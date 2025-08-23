@@ -1,0 +1,49 @@
+{
+  "name": "Pixel Pet",
+  "description": "A friendly digital companion for your desktop",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello there! 👋",
+        "How are you today?",
+        "Nice to see you again!",
+        "What can I help you with?",
+        "I'm here to keep you company! 😊"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick", 
+      "responses": [
+        "Right-click detected! 🖱️",
+        "That tickles!",
+        "Try clicking normally next time! 😄"
+      ],
+      "animation": "happy",
+      "cooldown": 8
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "I see you hovering...",
+        "Thinking of clicking?",
+        "Hello up there! 👀"
+      ],
+      "animation": "idle",
+      "cooldown": 10
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": false,
+    "defaultSize": 128
+  }
+}
