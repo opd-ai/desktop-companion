@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 
 	"fyne.io/fyne/v2/app"
@@ -68,7 +67,7 @@ func main() {
 	if desk, ok := myApp.(desktop.App); ok {
 		// Enable always-on-top and transparency support
 		window := ui.NewDesktopWindow(desk, char, *debug)
-		
+
 		if *debug {
 			log.Println("Created desktop window with transparency support")
 		}

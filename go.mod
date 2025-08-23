@@ -1,4 +1,4 @@
-module desktop-companion
+module github.com/opd-ai/desktop-companion
 
 go 1.21
 
