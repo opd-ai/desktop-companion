@@ -10,8 +10,8 @@ import (
 		"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/driver/desktop"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/ui"
+	"desktop-companion/internal/character"
+	"desktop-companion/internal/ui"
 )
 
 var (

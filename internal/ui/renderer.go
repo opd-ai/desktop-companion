@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"image"
 	"log"
 
 	"fyne.io/fyne/v2"
@@ -33,7 +32,7 @@ func NewCharacterRenderer(char *character.Character, debug bool) *CharacterRende
 	r.image = canvas.NewImageFromImage(nil)
 	r.image.FillMode = canvas.ImageFillContain
 	r.image.ScaleMode = canvas.ImageScaleSmooth
-	
+
 	// Set initial size
 	r.image.Resize(fyne.NewSize(float32(r.size), float32(r.size)))
 
@@ -62,7 +61,7 @@ func (r *CharacterRenderer) updateFrame() {
 	if frame != nil {
 		r.image.Image = frame
 		r.image.Refresh()
-		
+
 		if r.debug {
 			state := r.character.GetCurrentState()
 			log.Printf("Updated frame for state: %s", state)
