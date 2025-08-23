@@ -1,8 +1,9 @@
+````markdown
 # Desktop Companion
 
 A lightweight, cross-platform virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
-## Features
+## ✨ Features
 
 - 🎭 **Animated Characters**: Support for multi-frame GIF animations with proper timing
 - 🪟 **Transparent Overlay**: Always-on-top window with system transparency 
@@ -11,7 +12,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🌍 **Cross-Platform**: Works on Windows, macOS, and Linux
 - 🪶 **Lightweight**: <50MB memory usage, <10MB binary size
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -26,15 +27,37 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/desktop-companion
+git clone https://github.com/opd-ai/desktop-companion
 cd desktop-companion
 
 # Install dependencies
 go mod download
 
-# Run with default character
+# Add animation GIF files (see SETUP guide below)
+# Then run with default character
 go run cmd/companion/main.go
 ```
+
+### 🎬 Animation Setup (Required)
+
+Before running, you need to add GIF animation files:
+
+1. **Create GIF files** in `assets/characters/default/animations/`:
+   - `idle.gif` - Default character animation
+   - `talking.gif` - Speaking animation  
+   - `happy.gif` - Happy/excited animation
+   - `sad.gif` - Sad/disappointed animation
+
+2. **GIF Requirements**:
+   - Format: Animated GIF with transparency
+   - Size: 64x64 to 256x256 pixels  
+   - File size: <1MB each for best performance
+   - Frames: 2-10 frames per animation
+
+3. **Quick Test Setup**:
+   - Download sample pixel art GIFs from Tenor or Giphy
+   - Or create simple test animations using online GIF makers
+   - See `assets/characters/default/animations/SETUP.md` for details
 
 ### Building from Source
 
@@ -42,14 +65,14 @@ go run cmd/companion/main.go
 # Development build
 go build -o companion cmd/companion/main.go
 
-# Optimized release build
+# Optimized release build  
 go build -ldflags="-s -w" -o companion cmd/companion/main.go
 
 # Cross-platform builds
 make build-all  # Builds for Windows, macOS, and Linux
 ```
 
-## Dependencies
+## 🏗️ Architecture & Dependencies
 
 This project follows the "lazy programmer" philosophy, using mature libraries instead of custom implementations:
 
@@ -64,13 +87,13 @@ This project follows the "lazy programmer" philosophy, using mature libraries in
 
 All dependencies use permissive licenses (BSD-3-Clause) that allow commercial use without attribution requirements. No license files need to be bundled with binaries, but this project includes `LICENSES.md` for transparency.
 
-## Usage
+## 📖 Usage
 
 ### Basic Usage
 
 1. **Launch**: Run the executable or `go run cmd/companion/main.go`
 2. **Interact**: Click on the character to trigger dialog responses
-3. **Move**: Drag the character around your desktop
+3. **Move**: Drag the character around your desktop (if enabled)
 4. **Configure**: Edit `assets/characters/default/character.json` to customize behavior
 
 ### Character Cards
@@ -153,7 +176,7 @@ Characters are defined using JSON configuration files with this structure:
    go run cmd/companion/main.go -character assets/characters/mycharacter/character.json
    ```
 
-## Development
+## 🛠️ Development
 
 ### Project Structure
 
@@ -164,16 +187,21 @@ desktop-companion/
 │   ├── character/
 │   │   ├── card.go                 # JSON configuration parser (stdlib)
 │   │   ├── animation.go            # GIF animation manager (stdlib)
-│   │   └── behavior.go             # Character behavior logic
+│   │   ├── behavior.go             # Character behavior logic
+│   │   └── card_test.go            # Unit tests
 │   ├── ui/
 │   │   ├── window.go              # Transparent window (fyne)
 │   │   ├── renderer.go            # Character rendering
-│   │   └── interaction.go         # Mouse event handling (fyne)
+│   │   └── interaction.go         # Dialog bubbles (fyne)
 │   └── config/
 │       └── loader.go              # Configuration file loading
 ├── assets/characters/default/      # Default character files
 ├── build/scripts/                 # Cross-platform build scripts
-└── docs/                         # Additional documentation
+├── docs/                         # Additional documentation
+├── Makefile                       # Build automation
+├── IMPLEMENTATION.md              # Detailed implementation guide
+├── TROUBLESHOOTING.md             # Common issues and solutions
+└── LICENSES.md                    # License information
 ```
 
 ### Design Principles
@@ -181,7 +209,7 @@ desktop-companion/
 1. **Library-First**: Use existing solutions instead of custom implementations
 2. **Standard Library Preference**: Leverage Go's stdlib (json, image/gif) when possible
 3. **Minimal Custom Code**: Write only glue code and business logic
-4. **Interface-Based**: Use `net.Addr`, `io.Reader` patterns for testability
+4. **Interface-Based**: Use standard Go patterns for testability
 5. **Proper Concurrency**: Mutex protection for all shared state
 
 ### Running Tests
@@ -223,7 +251,7 @@ go tool pprof cpu.prof
 - Startup time: <2 seconds
 - Binary size: <10MB per platform
 
-## Building and Distribution
+## 🔨 Building and Distribution
 
 ### Development Builds
 
@@ -259,7 +287,7 @@ The `build/scripts/` directory contains platform-specific build optimizations:
 - **macOS**: Creates `.app` bundle with proper metadata
 - **Linux**: Generates `.desktop` file for application menu integration
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Common Issues
 
@@ -298,7 +326,9 @@ This provides detailed output about:
 - Window creation and positioning
 - Performance metrics and memory usage
 
-## Contributing
+See `TROUBLESHOOTING.md` for comprehensive troubleshooting guide.
+
+## 🤝 Contributing
 
 1. **Fork** the repository
 2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
@@ -317,7 +347,7 @@ This provides detailed output about:
 - Add mutex protection for shared state
 - Include unit tests for business logic (target 80% coverage)
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -328,7 +358,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [LICENSES.md](LICENSES.md) for complete license information.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - **Fyne Project**: For providing excellent cross-platform GUI capabilities
 - **Go Team**: For the robust standard library that handles GIF decoding and JSON parsing
@@ -341,3 +371,6 @@ See [LICENSES.md](LICENSES.md) for complete license information.
 - 50MB disk space
 - OpenGL 2.1 or higher (for hardware acceleration)
 - X11 (Linux), Cocoa (macOS), or Win32 (Windows) display server
+
+**Note**: This application requires GIF animation files to run. See the setup instructions above for details on adding animations.
+````
