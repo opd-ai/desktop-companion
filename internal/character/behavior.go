@@ -47,7 +47,7 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 	}
 
 	// Load all animations from the character card
-	for name, animPath := range card.Animations {
+	for name := range card.Animations {
 		fullPath, err := card.GetAnimationPath(basePath, name)
 		if err != nil {
 			return nil, fmt.Errorf("failed to resolve animation path for '%s': %w", name, err)

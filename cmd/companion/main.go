@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-		"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/driver/desktop"
 
 	"desktop-companion/internal/character"
