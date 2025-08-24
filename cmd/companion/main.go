@@ -33,11 +33,37 @@ func main() {
 
 	configureDebugLogging()
 
+	// Initialize performance profiler
+	profiler := monitoring.NewProfiler(50, 10) // 50MB memory, 10MB binary targets
+	
+	// Start profiling if requested
+	if err := profiler.Start(*memProfile, *cpuProfile, *debug); err != nil {
+		log.Fatalf("Failed to start profiler: %v", err)
+	}
+	defer func() {
+		if err := profiler.Stop(*memProfile, *debug); err != nil {
+			log.Printf("Error stopping profiler: %v", err)
+		}
+	}()
+
 	// Load character configuration
 	card, characterDir := loadCharacterConfiguration()
 
+	// Record startup completion
+	profiler.RecordStartupComplete()
+	
+	if *debug {
+		stats := profiler.GetStats()
+		log.Printf("Startup completed in %v", stats.StartupDuration)
+		log.Printf("Current memory usage: %.2f MB", stats.CurrentMemoryMB)
+		
+		if !profiler.IsMemoryTargetMet() {
+			log.Printf("WARNING: Memory usage exceeds 50MB target")
+		}
+	}
+
 	// Initialize application and show window
-	runDesktopApplication(card, characterDir)
+	runDesktopApplication(card, characterDir, profiler)
 }
 
 // showVersionInfo displays application version information.
@@ -78,7 +104,7 @@ func loadCharacterConfiguration() (*character.CharacterCard, string) {
 }
 
 // runDesktopApplication creates and runs the desktop companion application.
-func runDesktopApplication(card *character.CharacterCard, characterDir string) {
+func runDesktopApplication(card *character.CharacterCard, characterDir string, profiler *monitoring.Profiler) {
 	// Create Fyne application
 	myApp := app.NewWithID("com.opdai.desktop-companion")
 
@@ -88,8 +114,8 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string) {
 		log.Fatalf("Failed to create character: %v", err)
 	}
 
-	// Create and show desktop window
-	window := ui.NewDesktopWindow(myApp, char, *debug)
+	// Create and show desktop window with profiler integration
+	window := ui.NewDesktopWindow(myApp, char, *debug, profiler)
 
 	if *debug {
 		log.Println("Created desktop window")

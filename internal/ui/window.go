@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	"desktop-companion/internal/character"
+	"desktop-companion/internal/monitoring"
 )
 
 // DesktopWindow represents the transparent overlay window containing the character
@@ -18,12 +19,13 @@ type DesktopWindow struct {
 	character *character.Character
 	renderer  *CharacterRenderer
 	dialog    *DialogBubble
+	profiler  *monitoring.Profiler
 	debug     bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
-func NewDesktopWindow(app fyne.App, char *character.Character, debug bool) *DesktopWindow {
+func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler) *DesktopWindow {
 	// Create window with transparency support
 	window := app.NewWindow("Desktop Companion")
 
@@ -34,6 +36,7 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool) *Desk
 	dw := &DesktopWindow{
 		window:    window,
 		character: char,
+		profiler:  profiler,
 		debug:     debug,
 	}
 
@@ -113,19 +116,6 @@ func (dw *DesktopWindow) handleClick() {
 	}
 }
 
-// handleRightClick processes right-click interactions
-func (dw *DesktopWindow) handleRightClick() {
-	response := dw.character.HandleRightClick()
-
-	if dw.debug {
-		log.Printf("Character right-clicked, response: %q", response)
-	}
-
-	if response != "" {
-		dw.showDialog(response)
-	}
-}
-
 // showDialog displays a dialog bubble with the given text
 func (dw *DesktopWindow) showDialog(text string) {
 	dw.dialog.ShowWithText(text)
@@ -147,6 +137,11 @@ func (dw *DesktopWindow) animationLoop() {
 		// Update character behavior and animations
 		dw.character.Update()
 
+		// Record frame for performance monitoring
+		if dw.profiler != nil {
+			dw.profiler.RecordFrame()
+		}
+
 		// Refresh renderer to show new animation frame
 		dw.renderer.Refresh()
 	}
@@ -167,6 +162,9 @@ func (dw *DesktopWindow) setupRightClick(widget fyne.Widget) {
 
 	// TODO: Implement proper right-click detection
 	// This is a placeholder for platform-specific right-click handling
+	if dw.debug {
+		log.Println("Right-click setup pending - platform-specific implementation needed")
+	}
 }
 
 // setupDragging configures character dragging behavior
