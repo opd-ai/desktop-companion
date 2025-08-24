@@ -96,14 +96,39 @@ func (p *Profiler) Stop(memProfilePath string, debug bool) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
+	if err := p.validateProfilerState(); err != nil {
+		return err
+	}
+
+	p.shutdownProfiler()
+
+	if err := p.stopCPUProfilingIfActive(debug); err != nil {
+		return err
+	}
+
+	if err := p.saveMemoryProfileIfRequested(memProfilePath, debug); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateProfilerState checks if profiler is in valid state for stopping
+func (p *Profiler) validateProfilerState() error {
 	if !p.enabled {
 		return fmt.Errorf("profiler not started")
 	}
+	return nil
+}
 
+// shutdownProfiler performs core profiler shutdown operations
+func (p *Profiler) shutdownProfiler() {
 	p.enabled = false
 	p.cancel()
+}
 
-	// Stop CPU profiling
+// stopCPUProfilingIfActive stops CPU profiling if currently active
+func (p *Profiler) stopCPUProfilingIfActive(debug bool) error {
 	if p.cpuProfile != nil {
 		pprof.StopCPUProfile()
 		p.cpuProfile.Close()
@@ -111,8 +136,11 @@ func (p *Profiler) Stop(memProfilePath string, debug bool) error {
 			log.Printf("CPU profiling stopped")
 		}
 	}
+	return nil
+}
 
-	// Save memory profile if path provided
+// saveMemoryProfileIfRequested saves memory profile when path is provided
+func (p *Profiler) saveMemoryProfileIfRequested(memProfilePath string, debug bool) error {
 	if memProfilePath != "" {
 		if err := p.saveMemoryProfile(memProfilePath); err != nil {
 			return fmt.Errorf("failed to save memory profile: %w", err)
@@ -121,7 +149,6 @@ func (p *Profiler) Stop(memProfilePath string, debug bool) error {
 			log.Printf("Memory profile saved: %s", memProfilePath)
 		}
 	}
-
 	return nil
 }
 
