@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2/app"
 
 	"desktop-companion/internal/character"
+	"desktop-companion/internal/monitoring"
 	"desktop-companion/internal/ui"
 )
 
