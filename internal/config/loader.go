@@ -24,7 +24,7 @@ func New(basePath string) *Loader {
 // Generic function that can load any JSON structure
 func (l *Loader) LoadJSON(filename string, target interface{}) error {
 	fullPath := filepath.Join(l.basePath, filename)
-	
+
 	data, err := os.ReadFile(fullPath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file %s: %w", fullPath, err)
@@ -41,7 +41,7 @@ func (l *Loader) LoadJSON(filename string, target interface{}) error {
 // Useful for creating default configs or saving user preferences
 func (l *Loader) SaveJSON(filename string, data interface{}) error {
 	fullPath := filepath.Join(l.basePath, filename)
-	
+
 	// Ensure directory exists
 	if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)

@@ -54,7 +54,7 @@ func (am *AnimationManager) LoadAnimation(name, filepath string) error {
 	}
 
 	am.animations[name] = gifData
-	
+
 	// Set as current animation if this is the first one loaded
 	if am.currentAnim == "" {
 		am.currentAnim = name

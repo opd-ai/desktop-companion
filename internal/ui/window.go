@@ -6,10 +6,9 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"desktop-companion/internal/character"
 )
 
 // DesktopWindow represents the transparent overlay window containing the character
@@ -24,21 +23,13 @@ type DesktopWindow struct {
 
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
-func NewDesktopWindow(app desktop.App, char *character.Character, debug bool) *DesktopWindow {
+func NewDesktopWindow(app fyne.App, char *character.Character, debug bool) *DesktopWindow {
 	// Create window with transparency support
 	window := app.NewWindow("Desktop Companion")
-	
+
 	// Configure window for desktop overlay
 	window.SetFixedSize(true)
 	window.Resize(fyne.NewSize(float32(char.GetSize()), float32(char.GetSize())))
-	
-	// Remove window decorations for seamless desktop integration
-	window.SetDecorated(false)
-	
-	// Enable always-on-top behavior
-	if desk, ok := window.(desktop.Window); ok {
-		desk.SetMaster() // Fyne's way to set always-on-top
-	}
 
 	dw := &DesktopWindow{
 		window:    window,
@@ -48,14 +39,14 @@ func NewDesktopWindow(app desktop.App, char *character.Character, debug bool) *D
 
 	// Create character renderer
 	dw.renderer = NewCharacterRenderer(char, debug)
-	
+
 	// Create dialog bubble (initially hidden)
 	dw.dialog = NewDialogBubble()
 
 	// Set up window content and interactions
 	dw.setupContent()
 	dw.setupInteractions()
-	
+
 	// Start animation update loop
 	go dw.animationLoop()
 
@@ -85,7 +76,7 @@ func (dw *DesktopWindow) setupInteractions() {
 		dw.handleClick()
 	})
 	clickable.Resize(fyne.NewSize(float32(dw.character.GetSize()), float32(dw.character.GetSize())))
-	
+
 	// Make button transparent by removing background
 	clickable.Importance = widget.LowImportance
 
@@ -105,14 +96,14 @@ func (dw *DesktopWindow) setupInteractions() {
 		clickable,
 		dw.dialog,
 	)
-	
+
 	dw.window.SetContent(content)
 }
 
 // handleClick processes character click interactions
 func (dw *DesktopWindow) handleClick() {
 	response := dw.character.HandleClick()
-	
+
 	if dw.debug {
 		log.Printf("Character clicked, response: %q", response)
 	}
@@ -125,7 +116,7 @@ func (dw *DesktopWindow) handleClick() {
 // handleRightClick processes right-click interactions
 func (dw *DesktopWindow) handleRightClick() {
 	response := dw.character.HandleRightClick()
-	
+
 	if dw.debug {
 		log.Printf("Character right-clicked, response: %q", response)
 	}
@@ -137,8 +128,8 @@ func (dw *DesktopWindow) handleRightClick() {
 
 // showDialog displays a dialog bubble with the given text
 func (dw *DesktopWindow) showDialog(text string) {
-	dw.dialog.Show(text)
-	
+	dw.dialog.ShowWithText(text)
+
 	// Auto-hide dialog after 3 seconds
 	go func() {
 		time.Sleep(3 * time.Second)
@@ -155,7 +146,7 @@ func (dw *DesktopWindow) animationLoop() {
 	for range ticker.C {
 		// Update character behavior and animations
 		dw.character.Update()
-		
+
 		// Refresh renderer to show new animation frame
 		dw.renderer.Refresh()
 	}
@@ -173,7 +164,7 @@ func (dw *DesktopWindow) setupRightClick(widget fyne.Widget) {
 	// Fyne doesn't have built-in right-click support for widgets
 	// This would need platform-specific implementation or custom gesture detection
 	// For now, we'll use a simple approach with a context menu
-	
+
 	// TODO: Implement proper right-click detection
 	// This is a placeholder for platform-specific right-click handling
 }
@@ -184,7 +175,7 @@ func (dw *DesktopWindow) setupDragging() {
 	// This requires platform-specific window manipulation
 	// Fyne provides some drag support, but for desktop overlay windows
 	// we might need to handle this at the OS level
-	
+
 	if dw.debug {
 		log.Println("Dragging enabled for character (implementation pending)")
 	}
@@ -193,7 +184,7 @@ func (dw *DesktopWindow) setupDragging() {
 // Show displays the desktop window
 func (dw *DesktopWindow) Show() {
 	dw.window.Show()
-	
+
 	if dw.debug {
 		log.Printf("Desktop window shown for character: %s", dw.character.GetName())
 	}
@@ -210,15 +201,23 @@ func (dw *DesktopWindow) Close() {
 }
 
 // SetPosition moves the window to the specified screen coordinates
+// Note: Fyne doesn't directly support window positioning on all platforms
 func (dw *DesktopWindow) SetPosition(x, y int) {
-	dw.window.Move(fyne.NewPos(float32(x), float32(y)))
+	// Store position in character for reference
 	dw.character.SetPosition(float32(x), float32(y))
+
+	// Note: Window positioning may not be supported on all platforms
+	if dw.debug {
+		log.Printf("Position set to (%d, %d) - actual window positioning may not be supported", x, y)
+	}
 }
 
 // GetPosition returns the current window position
+// Note: Fyne doesn't directly support window position queries on all platforms
 func (dw *DesktopWindow) GetPosition() (int, int) {
-	pos := dw.window.Position()
-	return int(pos.X), int(pos.Y)
+	// Return stored character position as fallback
+	x, y := dw.character.GetPosition()
+	return int(x), int(y)
 }
 
 // SetSize updates the window and character size

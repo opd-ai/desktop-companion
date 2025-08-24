@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/driver/desktop"
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/ui"
@@ -64,18 +63,13 @@ func main() {
 	}
 
 	// Create desktop window
-	if desk, ok := myApp.(desktop.App); ok {
-		// Enable always-on-top and transparency support
-		window := ui.NewDesktopWindow(desk, char, *debug)
+	window := ui.NewDesktopWindow(myApp, char, *debug)
 
-		if *debug {
-			log.Println("Created desktop window with transparency support")
-		}
-
-		// Show window and start event loop
-		window.Show()
-		myApp.Run()
-	} else {
-		log.Fatal("Desktop functionality not available on this platform")
+	if *debug {
+		log.Println("Created desktop window")
 	}
+
+	// Show window and start event loop
+	window.Show()
+	myApp.Run()
 }

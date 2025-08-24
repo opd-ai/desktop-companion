@@ -13,10 +13,11 @@ import (
 // Uses Fyne's text and shape components for simple bubble rendering
 type DialogBubble struct {
 	widget.BaseWidget
-	text       *widget.RichText
-	background *canvas.Rectangle
-	container  *container.Container
-	visible    bool
+	text        *widget.RichText
+	background  *canvas.Rectangle
+	content     *fyne.Container
+	visible     bool
+	currentText string
 }
 
 // NewDialogBubble creates a new dialog bubble widget
@@ -31,23 +32,23 @@ func NewDialogBubble() *DialogBubble {
 	// Create text widget for dialog content
 	bubble.text = widget.NewRichText()
 	bubble.text.Wrapping = fyne.TextWrapWord
-	
+
 	// Set up text styling for readability
 	bubble.text.Segments = []widget.RichTextSegment{
 		&widget.TextSegment{
 			Text: "",
 			Style: widget.RichTextStyle{
-				ColorName: "foreground",
-				SizeName:  "default",
+				ColorName: fyne.ThemeColorName("foreground"),
+				SizeName:  fyne.ThemeSizeName("text"),
 			},
 		},
 	}
 
 	// Create container with background and text
-	bubble.container = container.NewBorder(nil, nil, nil, nil, bubble.background, bubble.text)
-	
+	bubble.content = container.NewBorder(nil, nil, nil, nil, bubble.background, bubble.text)
+
 	// Initially hidden
-	bubble.Hide()
+	bubble.visible = false
 
 	bubble.ExtendBaseWidget(bubble)
 	return bubble
@@ -56,38 +57,45 @@ func NewDialogBubble() *DialogBubble {
 // CreateRenderer creates the Fyne renderer for the dialog bubble
 func (b *DialogBubble) CreateRenderer() fyne.WidgetRenderer {
 	return &dialogBubbleRenderer{
-		bubble:    b,
-		container: b.container,
+		bubble:  b,
+		content: b.content,
 	}
 }
 
-// Show displays the dialog bubble with the specified text
-func (b *DialogBubble) Show(text string) {
+// SetText sets the text content for the dialog bubble
+func (b *DialogBubble) SetText(text string) {
+	b.currentText = text
 	// Update text content
 	b.text.Segments = []widget.RichTextSegment{
 		&widget.TextSegment{
 			Text: text,
 			Style: widget.RichTextStyle{
-				ColorName: "foreground",
-				SizeName:  "default",
+				ColorName: fyne.ThemeColorName("foreground"),
+				SizeName:  fyne.ThemeSizeName("text"),
 			},
 		},
 	}
 	b.text.Refresh()
-
-	// Calculate bubble size based on text content
 	b.updateSize(text)
+}
 
-	// Make visible
+// Show displays the dialog bubble (implements fyne.Widget interface)
+func (b *DialogBubble) Show() {
 	b.visible = true
-	b.container.Show()
+	b.content.Show()
 	b.Refresh()
+}
+
+// ShowWithText displays the dialog bubble with the specified text
+func (b *DialogBubble) ShowWithText(text string) {
+	b.SetText(text)
+	b.Show()
 }
 
 // Hide hides the dialog bubble
 func (b *DialogBubble) Hide() {
 	b.visible = false
-	b.container.Hide()
+	b.content.Hide()
 	b.Refresh()
 }
 
@@ -101,17 +109,17 @@ func (b *DialogBubble) updateSize(text string) {
 	// Simple size calculation based on text length
 	// This could be enhanced with proper text measurement
 	textLen := len(text)
-	
+
 	// Base size calculations
 	minWidth := float32(100)
 	minHeight := float32(40)
-	
+
 	// Calculate width based on text length (rough estimate)
 	width := minWidth + float32(textLen)*2
 	if width > 300 { // Max width
 		width = 300
 	}
-	
+
 	// Calculate height based on estimated line wrapping
 	lines := 1 + textLen/30 // Rough estimate of lines needed
 	height := minHeight + float32(lines-1)*20
@@ -120,16 +128,16 @@ func (b *DialogBubble) updateSize(text string) {
 	}
 
 	// Position bubble above character (offset by character size + margin)
-	bubbleX := float32(10) // Small offset from character
+	bubbleX := float32(10)           // Small offset from character
 	bubbleY := float32(-height - 10) // Above character with margin
 
 	// Update container size and position
-	b.container.Resize(fyne.NewSize(width, height))
-	b.container.Move(fyne.NewPos(bubbleX, bubbleY))
-	
+	b.content.Resize(fyne.NewSize(width, height))
+	b.content.Move(fyne.NewPos(bubbleX, bubbleY))
+
 	// Update background to match container
 	b.background.Resize(fyne.NewSize(width, height))
-	
+
 	// Update text area with padding
 	textPadding := float32(8)
 	b.text.Resize(fyne.NewSize(width-textPadding*2, height-textPadding*2))
@@ -143,7 +151,7 @@ func (b *DialogBubble) SetBackgroundColor(c color.Color) {
 }
 
 // SetTextColor updates the bubble text color
-func (b *DialogBubble) SetTextColor(colorName string) {
+func (b *DialogBubble) SetTextColor(colorName fyne.ThemeColorName) {
 	if len(b.text.Segments) > 0 {
 		if segment, ok := b.text.Segments[0].(*widget.TextSegment); ok {
 			segment.Style.ColorName = colorName
@@ -154,15 +162,15 @@ func (b *DialogBubble) SetTextColor(colorName string) {
 
 // dialogBubbleRenderer implements fyne.WidgetRenderer for dialog bubbles
 type dialogBubbleRenderer struct {
-	bubble    *DialogBubble
-	container *container.Container
+	bubble  *DialogBubble
+	content *fyne.Container
 }
 
 // Layout arranges the dialog bubble components
 func (r *dialogBubbleRenderer) Layout(size fyne.Size) {
 	if r.bubble.visible {
-		r.container.Resize(r.container.Size())
-		r.container.Move(r.container.Position())
+		r.content.Resize(r.content.Size())
+		r.content.Move(r.content.Position())
 	}
 }
 
@@ -177,7 +185,7 @@ func (r *dialogBubbleRenderer) MinSize() fyne.Size {
 // Objects returns the canvas objects for rendering
 func (r *dialogBubbleRenderer) Objects() []fyne.CanvasObject {
 	if r.bubble.visible {
-		return []fyne.CanvasObject{r.container}
+		return []fyne.CanvasObject{r.content}
 	}
 	return []fyne.CanvasObject{}
 }
@@ -185,7 +193,7 @@ func (r *dialogBubbleRenderer) Objects() []fyne.CanvasObject {
 // Refresh redraws the dialog bubble
 func (r *dialogBubbleRenderer) Refresh() {
 	if r.bubble.visible {
-		r.container.Refresh()
+		r.content.Refresh()
 	}
 }
 

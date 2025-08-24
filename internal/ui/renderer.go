@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"desktop-companion/internal/character"
 )
 
 // CharacterRenderer renders the animated character using Fyne's canvas

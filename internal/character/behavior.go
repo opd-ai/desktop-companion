@@ -14,18 +14,18 @@ type Character struct {
 	card             *CharacterCard
 	animationManager *AnimationManager
 	basePath         string
-	
+
 	// State management
-	currentState     string
-	lastStateChange  time.Time
-	lastInteraction  time.Time
-	dialogCooldowns  map[string]time.Time
-	
+	currentState    string
+	lastStateChange time.Time
+	lastInteraction time.Time
+	dialogCooldowns map[string]time.Time
+
 	// Behavior settings
-	idleTimeout      time.Duration
-	movementEnabled  bool
-	size             int
-	
+	idleTimeout     time.Duration
+	movementEnabled bool
+	size            int
+
 	// Position (for draggable characters)
 	x, y float32
 }
@@ -34,16 +34,16 @@ type Character struct {
 // Loads all animations and initializes behavior state
 func New(card *CharacterCard, basePath string) (*Character, error) {
 	char := &Character{
-		card:            card,
+		card:             card,
 		animationManager: NewAnimationManager(),
-		basePath:        basePath,
-		currentState:    "idle",
-		lastStateChange: time.Now(),
-		lastInteraction: time.Now(),
-		dialogCooldowns: make(map[string]time.Time),
-		idleTimeout:     time.Duration(card.Behavior.IdleTimeout) * time.Second,
-		movementEnabled: card.Behavior.MovementEnabled,
-		size:           card.Behavior.DefaultSize,
+		basePath:         basePath,
+		currentState:     "idle",
+		lastStateChange:  time.Now(),
+		lastInteraction:  time.Now(),
+		dialogCooldowns:  make(map[string]time.Time),
+		idleTimeout:      time.Duration(card.Behavior.IdleTimeout) * time.Second,
+		movementEnabled:  card.Behavior.MovementEnabled,
+		size:             card.Behavior.DefaultSize,
 	}
 
 	// Load all animations from the character card

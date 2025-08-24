@@ -22,10 +22,10 @@ type CharacterCard struct {
 
 // Dialog represents an interaction trigger and response configuration
 type Dialog struct {
-	Trigger    string   `json:"trigger"`    // "click", "rightclick", "hover"
-	Responses  []string `json:"responses"`  // 1-10 response strings
-	Animation  string   `json:"animation"`  // Must match an animation key
-	Cooldown   int      `json:"cooldown"`   // Seconds between triggers (default: 5)
+	Trigger   string   `json:"trigger"`   // "click", "rightclick", "hover"
+	Responses []string `json:"responses"` // 1-10 response strings
+	Animation string   `json:"animation"` // Must match an animation key
+	Cooldown  int      `json:"cooldown"`  // Seconds between triggers (default: 5)
 }
 
 // Behavior defines character behavior settings
@@ -167,7 +167,7 @@ func (c *CharacterCard) GetAnimationPath(basePath, animationName string) (string
 	}
 
 	fullPath := filepath.Join(basePath, animationFile)
-	
+
 	// Verify file exists
 	if _, err := os.Stat(fullPath); err != nil {
 		return "", fmt.Errorf("animation file not found: %s", fullPath)
@@ -182,7 +182,7 @@ func (d *Dialog) GetRandomResponse() string {
 	if len(d.Responses) == 0 {
 		return ""
 	}
-	
+
 	// Simple time-based pseudo-random selection
 	// For a desktop pet, this provides sufficient randomness
 	index := int(time.Now().UnixNano()) % len(d.Responses)
