@@ -106,8 +106,13 @@ func (b *DialogBubble) IsVisible() bool {
 
 // updateSize calculates appropriate bubble size for the text content
 func (b *DialogBubble) updateSize(text string) {
-	// Simple size calculation based on text length
-	// This could be enhanced with proper text measurement
+	width, height := b.calculateBubbleDimensions(text)
+	bubbleX, bubbleY := b.calculateBubblePosition(height)
+	b.applyBubbleLayout(width, height, bubbleX, bubbleY)
+}
+
+// calculateBubbleDimensions computes the bubble width and height based on text content
+func (b *DialogBubble) calculateBubbleDimensions(text string) (float32, float32) {
 	textLen := len(text)
 
 	// Base size calculations
@@ -127,10 +132,18 @@ func (b *DialogBubble) updateSize(text string) {
 		height = 150
 	}
 
-	// Position bubble above character (offset by character size + margin)
+	return width, height
+}
+
+// calculateBubblePosition determines the bubble position relative to the character
+func (b *DialogBubble) calculateBubblePosition(height float32) (float32, float32) {
 	bubbleX := float32(10)           // Small offset from character
 	bubbleY := float32(-height - 10) // Above character with margin
+	return bubbleX, bubbleY
+}
 
+// applyBubbleLayout applies the calculated dimensions and position to UI components
+func (b *DialogBubble) applyBubbleLayout(width, height, bubbleX, bubbleY float32) {
 	// Update container size and position
 	b.content.Resize(fyne.NewSize(width, height))
 	b.content.Move(fyne.NewPos(bubbleX, bubbleY))
