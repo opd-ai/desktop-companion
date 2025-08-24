@@ -58,36 +58,74 @@ func LoadCard(path string) (*CharacterCard, error) {
 // Validate ensures the character card has valid configuration
 // Implements comprehensive validation to prevent runtime errors
 func (c *CharacterCard) Validate() error {
-	// Validate name
+	if err := c.validateBasicFields(); err != nil {
+		return err
+	}
+
+	if err := c.validateAnimations(); err != nil {
+		return err
+	}
+
+	if err := c.validateDialogs(); err != nil {
+		return err
+	}
+
+	if err := c.Behavior.Validate(); err != nil {
+		return fmt.Errorf("behavior: %w", err)
+	}
+
+	return nil
+}
+
+// validateBasicFields checks name and description field constraints
+func (c *CharacterCard) validateBasicFields() error {
 	if len(c.Name) == 0 || len(c.Name) > 50 {
 		return fmt.Errorf("name must be 1-50 characters, got %d", len(c.Name))
 	}
 
-	// Validate description
 	if len(c.Description) == 0 || len(c.Description) > 200 {
 		return fmt.Errorf("description must be 1-200 characters, got %d", len(c.Description))
 	}
 
-	// Validate required animations
+	return nil
+}
+
+// validateAnimations ensures required animations exist and have valid file paths
+func (c *CharacterCard) validateAnimations() error {
 	if c.Animations == nil {
 		return fmt.Errorf("animations map is required")
 	}
 
+	if err := c.validateRequiredAnimations(); err != nil {
+		return err
+	}
+
+	return c.validateAnimationPaths()
+}
+
+// validateRequiredAnimations checks that mandatory animation keys are present
+func (c *CharacterCard) validateRequiredAnimations() error {
 	requiredAnimations := []string{"idle", "talking"}
 	for _, required := range requiredAnimations {
 		if _, exists := c.Animations[required]; !exists {
 			return fmt.Errorf("required animation '%s' not found", required)
 		}
 	}
+	return nil
+}
 
-	// Validate animation file paths
+// validateAnimationPaths ensures all animation files have proper GIF extensions
+func (c *CharacterCard) validateAnimationPaths() error {
 	for name, path := range c.Animations {
 		if !strings.HasSuffix(strings.ToLower(path), ".gif") {
 			return fmt.Errorf("animation '%s' must be a GIF file, got: %s", name, path)
 		}
 	}
+	return nil
+}
 
-	// Validate dialogs
+// validateDialogs ensures dialog configurations are valid and reference existing animations
+func (c *CharacterCard) validateDialogs() error {
 	if len(c.Dialogs) == 0 {
 		return fmt.Errorf("at least one dialog configuration is required")
 	}
@@ -96,11 +134,6 @@ func (c *CharacterCard) Validate() error {
 		if err := dialog.Validate(c.Animations); err != nil {
 			return fmt.Errorf("dialog %d: %w", i, err)
 		}
-	}
-
-	// Validate behavior settings
-	if err := c.Behavior.Validate(); err != nil {
-		return fmt.Errorf("behavior: %w", err)
 	}
 
 	return nil
