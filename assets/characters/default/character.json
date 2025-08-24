@@ -43,7 +43,7 @@
   ],
   "behavior": {
     "idleTimeout": 30,
-    "movementEnabled": false,
+    "movementEnabled": true,
     "defaultSize": 128
   }
 }

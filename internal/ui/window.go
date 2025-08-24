@@ -156,26 +156,39 @@ func (dw *DesktopWindow) supportsRightClick() bool {
 
 // setupRightClick configures right-click interaction
 func (dw *DesktopWindow) setupRightClick(widget fyne.Widget) {
-	// Fyne doesn't have built-in right-click support for widgets
-	// This would need platform-specific implementation or custom gesture detection
-	// For now, we'll use a simple approach with a context menu
+	// Right-click is handled by the DraggableCharacter's TappedSecondary method
+	// when dragging is enabled. For non-draggable characters, we'd need a different approach.
 
-	// TODO: Implement proper right-click detection
-	// This is a placeholder for platform-specific right-click handling
+	if !dw.character.IsMovementEnabled() {
+		// For non-draggable characters, we could implement a custom widget that supports right-click
+		// For now, we'll note that right-click works when movement is enabled
+		if dw.debug {
+			log.Println("Right-click available when movement is enabled")
+		}
+		return
+	}
+
 	if dw.debug {
-		log.Println("Right-click setup pending - platform-specific implementation needed")
+		log.Println("Right-click configured via draggable character widget")
 	}
 }
 
 // setupDragging configures character dragging behavior
 func (dw *DesktopWindow) setupDragging() {
-	// TODO: Implement window dragging
-	// This requires platform-specific window manipulation
-	// Fyne provides some drag support, but for desktop overlay windows
-	// we might need to handle this at the OS level
+	// Create draggable wrapper that implements Fyne's drag interface
+	// This provides smooth cross-platform drag support without platform-specific code
+	draggable := NewDraggableCharacter(dw, dw.character, dw.debug)
+
+	// Update window content to use draggable character instead of separate clickable overlay
+	content := container.NewWithoutLayout(
+		draggable,
+		dw.dialog,
+	)
+
+	dw.window.SetContent(content)
 
 	if dw.debug {
-		log.Println("Dragging enabled for character (implementation pending)")
+		log.Println("Character dragging enabled using Fyne drag system")
 	}
 }
 

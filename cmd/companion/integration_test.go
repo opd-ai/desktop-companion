@@ -50,15 +50,15 @@ func TestMainIntegration(t *testing.T) {
 
 	// Create dummy GIF files (minimal valid GIF data)
 	gifData := []byte("GIF89a\x01\x00\x01\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00;")
-	
+
 	idlePath := filepath.Join(tmpDir, "idle.gif")
 	talkingPath := filepath.Join(tmpDir, "talking.gif")
-	
+
 	err = os.WriteFile(idlePath, gifData, 0644)
 	if err != nil {
 		t.Fatalf("Failed to write idle.gif: %v", err)
 	}
-	
+
 	err = os.WriteFile(talkingPath, gifData, 0644)
 	if err != nil {
 		t.Fatalf("Failed to write talking.gif: %v", err)
@@ -94,7 +94,7 @@ func TestMainIntegration(t *testing.T) {
 
 	// Simulate application runtime
 	profiler.RecordStartupComplete()
-	
+
 	// Simulate frame rendering
 	for i := 0; i < 60; i++ { // 1 second at 60 FPS
 		char.Update()
@@ -104,7 +104,7 @@ func TestMainIntegration(t *testing.T) {
 
 	// Validate performance metrics
 	stats := profiler.GetStats()
-	
+
 	if stats.TotalFrames != 60 {
 		t.Errorf("Expected 60 frames, got %d", stats.TotalFrames)
 	}
@@ -164,7 +164,7 @@ func TestPerformanceTargets(t *testing.T) {
 	// Frame rate test (should be close to 60 FPS)
 	expectedFrames := uint64(frameCount)
 	actualFrames := stats.TotalFrames
-	
+
 	// Allow some variance in frame counting
 	if actualFrames < expectedFrames-5 || actualFrames > expectedFrames+5 {
 		t.Errorf("Frame count mismatch: expected ~%d, got %d", expectedFrames, actualFrames)
@@ -182,7 +182,7 @@ func TestConcurrentPerformanceMonitoring(t *testing.T) {
 
 	// Simulate concurrent frame rendering from multiple goroutines
 	done := make(chan bool, 5)
-	
+
 	for i := 0; i < 5; i++ {
 		go func() {
 			for j := 0; j < 100; j++ {
@@ -199,7 +199,7 @@ func TestConcurrentPerformanceMonitoring(t *testing.T) {
 	}
 
 	stats := profiler.GetStats()
-	
+
 	// Should have recorded 500 frames total
 	if stats.TotalFrames != 500 {
 		t.Errorf("Expected 500 frames from concurrent access, got %d", stats.TotalFrames)
@@ -223,7 +223,7 @@ func TestProfilerFileOutput(t *testing.T) {
 	memProfilePath := filepath.Join(tmpDir, "mem.prof")
 
 	profiler := monitoring.NewProfiler(50, 10)
-	
+
 	// Start with CPU profiling
 	err = profiler.Start("", cpuProfilePath, false)
 	if err != nil {
