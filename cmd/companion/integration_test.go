@@ -48,8 +48,32 @@ func TestMainIntegration(t *testing.T) {
 		t.Fatalf("Failed to write character config: %v", err)
 	}
 
-	// Create dummy GIF files (minimal valid GIF data)
-	gifData := []byte("GIF89a\x01\x00\x01\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00;")
+	// Create dummy GIF files (minimal valid GIF data with proper color table)
+	// This is a 1x1 pixel GIF with a global color table
+	gifData := []byte{
+		0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // GIF89a header
+		0x01, 0x00, // width = 1
+		0x01, 0x00, // height = 1
+		0x80,       // global color table flag = 1, color resolution = 000, sort flag = 0, global color table size = 000 (2 colors)
+		0x00,       // background color index
+		0x00,       // pixel aspect ratio
+		// Global color table (2 colors: white and black)
+		0xFF, 0xFF, 0xFF, // white
+		0x00, 0x00, 0x00, // black
+		// Image descriptor
+		0x2C,             // image separator
+		0x00, 0x00,       // left position
+		0x00, 0x00,       // top position
+		0x01, 0x00,       // width = 1
+		0x01, 0x00,       // height = 1
+		0x00,             // local color table flag = 0, interlace flag = 0, sort flag = 0, reserved = 00, local color table size = 000
+		// Image data
+		0x02,       // LZW minimum code size
+		0x02,       // data sub-block size
+		0x04, 0x01, // compressed data
+		0x00,       // data sub-block terminator
+		0x3B,       // trailer
+	}
 
 	idlePath := filepath.Join(tmpDir, "idle.gif")
 	talkingPath := filepath.Join(tmpDir, "talking.gif")
