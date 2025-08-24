@@ -17,6 +17,8 @@ var (
 	characterPath = flag.String("character", "assets/characters/default/character.json", "Path to character configuration file")
 	debug         = flag.Bool("debug", false, "Enable debug logging")
 	version       = flag.Bool("version", false, "Show version information")
+	memProfile    = flag.String("memprofile", "", "Write memory profile to file")
+	cpuProfile    = flag.String("cpuprofile", "", "Write CPU profile to file")
 )
 
 const appVersion = "1.0.0"
