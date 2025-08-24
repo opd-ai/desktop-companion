@@ -212,14 +212,25 @@ func (dw *DesktopWindow) Close() {
 }
 
 // SetPosition moves the window to the specified screen coordinates
-// Note: Fyne doesn't directly support window positioning on all platforms
+// Uses available Fyne APIs for best-effort positioning support
 func (dw *DesktopWindow) SetPosition(x, y int) {
 	// Store position in character for reference
 	dw.character.SetPosition(float32(x), float32(y))
 
-	// Note: Window positioning may not be supported on all platforms
-	if dw.debug {
-		log.Printf("Position set to (%d, %d) - actual window positioning may not be supported", x, y)
+	// Attempt to use available Fyne positioning capabilities
+	// Note: Full positioning support varies by platform, but we can try
+	if x == 0 && y == 0 {
+		// Special case: center the window when position is (0,0)
+		dw.window.CenterOnScreen()
+		if dw.debug {
+			log.Printf("Centering window using CenterOnScreen()")
+		}
+	} else {
+		// For non-zero positions, we need to work within Fyne's limitations
+		// Fyne doesn't expose direct positioning, but we can provide feedback
+		if dw.debug {
+			log.Printf("Position set to (%d, %d) - stored in character. Note: Fyne has limited window positioning support on some platforms", x, y)
+		}
 	}
 }
 
@@ -229,6 +240,17 @@ func (dw *DesktopWindow) GetPosition() (int, int) {
 	// Return stored character position as fallback
 	x, y := dw.character.GetPosition()
 	return int(x), int(y)
+}
+
+// CenterWindow centers the window on screen using Fyne's built-in capability
+func (dw *DesktopWindow) CenterWindow() {
+	dw.window.CenterOnScreen()
+	// Reset stored position to indicate centered state
+	dw.character.SetPosition(0, 0)
+	
+	if dw.debug {
+		log.Println("Window centered on screen")
+	}
 }
 
 // SetSize updates the window and character size

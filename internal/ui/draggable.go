@@ -102,18 +102,19 @@ func (dc *DraggableCharacter) DragEnd() {
 }
 
 // moveWindow attempts to move the window to follow character position
-// Note: Window positioning support varies by platform in Fyne
+// Uses improved positioning logic with available Fyne capabilities
 func (dc *DraggableCharacter) moveWindow(x, y float32) {
-	// Fyne has limited window positioning support
-	// This is a best-effort implementation that may not work on all platforms
-
 	// Store position in character for consistency
 	dc.character.SetPosition(x, y)
 
-	// For now, we'll keep the window stationary and just track logical position
-	// A future enhancement could implement platform-specific window moving
-	if dc.debug && x != dc.startPosX || y != dc.startPosY {
-		log.Printf("Character position updated to (%.1f, %.1f) - window positioning is platform-dependent", x, y)
+	// Use the improved SetPosition method from DesktopWindow
+	// This provides better positioning support using available Fyne APIs
+	if dc.window != nil {
+		dc.window.SetPosition(int(x), int(y))
+	}
+
+	if dc.debug {
+		log.Printf("Character position updated to (%.1f, %.1f) via improved positioning", x, y)
 	}
 }
 

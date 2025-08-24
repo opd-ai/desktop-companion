@@ -52,19 +52,20 @@ func checkDisplayAvailable() error {
 ```
 
 ```
-### CRITICAL BUG: Invalid Test GIF Data Causes Animation Loading Failures
+### CRITICAL BUG: Invalid Test GIF Data Causes Animation Loading Failures - RESOLVED
 **File:** cmd/companion/integration_test.go:80, internal/character/animation.go:38
 **Severity:** High
+**Status:** RESOLVED (already fixed in current codebase, 2025-08-24)
 **Description:** Integration test creates malformed GIF data that fails to decode, causing character creation to fail with "gif: no color table" error.
 **Expected Behavior:** Test should create valid minimal GIF data or mock the animation loading
-**Actual Behavior:** Test fails during character creation due to invalid GIF format
-**Impact:** Integration tests fail, reducing confidence in the codebase and blocking CI/CD pipelines
-**Reproduction:** Run `go test ./...` - TestMainIntegration fails with GIF decode error
+**Actual Behavior:** ~~Test fails during character creation due to invalid GIF format~~ **FIXED:** Tests now use valid GIF data and pass successfully
+**Impact:** ~~Integration tests fail, reducing confidence in the codebase and blocking CI/CD pipelines~~ **RESOLVED:** Tests now pass with proper GIF validation
+**Reproduction:** ~~Run `go test ./...` - TestMainIntegration fails with GIF decode error~~ **FIXED:** Tests include both regression and validation cases
 **Code Reference:**
 ```go
-// Create dummy GIF files (minimal valid GIF data)
-gifData := []byte("GIF89a\x01\x00\x01\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00;")
-// This GIF data is malformed and lacks a color table
+// Valid GIF data now used in tests (1x1 white pixel GIF that decodes correctly)
+validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
+// Dedicated regression tests in gif_test.go validate both failure and success cases
 ```
 ```
 
