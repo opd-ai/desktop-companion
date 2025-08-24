@@ -141,20 +141,35 @@ func (c *CharacterCard) validateDialogs() error {
 
 // Validate ensures dialog configuration is valid
 func (d *Dialog) Validate(animations map[string]string) error {
-	// Validate trigger
-	validTriggers := []string{"click", "rightclick", "hover"}
-	valid := false
-	for _, trigger := range validTriggers {
-		if d.Trigger == trigger {
-			valid = true
-			break
-		}
-	}
-	if !valid {
-		return fmt.Errorf("trigger must be one of %v, got: %s", validTriggers, d.Trigger)
+	if err := d.validateTrigger(); err != nil {
+		return err
 	}
 
-	// Validate responses
+	if err := d.validateResponses(); err != nil {
+		return err
+	}
+
+	if err := d.validateAnimationReference(animations); err != nil {
+		return err
+	}
+
+	d.setDefaultCooldown()
+	return nil
+}
+
+// validateTrigger checks if the trigger type is valid
+func (d *Dialog) validateTrigger() error {
+	validTriggers := []string{"click", "rightclick", "hover"}
+	for _, trigger := range validTriggers {
+		if d.Trigger == trigger {
+			return nil
+		}
+	}
+	return fmt.Errorf("trigger must be one of %v, got: %s", validTriggers, d.Trigger)
+}
+
+// validateResponses ensures responses are within limits and not empty
+func (d *Dialog) validateResponses() error {
 	if len(d.Responses) == 0 || len(d.Responses) > 10 {
 		return fmt.Errorf("must have 1-10 responses, got %d", len(d.Responses))
 	}
@@ -165,17 +180,22 @@ func (d *Dialog) Validate(animations map[string]string) error {
 		}
 	}
 
-	// Validate animation reference
+	return nil
+}
+
+// validateAnimationReference checks if the referenced animation exists
+func (d *Dialog) validateAnimationReference(animations map[string]string) error {
 	if _, exists := animations[d.Animation]; !exists {
 		return fmt.Errorf("animation '%s' not found in animations map", d.Animation)
 	}
+	return nil
+}
 
-	// Set default cooldown if not specified
+// setDefaultCooldown applies default cooldown value if not specified
+func (d *Dialog) setDefaultCooldown() {
 	if d.Cooldown <= 0 {
 		d.Cooldown = 5 // 5 second default
 	}
-
-	return nil
 }
 
 // Validate ensures behavior settings are within acceptable ranges

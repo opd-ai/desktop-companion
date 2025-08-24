@@ -1,8 +1,8 @@
 {
   "metadata": {
     "repository": "/workspaces/DDS",
-    "generated_at": "2025-08-24T07:11:53.924058359Z",
-    "analysis_time": 11547152,
+    "generated_at": "2025-08-24T07:14:35.397667063Z",
+    "analysis_time": 10191554,
     "files_processed": 9,
     "tool_version": "1.0.0",
     "go_version": ""
@@ -10,48 +10,13 @@
   "overview": {
     "total_lines_of_code": 0,
     "total_functions": 9,
-    "total_methods": 79,
+    "total_methods": 84,
     "total_structs": 11,
     "total_interfaces": 0,
     "total_packages": 4,
     "total_files": 9
   },
   "functions": [
-    {
-      "name": "main",
-      "package": "main",
-      "file": "main",
-      "line": 23,
-      "is_exported": false,
-      "is_method": false,
-      "lines": {
-        "total": 51,
-        "code": 35,
-        "comments": 5,
-        "blank": 11
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0
-      },
-      "complexity": {
-        "cyclomatic": 9,
-        "cognitive": 9,
-        "nesting_depth": 1,
-        "overall": 12.2
-      },
-      "documentation": {
-        "has_comment": false,
-        "comment_length": 0,
-        "has_example": false,
-        "quality_score": 0
-      }
-    },
     {
       "name": "NewAnimationManager",
       "package": "character",
@@ -517,257 +482,6 @@
         "comment_length": 54,
         "has_example": false,
         "quality_score": 0.21600000000000003
-      }
-    },
-    {
-      "name": "LoadCard",
-      "package": "character",
-      "file": "character",
-      "line": 40,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 15,
-        "code": 12,
-        "comments": 0,
-        "blank": 3
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 2,
-        "has_variadic": false,
-        "returns_error": true,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.1
-      },
-      "complexity": {
-        "cyclomatic": 4,
-        "cognitive": 4,
-        "nesting_depth": 1,
-        "overall": 5.7
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 133,
-        "has_example": false,
-        "quality_score": 0.4
-      }
-    },
-    {
-      "name": "Validate",
-      "package": "character",
-      "file": "character",
-      "line": 60,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CharacterCard",
-      "lines": {
-        "total": 46,
-        "code": 32,
-        "comments": 6,
-        "blank": 8
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": true,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 12,
-        "cognitive": 12,
-        "nesting_depth": 2,
-        "overall": 16.6
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 122,
-        "has_example": false,
-        "quality_score": 0.5
-      }
-    },
-    {
-      "name": "Validate",
-      "package": "character",
-      "file": "character",
-      "line": 110,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*Dialog",
-      "lines": {
-        "total": 35,
-        "code": 26,
-        "comments": 4,
-        "blank": 5
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": true,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 9,
-        "cognitive": 9,
-        "nesting_depth": 2,
-        "overall": 12.7
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 47,
-        "has_example": false,
-        "quality_score": 0.188
-      }
-    },
-    {
-      "name": "Validate",
-      "package": "character",
-      "file": "character",
-      "line": 149,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*Behavior",
-      "lines": {
-        "total": 9,
-        "code": 7,
-        "comments": 0,
-        "blank": 2
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": true,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 3,
-        "cognitive": 3,
-        "nesting_depth": 1,
-        "overall": 4.4
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 64,
-        "has_example": false,
-        "quality_score": 0.256
-      }
-    },
-    {
-      "name": "GetAnimationPath",
-      "package": "character",
-      "file": "character",
-      "line": 163,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CharacterCard",
-      "lines": {
-        "total": 13,
-        "code": 9,
-        "comments": 1,
-        "blank": 3
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 2,
-        "has_variadic": false,
-        "returns_error": true,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.1
-      },
-      "complexity": {
-        "cyclomatic": 3,
-        "cognitive": 3,
-        "nesting_depth": 1,
-        "overall": 4.4
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 118,
-        "has_example": false,
-        "quality_score": 0.5
-      }
-    },
-    {
-      "name": "GetRandomResponse",
-      "package": "character",
-      "file": "character",
-      "line": 181,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*Dialog",
-      "lines": {
-        "total": 8,
-        "code": 5,
-        "comments": 2,
-        "blank": 1
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 2,
-        "cognitive": 2,
-        "nesting_depth": 1,
-        "overall": 3.1
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 151,
-        "has_example": false,
-        "quality_score": 0.5
-      }
-    },
-    {
-      "name": "CanTrigger",
-      "package": "character",
-      "file": "character",
-      "line": 193,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*Dialog",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 67,
-        "has_example": false,
-        "quality_score": 0.268
       }
     },
     {
@@ -1382,6 +1096,41 @@
       }
     },
     {
+      "name": "main",
+      "package": "main",
+      "file": "main",
+      "line": 23,
+      "is_exported": false,
+      "is_method": false,
+      "lines": {
+        "total": 51,
+        "code": 35,
+        "comments": 5,
+        "blank": 11
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 9,
+        "cognitive": 9,
+        "nesting_depth": 1,
+        "overall": 12.2
+      },
+      "documentation": {
+        "has_comment": false,
+        "comment_length": 0,
+        "has_example": false,
+        "quality_score": 0
+      }
+    },
+    {
       "name": "New",
       "package": "config",
       "file": "config",
@@ -1597,51 +1346,159 @@
       }
     },
     {
-      "name": "NewCharacterRenderer",
-      "package": "ui",
-      "file": "ui",
-      "line": 24,
+      "name": "LoadCard",
+      "package": "character",
+      "file": "character",
+      "line": 40,
       "is_exported": true,
       "is_method": false,
       "lines": {
-        "total": 24,
-        "code": 15,
-        "comments": 3,
-        "blank": 6
+        "total": 15,
+        "code": 12,
+        "comments": 0,
+        "blank": 3
       },
       "signature": {
-        "parameter_count": 2,
-        "return_count": 1,
+        "parameter_count": 1,
+        "return_count": 2,
         "has_variadic": false,
-        "returns_error": false,
+        "returns_error": true,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 1.3
+        "signature_complexity": 1.1
       },
       "complexity": {
-        "cyclomatic": 2,
-        "cognitive": 2,
+        "cyclomatic": 4,
+        "cognitive": 4,
         "nesting_depth": 1,
-        "overall": 3.1
+        "overall": 5.7
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 61,
+        "comment_length": 133,
         "has_example": false,
-        "quality_score": 0.244
+        "quality_score": 0.4
       }
     },
     {
-      "name": "CreateRenderer",
-      "package": "ui",
-      "file": "ui",
-      "line": 52,
+      "name": "Validate",
+      "package": "character",
+      "file": "character",
+      "line": 60,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*CharacterRenderer",
+      "receiver_type": "*CharacterCard",
       "lines": {
-        "total": 3,
-        "code": 3,
+        "total": 17,
+        "code": 13,
+        "comments": 0,
+        "blank": 4
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 5,
+        "cognitive": 5,
+        "nesting_depth": 1,
+        "overall": 7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 122,
+        "has_example": false,
+        "quality_score": 0.5
+      }
+    },
+    {
+      "name": "validateBasicFields",
+      "package": "character",
+      "file": "character",
+      "line": 81,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 9,
+        "code": 7,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 66,
+        "has_example": false,
+        "quality_score": 0.264
+      }
+    },
+    {
+      "name": "validateAnimations",
+      "package": "character",
+      "file": "character",
+      "line": 94,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 9,
+        "code": 7,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 79,
+        "has_example": false,
+        "quality_score": 0.31600000000000006
+      }
+    },
+    {
+      "name": "validateRequiredAnimations",
+      "package": "character",
+      "file": "character",
+      "line": 107,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 7,
+        "code": 7,
         "comments": 0,
         "blank": 0
       },
@@ -1649,46 +1506,10 @@
         "parameter_count": 0,
         "return_count": 1,
         "has_variadic": false,
-        "returns_error": false,
+        "returns_error": true,
         "interface_parameters": 0,
         "generic_parameters": null,
         "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 57,
-        "has_example": false,
-        "quality_score": 0.22799999999999998
-      }
-    },
-    {
-      "name": "updateFrame",
-      "package": "ui",
-      "file": "ui",
-      "line": 59,
-      "is_exported": false,
-      "is_method": true,
-      "receiver_type": "*CharacterRenderer",
-      "lines": {
-        "total": 10,
-        "code": 9,
-        "comments": 0,
-        "blank": 1
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0
       },
       "complexity": {
         "cyclomatic": 3,
@@ -1698,166 +1519,22 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 50,
-        "has_example": false,
-        "quality_score": 0.2
-      }
-    },
-    {
-      "name": "Refresh",
-      "package": "ui",
-      "file": "ui",
-      "line": 73,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CharacterRenderer",
-      "lines": {
-        "total": 2,
-        "code": 2,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 71,
-        "has_example": false,
-        "quality_score": 0.284
-      }
-    },
-    {
-      "name": "SetSize",
-      "package": "ui",
-      "file": "ui",
-      "line": 79,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CharacterRenderer",
-      "lines": {
-        "total": 3,
-        "code": 3,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 43,
-        "has_example": false,
-        "quality_score": 0.17200000000000001
-      }
-    },
-    {
-      "name": "GetSize",
-      "package": "ui",
-      "file": "ui",
-      "line": 86,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CharacterRenderer",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 51,
+        "comment_length": 76,
         "has_example": false,
         "quality_score": 0.30400000000000005
       }
     },
     {
-      "name": "Layout",
-      "package": "ui",
-      "file": "ui",
-      "line": 96,
-      "is_exported": true,
+      "name": "validateAnimationPaths",
+      "package": "character",
+      "file": "character",
+      "line": 118,
+      "is_exported": false,
       "is_method": true,
-      "receiver_type": "*characterWidgetRenderer",
+      "receiver_type": "*CharacterCard",
       "lines": {
-        "total": 2,
-        "code": 2,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 61,
-        "has_example": false,
-        "quality_score": 0.244
-      }
-    },
-    {
-      "name": "MinSize",
-      "package": "ui",
-      "file": "ui",
-      "line": 102,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*characterWidgetRenderer",
-      "lines": {
-        "total": 1,
-        "code": 1,
+        "total": 6,
+        "code": 6,
         "comments": 0,
         "blank": 0
       },
@@ -1865,68 +1542,212 @@
         "parameter_count": 0,
         "return_count": 1,
         "has_variadic": false,
-        "returns_error": false,
+        "returns_error": true,
         "interface_parameters": 0,
         "generic_parameters": null,
         "signature_complexity": 0.3
       },
       "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 2,
+        "overall": 4.9
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 60,
-        "has_example": false,
-        "quality_score": 0.33999999999999997
-      }
-    },
-    {
-      "name": "Objects",
-      "package": "ui",
-      "file": "ui",
-      "line": 107,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*characterWidgetRenderer",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 53,
+        "comment_length": 78,
         "has_example": false,
         "quality_score": 0.31200000000000006
       }
     },
     {
-      "name": "Refresh",
-      "package": "ui",
-      "file": "ui",
-      "line": 112,
+      "name": "validateDialogs",
+      "package": "character",
+      "file": "character",
+      "line": 128,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 11,
+        "code": 9,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 2,
+        "overall": 6.2
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 90,
+        "has_example": false,
+        "quality_score": 0.36000000000000004
+      }
+    },
+    {
+      "name": "Validate",
+      "package": "character",
+      "file": "character",
+      "line": 143,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*characterWidgetRenderer",
+      "receiver_type": "*Dialog",
+      "lines": {
+        "total": 35,
+        "code": 26,
+        "comments": 4,
+        "blank": 5
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 9,
+        "cognitive": 9,
+        "nesting_depth": 2,
+        "overall": 12.7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 47,
+        "has_example": false,
+        "quality_score": 0.188
+      }
+    },
+    {
+      "name": "Validate",
+      "package": "character",
+      "file": "character",
+      "line": 182,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*Behavior",
+      "lines": {
+        "total": 9,
+        "code": 7,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 64,
+        "has_example": false,
+        "quality_score": 0.256
+      }
+    },
+    {
+      "name": "GetAnimationPath",
+      "package": "character",
+      "file": "character",
+      "line": 196,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 13,
+        "code": 9,
+        "comments": 1,
+        "blank": 3
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 2,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.1
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 118,
+        "has_example": false,
+        "quality_score": 0.5
+      }
+    },
+    {
+      "name": "GetRandomResponse",
+      "package": "character",
+      "file": "character",
+      "line": 214,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*Dialog",
+      "lines": {
+        "total": 8,
+        "code": 5,
+        "comments": 2,
+        "blank": 1
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 151,
+        "has_example": false,
+        "quality_score": 0.5
+      }
+    },
+    {
+      "name": "CanTrigger",
+      "package": "character",
+      "file": "character",
+      "line": 226,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*Dialog",
       "lines": {
         "total": 1,
         "code": 1,
@@ -1934,13 +1755,13 @@
         "blank": 0
       },
       "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
+        "parameter_count": 1,
+        "return_count": 1,
         "has_variadic": false,
         "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 0
+        "signature_complexity": 0.8
       },
       "complexity": {
         "cyclomatic": 1,
@@ -1950,45 +1771,9 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 39,
+        "comment_length": 67,
         "has_example": false,
-        "quality_score": 0.15600000000000003
-      }
-    },
-    {
-      "name": "Destroy",
-      "package": "ui",
-      "file": "ui",
-      "line": 117,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*characterWidgetRenderer",
-      "lines": {
-        "total": 1,
-        "code": 0,
-        "comments": 1,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 37,
-        "has_example": false,
-        "quality_score": 0.148
+        "quality_score": 0.268
       }
     },
     {
@@ -2528,6 +2313,401 @@
         "comment_length": 42,
         "has_example": false,
         "quality_score": 0.168
+      }
+    },
+    {
+      "name": "NewCharacterRenderer",
+      "package": "ui",
+      "file": "ui",
+      "line": 24,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 24,
+        "code": 15,
+        "comments": 3,
+        "blank": 6
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.3
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 61,
+        "has_example": false,
+        "quality_score": 0.244
+      }
+    },
+    {
+      "name": "CreateRenderer",
+      "package": "ui",
+      "file": "ui",
+      "line": 52,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterRenderer",
+      "lines": {
+        "total": 3,
+        "code": 3,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 57,
+        "has_example": false,
+        "quality_score": 0.22799999999999998
+      }
+    },
+    {
+      "name": "updateFrame",
+      "package": "ui",
+      "file": "ui",
+      "line": 59,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterRenderer",
+      "lines": {
+        "total": 10,
+        "code": 9,
+        "comments": 0,
+        "blank": 1
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 2,
+        "overall": 4.9
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 50,
+        "has_example": false,
+        "quality_score": 0.2
+      }
+    },
+    {
+      "name": "Refresh",
+      "package": "ui",
+      "file": "ui",
+      "line": 73,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterRenderer",
+      "lines": {
+        "total": 2,
+        "code": 2,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 71,
+        "has_example": false,
+        "quality_score": 0.284
+      }
+    },
+    {
+      "name": "SetSize",
+      "package": "ui",
+      "file": "ui",
+      "line": 79,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterRenderer",
+      "lines": {
+        "total": 3,
+        "code": 3,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.5
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 43,
+        "has_example": false,
+        "quality_score": 0.17200000000000001
+      }
+    },
+    {
+      "name": "GetSize",
+      "package": "ui",
+      "file": "ui",
+      "line": 86,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterRenderer",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 51,
+        "has_example": false,
+        "quality_score": 0.30400000000000005
+      }
+    },
+    {
+      "name": "Layout",
+      "package": "ui",
+      "file": "ui",
+      "line": 96,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*characterWidgetRenderer",
+      "lines": {
+        "total": 2,
+        "code": 2,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.5
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 61,
+        "has_example": false,
+        "quality_score": 0.244
+      }
+    },
+    {
+      "name": "MinSize",
+      "package": "ui",
+      "file": "ui",
+      "line": 102,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*characterWidgetRenderer",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 60,
+        "has_example": false,
+        "quality_score": 0.33999999999999997
+      }
+    },
+    {
+      "name": "Objects",
+      "package": "ui",
+      "file": "ui",
+      "line": 107,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*characterWidgetRenderer",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 53,
+        "has_example": false,
+        "quality_score": 0.31200000000000006
+      }
+    },
+    {
+      "name": "Refresh",
+      "package": "ui",
+      "file": "ui",
+      "line": 112,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*characterWidgetRenderer",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 39,
+        "has_example": false,
+        "quality_score": 0.15600000000000003
+      }
+    },
+    {
+      "name": "Destroy",
+      "package": "ui",
+      "file": "ui",
+      "line": 117,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*characterWidgetRenderer",
+      "lines": {
+        "total": 1,
+        "code": 0,
+        "comments": 1,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 37,
+        "has_example": false,
+        "quality_score": 0.148
       }
     },
     {
@@ -3592,289 +3772,6 @@
       }
     },
     {
-      "name": "CharacterCard",
-      "package": "character",
-      "file": "character",
-      "line": 15,
-      "is_exported": true,
-      "total_fields": 5,
-      "fields_by_type": {
-        "map": 1,
-        "primitive": 2,
-        "slice": 1,
-        "struct": 1
-      },
-      "embedded_types": null,
-      "methods": [
-        {
-          "name": "Validate",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 0,
-            "return_count": 1,
-            "has_variadic": false,
-            "returns_error": true,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.3
-          },
-          "lines": {
-            "total": 46,
-            "code": 32,
-            "comments": 9,
-            "blank": 5
-          },
-          "complexity": {
-            "cyclomatic": 12,
-            "cognitive": 0,
-            "nesting_depth": 11,
-            "overall": 17.5
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 128,
-            "has_example": true,
-            "quality_score": 0.7
-          }
-        },
-        {
-          "name": "GetAnimationPath",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 2,
-            "return_count": 2,
-            "has_variadic": false,
-            "returns_error": true,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 1.6
-          },
-          "lines": {
-            "total": 13,
-            "code": 9,
-            "comments": 2,
-            "blank": 2
-          },
-          "complexity": {
-            "cyclomatic": 3,
-            "cognitive": 0,
-            "nesting_depth": 2,
-            "overall": 4
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 124,
-            "has_example": true,
-            "quality_score": 0.7
-          }
-        }
-      ],
-      "tag_usage": {
-        "json": 5
-      },
-      "complexity": {
-        "cyclomatic": 11,
-        "cognitive": 0,
-        "nesting_depth": 0,
-        "overall": 11
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 209,
-        "has_example": true,
-        "quality_score": 0.8999999999999999
-      }
-    },
-    {
-      "name": "Dialog",
-      "package": "character",
-      "file": "character",
-      "line": 24,
-      "is_exported": true,
-      "total_fields": 4,
-      "fields_by_type": {
-        "primitive": 3,
-        "slice": 1
-      },
-      "embedded_types": null,
-      "methods": [
-        {
-          "name": "Validate",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 1,
-            "return_count": 1,
-            "has_variadic": false,
-            "returns_error": true,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.8
-          },
-          "lines": {
-            "total": 35,
-            "code": 24,
-            "comments": 7,
-            "blank": 4
-          },
-          "complexity": {
-            "cyclomatic": 9,
-            "cognitive": 0,
-            "nesting_depth": 8,
-            "overall": 13
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 50,
-            "has_example": true,
-            "quality_score": 0.3
-          }
-        },
-        {
-          "name": "GetRandomResponse",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 0,
-            "return_count": 1,
-            "has_variadic": false,
-            "returns_error": false,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.3
-          },
-          "lines": {
-            "total": 8,
-            "code": 5,
-            "comments": 1,
-            "blank": 2
-          },
-          "complexity": {
-            "cyclomatic": 2,
-            "cognitive": 0,
-            "nesting_depth": 1,
-            "overall": 2.5
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 157,
-            "has_example": true,
-            "quality_score": 0.7
-          }
-        },
-        {
-          "name": "CanTrigger",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 1,
-            "return_count": 1,
-            "has_variadic": false,
-            "returns_error": false,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.8
-          },
-          "lines": {
-            "total": 1,
-            "code": 0,
-            "comments": 0,
-            "blank": 1
-          },
-          "complexity": {
-            "cyclomatic": 1,
-            "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 70,
-            "has_example": true,
-            "quality_score": 0.5
-          }
-        }
-      ],
-      "tag_usage": {
-        "json": 4
-      },
-      "complexity": {
-        "cyclomatic": 8,
-        "cognitive": 0,
-        "nesting_depth": 0,
-        "overall": 8
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 71,
-        "has_example": true,
-        "quality_score": 0.7
-      }
-    },
-    {
-      "name": "Behavior",
-      "package": "character",
-      "file": "character",
-      "line": 32,
-      "is_exported": true,
-      "total_fields": 3,
-      "fields_by_type": {
-        "primitive": 3
-      },
-      "embedded_types": null,
-      "methods": [
-        {
-          "name": "Validate",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 0,
-            "return_count": 1,
-            "has_variadic": false,
-            "returns_error": true,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.3
-          },
-          "lines": {
-            "total": 9,
-            "code": 6,
-            "comments": 1,
-            "blank": 2
-          },
-          "complexity": {
-            "cyclomatic": 3,
-            "cognitive": 0,
-            "nesting_depth": 2,
-            "overall": 4
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 67,
-            "has_example": true,
-            "quality_score": 0.5
-          }
-        }
-      ],
-      "tag_usage": {
-        "json": 3
-      },
-      "complexity": {
-        "cyclomatic": 6,
-        "cognitive": 0,
-        "nesting_depth": 0,
-        "overall": 6
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 48,
-        "has_example": true,
-        "quality_score": 0.3
-      }
-    },
-    {
       "name": "Character",
       "package": "character",
       "file": "character",
@@ -4604,75 +4501,165 @@
       }
     },
     {
-      "name": "CharacterRenderer",
-      "package": "ui",
-      "file": "ui",
+      "name": "CharacterCard",
+      "package": "character",
+      "file": "character",
       "line": 15,
       "is_exported": true,
       "total_fields": 5,
       "fields_by_type": {
-        "embedded": 1,
-        "pointer": 2,
-        "primitive": 2
+        "map": 1,
+        "primitive": 2,
+        "slice": 1,
+        "struct": 1
       },
-      "embedded_types": [
-        {
-          "name": "BaseWidget",
-          "package": "widget",
-          "is_pointer": false,
-          "is_exported": true
-        }
-      ],
+      "embedded_types": null,
       "methods": [
         {
-          "name": "CreateRenderer",
+          "name": "Validate",
           "is_exported": true,
           "is_pointer_receiver": true,
           "signature": {
             "parameter_count": 0,
             "return_count": 1,
             "has_variadic": false,
-            "returns_error": false,
+            "returns_error": true,
             "interface_parameters": 0,
             "generic_parameters": null,
             "signature_complexity": 0.3
           },
           "lines": {
-            "total": 3,
-            "code": 2,
-            "comments": 0,
-            "blank": 1
+            "total": 17,
+            "code": 11,
+            "comments": 3,
+            "blank": 3
           },
           "complexity": {
-            "cyclomatic": 1,
+            "cyclomatic": 5,
             "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
+            "nesting_depth": 4,
+            "overall": 7
           },
           "documentation": {
             "has_comment": true,
-            "comment_length": 60,
+            "comment_length": 128,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
+          "name": "validateBasicFields",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 9,
+            "code": 6,
+            "comments": 1,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 3,
+            "cognitive": 0,
+            "nesting_depth": 2,
+            "overall": 4
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 69,
             "has_example": true,
             "quality_score": 0.5
           }
         },
         {
-          "name": "updateFrame",
+          "name": "validateAnimations",
           "is_exported": false,
           "is_pointer_receiver": true,
           "signature": {
             "parameter_count": 0,
-            "return_count": 0,
+            "return_count": 1,
             "has_variadic": false,
-            "returns_error": false,
+            "returns_error": true,
             "interface_parameters": 0,
             "generic_parameters": null,
-            "signature_complexity": 0
+            "signature_complexity": 0.3
           },
           "lines": {
-            "total": 10,
-            "code": 7,
-            "comments": 2,
+            "total": 9,
+            "code": 6,
+            "comments": 1,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 3,
+            "cognitive": 0,
+            "nesting_depth": 2,
+            "overall": 4
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 82,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateRequiredAnimations",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 7,
+            "code": 4,
+            "comments": 1,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 3,
+            "cognitive": 0,
+            "nesting_depth": 2,
+            "overall": 4
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 79,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateAnimationPaths",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 6,
+            "code": 4,
+            "comments": 1,
             "blank": 1
           },
           "complexity": {
@@ -4683,77 +4670,139 @@
           },
           "documentation": {
             "has_comment": true,
-            "comment_length": 53,
+            "comment_length": 81,
             "has_example": true,
             "quality_score": 0.5
           }
         },
         {
-          "name": "Refresh",
-          "is_exported": true,
+          "name": "validateDialogs",
+          "is_exported": false,
           "is_pointer_receiver": true,
           "signature": {
             "parameter_count": 0,
-            "return_count": 0,
+            "return_count": 1,
             "has_variadic": false,
-            "returns_error": false,
+            "returns_error": true,
             "interface_parameters": 0,
             "generic_parameters": null,
-            "signature_complexity": 0
+            "signature_complexity": 0.3
           },
           "lines": {
-            "total": 2,
-            "code": 1,
-            "comments": 0,
-            "blank": 1
+            "total": 11,
+            "code": 7,
+            "comments": 2,
+            "blank": 2
           },
           "complexity": {
-            "cyclomatic": 1,
+            "cyclomatic": 4,
             "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
+            "nesting_depth": 3,
+            "overall": 5.5
           },
           "documentation": {
             "has_comment": true,
-            "comment_length": 74,
+            "comment_length": 93,
             "has_example": true,
             "quality_score": 0.5
           }
         },
         {
-          "name": "SetSize",
+          "name": "GetAnimationPath",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 2,
+            "return_count": 2,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 1.6
+          },
+          "lines": {
+            "total": 13,
+            "code": 9,
+            "comments": 2,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 3,
+            "cognitive": 0,
+            "nesting_depth": 2,
+            "overall": 4
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 124,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        }
+      ],
+      "tag_usage": {
+        "json": 5
+      },
+      "complexity": {
+        "cyclomatic": 11,
+        "cognitive": 0,
+        "nesting_depth": 0,
+        "overall": 11
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 209,
+        "has_example": true,
+        "quality_score": 0.8999999999999999
+      }
+    },
+    {
+      "name": "Dialog",
+      "package": "character",
+      "file": "character",
+      "line": 24,
+      "is_exported": true,
+      "total_fields": 4,
+      "fields_by_type": {
+        "primitive": 3,
+        "slice": 1
+      },
+      "embedded_types": null,
+      "methods": [
+        {
+          "name": "Validate",
           "is_exported": true,
           "is_pointer_receiver": true,
           "signature": {
             "parameter_count": 1,
-            "return_count": 0,
+            "return_count": 1,
             "has_variadic": false,
-            "returns_error": false,
+            "returns_error": true,
             "interface_parameters": 0,
             "generic_parameters": null,
-            "signature_complexity": 0.5
+            "signature_complexity": 0.8
           },
           "lines": {
-            "total": 3,
-            "code": 2,
-            "comments": 0,
-            "blank": 1
+            "total": 35,
+            "code": 24,
+            "comments": 7,
+            "blank": 4
           },
           "complexity": {
-            "cyclomatic": 1,
+            "cyclomatic": 9,
             "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
+            "nesting_depth": 8,
+            "overall": 13
           },
           "documentation": {
             "has_comment": true,
-            "comment_length": 46,
+            "comment_length": 50,
             "has_example": true,
             "quality_score": 0.3
           }
         },
         {
-          "name": "GetSize",
+          "name": "GetRandomResponse",
           "is_exported": true,
           "is_pointer_receiver": true,
           "signature": {
@@ -4764,6 +4813,38 @@
             "interface_parameters": 0,
             "generic_parameters": null,
             "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 8,
+            "code": 5,
+            "comments": 1,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 2,
+            "cognitive": 0,
+            "nesting_depth": 1,
+            "overall": 2.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 157,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
+          "name": "CanTrigger",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8
           },
           "lines": {
             "total": 1,
@@ -4779,211 +4860,87 @@
           },
           "documentation": {
             "has_comment": true,
-            "comment_length": 54,
+            "comment_length": 70,
             "has_example": true,
             "quality_score": 0.5
           }
         }
       ],
-      "tag_usage": {},
+      "tag_usage": {
+        "json": 4
+      },
       "complexity": {
-        "cyclomatic": 12,
+        "cyclomatic": 8,
         "cognitive": 0,
-        "nesting_depth": 1,
-        "overall": 12.5
+        "nesting_depth": 0,
+        "overall": 8
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 149,
+        "comment_length": 71,
         "has_example": true,
         "quality_score": 0.7
       }
     },
     {
-      "name": "characterWidgetRenderer",
-      "package": "ui",
-      "file": "ui",
-      "line": 91,
-      "is_exported": false,
-      "total_fields": 1,
+      "name": "Behavior",
+      "package": "character",
+      "file": "character",
+      "line": 32,
+      "is_exported": true,
+      "total_fields": 3,
       "fields_by_type": {
-        "pointer": 1
+        "primitive": 3
       },
       "embedded_types": null,
       "methods": [
         {
-          "name": "Layout",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 1,
-            "return_count": 0,
-            "has_variadic": false,
-            "returns_error": false,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.5
-          },
-          "lines": {
-            "total": 2,
-            "code": 1,
-            "comments": 0,
-            "blank": 1
-          },
-          "complexity": {
-            "cyclomatic": 1,
-            "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 64,
-            "has_example": true,
-            "quality_score": 0.5
-          }
-        },
-        {
-          "name": "MinSize",
+          "name": "Validate",
           "is_exported": true,
           "is_pointer_receiver": true,
           "signature": {
             "parameter_count": 0,
             "return_count": 1,
             "has_variadic": false,
-            "returns_error": false,
+            "returns_error": true,
             "interface_parameters": 0,
             "generic_parameters": null,
             "signature_complexity": 0.3
           },
           "lines": {
-            "total": 1,
-            "code": 0,
-            "comments": 0,
-            "blank": 1
+            "total": 9,
+            "code": 6,
+            "comments": 1,
+            "blank": 2
           },
           "complexity": {
-            "cyclomatic": 1,
+            "cyclomatic": 3,
             "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
+            "nesting_depth": 2,
+            "overall": 4
           },
           "documentation": {
             "has_comment": true,
-            "comment_length": 63,
+            "comment_length": 67,
             "has_example": true,
             "quality_score": 0.5
-          }
-        },
-        {
-          "name": "Objects",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 0,
-            "return_count": 1,
-            "has_variadic": false,
-            "returns_error": false,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0.3
-          },
-          "lines": {
-            "total": 1,
-            "code": 0,
-            "comments": 0,
-            "blank": 1
-          },
-          "complexity": {
-            "cyclomatic": 1,
-            "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 56,
-            "has_example": true,
-            "quality_score": 0.5
-          }
-        },
-        {
-          "name": "Refresh",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 0,
-            "return_count": 0,
-            "has_variadic": false,
-            "returns_error": false,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0
-          },
-          "lines": {
-            "total": 1,
-            "code": 0,
-            "comments": 0,
-            "blank": 1
-          },
-          "complexity": {
-            "cyclomatic": 1,
-            "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 42,
-            "has_example": true,
-            "quality_score": 0.3
-          }
-        },
-        {
-          "name": "Destroy",
-          "is_exported": true,
-          "is_pointer_receiver": true,
-          "signature": {
-            "parameter_count": 0,
-            "return_count": 0,
-            "has_variadic": false,
-            "returns_error": false,
-            "interface_parameters": 0,
-            "generic_parameters": null,
-            "signature_complexity": 0
-          },
-          "lines": {
-            "total": 1,
-            "code": 0,
-            "comments": 0,
-            "blank": 1
-          },
-          "complexity": {
-            "cyclomatic": 1,
-            "cognitive": 0,
-            "nesting_depth": 0,
-            "overall": 1
-          },
-          "documentation": {
-            "has_comment": true,
-            "comment_length": 40,
-            "has_example": true,
-            "quality_score": 0.3
           }
         }
       ],
-      "tag_usage": {},
+      "tag_usage": {
+        "json": 3
+      },
       "complexity": {
-        "cyclomatic": 2,
+        "cyclomatic": 6,
         "cognitive": 0,
         "nesting_depth": 0,
-        "overall": 2
+        "overall": 6
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 76,
+        "comment_length": 48,
         "has_example": true,
-        "quality_score": 0.5
+        "quality_score": 0.3
       }
     },
     {
@@ -5493,6 +5450,389 @@
       "documentation": {
         "has_comment": true,
         "comment_length": 74,
+        "has_example": true,
+        "quality_score": 0.5
+      }
+    },
+    {
+      "name": "CharacterRenderer",
+      "package": "ui",
+      "file": "ui",
+      "line": 15,
+      "is_exported": true,
+      "total_fields": 5,
+      "fields_by_type": {
+        "embedded": 1,
+        "pointer": 2,
+        "primitive": 2
+      },
+      "embedded_types": [
+        {
+          "name": "BaseWidget",
+          "package": "widget",
+          "is_pointer": false,
+          "is_exported": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "CreateRenderer",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 3,
+            "code": 2,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 60,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "updateFrame",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 0,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0
+          },
+          "lines": {
+            "total": 10,
+            "code": 7,
+            "comments": 2,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 3,
+            "cognitive": 0,
+            "nesting_depth": 2,
+            "overall": 4
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 53,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "Refresh",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 0,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0
+          },
+          "lines": {
+            "total": 2,
+            "code": 1,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 74,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "SetSize",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 0,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.5
+          },
+          "lines": {
+            "total": 3,
+            "code": 2,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 46,
+            "has_example": true,
+            "quality_score": 0.3
+          }
+        },
+        {
+          "name": "GetSize",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 54,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        }
+      ],
+      "tag_usage": {},
+      "complexity": {
+        "cyclomatic": 12,
+        "cognitive": 0,
+        "nesting_depth": 1,
+        "overall": 12.5
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 149,
+        "has_example": true,
+        "quality_score": 0.7
+      }
+    },
+    {
+      "name": "characterWidgetRenderer",
+      "package": "ui",
+      "file": "ui",
+      "line": 91,
+      "is_exported": false,
+      "total_fields": 1,
+      "fields_by_type": {
+        "pointer": 1
+      },
+      "embedded_types": null,
+      "methods": [
+        {
+          "name": "Layout",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 0,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.5
+          },
+          "lines": {
+            "total": 2,
+            "code": 1,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 64,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "MinSize",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 63,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "Objects",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 56,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "Refresh",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 0,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 42,
+            "has_example": true,
+            "quality_score": 0.3
+          }
+        },
+        {
+          "name": "Destroy",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 0,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 40,
+            "has_example": true,
+            "quality_score": 0.3
+          }
+        }
+      ],
+      "tag_usage": {},
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 0,
+        "nesting_depth": 0,
+        "overall": 2
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 76,
         "has_example": true,
         "quality_score": 0.5
       }
@@ -6046,21 +6386,21 @@
       "path": "character",
       "files": [
         "/workspaces/DDS/internal/character/animation.go",
-        "/workspaces/DDS/internal/character/card.go",
-        "/workspaces/DDS/internal/character/behavior.go"
+        "/workspaces/DDS/internal/character/behavior.go",
+        "/workspaces/DDS/internal/character/card.go"
       ],
       "lines": {
-        "total": 687,
-        "code": 687,
+        "total": 720,
+        "code": 720,
         "comments": 0,
         "blank": 0
       },
-      "functions": 37,
+      "functions": 42,
       "structs": 5,
       "interfaces": 0,
       "dependencies": [],
       "dependents": null,
-      "cohesion_score": 2.8,
+      "cohesion_score": 3.1333333333333333,
       "coupling_score": 0,
       "documentation": {
         "has_comment": false,
@@ -6130,8 +6470,8 @@
       "name": "ui",
       "path": "ui",
       "files": [
-        "/workspaces/DDS/internal/ui/renderer.go",
         "/workspaces/DDS/internal/ui/interaction.go",
+        "/workspaces/DDS/internal/ui/renderer.go",
         "/workspaces/DDS/internal/ui/window.go"
       ],
       "lines": {
@@ -6146,8 +6486,8 @@
       "dependencies": [
         "fyne.io/fyne/v2",
         "fyne.io/fyne/v2/canvas",
-        "fyne.io/fyne/v2/widget",
-        "fyne.io/fyne/v2/container"
+        "fyne.io/fyne/v2/container",
+        "fyne.io/fyne/v2/widget"
       ],
       "dependents": null,
       "cohesion_score": 3.2,
