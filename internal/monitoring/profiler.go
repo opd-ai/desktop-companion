@@ -14,14 +14,14 @@ import (
 // Profiler handles performance monitoring and memory profiling
 // Uses Go's built-in runtime/pprof package - following "lazy programmer" principle
 type Profiler struct {
-	mu               sync.RWMutex
-	enabled          bool
-	startTime        time.Time
-	cpuProfile       *os.File
-	ctx              context.Context
-	cancel           context.CancelFunc
-	stats            *PerformanceStats
-	targetMemoryMB   int // Target <50MB
+	mu                 sync.RWMutex
+	enabled            bool
+	startTime          time.Time
+	cpuProfile         *os.File
+	ctx                context.Context
+	cancel             context.CancelFunc
+	stats              *PerformanceStats
+	targetMemoryMB     int // Target <50MB
 	targetBinarySizeMB int // Target <10MB
 }
 
@@ -42,7 +42,7 @@ type PerformanceStats struct {
 // NewProfiler creates a new performance profiler
 func NewProfiler(memoryTargetMB, binarySizeMB int) *Profiler {
 	ctx, cancel := context.WithCancel(context.Background())
-	
+
 	return &Profiler{
 		enabled:            false,
 		targetMemoryMB:     memoryTargetMB,
@@ -84,7 +84,7 @@ func (p *Profiler) Start(memProfilePath, cpuProfilePath string, debug bool) erro
 	go p.monitorFrameRate(debug)
 
 	if debug {
-		log.Printf("Performance monitoring started (targets: %dMB memory, %dMB binary)", 
+		log.Printf("Performance monitoring started (targets: %dMB memory, %dMB binary)",
 			p.targetMemoryMB, p.targetBinarySizeMB)
 	}
 
@@ -192,7 +192,7 @@ func (p *Profiler) updateMemoryStats(debug bool) {
 
 	// Log warning if memory exceeds target
 	if currentMB > float64(p.targetMemoryMB) && debug {
-		log.Printf("WARNING: Memory usage %.1fMB exceeds target %dMB", 
+		log.Printf("WARNING: Memory usage %.1fMB exceeds target %dMB",
 			currentMB, p.targetMemoryMB)
 	}
 }
