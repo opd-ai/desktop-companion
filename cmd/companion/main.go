@@ -24,17 +24,35 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Printf("Desktop Companion v%s\n", appVersion)
-		fmt.Println("Built with Go and Fyne - Cross-platform desktop pet")
+		showVersionInfo()
 		return
 	}
 
+	configureDebugLogging()
+
+	// Load character configuration
+	card, characterDir := loadCharacterConfiguration()
+
+	// Initialize application and show window
+	runDesktopApplication(card, characterDir)
+}
+
+// showVersionInfo displays application version information.
+func showVersionInfo() {
+	fmt.Printf("Desktop Companion v%s\n", appVersion)
+	fmt.Println("Built with Go and Fyne - Cross-platform desktop pet")
+}
+
+// configureDebugLogging sets up debug logging if enabled.
+func configureDebugLogging() {
 	if *debug {
 		log.SetFlags(log.LstdFlags | log.Lshortfile)
 		log.Println("Debug mode enabled")
 	}
+}
 
-	// Load character configuration
+// loadCharacterConfiguration loads and validates the character configuration file.
+func loadCharacterConfiguration() (*character.CharacterCard, string) {
 	absPath, err := filepath.Abs(*characterPath)
 	if err != nil {
 		log.Fatalf("Failed to resolve character path: %v", err)
@@ -53,16 +71,21 @@ func main() {
 		log.Printf("Loaded character: %s - %s", card.Name, card.Description)
 	}
 
+	return card, filepath.Dir(absPath)
+}
+
+// runDesktopApplication creates and runs the desktop companion application.
+func runDesktopApplication(card *character.CharacterCard, characterDir string) {
 	// Create Fyne application
 	myApp := app.NewWithID("com.opdai.desktop-companion")
 
 	// Create character instance
-	char, err := character.New(card, filepath.Dir(absPath))
+	char, err := character.New(card, characterDir)
 	if err != nil {
 		log.Fatalf("Failed to create character: %v", err)
 	}
 
-	// Create desktop window
+	// Create and show desktop window
 	window := ui.NewDesktopWindow(myApp, char, *debug)
 
 	if *debug {
