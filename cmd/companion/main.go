@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 
 	"fyne.io/fyne/v2/app"
@@ -105,6 +106,11 @@ func loadCharacterConfiguration() (*character.CharacterCard, string) {
 
 // runDesktopApplication creates and runs the desktop companion application.
 func runDesktopApplication(card *character.CharacterCard, characterDir string, profiler *monitoring.Profiler) {
+	// Check if we're in a headless environment before attempting to create UI
+	if err := checkDisplayAvailable(); err != nil {
+		log.Fatalf("Cannot run desktop application: %v", err)
+	}
+
 	// Create Fyne application
 	myApp := app.NewWithID("com.opdai.desktop-companion")
 
@@ -124,4 +130,24 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 	// Show window and start event loop
 	window.Show()
 	myApp.Run()
+}
+
+// checkDisplayAvailable verifies that a display is available for GUI applications
+func checkDisplayAvailable() error {
+	// Check for X11 display on Linux/Unix systems
+	display := os.Getenv("DISPLAY")
+	if display == "" {
+		return fmt.Errorf("no display available - DISPLAY environment variable is not set.\n" +
+			"This application requires a graphical desktop environment to run.\n" +
+			"Please run from a desktop session or use X11 forwarding for remote connections")
+	}
+
+	// For additional safety, we could also check for Wayland
+	waylandDisplay := os.Getenv("WAYLAND_DISPLAY")
+	if display == "" && waylandDisplay == "" {
+		return fmt.Errorf("no display available - neither X11 (DISPLAY) nor Wayland (WAYLAND_DISPLAY) environment is available.\n" +
+			"This application requires a graphical desktop environment to run")
+	}
+
+	return nil
 }
