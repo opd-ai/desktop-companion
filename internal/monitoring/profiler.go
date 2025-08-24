@@ -60,14 +60,38 @@ func (p *Profiler) Start(memProfilePath, cpuProfilePath string, debug bool) erro
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
+	if err := p.validateStartConditions(); err != nil {
+		return err
+	}
+
+	p.initializeProfiler()
+
+	if err := p.startCPUProfilingIfEnabled(cpuProfilePath, debug); err != nil {
+		return err
+	}
+
+	p.startMonitoring(debug)
+	p.logStartupIfDebug(debug)
+
+	return nil
+}
+
+// validateStartConditions checks if profiler can be started
+func (p *Profiler) validateStartConditions() error {
 	if p.enabled {
 		return fmt.Errorf("profiler already started")
 	}
+	return nil
+}
 
+// initializeProfiler sets up initial profiler state
+func (p *Profiler) initializeProfiler() {
 	p.enabled = true
 	p.startTime = time.Now()
+}
 
-	// Start CPU profiling if path provided
+// startCPUProfilingIfEnabled starts CPU profiling when path is provided
+func (p *Profiler) startCPUProfilingIfEnabled(cpuProfilePath string, debug bool) error {
 	if cpuProfilePath != "" {
 		if err := p.startCPUProfiling(cpuProfilePath); err != nil {
 			return fmt.Errorf("failed to start CPU profiling: %w", err)
@@ -76,19 +100,21 @@ func (p *Profiler) Start(memProfilePath, cpuProfilePath string, debug bool) erro
 			log.Printf("CPU profiling started: %s", cpuProfilePath)
 		}
 	}
+	return nil
+}
 
-	// Start memory monitoring
+// startMonitoring launches memory and frame rate monitoring goroutines
+func (p *Profiler) startMonitoring(debug bool) {
 	go p.monitorMemory(debug)
-
-	// Start frame rate monitoring
 	go p.monitorFrameRate(debug)
+}
 
+// logStartupIfDebug logs startup message when debug mode is enabled
+func (p *Profiler) logStartupIfDebug(debug bool) {
 	if debug {
 		log.Printf("Performance monitoring started (targets: %dMB memory, %dMB binary)",
 			p.targetMemoryMB, p.targetBinarySizeMB)
 	}
-
-	return nil
 }
 
 // Stop ends profiling and saves memory profile if enabled
