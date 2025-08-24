@@ -35,7 +35,7 @@ func main() {
 
 	// Initialize performance profiler
 	profiler := monitoring.NewProfiler(50, 10) // 50MB memory, 10MB binary targets
-	
+
 	// Start profiling if requested
 	if err := profiler.Start(*memProfile, *cpuProfile, *debug); err != nil {
 		log.Fatalf("Failed to start profiler: %v", err)
@@ -51,12 +51,12 @@ func main() {
 
 	// Record startup completion
 	profiler.RecordStartupComplete()
-	
+
 	if *debug {
 		stats := profiler.GetStats()
 		log.Printf("Startup completed in %v", stats.StartupDuration)
 		log.Printf("Current memory usage: %.2f MB", stats.CurrentMemoryMB)
-		
+
 		if !profiler.IsMemoryTargetMet() {
 			log.Printf("WARNING: Memory usage exceeds 50MB target")
 		}

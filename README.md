@@ -231,7 +231,7 @@ go tool cover -html=coverage.out
 
 ### Performance Monitoring
 
-The application includes built-in performance monitoring:
+The application includes built-in performance monitoring and profiling:
 
 ```bash
 # Run with memory profiling
@@ -240,16 +240,26 @@ go run cmd/companion/main.go -memprofile=mem.prof
 # Run with CPU profiling  
 go run cmd/companion/main.go -cpuprofile=cpu.prof
 
+# Run with both profiles and debug output
+go run cmd/companion/main.go -memprofile=mem.prof -cpuprofile=cpu.prof -debug
+
 # Analyze profiles
 go tool pprof mem.prof
 go tool pprof cpu.prof
 ```
 
 **Performance Targets**:
-- Memory usage: <50MB during normal operation
-- Animation framerate: 30+ FPS consistently
-- Startup time: <2 seconds
-- Binary size: <10MB per platform
+- Memory usage: <50MB during normal operation ✅ **MONITORED**
+- Animation framerate: 30+ FPS consistently ✅ **MONITORED**
+- Startup time: <2 seconds ✅ **MONITORED**
+- Binary size: <10MB per platform ✅ **TRACKED**
+
+**Real-time Monitoring**:
+- Memory usage tracking with target validation
+- Frame rate monitoring with performance warnings
+- Startup time measurement
+- Concurrent frame rendering support
+- Automatic performance target validation
 
 ## 🔨 Building and Distribution
 
