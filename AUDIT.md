@@ -3,14 +3,14 @@
 ## AUDIT SUMMARY
 
 ```
-CRITICAL BUG: 2 findings
+CRITICAL BUG: 1 finding (1 resolved)
 FUNCTIONAL MISMATCH: 3 findings  
 MISSING FEATURE: 4 findings
 EDGE CASE BUG: 2 findings
 PERFORMANCE ISSUE: 1 finding
 
-Total Issues: 12
-High Severity: 6 issues
+Total Issues: 12 (1 resolved)
+High Severity: 5 issues (1 resolved)
 Medium Severity: 4 issues
 Low Severity: 2 issues
 ```
@@ -18,21 +18,36 @@ Low Severity: 2 issues
 ## DETAILED FINDINGS
 
 ```
-### CRITICAL BUG: Application Crashes When No Display Available
+### CRITICAL BUG: Application Crashes When No Display Available - RESOLVED
 **File:** cmd/companion/main.go:66, internal/ui/window.go:30
 **Severity:** High
+**Status:** RESOLVED (commit 45876e9, 2025-08-24)
 **Description:** The application panics with "X11: The DISPLAY environment variable is missing" and "NotInitialized: The GLFW library is not initialized" when run in headless environments or containers without display support.
 **Expected Behavior:** Application should gracefully handle headless environments or provide helpful error messages
-**Actual Behavior:** Application crashes with panic, preventing any usage in CI/CD, Docker, or server environments
-**Impact:** Makes the application unusable in many deployment scenarios, blocks automated testing, prevents server-side usage
-**Reproduction:** Run `go run cmd/companion/main.go` in any environment without X11 display (containers, SSH without X forwarding, CI/CD)
+**Actual Behavior:** ~~Application crashes with panic, preventing any usage in CI/CD, Docker, or server environments~~ **FIXED:** Application now provides helpful error message and exits gracefully
+**Impact:** ~~Makes the application unusable in many deployment scenarios, blocks automated testing, prevents server-side usage~~ **RESOLVED:** Application now fails gracefully with clear instructions
+**Reproduction:** ~~Run `go run cmd/companion/main.go` in any environment without X11 display (containers, SSH without X forwarding, CI/CD)~~ **FIXED:** Now shows helpful error message
 **Code Reference:**
 ```go
+// runDesktopApplication creates and runs the desktop companion application.
 func runDesktopApplication(card *character.CharacterCard, characterDir string, profiler *monitoring.Profiler) {
-	// Create Fyne application
-	myApp := app.NewWithID("com.opdai.desktop-companion")
-	// This crashes when no display is available - no error handling
-	window := ui.NewDesktopWindow(myApp, char, *debug, profiler)
+	// Check if we're in a headless environment before attempting to create UI
+	if err := checkDisplayAvailable(); err != nil {
+		log.Fatalf("Cannot run desktop application: %v", err)
+	}
+	// ... rest of function
+}
+
+// checkDisplayAvailable verifies that a display is available for GUI applications
+func checkDisplayAvailable() error {
+	display := os.Getenv("DISPLAY")
+	if display == "" {
+		return fmt.Errorf("no display available - DISPLAY environment variable is not set.\n" +
+			"This application requires a graphical desktop environment to run.\n" +
+			"Please run from a desktop session or use X11 forwarding for remote connections")
+	}
+	return nil
+}
 ```
 ```
 
