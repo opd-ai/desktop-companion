@@ -162,3 +162,103 @@ func TestDialogCooldownRaceCondition(t *testing.T) {
 		t.Logf("Warning: High response count (%d) may indicate cooldown race condition", responseCount)
 	}
 }
+
+// TestAnimationFrameRateOptimization tests that animations only refresh when frames actually change
+func TestAnimationFrameRateOptimization(t *testing.T) {
+	// Create animation manager with slow-updating animation
+	am := NewAnimationManager()
+
+	// Create GIF with 500ms per frame (2 FPS)
+	am.animations["slow"] = &gif.GIF{
+		Image: []*image.Paletted{
+			{Pix: []uint8{0}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
+			{Pix: []uint8{1}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
+		},
+		Delay: []int{50, 50}, // 500ms per frame (GIF delay is in centiseconds)
+	}
+	am.currentAnim = "slow"
+	am.playing = true
+	am.lastUpdate = time.Now()
+
+	// Test that Update() returns false when no frame change occurs
+	frameChanged := am.Update()
+	if frameChanged {
+		t.Error("Expected no frame change immediately after setting lastUpdate")
+	}
+
+	// Wait for frame delay and test that Update() returns true
+	time.Sleep(510 * time.Millisecond) // Wait slightly longer than frame delay
+	frameChanged = am.Update()
+	if !frameChanged {
+		t.Error("Expected frame change after waiting for frame delay")
+	}
+
+	// Test that subsequent immediate calls return false
+	frameChanged = am.Update()
+	if frameChanged {
+		t.Error("Expected no frame change on immediate subsequent call")
+	}
+}
+
+// TestCharacterUpdateReturnsChanges tests that Character.Update() correctly reports visual changes
+func TestCharacterUpdateReturnsChanges(t *testing.T) {
+	// Create a test character card
+	card := &CharacterCard{
+		Name:        "TestCharacter",
+		Description: "Test",
+		Animations: map[string]string{
+			"idle": "idle.gif",
+		},
+		Dialogs: []Dialog{},
+		Behavior: Behavior{
+			IdleTimeout:     10,
+			MovementEnabled: true,
+			DefaultSize:     100,
+		},
+	}
+
+	char := &Character{
+		card:             card,
+		animationManager: NewAnimationManager(),
+		currentState:     "idle",
+		lastStateChange:  time.Now(),
+		lastInteraction:  time.Now(),
+		dialogCooldowns:  make(map[string]time.Time),
+		idleTimeout:      10 * time.Second,
+		movementEnabled:  true,
+		size:             100,
+	}
+
+	// Create a slow animation (2 FPS)
+	char.animationManager.animations["idle"] = &gif.GIF{
+		Image: []*image.Paletted{
+			{Pix: []uint8{0}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
+			{Pix: []uint8{1}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
+		},
+		Delay: []int{50, 50}, // 500ms per frame
+	}
+	char.animationManager.currentAnim = "idle"
+	char.animationManager.playing = true
+	char.animationManager.lastUpdate = time.Now()
+
+	// First call should return false (no frame change yet)
+	hasChanges := char.Update()
+	if hasChanges {
+		t.Error("Expected no changes immediately after initialization")
+	}
+
+	// Wait for animation frame delay
+	time.Sleep(510 * time.Millisecond)
+
+	// This call should return true (frame changed)
+	hasChanges = char.Update()
+	if !hasChanges {
+		t.Error("Expected changes after waiting for frame delay")
+	}
+
+	// Immediate subsequent call should return false
+	hasChanges = char.Update()
+	if hasChanges {
+		t.Error("Expected no changes on immediate subsequent call")
+	}
+}

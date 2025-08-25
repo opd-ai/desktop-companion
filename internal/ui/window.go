@@ -144,22 +144,53 @@ func (dw *DesktopWindow) showDialog(text string) {
 }
 
 // animationLoop runs the character animation update loop
-// Maintains 60 FPS for smooth animation playback
+// Uses adaptive frame rate based on animation needs to optimize performance
 func (dw *DesktopWindow) animationLoop() {
-	ticker := time.NewTicker(time.Second / 60) // 60 FPS
+	maxFPS := time.Second / 60  // 60 FPS when actively animating
+	idleFPS := time.Second / 10 // 10 FPS when idle/no changes
+	currentInterval := maxFPS   // Start with high frame rate
+
+	ticker := time.NewTicker(currentInterval)
 	defer ticker.Stop()
+
+	consecutiveNoChanges := 0
 
 	for range ticker.C {
 		// Update character behavior and animations
-		dw.character.Update()
+		hasChanges := dw.character.Update()
+
+		// Track consecutive frames without changes for adaptive frame rate
+		if hasChanges {
+			consecutiveNoChanges = 0
+			// Switch to high frame rate when animating
+			if currentInterval != maxFPS {
+				currentInterval = maxFPS
+				ticker.Reset(currentInterval)
+				if dw.debug {
+					log.Printf("Animation active: switching to %v FPS", time.Second/currentInterval)
+				}
+			}
+		} else {
+			consecutiveNoChanges++
+			// After 30 frames (0.5 seconds) with no changes, reduce frame rate
+			if consecutiveNoChanges >= 30 && currentInterval != idleFPS {
+				currentInterval = idleFPS
+				ticker.Reset(currentInterval)
+				if dw.debug {
+					log.Printf("Animation idle: switching to %v FPS for power saving", time.Second/currentInterval)
+				}
+			}
+		}
 
 		// Record frame for performance monitoring
 		if dw.profiler != nil {
 			dw.profiler.RecordFrame()
 		}
 
-		// Refresh renderer to show new animation frame
-		dw.renderer.Refresh()
+		// Only refresh renderer when there are actual changes
+		if hasChanges {
+			dw.renderer.Refresh()
+		}
 	}
 }
 

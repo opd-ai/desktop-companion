@@ -68,17 +68,22 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 
 // Update updates character behavior and animations
 // Call this regularly (e.g., 60 FPS) to maintain responsive behavior
-func (c *Character) Update() {
+// Returns true if visual changes occurred (animation frame changed or state changed)
+func (c *Character) Update() bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	// Update animation frames
-	c.animationManager.Update()
+	frameChanged := c.animationManager.Update()
 
 	// Check if we should return to idle state
+	stateChanged := false
 	if c.currentState != "idle" && time.Since(c.lastStateChange) >= c.idleTimeout {
 		c.setState("idle")
+		stateChanged = true
 	}
+
+	return frameChanged || stateChanged
 }
 
 // GetCurrentFrame returns the current animation frame for rendering
