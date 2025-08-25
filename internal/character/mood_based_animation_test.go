@@ -34,7 +34,6 @@ func TestMoodBasedAnimationSelection(t *testing.T) {
 	// Test high mood (80+) should select happy animation
 	char.gameState.Stats["hunger"].Current = 90.0
 	char.gameState.Stats["happiness"].Current = 95.0
-	char.gameState.Stats["health"].Current = 85.0
 	char.gameState.Stats["energy"].Current = 80.0
 
 	animation := char.selectIdleAnimation()
@@ -45,7 +44,6 @@ func TestMoodBasedAnimationSelection(t *testing.T) {
 	// Test normal mood (60-79) should select idle animation
 	char.gameState.Stats["hunger"].Current = 70.0
 	char.gameState.Stats["happiness"].Current = 65.0
-	char.gameState.Stats["health"].Current = 70.0
 	char.gameState.Stats["energy"].Current = 60.0
 
 	animation = char.selectIdleAnimation()
@@ -56,7 +54,6 @@ func TestMoodBasedAnimationSelection(t *testing.T) {
 	// Test low mood (20-39) should select sad animation
 	char.gameState.Stats["hunger"].Current = 30.0
 	char.gameState.Stats["happiness"].Current = 25.0
-	char.gameState.Stats["health"].Current = 35.0
 	char.gameState.Stats["energy"].Current = 20.0
 
 	animation = char.selectIdleAnimation()
@@ -67,7 +64,6 @@ func TestMoodBasedAnimationSelection(t *testing.T) {
 	// Test very low mood (<20) should select sad animation
 	char.gameState.Stats["hunger"].Current = 10.0
 	char.gameState.Stats["happiness"].Current = 15.0
-	char.gameState.Stats["health"].Current = 5.0
 	char.gameState.Stats["energy"].Current = 18.0
 
 	animation = char.selectIdleAnimation()
@@ -103,7 +99,6 @@ func TestMoodBasedAnimationDisabled(t *testing.T) {
 	// Set very low mood but mood-based animations are disabled
 	char.gameState.Stats["hunger"].Current = 5.0
 	char.gameState.Stats["happiness"].Current = 10.0
-	char.gameState.Stats["health"].Current = 8.0
 	char.gameState.Stats["energy"].Current = 12.0
 
 	animation := char.selectIdleAnimation()
@@ -186,7 +181,6 @@ func TestMoodBasedAnimationWithMissingAnimations(t *testing.T) {
 	// Set low mood - should want "sad" but fall back to "idle"
 	char.gameState.Stats["hunger"].Current = 15.0
 	char.gameState.Stats["happiness"].Current = 20.0
-	char.gameState.Stats["health"].Current = 25.0
 	char.gameState.Stats["energy"].Current = 10.0
 
 	animation = char.selectIdleAnimation()
@@ -246,7 +240,6 @@ func TestMoodBasedAnimationIntegration(t *testing.T) {
 	// Set high mood
 	char.gameState.Stats["hunger"].Current = 90.0
 	char.gameState.Stats["happiness"].Current = 95.0
-	char.gameState.Stats["health"].Current = 85.0
 	char.gameState.Stats["energy"].Current = 80.0
 
 	// Force character into a non-idle state
