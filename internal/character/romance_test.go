@@ -27,7 +27,7 @@ func TestRomanceFeatureValidation(t *testing.T) {
 						"romanticism": 0.8,
 					},
 					Compatibility: map[string]float64{
-						"gift_appreciation": 1.5,
+						"gift_appreciation":  1.5,
 						"conversation_lover": 1.3,
 					},
 				},
@@ -104,8 +104,8 @@ func TestRomanceFeatureValidation(t *testing.T) {
 				RomanceDialogs: []DialogExtended{
 					{
 						Dialog: Dialog{
-							Trigger: "click", 
-							Responses: []string{"Hello sweetheart!"}, 
+							Trigger:   "click",
+							Responses: []string{"Hello sweetheart!"},
 							Animation: "romantic",
 						},
 						Requirements: &RomanceRequirement{
@@ -134,8 +134,8 @@ func TestRomanceFeatureValidation(t *testing.T) {
 				RomanceDialogs: []DialogExtended{
 					{
 						Dialog: Dialog{
-							Trigger: "click", 
-							Responses: []string{"Hello sweetheart!"}, 
+							Trigger:   "click",
+							Responses: []string{"Hello sweetheart!"},
 							Animation: "romantic",
 						},
 						Requirements: &RomanceRequirement{
@@ -338,15 +338,15 @@ func TestRomanceCharacterLoading(t *testing.T) {
 				"romanticism": 0.8,
 			},
 			Compatibility: map[string]float64{
-				"gift_appreciation": 1.5,
+				"gift_appreciation":  1.5,
 				"conversation_lover": 1.3,
 			},
 		},
 		RomanceDialogs: []DialogExtended{
 			{
 				Dialog: Dialog{
-					Trigger: "click", 
-					Responses: []string{"Hi sweetheart!"}, 
+					Trigger:   "click",
+					Responses: []string{"Hi sweetheart!"},
 					Animation: "talking",
 				},
 				Requirements: &RomanceRequirement{

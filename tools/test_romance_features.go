@@ -14,9 +14,9 @@ func main() {
 
 	// Test loading the romance character
 	romanceCharPath := filepath.Join("assets", "characters", "romance", "character.json")
-	
+
 	fmt.Printf("Loading character from: %s\n", romanceCharPath)
-	
+
 	// Note: This will fail if animation files don't exist, but will validate JSON structure
 	card, err := character.LoadCard(romanceCharPath)
 	if err != nil {

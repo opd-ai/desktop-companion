@@ -19,6 +19,10 @@ type GameState struct {
 	TotalPlayTime   time.Duration     `json:"totalPlayTime"`
 	Config          *GameConfig       `json:"config,omitempty"`
 	Progression     *ProgressionState `json:"progression,omitempty"`
+	// Romance feature extensions (Dating Simulator Phase 1)
+	RelationshipLevel  string                 `json:"relationshipLevel,omitempty"`
+	InteractionHistory map[string][]time.Time `json:"interactionHistory,omitempty"`
+	RomanceMemories    []RomanceMemory        `json:"romanceMemories,omitempty"`
 }
 
 // Stat represents a game statistic with boundaries and degradation rules
@@ -45,6 +49,16 @@ type StatConfig struct {
 	Max               float64 `json:"max"`
 	DegradationRate   float64 `json:"degradationRate"`
 	CriticalThreshold float64 `json:"criticalThreshold"`
+}
+
+// RomanceMemory represents a recorded romance interaction for the memory system
+// Used to track relationship history and enable future complex romance features
+type RomanceMemory struct {
+	Timestamp       time.Time          `json:"timestamp"`
+	InteractionType string             `json:"interactionType"`
+	StatsBefore     map[string]float64 `json:"statsBefore"`
+	StatsAfter      map[string]float64 `json:"statsAfter"`
+	Response        string             `json:"response"`
 }
 
 // NewGameState creates a new game state from stat configurations
@@ -497,4 +511,138 @@ func (gs *GameState) validateStat(name string, stat *Stat) error {
 	}
 
 	return nil
+}
+
+// Romance-related methods for Dating Simulator features (Phase 2 implementation)
+
+// RecordRomanceInteraction records a romance interaction in the memory system
+// Tracks interaction history for relationship progression and future features
+func (gs *GameState) RecordRomanceInteraction(interactionType, response string, statsBefore, statsAfter map[string]float64) {
+	if gs == nil {
+		return
+	}
+
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	// Initialize maps if they don't exist
+	if gs.InteractionHistory == nil {
+		gs.InteractionHistory = make(map[string][]time.Time)
+	}
+	if gs.RomanceMemories == nil {
+		gs.RomanceMemories = make([]RomanceMemory, 0)
+	}
+
+	// Record in interaction history
+	gs.InteractionHistory[interactionType] = append(
+		gs.InteractionHistory[interactionType],
+		time.Now(),
+	)
+
+	// Record detailed memory
+	memory := RomanceMemory{
+		Timestamp:       time.Now(),
+		InteractionType: interactionType,
+		StatsBefore:     statsBefore,
+		StatsAfter:      statsAfter,
+		Response:        response,
+	}
+	gs.RomanceMemories = append(gs.RomanceMemories, memory)
+
+	// Keep only last 50 memories to prevent unbounded growth
+	if len(gs.RomanceMemories) > 50 {
+		gs.RomanceMemories = gs.RomanceMemories[len(gs.RomanceMemories)-50:]
+	}
+}
+
+// GetInteractionCount returns the number of times a specific interaction has been used
+// Used for progression requirements and achievement tracking
+func (gs *GameState) GetInteractionCount(interactionType string) int {
+	if gs == nil || gs.InteractionHistory == nil {
+		return 0
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if interactions, exists := gs.InteractionHistory[interactionType]; exists {
+		return len(interactions)
+	}
+	return 0
+}
+
+// GetRelationshipLevel returns the current relationship level
+// Returns "Stranger" as default if no level has been set
+func (gs *GameState) GetRelationshipLevel() string {
+	if gs == nil {
+		return "Stranger"
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.RelationshipLevel == "" {
+		return "Stranger" // Default level
+	}
+	return gs.RelationshipLevel
+}
+
+// UpdateRelationshipLevel checks progression levels and updates relationship level if requirements are met
+// Returns true if the relationship level changed, false otherwise
+func (gs *GameState) UpdateRelationshipLevel(progressionConfig *ProgressionConfig) bool {
+	if gs == nil || progressionConfig == nil {
+		return false
+	}
+
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	oldLevel := gs.RelationshipLevel
+	newLevel := oldLevel
+
+	// Check each relationship level in order to find the highest level the character qualifies for
+	for _, level := range progressionConfig.Levels {
+		if gs.meetsRelationshipRequirements(level.Requirement) {
+			newLevel = level.Name
+		}
+	}
+
+	// Update the relationship level if it changed
+	if newLevel != oldLevel {
+		gs.RelationshipLevel = newLevel
+		return true
+	}
+
+	return false
+}
+
+// meetsRelationshipRequirements checks if current stats meet the requirements for a relationship level
+// Supports age-based, stat-based, and other progression requirements
+func (gs *GameState) meetsRelationshipRequirements(requirements map[string]int64) bool {
+	if gs == nil || len(requirements) == 0 {
+		return true
+	}
+
+	for statName, threshold := range requirements {
+		if statName == "age" {
+			// Special handling for age requirement (in seconds)
+			ageSeconds := int64(time.Since(gs.CreationTime).Seconds())
+			if ageSeconds < threshold {
+				return false
+			}
+			continue
+		}
+
+		// Check regular stat requirements
+		if stat, exists := gs.Stats[statName]; exists {
+			if int64(stat.Current) < threshold {
+				return false
+			}
+		} else {
+			// If stat doesn't exist, requirement can't be met
+			return false
+		}
+	}
+
+	return true
 }
