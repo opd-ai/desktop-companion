@@ -161,7 +161,8 @@ func (c *Character) Update() bool {
 
 	// Check if we should return to idle state (lower priority than game states)
 	if !stateChanged && c.currentState != "idle" && time.Since(c.lastStateChange) >= c.idleTimeout {
-		c.setState("idle")
+		idleAnimation := c.selectIdleAnimation()
+		c.setState(idleAnimation)
 		stateChanged = true
 	}
 
@@ -509,6 +510,43 @@ func (c *Character) selectAnimationFromTriggeredStates(triggeredStates []string)
 	}
 
 	return bestState
+}
+
+// selectIdleAnimation chooses appropriate idle animation based on mood when moodBasedAnimations is enabled
+// Returns "idle" by default, or mood-based animation if configured and available
+func (c *Character) selectIdleAnimation() string {
+	// Default to idle animation
+	defaultIdle := "idle"
+	
+	// Check if mood-based animations are enabled
+	if c.gameState == nil || c.gameState.Config == nil || !c.gameState.Config.MoodBasedAnimations {
+		return defaultIdle
+	}
+	
+	// Get overall mood (0-100 scale)
+	mood := c.gameState.GetOverallMood()
+	
+	// Select animation based on mood thresholds
+	var moodAnimation string
+	switch {
+	case mood >= 80:
+		moodAnimation = "happy" // Very good mood
+	case mood >= 60:
+		moodAnimation = "idle" // Normal mood
+	case mood >= 40:
+		moodAnimation = "idle" // Slightly below normal
+	case mood >= 20:
+		moodAnimation = "sad" // Low mood
+	default:
+		moodAnimation = "sad" // Very low mood
+	}
+	
+	// Check if the selected mood animation exists, fallback to idle if not
+	if _, exists := c.card.Animations[moodAnimation]; exists {
+		return moodAnimation
+	}
+	
+	return defaultIdle
 }
 
 // getAnimationForGameState maps game states to animation names

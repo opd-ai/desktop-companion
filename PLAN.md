@@ -511,7 +511,7 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 **Deliverables:**
 - ✅ `internal/character/progression.go` - **COMPLETED**
 - ✅ Achievement system - **COMPLETED**
-- [ ] Multiple example character cards (easy/normal/hard)
+- [] Multiple example character cards (easy/normal/hard)
 - [x] Random events system ✅ **COMPLETED (August 25, 2025)**
 - [ ] Critical state animations
 
