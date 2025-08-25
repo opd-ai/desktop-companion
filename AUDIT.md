@@ -4,14 +4,14 @@
 
 ```
 CRITICAL BUG: 1 finding (1 resolved)
-FUNCTIONAL MISMATCH: 3 findings (2 resolved)
+FUNCTIONAL MISMATCH: 3 findings (3 resolved)
 MISSING FEATURE: 4 findings
 EDGE CASE BUG: 2 findings
 PERFORMANCE ISSUE: 1 finding
 
-Total Issues: 12 (4 resolved)
+Total Issues: 12 (5 resolved)
 High Severity: 5 issues (1 resolved)
-Medium Severity: 4 issues (3 resolved)
+Medium Severity: 4 issues (4 resolved)
 Low Severity: 2 issues
 ```
 
@@ -145,23 +145,31 @@ func configureAlwaysOnTop(window fyne.Window, debug bool) {
 ```
 
 ```
-### FUNCTIONAL MISMATCH: Right-Click Only Works When Movement Enabled
+### FUNCTIONAL MISMATCH: Right-Click Only Works When Movement Enabled - RESOLVED
 **File:** internal/ui/window.go:95-112, internal/ui/draggable.go:165-175
 **Severity:** Medium
+**Status:** RESOLVED (commit 9eee237, 2025-08-25)
 **Description:** Right-click functionality is only available when character movement is enabled, contradicting documentation which shows right-click as independent feature.
 **Expected Behavior:** Right-click should work regardless of movement settings
-**Actual Behavior:** Right-click only functions through DraggableCharacter widget when movementEnabled is true
-**Impact:** Users cannot access right-click dialogs unless they enable character dragging, limiting interaction options
-**Reproduction:** Set "movementEnabled": false in character.json, right-click does nothing
+**Actual Behavior:** ~~Right-click only functions through DraggableCharacter widget when movementEnabled is true~~ **FIXED:** Right-click now works for both draggable and non-draggable characters
+**Impact:** ~~Users cannot access right-click dialogs unless they enable character dragging, limiting interaction options~~ **RESOLVED:** Right-click dialogs now accessible regardless of movement setting
+**Reproduction:** ~~Set "movementEnabled": false in character.json, right-click does nothing~~ **FIXED:** Right-click now calls HandleRightClick() for both draggable and non-draggable characters
 **Code Reference:**
 ```go
-func (dw *DesktopWindow) setupRightClick(widget fyne.Widget) {
-	if !dw.character.IsMovementEnabled() {
-		if dw.debug {
-			log.Println("Right-click available when movement is enabled")
-		}
-		return  // Right-click setup skipped for non-draggable characters
+// setupInteractions configures mouse interactions with the character
+func (dw *DesktopWindow) setupInteractions() {
+	// Add dragging support if character allows movement
+	if dw.character.IsMovementEnabled() {
+		dw.setupDragging()
+		return // Draggable character handles all interactions
 	}
+
+	// For non-draggable characters, create custom clickable widget that supports both left and right click
+	clickable := NewClickableWidget(
+		func() { dw.handleClick() },
+		func() { dw.handleRightClick() },
+	)
+	// Custom ClickableWidget now provides right-click support for non-draggable characters
 }
 ```
 ```
