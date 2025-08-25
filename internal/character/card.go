@@ -26,6 +26,10 @@ type CharacterCard struct {
 	Progression *ProgressionConfig `json:"progression,omitempty"`
 	// Random events (Phase 3 implementation)
 	RandomEvents []RandomEventConfig `json:"randomEvents,omitempty"`
+	// Romance feature extensions (Dating Simulator Phase 1)
+	Personality    *PersonalityConfig  `json:"personality,omitempty"`
+	RomanceDialogs []DialogExtended    `json:"romanceDialogs,omitempty"`
+	RomanceEvents  []RandomEventConfig `json:"romanceEvents,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -76,6 +80,35 @@ type RandomEventConfig struct {
 	Cooldown    int                           `json:"cooldown"`    // Minimum seconds between triggers
 	Duration    int                           `json:"duration"`    // Duration in seconds (0 = instant)
 	Conditions  map[string]map[string]float64 `json:"conditions"`  // Stat conditions required to trigger
+}
+
+// Romance-specific configuration structures (Dating Simulator Phase 1)
+// PersonalityConfig defines character personality traits that affect romance interactions
+type PersonalityConfig struct {
+	Traits        map[string]float64 `json:"traits"`        // Personality traits (0.0-1.0 values)
+	Compatibility map[string]float64 `json:"compatibility"` // Behavior compatibility modifiers
+}
+
+// RomanceRequirement defines complex requirements for romance features
+type RomanceRequirement struct {
+	Stats               map[string]map[string]float64 `json:"stats,omitempty"`               // Stat-based requirements
+	RelationshipLevel   string                        `json:"relationshipLevel,omitempty"`   // Required relationship level
+	InteractionCount    map[string]map[string]int     `json:"interactionCount,omitempty"`    // Interaction count requirements
+	AchievementUnlocked []string                      `json:"achievementUnlocked,omitempty"` // Required achievements
+}
+
+// DialogExtended extends the basic Dialog with romance-specific features
+type DialogExtended struct {
+	Dialog                           // Embed existing Dialog struct
+	Requirements *RomanceRequirement `json:"requirements,omitempty"` // Romance-specific requirements
+	RomanceLevel string              `json:"romanceLevel,omitempty"` // Associated romance level
+}
+
+// InteractionConfigExtended extends basic InteractionConfig with romance features
+type InteractionConfigExtended struct {
+	InteractionConfig                      // Embed existing InteractionConfig struct
+	UnlockRequirements *RomanceRequirement `json:"unlockRequirements,omitempty"` // Romance unlock requirements
+	RomanceCategory    string              `json:"romanceCategory,omitempty"`    // Romance interaction category
 }
 
 // LoadCard loads and validates a character card from a JSON file
@@ -131,6 +164,10 @@ func (c *CharacterCard) Validate() error {
 		return fmt.Errorf("random events: %w", err)
 	}
 
+	if err := c.validateRomanceFeatures(); err != nil {
+		return fmt.Errorf("romance features: %w", err)
+	}
+
 	return nil
 }
 
@@ -162,6 +199,10 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 
 	if err := c.validateRandomEvents(); err != nil {
 		return fmt.Errorf("random events: %w", err)
+	}
+
+	if err := c.validateRomanceFeatures(); err != nil {
+		return fmt.Errorf("romance features: %w", err)
 	}
 
 	return nil
@@ -628,4 +669,126 @@ func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index
 	}
 
 	return nil
+}
+
+// Romance feature validation methods (Dating Simulator Phase 1)
+
+// validateRomanceFeatures validates romance-specific configuration fields
+func (c *CharacterCard) validateRomanceFeatures() error {
+	// Personality validation (optional)
+	if c.Personality != nil {
+		if err := c.validatePersonalityConfig(); err != nil {
+			return fmt.Errorf("personality: %w", err)
+		}
+	}
+
+	// Romance dialogs validation (optional)
+	if len(c.RomanceDialogs) > 0 {
+		for i, dialog := range c.RomanceDialogs {
+			if err := c.validateRomanceDialog(dialog, i); err != nil {
+				return fmt.Errorf("romance dialog %d: %w", i, err)
+			}
+		}
+	}
+
+	// Romance events validation (optional)
+	if len(c.RomanceEvents) > 0 {
+		for i, event := range c.RomanceEvents {
+			if err := c.validateRandomEventConfig(event, i); err != nil {
+				return fmt.Errorf("romance event %d (%s): %w", i, event.Name, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// validatePersonalityConfig ensures personality configuration is valid
+func (c *CharacterCard) validatePersonalityConfig() error {
+	if c.Personality.Traits != nil {
+		for name, value := range c.Personality.Traits {
+			if value < 0.0 || value > 1.0 {
+				return fmt.Errorf("trait '%s' must be 0.0-1.0, got %f", name, value)
+			}
+		}
+	}
+
+	if c.Personality.Compatibility != nil {
+		for name, value := range c.Personality.Compatibility {
+			if value < 0.0 || value > 5.0 {
+				return fmt.Errorf("compatibility modifier '%s' must be 0.0-5.0, got %f", name, value)
+			}
+		}
+	}
+
+	return nil
+}
+
+// validateRomanceDialog validates an extended dialog configuration
+func (c *CharacterCard) validateRomanceDialog(dialog DialogExtended, index int) error {
+	// Validate base dialog
+	if err := dialog.Dialog.Validate(c.Animations); err != nil {
+		return err
+	}
+
+	// Validate romance requirements if present
+	if dialog.Requirements != nil {
+		if err := c.validateRomanceRequirements(dialog.Requirements); err != nil {
+			return fmt.Errorf("requirements: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// validateRomanceRequirements validates romance requirement configuration
+func (c *CharacterCard) validateRomanceRequirements(req *RomanceRequirement) error {
+	// Validate stat requirements reference existing stats (if stats are defined)
+	if c.Stats != nil && len(c.Stats) > 0 && req.Stats != nil {
+		for statName := range req.Stats {
+			if _, exists := c.Stats[statName]; !exists {
+				return fmt.Errorf("requirement references stat '%s' which is not defined", statName)
+			}
+		}
+	}
+
+	// Validate interaction count requirements
+	if req.InteractionCount != nil {
+		for interactionName := range req.InteractionCount {
+			if c.Interactions != nil {
+				if _, exists := c.Interactions[interactionName]; !exists {
+					return fmt.Errorf("requirement references interaction '%s' which is not defined", interactionName)
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+// HasRomanceFeatures returns true if this character card includes romance features
+func (c *CharacterCard) HasRomanceFeatures() bool {
+	return c.Personality != nil || len(c.RomanceDialogs) > 0 || len(c.RomanceEvents) > 0
+}
+
+// GetPersonalityTrait returns the value of a personality trait, defaulting to 0.5 if not found
+func (c *CharacterCard) GetPersonalityTrait(trait string) float64 {
+	if c.Personality == nil || c.Personality.Traits == nil {
+		return 0.5 // Default neutral value
+	}
+	if value, exists := c.Personality.Traits[trait]; exists {
+		return value
+	}
+	return 0.5
+}
+
+// GetCompatibilityModifier returns the compatibility modifier for a behavior, defaulting to 1.0
+func (c *CharacterCard) GetCompatibilityModifier(behavior string) float64 {
+	if c.Personality == nil || c.Personality.Compatibility == nil {
+		return 1.0 // Default no modifier
+	}
+	if modifier, exists := c.Personality.Compatibility[behavior]; exists {
+		return modifier
+	}
+	return 1.0
 }
