@@ -289,25 +289,32 @@ func NewProfiler(memoryTargetMB int) *Profiler {
 ```
 
 ```
-### EDGE CASE BUG: Concurrent Frame Updates Cause Timing Issues  
+### EDGE CASE BUG: Concurrent Frame Updates Cause Timing Issues - RESOLVED
 **File:** internal/character/animation.go:71-95, internal/ui/window.go:144-156
 **Severity:** Medium
+**Status:** RESOLVED (commit 64a470a, 2025-08-25)
 **Description:** GetCurrentFrame method modifies frameIndex and lastUpdate fields while holding only read lock, causing race conditions when called from both Update() and animation loop.
 **Expected Behavior:** Frame updates should be thread-safe and consistent
-**Actual Behavior:** Concurrent access can cause frame timing inconsistencies and potential data races
-**Impact:** Animation may stutter, frames may be skipped, or incorrect frame timing under concurrent access
-**Reproduction:** Run animation loop while calling GetCurrentFrame from multiple goroutines simultaneously
+**Actual Behavior:** ~~Concurrent access can cause frame timing inconsistencies and potential data races~~ **FIXED:** GetCurrentFrame now only reads state, frame advancement happens only in Update()
+**Impact:** ~~Animation may stutter, frames may be skipped, or incorrect frame timing under concurrent access~~ **RESOLVED:** Animation state is now properly synchronized
+**Reproduction:** ~~Run animation loop while calling GetCurrentFrame from multiple goroutines simultaneously~~ **FIXED:** Concurrent test added to prevent regression
 **Code Reference:**
 ```go
+// GetCurrentFrame now only reads state - no modifications
 func (am *AnimationManager) GetCurrentFrame() (image.Image, bool) {
 	am.mu.RLock()
 	defer am.mu.RUnlock()
-	// Race condition: modifies frameIndex with read lock
-	if time.Since(am.lastUpdate) >= frameDelay {
-		am.frameIndex = (am.frameIndex + 1) % len(currentGif.Image)
-		am.lastUpdate = time.Now()
-		newFrame = true
-	}
+	
+	// Check timing but don't modify state (avoid race condition)
+	newFrame := time.Since(am.lastUpdate) >= frameDelay
+	return currentGif.Image[am.frameIndex], newFrame
+}
+
+// Frame advancement only happens in Update() with proper write lock
+func (am *AnimationManager) Update() bool {
+	am.mu.Lock()
+	defer am.mu.Unlock()
+	// ... frame advancement with write lock
 }
 ```
 ```
