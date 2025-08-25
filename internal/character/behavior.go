@@ -32,6 +32,7 @@ type Character struct {
 	// Game features (added for Phase 2)
 	gameState                *GameState
 	gameInteractionCooldowns map[string]time.Time
+	randomEventManager       *RandomEventManager // Added for Phase 3 - random events
 }
 
 // New creates a new character instance from a character card
@@ -95,6 +96,15 @@ func (c *Character) initializeGameFeatures() {
 
 	// Initialize game state with stats from character card
 	c.gameState = NewGameState(c.card.Stats, gameConfig)
+
+	// Initialize random events manager if random events are configured
+	randomEventsEnabled := len(c.card.RandomEvents) > 0
+	checkInterval := 30 * time.Second // Default 30 second check interval
+	if c.card.GameRules != nil && c.card.GameRules.StatsDecayInterval > 0 {
+		// Use the same interval as stats decay for efficiency
+		checkInterval = time.Duration(c.card.GameRules.StatsDecayInterval) * time.Second
+	}
+	c.randomEventManager = NewRandomEventManager(c.card.RandomEvents, randomEventsEnabled, checkInterval)
 }
 
 // Update updates character behavior and animations
@@ -113,8 +123,34 @@ func (c *Character) Update() bool {
 		elapsed := time.Since(c.lastStateChange)
 		triggeredStates := c.gameState.Update(elapsed)
 
-		// Handle critical states with higher priority
-		if len(triggeredStates) > 0 {
+		// Check for random events
+		var triggeredEvent *TriggeredEvent
+		if c.randomEventManager != nil {
+			triggeredEvent = c.randomEventManager.Update(elapsed, c.gameState)
+		}
+
+		// Handle triggered random event
+		if triggeredEvent != nil {
+			// Apply stat effects
+			if triggeredEvent.HasEffects() {
+				c.gameState.ApplyInteractionEffects(triggeredEvent.Effects)
+			}
+
+			// Trigger animation if specified
+			if triggeredEvent.HasAnimations() {
+				animation := triggeredEvent.GetRandomAnimation()
+				if animation != "" && animation != c.currentState {
+					c.setState(animation)
+					stateChanged = true
+				}
+			}
+
+			// Note: Dialog responses from random events would be handled by the UI layer
+			// The character behavior only manages state and animation changes
+		}
+
+		// Handle critical states with higher priority (if no random event animation)
+		if !stateChanged && len(triggeredStates) > 0 {
 			newState := c.selectAnimationFromTriggeredStates(triggeredStates)
 			if newState != "" && newState != c.currentState {
 				c.setState(newState)

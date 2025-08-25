@@ -24,6 +24,8 @@ type CharacterCard struct {
 	Interactions map[string]InteractionConfig `json:"interactions,omitempty"`
 	// Progression features (Phase 3 implementation)
 	Progression *ProgressionConfig `json:"progression,omitempty"`
+	// Random events (Phase 3 implementation)
+	RandomEvents []RandomEventConfig `json:"randomEvents,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -60,6 +62,20 @@ type InteractionConfig struct {
 	Cooldown     int                           `json:"cooldown"`     // Seconds between uses
 	Duration     int                           `json:"duration"`     // Duration of effect (for sleep, etc.)
 	Requirements map[string]map[string]float64 `json:"requirements"` // Stat requirements to use interaction
+}
+
+// RandomEventConfig defines a random event that can affect character stats
+// Events are triggered based on probability and conditions, following "lazy programmer" approach
+type RandomEventConfig struct {
+	Name        string                        `json:"name"`        // Event name for identification
+	Description string                        `json:"description"` // Human-readable description
+	Probability float64                       `json:"probability"` // 0.0-1.0 chance of triggering per check
+	Effects     map[string]float64            `json:"effects"`     // Stat changes to apply when triggered
+	Animations  []string                      `json:"animations"`  // Animations to play when triggered
+	Responses   []string                      `json:"responses"`   // Dialog responses to show
+	Cooldown    int                           `json:"cooldown"`    // Minimum seconds between triggers
+	Duration    int                           `json:"duration"`    // Duration in seconds (0 = instant)
+	Conditions  map[string]map[string]float64 `json:"conditions"`  // Stat conditions required to trigger
 }
 
 // LoadCard loads and validates a character card from a JSON file
@@ -111,6 +127,10 @@ func (c *CharacterCard) Validate() error {
 		return fmt.Errorf("progression: %w", err)
 	}
 
+	if err := c.validateRandomEvents(); err != nil {
+		return fmt.Errorf("random events: %w", err)
+	}
+
 	return nil
 }
 
@@ -138,6 +158,10 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 
 	if err := c.validateProgression(); err != nil {
 		return fmt.Errorf("progression: %w", err)
+	}
+
+	if err := c.validateRandomEvents(); err != nil {
+		return fmt.Errorf("random events: %w", err)
 	}
 
 	return nil
@@ -536,4 +560,71 @@ func (d *Dialog) GetRandomResponse() string {
 // CanTrigger checks if enough time has passed since the last trigger
 func (d *Dialog) CanTrigger(lastTriggerTime time.Time) bool {
 	return time.Since(lastTriggerTime) >= time.Duration(d.Cooldown)*time.Second
+}
+
+// validateRandomEvents validates the random events configuration
+func (c *CharacterCard) validateRandomEvents() error {
+	if len(c.RandomEvents) == 0 {
+		return nil // Random events are optional
+	}
+
+	for i, event := range c.RandomEvents {
+		if err := c.validateRandomEventConfig(event, i); err != nil {
+			return fmt.Errorf("event %d (%s): %w", i, event.Name, err)
+		}
+	}
+
+	return nil
+}
+
+// validateRandomEventConfig validates a single random event configuration
+func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index int) error {
+	if len(event.Name) == 0 {
+		return fmt.Errorf("name cannot be empty")
+	}
+
+	if len(event.Description) == 0 {
+		return fmt.Errorf("description cannot be empty")
+	}
+
+	if event.Probability < 0.0 || event.Probability > 1.0 {
+		return fmt.Errorf("probability must be 0.0-1.0, got %f", event.Probability)
+	}
+
+	if event.Cooldown < 0 || event.Cooldown > 86400 {
+		return fmt.Errorf("cooldown must be 0-86400 seconds, got %d", event.Cooldown)
+	}
+
+	if event.Duration < 0 || event.Duration > 3600 {
+		return fmt.Errorf("duration must be 0-3600 seconds, got %d", event.Duration)
+	}
+
+	// Validate animations exist
+	for _, animation := range event.Animations {
+		if _, exists := c.Animations[animation]; !exists {
+			return fmt.Errorf("animation '%s' not found in animations map", animation)
+		}
+	}
+
+	// Validate responses
+	if len(event.Responses) > 10 {
+		return fmt.Errorf("must have 0-10 responses, got %d", len(event.Responses))
+	}
+
+	// Validate that referenced stats exist in character stats
+	if c.Stats != nil {
+		for statName := range event.Effects {
+			if _, exists := c.Stats[statName]; !exists {
+				return fmt.Errorf("event effects reference stat '%s' which is not defined", statName)
+			}
+		}
+
+		for statName := range event.Conditions {
+			if _, exists := c.Stats[statName]; !exists {
+				return fmt.Errorf("event conditions reference stat '%s' which is not defined", statName)
+			}
+		}
+	}
+
+	return nil
 }

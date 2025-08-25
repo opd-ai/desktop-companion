@@ -3,9 +3,41 @@ package character
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
+
+// Helper function to get a valid character card for testing
+func getValidCharacterCard() CharacterCard {
+	return CharacterCard{
+		Name:        "Test Character",
+		Description: "A test character for validation testing",
+		Animations: map[string]string{
+			"idle":    "idle.gif",
+			"talking": "talking.gif",
+			"happy":   "happy.gif",
+			"sad":     "sad.gif",
+		},
+		Dialogs: []Dialog{
+			{
+				Trigger:   "click",
+				Responses: []string{"Hello!", "Hi there!"},
+				Animation: "talking",
+				Cooldown:  5,
+			},
+		},
+		Behavior: Behavior{
+			IdleTimeout: 30,
+			DefaultSize: 128,
+		},
+	}
+}
+
+// Helper function to check if string contains substring
+func containsSubstring(str, substr string) bool {
+	return strings.Contains(str, substr)
+}
 
 // TestLoadCard verifies character card loading and validation
 func TestLoadCard(t *testing.T) {
@@ -252,5 +284,300 @@ func BenchmarkCharacterCardValidation(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = card.Validate()
+	}
+}
+
+// TestCharacterCardRandomEventsValidation tests validation of random events configuration
+func TestCharacterCardRandomEventsValidation(t *testing.T) {
+	baseCard := getValidCharacterCard()
+	
+	tests := []struct {
+		name          string
+		randomEvents  []RandomEventConfig
+		expectError   bool
+		errorContains string
+	}{
+		{
+			name:         "no random events (valid)",
+			randomEvents: []RandomEventConfig{},
+			expectError:  false,
+		},
+		{
+			name: "valid random event",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "good_event",
+					Description: "A good event",
+					Probability: 0.1,
+					Effects:     map[string]float64{"hunger": 10},
+					Animations:  []string{"happy"},
+					Responses:   []string{"Yay!"},
+					Cooldown:    60,
+					Duration:    0,
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "empty event name",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "",
+					Description: "No name event",
+					Probability: 0.1,
+				},
+			},
+			expectError:   true,
+			errorContains: "name cannot be empty",
+		},
+		{
+			name: "empty description",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "test_event",
+					Description: "",
+					Probability: 0.1,
+				},
+			},
+			expectError:   true,
+			errorContains: "description cannot be empty",
+		},
+		{
+			name: "invalid probability negative",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_prob_event",
+					Description: "Bad probability",
+					Probability: -0.1,
+				},
+			},
+			expectError:   true,
+			errorContains: "probability must be 0.0-1.0",
+		},
+		{
+			name: "invalid probability too high",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_prob_event",
+					Description: "Bad probability",
+					Probability: 1.5,
+				},
+			},
+			expectError:   true,
+			errorContains: "probability must be 0.0-1.0",
+		},
+		{
+			name: "invalid cooldown negative",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_cooldown_event",
+					Description: "Bad cooldown",
+					Probability: 0.1,
+					Cooldown:    -1,
+				},
+			},
+			expectError:   true,
+			errorContains: "cooldown must be 0-86400 seconds",
+		},
+		{
+			name: "invalid cooldown too high",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_cooldown_event",
+					Description: "Bad cooldown",
+					Probability: 0.1,
+					Cooldown:    90000, // > 86400 (24 hours)
+				},
+			},
+			expectError:   true,
+			errorContains: "cooldown must be 0-86400 seconds",
+		},
+		{
+			name: "invalid duration negative",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_duration_event",
+					Description: "Bad duration",
+					Probability: 0.1,
+					Duration:    -1,
+				},
+			},
+			expectError:   true,
+			errorContains: "duration must be 0-3600 seconds",
+		},
+		{
+			name: "invalid duration too high",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_duration_event",
+					Description: "Bad duration",
+					Probability: 0.1,
+					Duration:    4000, // > 3600 (1 hour)
+				},
+			},
+			expectError:   true,
+			errorContains: "duration must be 0-3600 seconds",
+		},
+		{
+			name: "non-existent animation",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_animation_event",
+					Description: "Bad animation",
+					Probability: 0.1,
+					Animations:  []string{"nonexistent"},
+				},
+			},
+			expectError:   true,
+			errorContains: "animation 'nonexistent' not found",
+		},
+		{
+			name: "too many responses",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "too_many_responses_event",
+					Description: "Too many responses",
+					Probability: 0.1,
+					Responses:   []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"},
+				},
+			},
+			expectError:   true,
+			errorContains: "must have 0-10 responses",
+		},
+		{
+			name: "effects reference non-existent stat (no stats defined)",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_effect_event",
+					Description: "Bad effect",
+					Probability: 0.1,
+					Effects:     map[string]float64{"nonexistent": 10},
+				},
+			},
+			expectError:   true,
+			errorContains: "event effects reference stat 'nonexistent' which is not defined",
+		},
+		{
+			name: "conditions reference non-existent stat (no stats defined)",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_condition_event",
+					Description: "Bad condition",
+					Probability: 0.1,
+					Conditions:  map[string]map[string]float64{"nonexistent": {"min": 50}},
+				},
+			},
+			expectError:   true,
+			errorContains: "event conditions reference stat 'nonexistent' which is not defined",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			card := baseCard
+			card.RandomEvents = tt.randomEvents
+			
+			err := card.Validate()
+			
+			if tt.expectError {
+				if err == nil {
+					t.Error("expected validation error, but got none")
+				} else if !containsSubstring(err.Error(), tt.errorContains) {
+					t.Errorf("expected error to contain '%s', got: %v", tt.errorContains, err)
+				}
+			} else {
+				if err != nil {
+					t.Errorf("expected no validation error, got: %v", err)
+				}
+			}
+		})
+	}
+}
+
+// TestCharacterCardRandomEventsWithStats tests random events validation when stats are defined
+func TestCharacterCardRandomEventsWithStats(t *testing.T) {
+	baseCard := getValidCharacterCard()
+	baseCard.Stats = map[string]StatConfig{
+		"hunger": {
+			Initial:           100,
+			Max:               100,
+			DegradationRate:   1.0,
+			CriticalThreshold: 20,
+		},
+		"happiness": {
+			Initial:           100,
+			Max:               100,
+			DegradationRate:   0.8,
+			CriticalThreshold: 15,
+		},
+	}
+	
+	tests := []struct {
+		name          string
+		randomEvents  []RandomEventConfig
+		expectError   bool
+		errorContains string
+	}{
+		{
+			name: "valid event with existing stats",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "stat_event",
+					Description: "Affects stats",
+					Probability: 0.1,
+					Effects:     map[string]float64{"hunger": 10, "happiness": 5},
+					Conditions:  map[string]map[string]float64{"hunger": {"max": 50}},
+					Cooldown:    60,
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "effect references non-existent stat (with stats defined)",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_effect_event",
+					Description: "Bad effect",
+					Probability: 0.1,
+					Effects:     map[string]float64{"energy": 10}, // energy not defined
+				},
+			},
+			expectError:   true,
+			errorContains: "event effects reference stat 'energy' which is not defined",
+		},
+		{
+			name: "condition references non-existent stat (with stats defined)",
+			randomEvents: []RandomEventConfig{
+				{
+					Name:        "bad_condition_event",
+					Description: "Bad condition",
+					Probability: 0.1,
+					Conditions:  map[string]map[string]float64{"energy": {"min": 50}}, // energy not defined
+				},
+			},
+			expectError:   true,
+			errorContains: "event conditions reference stat 'energy' which is not defined",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			card := baseCard
+			card.RandomEvents = tt.randomEvents
+			
+			err := card.Validate()
+			
+			if tt.expectError {
+				if err == nil {
+					t.Error("expected validation error, but got none")
+				} else if !containsSubstring(err.Error(), tt.errorContains) {
+					t.Errorf("expected error to contain '%s', got: %v", tt.errorContains, err)
+				}
+			} else {
+				if err != nil {
+					t.Errorf("expected no validation error, got: %v", err)
+				}
+			}
+		})
 	}
 }

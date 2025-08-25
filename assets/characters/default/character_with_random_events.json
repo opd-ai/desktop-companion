@@ -1,0 +1,307 @@
+{
+  "name": "Adventure Cat",
+  "description": "A curious cat that experiences random adventures and events",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "sleeping": "animations/sleeping.gif",
+    "eating": "animations/eating.gif",
+    "playing": "animations/playing.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Meow! What's happening?",
+        "Oh, hello there!",
+        "Pet me more!",
+        "I wonder what adventure awaits..."
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Feed me please!",
+        "I'm getting hungry...",
+        "Food time?"
+      ],
+      "animation": "sad",
+      "cooldown": 8
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 15
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.2,
+      "criticalThreshold": 25
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 30
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 60,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {
+        "hunger": 25,
+        "happiness": 5
+      },
+      "animations": ["eating"],
+      "responses": [
+        "Purr purr! Delicious!",
+        "Thank you for the food!",
+        "Nom nom nom..."
+      ],
+      "cooldown": 30,
+      "requirements": {
+        "hunger": {"max": 80}
+      }
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {
+        "happiness": 20,
+        "energy": -15
+      },
+      "animations": ["playing", "happy"],
+      "responses": [
+        "This is so much fun!",
+        "I love playing!",
+        "Let's play more!"
+      ],
+      "cooldown": 45,
+      "requirements": {
+        "energy": {"min": 20}
+      }
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "sunny_day",
+      "description": "A beautiful sunny day brightens the cat's mood",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 15,
+        "energy": 10
+      },
+      "animations": ["happy"],
+      "responses": [
+        "What a beautiful day!",
+        "The sun feels so warm!",
+        "Perfect weather for adventures!"
+      ],
+      "cooldown": 1800,
+      "duration": 0
+    },
+    {
+      "name": "rain_shower",
+      "description": "A sudden rain shower makes the cat a bit sad",
+      "probability": 0.03,
+      "effects": {
+        "happiness": -10,
+        "energy": -5
+      },
+      "animations": ["sad"],
+      "responses": [
+        "Oh no, it's raining...",
+        "I don't like getting wet!",
+        "Time to find shelter!"
+      ],
+      "cooldown": 2400,
+      "duration": 0
+    },
+    {
+      "name": "mysterious_noise",
+      "description": "A strange noise catches the cat's attention",
+      "probability": 0.08,
+      "effects": {
+        "energy": -8,
+        "happiness": 5
+      },
+      "animations": ["talking"],
+      "responses": [
+        "What was that sound?",
+        "Did you hear that too?",
+        "Something interesting is happening!",
+        "My curiosity is piqued!"
+      ],
+      "cooldown": 600,
+      "duration": 0
+    },
+    {
+      "name": "food_discovery",
+      "description": "The cat finds some tasty food!",
+      "probability": 0.02,
+      "effects": {
+        "hunger": 20,
+        "happiness": 10,
+        "health": 5
+      },
+      "animations": ["eating", "happy"],
+      "responses": [
+        "Wow! I found some food!",
+        "Lucky me! Free snacks!",
+        "This tastes amazing!",
+        "What a delicious surprise!"
+      ],
+      "cooldown": 3600,
+      "duration": 0,
+      "conditions": {
+        "hunger": {"max": 60}
+      }
+    },
+    {
+      "name": "nap_time",
+      "description": "The cat suddenly feels very sleepy",
+      "probability": 0.04,
+      "effects": {
+        "energy": 30,
+        "happiness": -3
+      },
+      "animations": ["sleeping"],
+      "responses": [
+        "Yawn... I need a nap...",
+        "Suddenly feeling so sleepy...",
+        "Time for a quick rest!",
+        "ZZZ..."
+      ],
+      "cooldown": 1200,
+      "duration": 60,
+      "conditions": {
+        "energy": {"max": 40}
+      }
+    },
+    {
+      "name": "burst_of_energy",
+      "description": "The cat gets a sudden burst of energy",
+      "probability": 0.06,
+      "effects": {
+        "energy": 25,
+        "happiness": 15,
+        "hunger": -5
+      },
+      "animations": ["playing", "happy"],
+      "responses": [
+        "I feel so energetic!",
+        "Time to run around!",
+        "So much energy to burn!",
+        "Let's have some fun!"
+      ],
+      "cooldown": 900,
+      "duration": 0,
+      "conditions": {
+        "energy": {"min": 20, "max": 70}
+      }
+    },
+    {
+      "name": "health_boost",
+      "description": "The cat feels particularly healthy and vibrant",
+      "probability": 0.015,
+      "effects": {
+        "health": 20,
+        "happiness": 8,
+        "energy": 5
+      },
+      "animations": ["happy"],
+      "responses": [
+        "I feel so healthy and strong!",
+        "My body feels amazing today!",
+        "Such vitality!",
+        "Never felt better!"
+      ],
+      "cooldown": 7200,
+      "duration": 0,
+      "conditions": {
+        "health": {"min": 50}
+      }
+    }
+  ],
+  "progression": {
+    "levels": [
+      {
+        "name": "Kitten",
+        "requirement": {"age": 0},
+        "size": 96,
+        "animations": {
+          "idle": "animations/kitten_idle.gif"
+        }
+      },
+      {
+        "name": "Young Cat", 
+        "requirement": {"age": 86400},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Adult Cat",
+        "requirement": {"age": 259200},
+        "size": 160,
+        "animations": {
+          "idle": "animations/adult_idle.gif"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Well Fed",
+        "requirement": {
+          "hunger": {"maintainAbove": 80, "duration": 86400}
+        },
+        "reward": {
+          "statBonus": {"health": 5}
+        }
+      },
+      {
+        "name": "Happy Cat",
+        "requirement": {
+          "happiness": {"maintainAbove": 90, "duration": 43200}
+        },
+        "reward": {
+          "statBonus": {"energy": 10}
+        }
+      },
+      {
+        "name": "Adventurous Spirit",
+        "requirement": {
+          "happiness": {"maintainAbove": 70, "duration": 172800}
+        },
+        "reward": {
+          "statBonus": {"happiness": 15}
+        }
+      }
+    ]
+  }
+}
