@@ -97,7 +97,7 @@ func (ps *ProgressionState) Update(gameState *GameState, elapsed time.Duration) 
 	ps.TotalCareTime += elapsed
 
 	levelChanged := ps.checkLevelProgression()
-	newAchievements := ps.checkAchievements(gameState)
+	newAchievements := ps.checkAchievements(gameState, elapsed)
 
 	ps.LastLevelCheck = time.Now()
 
@@ -145,7 +145,7 @@ func (ps *ProgressionState) getCurrentLevelIndex() int {
 }
 
 // checkAchievements evaluates achievement progress and completion
-func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
+func (ps *ProgressionState) checkAchievements(gameState *GameState, elapsed time.Duration) []string {
 	if ps.Config == nil || gameState == nil {
 		return nil
 	}
@@ -167,6 +167,7 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
 			// Just started meeting criteria
 			progress.StartTime = time.Now()
 			progress.MetCriteria = true
+			progress.Duration = 0 // Reset duration
 
 			// Extract required duration if specified (look for maintainAbove duration)
 			if maintainAbove, hasMA := achievement.Requirement["maintainAbove"]; hasMA {
@@ -190,8 +191,8 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
 		}
 
 		if progress.MetCriteria && progress.RequiredTime > 0 {
-			// Update duration of criteria being met
-			progress.Duration = time.Since(progress.StartTime)
+			// Update duration using elapsed time from game loop
+			progress.Duration += elapsed
 
 			// Check if duration requirement is satisfied
 			if progress.Duration >= progress.RequiredTime {
@@ -207,9 +208,7 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
 	}
 
 	return newAchievements
-}
-
-// evaluateAchievementRequirement checks if current game state meets achievement criteria
+} // evaluateAchievementRequirement checks if current game state meets achievement criteria
 func (ps *ProgressionState) evaluateAchievementRequirement(requirement map[string]map[string]interface{}, gameState *GameState) bool {
 	for statName, criteria := range requirement {
 		// Skip special achievement requirement types
