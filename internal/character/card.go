@@ -48,7 +48,9 @@ func LoadCard(path string) (*CharacterCard, error) {
 		return nil, fmt.Errorf("failed to parse character card %s: %w", path, err)
 	}
 
-	if err := card.Validate(); err != nil {
+	// Get character directory for animation file validation
+	characterDir := filepath.Dir(path)
+	if err := card.ValidateWithBasePath(characterDir); err != nil {
 		return nil, fmt.Errorf("invalid character card %s: %w", path, err)
 	}
 
@@ -63,6 +65,27 @@ func (c *CharacterCard) Validate() error {
 	}
 
 	if err := c.validateAnimations(); err != nil {
+		return err
+	}
+
+	if err := c.validateDialogs(); err != nil {
+		return err
+	}
+
+	if err := c.Behavior.Validate(); err != nil {
+		return fmt.Errorf("behavior: %w", err)
+	}
+
+	return nil
+}
+
+// ValidateWithBasePath ensures the character card has valid configuration including file existence checks
+func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
+	if err := c.validateBasicFields(); err != nil {
+		return err
+	}
+
+	if err := c.validateAnimationsWithBasePath(basePath); err != nil {
 		return err
 	}
 
@@ -103,6 +126,19 @@ func (c *CharacterCard) validateAnimations() error {
 	return c.validateAnimationPaths()
 }
 
+// validateAnimationsWithBasePath ensures required animations exist and all animation files are accessible
+func (c *CharacterCard) validateAnimationsWithBasePath(basePath string) error {
+	if c.Animations == nil {
+		return fmt.Errorf("animations map is required")
+	}
+
+	if err := c.validateRequiredAnimations(); err != nil {
+		return err
+	}
+
+	return c.validateAnimationPathsWithBasePath(basePath)
+}
+
 // validateRequiredAnimations checks that mandatory animation keys are present
 func (c *CharacterCard) validateRequiredAnimations() error {
 	requiredAnimations := []string{"idle", "talking"}
@@ -119,6 +155,25 @@ func (c *CharacterCard) validateAnimationPaths() error {
 	for name, path := range c.Animations {
 		if !strings.HasSuffix(strings.ToLower(path), ".gif") {
 			return fmt.Errorf("animation '%s' must be a GIF file, got: %s", name, path)
+		}
+	}
+	return nil
+}
+
+// validateAnimationPathsWithBasePath ensures all animation files exist and are accessible
+func (c *CharacterCard) validateAnimationPathsWithBasePath(basePath string) error {
+	for name, path := range c.Animations {
+		if !strings.HasSuffix(strings.ToLower(path), ".gif") {
+			return fmt.Errorf("animation '%s' must be a GIF file, got: %s", name, path)
+		}
+
+		// Check if the animation file actually exists and is readable
+		fullPath := filepath.Join(basePath, path)
+		if _, err := os.Stat(fullPath); err != nil {
+			if os.IsNotExist(err) {
+				return fmt.Errorf("animation file '%s' not found: %s", name, fullPath)
+			}
+			return fmt.Errorf("animation file '%s' not accessible: %s (%v)", name, fullPath, err)
 		}
 	}
 	return nil
