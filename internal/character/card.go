@@ -107,6 +107,10 @@ func (c *CharacterCard) Validate() error {
 		return fmt.Errorf("game features: %w", err)
 	}
 
+	if err := c.validateProgression(); err != nil {
+		return fmt.Errorf("progression: %w", err)
+	}
+
 	return nil
 }
 
@@ -130,6 +134,10 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 
 	if err := c.validateGameFeatures(); err != nil {
 		return fmt.Errorf("game features: %w", err)
+	}
+
+	if err := c.validateProgression(); err != nil {
+		return fmt.Errorf("progression: %w", err)
 	}
 
 	return nil
