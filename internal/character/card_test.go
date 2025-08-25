@@ -41,12 +41,12 @@ func TestLoadCard(t *testing.T) {
 
 	// Create valid GIF files that the character card references
 	validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
-	
+
 	err = os.WriteFile(filepath.Join(tmpDir, "test_idle.gif"), validGIF, 0644)
 	if err != nil {
 		t.Fatalf("Failed to create test_idle.gif: %v", err)
 	}
-	
+
 	err = os.WriteFile(filepath.Join(tmpDir, "test_talking.gif"), validGIF, 0644)
 	if err != nil {
 		t.Fatalf("Failed to create test_talking.gif: %v", err)
