@@ -8,27 +8,27 @@ import (
 // TestNewRandomEventManager tests creation of random event manager
 func TestNewRandomEventManager(t *testing.T) {
 	tests := []struct {
-		name         string
-		events       []RandomEventConfig
-		enabled      bool
-		interval     time.Duration
-		expectNil    bool
+		name          string
+		events        []RandomEventConfig
+		enabled       bool
+		interval      time.Duration
+		expectNil     bool
 		expectEnabled bool
 	}{
 		{
-			name:         "disabled manager",
-			events:       []RandomEventConfig{},
-			enabled:      false,
-			interval:     30 * time.Second,
-			expectNil:    false,
+			name:          "disabled manager",
+			events:        []RandomEventConfig{},
+			enabled:       false,
+			interval:      30 * time.Second,
+			expectNil:     false,
 			expectEnabled: false,
 		},
 		{
-			name:         "no events",
-			events:       []RandomEventConfig{},
-			enabled:      true,
-			interval:     30 * time.Second,
-			expectNil:    false,
+			name:          "no events",
+			events:        []RandomEventConfig{},
+			enabled:       true,
+			interval:      30 * time.Second,
+			expectNil:     false,
 			expectEnabled: false,
 		},
 		{
@@ -52,7 +52,7 @@ func TestNewRandomEventManager(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rem := NewRandomEventManager(tt.events, tt.enabled, tt.interval)
-			
+
 			if rem == nil {
 				t.Fatal("NewRandomEventManager returned nil")
 			}
@@ -82,19 +82,19 @@ func TestRandomEventManagerUpdate(t *testing.T) {
 	gameState := NewGameState(statConfigs, nil)
 
 	tests := []struct {
-		name           string
-		events         []RandomEventConfig
-		enabled        bool
-		interval       time.Duration
-		elapsed        time.Duration
+		name            string
+		events          []RandomEventConfig
+		enabled         bool
+		interval        time.Duration
+		elapsed         time.Duration
 		expectTriggered bool
 	}{
 		{
-			name:           "disabled manager",
-			events:         []RandomEventConfig{},
-			enabled:        false,
-			interval:       1 * time.Second,
-			elapsed:        2 * time.Second,
+			name:            "disabled manager",
+			events:          []RandomEventConfig{},
+			enabled:         false,
+			interval:        1 * time.Second,
+			elapsed:         2 * time.Second,
 			expectTriggered: false,
 		},
 		{
@@ -107,9 +107,9 @@ func TestRandomEventManagerUpdate(t *testing.T) {
 					Cooldown:    1,
 				},
 			},
-			enabled:        true,
-			interval:       1 * time.Second,
-			elapsed:        2 * time.Second,
+			enabled:         true,
+			interval:        1 * time.Second,
+			elapsed:         2 * time.Second,
 			expectTriggered: true, // Should trigger with 100% probability
 		},
 		{
@@ -122,9 +122,9 @@ func TestRandomEventManagerUpdate(t *testing.T) {
 					Cooldown:    1,
 				},
 			},
-			enabled:        true,
-			interval:       1 * time.Second,
-			elapsed:        2 * time.Second,
+			enabled:         true,
+			interval:        1 * time.Second,
+			elapsed:         2 * time.Second,
 			expectTriggered: false, // Should never trigger with 0% probability
 		},
 	}
@@ -132,14 +132,14 @@ func TestRandomEventManagerUpdate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rem := NewRandomEventManager(tt.events, tt.enabled, tt.interval)
-			
+
 			// Update with specified elapsed time
 			triggeredEvent := rem.Update(tt.elapsed, gameState)
-			
+
 			if tt.expectTriggered && triggeredEvent == nil {
 				t.Error("expected event to trigger, but got nil")
 			}
-			
+
 			if !tt.expectTriggered && triggeredEvent != nil {
 				t.Errorf("expected no event to trigger, but got: %v", triggeredEvent.Name)
 			}
@@ -181,9 +181,9 @@ func TestRandomEventManagerCooldowns(t *testing.T) {
 // TestRandomEventManagerConditions tests condition checking
 func TestRandomEventManagerConditions(t *testing.T) {
 	tests := []struct {
-		name           string
-		event          RandomEventConfig
-		hungerValue    float64
+		name            string
+		event           RandomEventConfig
+		hungerValue     float64
 		expectTriggered bool
 	}{
 		{
@@ -194,10 +194,10 @@ func TestRandomEventManagerConditions(t *testing.T) {
 				Conditions: map[string]map[string]float64{
 					"hunger": {"max": 30.0}, // Trigger when hunger <= 30
 				},
-				Effects: map[string]float64{"hunger": 10},
+				Effects:  map[string]float64{"hunger": 10},
 				Cooldown: 1,
 			},
-			hungerValue:    20.0, // Below threshold
+			hungerValue:     20.0, // Below threshold
 			expectTriggered: true,
 		},
 		{
@@ -208,10 +208,10 @@ func TestRandomEventManagerConditions(t *testing.T) {
 				Conditions: map[string]map[string]float64{
 					"hunger": {"max": 30.0}, // Trigger when hunger <= 30
 				},
-				Effects: map[string]float64{"hunger": 10},
+				Effects:  map[string]float64{"hunger": 10},
 				Cooldown: 1,
 			},
-			hungerValue:    50.0, // Above threshold
+			hungerValue:     50.0, // Above threshold
 			expectTriggered: false,
 		},
 	}
@@ -224,13 +224,13 @@ func TestRandomEventManagerConditions(t *testing.T) {
 			gameState := NewGameState(statConfigs, nil)
 
 			rem := NewRandomEventManager([]RandomEventConfig{tt.event}, true, 1*time.Second)
-			
+
 			triggeredEvent := rem.Update(2*time.Second, gameState)
-			
+
 			if tt.expectTriggered && triggeredEvent == nil {
 				t.Error("expected event to trigger based on conditions, but got nil")
 			}
-			
+
 			if !tt.expectTriggered && triggeredEvent != nil {
 				t.Errorf("expected event to be blocked by conditions, but got: %v", triggeredEvent.Name)
 			}
@@ -241,11 +241,11 @@ func TestRandomEventManagerConditions(t *testing.T) {
 // TestTriggeredEvent tests the TriggeredEvent struct and its methods
 func TestTriggeredEvent(t *testing.T) {
 	tests := []struct {
-		name              string
-		event             TriggeredEvent
-		expectHasEffects  bool
+		name                string
+		event               TriggeredEvent
+		expectHasEffects    bool
 		expectHasAnimations bool
-		expectHasResponses bool
+		expectHasResponses  bool
 	}{
 		{
 			name: "complete event",
@@ -257,7 +257,7 @@ func TestTriggeredEvent(t *testing.T) {
 				Responses:   []string{"Yay!", "This is great!"},
 				Duration:    30 * time.Second,
 			},
-			expectHasEffects:   true,
+			expectHasEffects:    true,
 			expectHasAnimations: true,
 			expectHasResponses:  true,
 		},
@@ -270,7 +270,7 @@ func TestTriggeredEvent(t *testing.T) {
 				Animations:  []string{},
 				Responses:   []string{},
 			},
-			expectHasEffects:   true,
+			expectHasEffects:    true,
 			expectHasAnimations: false,
 			expectHasResponses:  false,
 		},
@@ -283,7 +283,7 @@ func TestTriggeredEvent(t *testing.T) {
 				Animations:  []string{"idle"},
 				Responses:   []string{"Hello!"},
 			},
-			expectHasEffects:   false,
+			expectHasEffects:    false,
 			expectHasAnimations: true,
 			expectHasResponses:  true,
 		},
@@ -378,7 +378,7 @@ func TestRandomEventManagerThreadSafety(t *testing.T) {
 	for i := 0; i < numGoroutines; i++ {
 		go func() {
 			defer func() { done <- struct{}{} }()
-			
+
 			// Multiple operations
 			rem.IsEnabled()
 			rem.GetEventCount()
@@ -404,7 +404,7 @@ func TestRandomEventManagerEdgeCases(t *testing.T) {
 			{Name: "test", Probability: 1.0, Effects: map[string]float64{"hunger": 10}},
 		}
 		rem := NewRandomEventManager(events, true, 1*time.Second)
-		
+
 		triggeredEvent := rem.Update(2*time.Second, nil)
 		if triggeredEvent != nil {
 			t.Error("expected nil when game state is nil")
@@ -413,7 +413,7 @@ func TestRandomEventManagerEdgeCases(t *testing.T) {
 
 	t.Run("empty responses", func(t *testing.T) {
 		rem := NewRandomEventManager([]RandomEventConfig{}, true, 1*time.Second)
-		
+
 		response := rem.GetRandomResponse([]string{})
 		if response != "" {
 			t.Error("expected empty response for empty responses list")
@@ -422,7 +422,7 @@ func TestRandomEventManagerEdgeCases(t *testing.T) {
 
 	t.Run("disabled manager operations", func(t *testing.T) {
 		rem := NewRandomEventManager([]RandomEventConfig{}, false, 1*time.Second)
-		
+
 		response := rem.GetRandomResponse([]string{"test"})
 		if response != "" {
 			t.Error("expected empty response when manager is disabled")

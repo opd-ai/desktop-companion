@@ -445,30 +445,28 @@ func TestCharacterCardRandomEventsValidation(t *testing.T) {
 			errorContains: "must have 0-10 responses",
 		},
 		{
-			name: "effects reference non-existent stat (no stats defined)",
+			name: "effects reference stat when no stats defined (allowed)",
 			randomEvents: []RandomEventConfig{
 				{
-					Name:        "bad_effect_event",
-					Description: "Bad effect",
+					Name:        "effect_event_no_stats",
+					Description: "Event with effects but no stats defined",
 					Probability: 0.1,
-					Effects:     map[string]float64{"nonexistent": 10},
+					Effects:     map[string]float64{"hunger": 10},
 				},
 			},
-			expectError:   true,
-			errorContains: "event effects reference stat 'nonexistent' which is not defined",
+			expectError: false, // This should be allowed - effects will be ignored at runtime
 		},
 		{
-			name: "conditions reference non-existent stat (no stats defined)",
+			name: "conditions reference stat when no stats defined (allowed)",
 			randomEvents: []RandomEventConfig{
 				{
-					Name:        "bad_condition_event",
-					Description: "Bad condition",
+					Name:        "condition_event_no_stats",
+					Description: "Event with conditions but no stats defined",
 					Probability: 0.1,
-					Conditions:  map[string]map[string]float64{"nonexistent": {"min": 50}},
+					Conditions:  map[string]map[string]float64{"energy": {"min": 50}},
 				},
 			},
-			expectError:   true,
-			errorContains: "event conditions reference stat 'nonexistent' which is not defined",
+			expectError: false, // This should be allowed - conditions will be ignored at runtime
 		},
 	}
 

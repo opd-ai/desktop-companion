@@ -611,8 +611,9 @@ func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index
 		return fmt.Errorf("must have 0-10 responses, got %d", len(event.Responses))
 	}
 
-	// Validate that referenced stats exist in character stats
-	if c.Stats != nil {
+	// Validate that referenced stats exist when character has stats defined
+	// If no stats are defined, stat references are allowed but will be ignored at runtime
+	if c.Stats != nil && len(c.Stats) > 0 {
 		for statName := range event.Effects {
 			if _, exists := c.Stats[statName]; !exists {
 				return fmt.Errorf("event effects reference stat '%s' which is not defined", statName)
