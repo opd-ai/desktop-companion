@@ -545,7 +545,7 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
    - Specialized pet types (hungry pet, sleepy pet, etc.)
 
 **Deliverables:**
-- [ ] Comprehensive test suite (80%+ coverage)
+- [ ] Comprehensive test suite (70%+ coverage)
 - [ ] Updated README.md with game features
 - [ ] GAME_FEATURES.md documentation
 - [ ] 5+ example character cards

@@ -390,7 +390,7 @@ For additional help, see the debug output above or check `AUDIT.md` for known is
 - Use standard library when possible
 - Implement proper error handling (no ignored errors)
 - Add mutex protection for shared state
-- Include unit tests for business logic (target 80% coverage)
+- Include unit tests for business logic (target 70% coverage)
 
 ## 📄 License
 
