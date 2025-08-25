@@ -9,6 +9,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🪟 **Transparent Overlay**: Always-on-top window with system transparency 
 - 🖱️ **Interactive**: Click and drag interactions with animated responses
 - 🎮 **Game Features**: Optional Tamagotchi-style stats (hunger, happiness, health, energy) with time-based degradation *(Phase 1 Complete)*
+- 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Phase 2 Partial)*
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Cross-Platform**: Runs on Windows, macOS, and Linux (build on target platform)
 - 🪶 **Lightweight**: <50MB memory usage
@@ -227,13 +228,17 @@ desktop-companion/
 │   │   ├── card.go                 # JSON configuration parser (stdlib)
 │   │   ├── animation.go            # GIF animation manager (stdlib)
 │   │   ├── behavior.go             # Character behavior logic
+│   │   ├── game_state.go           # Tamagotchi-style game state management
 │   │   └── card_test.go            # Unit tests
 │   ├── ui/
 │   │   ├── window.go              # Transparent window (fyne)
 │   │   ├── renderer.go            # Character rendering
 │   │   └── interaction.go         # Dialog bubbles (fyne)
-│   └── config/
-│       └── loader.go              # Configuration file loading
+│   ├── config/
+│   │   └── loader.go              # Configuration file loading
+│   └── persistence/               # Game state persistence (NEW)
+│       ├── save_manager.go        # JSON-based save/load system
+│       └── save_manager_test.go   # Comprehensive persistence tests
 ├── assets/characters/default/      # Default character files
 ├── Makefile                       # Build automation
 ├── PERFORMANCE_MONITORING.md      # Performance metrics and monitoring
