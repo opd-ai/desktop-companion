@@ -22,6 +22,8 @@ type CharacterCard struct {
 	Stats        map[string]StatConfig        `json:"stats,omitempty"`
 	GameRules    *GameRulesConfig             `json:"gameRules,omitempty"`
 	Interactions map[string]InteractionConfig `json:"interactions,omitempty"`
+	// Progression features (Phase 3 implementation)
+	Progression  *ProgressionConfig           `json:"progression,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
