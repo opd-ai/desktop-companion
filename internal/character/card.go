@@ -654,7 +654,7 @@ func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index
 
 	// Validate that referenced stats exist when character has stats defined
 	// If no stats are defined, stat references are allowed but will be ignored at runtime
-	if c.Stats != nil && len(c.Stats) > 0 {
+	if len(c.Stats) > 0 {
 		for statName := range event.Effects {
 			if _, exists := c.Stats[statName]; !exists {
 				return fmt.Errorf("event effects reference stat '%s' which is not defined", statName)
@@ -744,7 +744,7 @@ func (c *CharacterCard) validateRomanceDialog(dialog DialogExtended, index int) 
 // validateRomanceRequirements validates romance requirement configuration
 func (c *CharacterCard) validateRomanceRequirements(req *RomanceRequirement) error {
 	// Validate stat requirements reference existing stats (if stats are defined)
-	if c.Stats != nil && len(c.Stats) > 0 && req.Stats != nil {
+	if len(c.Stats) > 0 && req.Stats != nil {
 		for statName := range req.Stats {
 			if _, exists := c.Stats[statName]; !exists {
 				return fmt.Errorf("requirement references stat '%s' which is not defined", statName)

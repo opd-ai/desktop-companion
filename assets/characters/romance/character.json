@@ -1,0 +1,306 @@
+{
+  "name": "Romance Companion",
+  "description": "A virtual dating companion with romance mechanics",
+  
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif",
+    "blushing": "animations/blushing.gif",
+    "heart_eyes": "animations/heart_eyes.gif",
+    "shy": "animations/shy.gif",
+    "flirty": "animations/flirty.gif",
+    "romantic_idle": "animations/romantic_idle.gif",
+    "jealous": "animations/jealous.gif",
+    "excited_romance": "animations/excited_romance.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello there! 👋",
+        "How are you today?",
+        "Nice to see you again!",
+        "I'm here to keep you company! 😊"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "What would you like to do?",
+        "Right-click for options!",
+        "I'm ready for interaction!"
+      ],
+      "animation": "happy",
+      "cooldown": 3
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.5,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 10
+    },
+    "trust": {
+      "initial": 20,
+      "max": 100,
+      "degradationRate": 0.05,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 2.0,
+      "criticalThreshold": 80
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 60,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 25, "happiness": 5},
+      "animations": ["eating", "happy"],
+      "responses": ["Yum! Thank you!", "That was delicious!", "I feel much better now!"],
+      "cooldown": 30,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 20, "energy": -15},
+      "animations": ["happy"],
+      "responses": ["This is fun!", "I love playing with you!", "Let's play more!"],
+      "cooldown": 45,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 10, "health": 2},
+      "animations": ["happy"],
+      "responses": ["That feels nice!", "I love attention!", "Pet me more!"],
+      "cooldown": 15
+    },
+    "compliment": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 5, "happiness": 3, "trust": 1},
+      "animations": ["blushing", "happy"],
+      "responses": [
+        "Thank you! That's so sweet! 💕",
+        "*blushes* You really think so?",
+        "You always know what to say! 😊"
+      ],
+      "cooldown": 45,
+      "requirements": {"trust": {"min": 10}}
+    },
+    "give_gift": {
+      "triggers": ["ctrl+click"],
+      "effects": {"affection": 10, "happiness": 8, "trust": 2},
+      "animations": ["heart_eyes", "excited_romance"],
+      "responses": [
+        "Oh my! This is perfect! 🎁",
+        "You remembered what I like! 💝",
+        "I'll treasure this forever!"
+      ],
+      "cooldown": 120,
+      "requirements": {"affection": {"min": 15}}
+    },
+    "deep_conversation": {
+      "triggers": ["alt+click"],
+      "effects": {"trust": 8, "affection": 3, "intimacy": 5},
+      "animations": ["talking", "romantic_idle"],
+      "responses": [
+        "I love talking with you about deep things...",
+        "You really understand me.",
+        "These conversations mean everything to me."
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 20}}
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Stranger",
+        "requirement": {"age": 0},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Friend",
+        "requirement": {"age": 86400, "affection": 15, "trust": 10},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Close Friend",
+        "requirement": {"age": 172800, "affection": 30, "trust": 25},
+        "size": 136,
+        "animations": {}
+      },
+      {
+        "name": "Romantic Interest",
+        "requirement": {"age": 259200, "affection": 50, "trust": 40, "intimacy": 20},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Compliment",
+        "requirement": {
+          "affection": {"min": 5}
+        }
+      },
+      {
+        "name": "Trusted Friend",
+        "requirement": {
+          "trust": {"min": 50}
+        }
+      },
+      {
+        "name": "Close Bond",
+        "requirement": {
+          "affection": {"min": 40},
+          "trust": {"min": 30}
+        }
+      }
+    ]
+  },
+
+  "personality": {
+    "traits": {
+      "shyness": 0.6,
+      "romanticism": 0.8,
+      "jealousy_prone": 0.3,
+      "trust_difficulty": 0.4,
+      "affection_responsiveness": 0.9,
+      "flirtiness": 0.7
+    },
+    "compatibility": {
+      "consistent_interaction": 1.2,
+      "variety_preference": 0.8,
+      "gift_appreciation": 1.5,
+      "conversation_lover": 1.3
+    }
+  },
+
+  "romanceDialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hi sweetheart! 💕",
+        "I was hoping you'd come see me!",
+        "Every moment with you is special 💖"
+      ],
+      "animation": "romantic_idle",
+      "cooldown": 5,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 50}
+        }
+      }
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "*heart flutters* 💓",
+        "Just being near you makes me happy...",
+        "I can feel the love between us..."
+      ],
+      "animation": "blushing",
+      "cooldown": 10,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 30},
+          "intimacy": {"min": 20}
+        }
+      }
+    }
+  ],
+
+  "romanceEvents": [
+    {
+      "name": "Love Letter Memory",
+      "description": "Character remembers a sweet moment",
+      "probability": 0.05,
+      "effects": {"affection": 3, "happiness": 5},
+      "animations": ["blushing", "happy"],
+      "responses": [
+        "I was just thinking about that sweet thing you said...",
+        "You make me so happy! 💕",
+        "I'm so lucky to have you in my life!"
+      ],
+      "cooldown": 1800,
+      "conditions": {"affection": {"min": 20}}
+    },
+    {
+      "name": "Romantic Daydream",
+      "description": "Character has romantic thoughts",
+      "probability": 0.08,
+      "effects": {"intimacy": 2, "happiness": 3},
+      "animations": ["heart_eyes", "romantic_idle"],
+      "responses": [
+        "I was just daydreaming about us... 💭💕",
+        "*sighs dreamily* You're wonderful...",
+        "I can't stop thinking about you! 💖"
+      ],
+      "cooldown": 900,
+      "conditions": {"affection": {"min": 40}, "intimacy": {"min": 15}}
+    }
+  ]
+}
