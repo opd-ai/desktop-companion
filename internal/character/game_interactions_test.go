@@ -34,6 +34,9 @@ func TestGameInteractionFeed(t *testing.T) {
 		t.Fatalf("Failed to enable game mode: %v", err)
 	}
 
+	// Set hunger to below the requirement threshold (80) so feeding is allowed
+	char.gameState.Stats["hunger"].Current = 70.0
+
 	// Get initial hunger stat
 	initialHunger := char.gameState.GetStat("hunger")
 
@@ -76,6 +79,11 @@ func TestGameInteractionPlay(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to enable game mode: %v", err)
 	}
+
+	// Ensure energy is above minimum requirement (20) for playing
+	char.gameState.Stats["energy"].Current = 50.0
+	// Set happiness below max so it can increase
+	char.gameState.Stats["happiness"].Current = 60.0
 
 	// Get initial stats
 	initialHappiness := char.gameState.GetStat("happiness")
@@ -365,5 +373,271 @@ func createTestAnimationFiles(t *testing.T, dir string) {
 		if err != nil {
 			t.Fatalf("Failed to create test animation file %s: %v", filename, err)
 		}
+	}
+}
+
+// TestGameInteractionCooldownMethods tests cooldown-related helper methods
+func TestGameInteractionCooldownMethods(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "game_cooldown_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	card := createTestGameCharacterCard()
+	createTestAnimationFiles(t, tmpDir)
+
+	char, err := New(card, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character: %v", err)
+	}
+
+	err = char.EnableGameMode(nil, "")
+	if err != nil {
+		t.Fatalf("Failed to enable game mode: %v", err)
+	}
+
+	// Test CanUseGameInteraction before and after using interaction
+	if !char.CanUseGameInteraction("pet") {
+		t.Error("Should be able to use pet interaction initially")
+	}
+
+	// Use the interaction
+	char.gameState.Stats["hunger"].Current = 70.0 // Ensure requirements met
+	response := char.HandleGameInteraction("pet")
+	if response == "" {
+		t.Error("Pet interaction should return a response")
+	}
+
+	// Test GetGameInteractionCooldowns
+	cooldowns := char.GetGameInteractionCooldowns()
+	if cooldowns == nil {
+		t.Error("Should return cooldown map when game mode enabled")
+	}
+
+	if _, exists := cooldowns["pet"]; !exists {
+		t.Error("Pet interaction should be in cooldown map")
+	}
+
+	// Test that interaction is now on cooldown
+	if char.CanUseGameInteraction("pet") {
+		t.Error("Pet interaction should be on cooldown after use")
+	}
+}
+
+// TestEnableGameModeEdgeCases tests edge cases for enabling game mode
+func TestEnableGameModeEdgeCases(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "game_enable_edge_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Test with character card that doesn't have game features
+	cardWithoutGame := &CharacterCard{
+		Name:        "Regular Pet",
+		Description: "A regular pet without game features",
+		Animations: map[string]string{
+			"idle":    "idle.gif",
+			"talking": "talking.gif",
+		},
+		Dialogs: []Dialog{
+			{
+				Trigger:   "click",
+				Responses: []string{"Hello!"},
+				Animation: "talking",
+				Cooldown:  5,
+			},
+		},
+		Behavior: Behavior{
+			IdleTimeout:     30,
+			MovementEnabled: false,
+			DefaultSize:     128,
+		},
+	}
+
+	createTestAnimationFiles(t, tmpDir)
+
+	char, err := New(cardWithoutGame, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character: %v", err)
+	}
+
+	// Try to enable game mode on character without game features
+	err = char.EnableGameMode(nil, "")
+	if err == nil {
+		t.Error("Should error when trying to enable game mode on character without game features")
+	}
+
+	// Verify game state is still nil
+	if char.GetGameState() != nil {
+		t.Error("Game state should remain nil when enable fails")
+	}
+
+	// Test GetGameInteractionCooldowns with no game mode
+	cooldowns := char.GetGameInteractionCooldowns()
+	if cooldowns != nil {
+		t.Error("Should return nil cooldowns when game mode not enabled")
+	}
+
+	// Test with character that has game features
+	cardWithGame := createTestGameCharacterCard()
+	charWithGame, err := New(cardWithGame, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character with game features: %v", err)
+	}
+
+	// EnableGameMode should work for characters with game features
+	err = charWithGame.EnableGameMode(nil, "")
+	if err != nil {
+		t.Errorf("EnableGameMode should work for characters with game features: %v", err)
+	}
+}
+
+// TestGetGameState tests the GetGameState method
+func TestGetGameState(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "game_state_get_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Test with character that has game features
+	card := createTestGameCharacterCard()
+	createTestAnimationFiles(t, tmpDir)
+
+	char, err := New(card, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character: %v", err)
+	}
+
+	// Game state should be initialized automatically for characters with game features
+	gameState := char.GetGameState()
+	if gameState == nil {
+		t.Error("Game state should be initialized for character with game features")
+	}
+
+	// Verify we can access game state data
+	hungerStat := gameState.GetStat("hunger")
+	if hungerStat != 100.0 {
+		t.Errorf("Expected initial hunger to be 100, got %f", hungerStat)
+	}
+
+	// Test with character without game features
+	cardWithoutGame := &CharacterCard{
+		Name:        "Regular Pet",
+		Description: "A regular pet without game features",
+		Animations: map[string]string{
+			"idle":    "idle.gif",
+			"talking": "talking.gif",
+		},
+		Dialogs: []Dialog{
+			{
+				Trigger:   "click",
+				Responses: []string{"Hello!"},
+				Animation: "talking",
+				Cooldown:  5,
+			},
+		},
+		Behavior: Behavior{
+			IdleTimeout:     30,
+			MovementEnabled: false,
+			DefaultSize:     128,
+		},
+	}
+
+	charWithoutGame, err := New(cardWithoutGame, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character without game features: %v", err)
+	}
+
+	// Game state should be nil for characters without game features
+	if charWithoutGame.GetGameState() != nil {
+		t.Error("Game state should be nil for character without game features")
+	}
+}
+
+// TestCharacterUpdateWithGameState tests that character update integrates with game state
+func TestCharacterUpdateWithGameState(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "update_game_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	card := createTestGameCharacterCard()
+	createTestAnimationFiles(t, tmpDir)
+
+	char, err := New(card, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character: %v", err)
+	}
+
+	// Enable game mode
+	err = char.EnableGameMode(nil, "")
+	if err != nil {
+		t.Fatalf("Failed to enable game mode: %v", err)
+	}
+
+	// Set hunger to critical level to trigger state change
+	char.gameState.Stats["hunger"].Current = 10.0                     // Below critical threshold
+	char.gameState.LastDecayUpdate = time.Now().Add(-2 * time.Minute) // Force update
+
+	// Update should trigger state change
+	changed := char.Update()
+	if !changed {
+		t.Error("Update should return true when game state triggers animation change")
+	}
+
+	// Check that state changed to appropriate critical animation
+	currentState := char.GetCurrentState()
+	if currentState != "hungry" && currentState != "sad" {
+		t.Errorf("Character should be in critical state, got: %s", currentState)
+	}
+}
+
+// TestSelectAnimationFromStates tests animation selection logic
+func TestSelectAnimationFromStates(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "select_animation_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	card := createTestGameCharacterCard()
+	createTestAnimationFiles(t, tmpDir)
+
+	char, err := New(card, tmpDir)
+	if err != nil {
+		t.Fatalf("Failed to create character: %v", err)
+	}
+
+	err = char.EnableGameMode(nil, "")
+	if err != nil {
+		t.Fatalf("Failed to enable game mode: %v", err)
+	}
+
+	// Test that selectAnimationFromStates works properly
+	// Since it's an internal method, we test it indirectly through Update
+
+	// Test with empty triggered states
+	char.gameState.LastDecayUpdate = time.Now() // No decay needed
+	changed := char.Update()
+
+	// Should not change state if no triggers
+	if changed && char.GetCurrentState() != "idle" {
+		t.Error("Character should stay in idle state when no game triggers")
+	}
+
+	// Test animation priority with critical states
+	char.gameState.Stats["hunger"].Current = 15.0 // Critical
+	char.gameState.LastDecayUpdate = time.Now().Add(-2 * time.Minute)
+
+	char.Update()
+
+	// Should prioritize critical animations
+	state := char.GetCurrentState()
+	if state != "hungry" && state != "sad" {
+		t.Errorf("Should prioritize critical animation, got: %s", state)
 	}
 }
