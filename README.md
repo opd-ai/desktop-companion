@@ -1,5 +1,5 @@
 ````markdown
-# Desktop Companion
+# Desktop Companion (DDS)
 
 A lightweight, cross-platform virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
@@ -9,7 +9,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🪟 **Transparent Overlay**: Always-on-top window with system transparency 
 - 🖱️ **Interactive**: Click and drag interactions with animated responses
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
-- 🌍 **Cross-Platform**: Works on Windows, macOS, and Linux
+- 🌍 **Cross-Platform**: Runs on Windows, macOS, and Linux (build on target platform)
 - 🪶 **Lightweight**: <50MB memory usage
 
 ## 🚀 Quick Start
@@ -27,8 +27,8 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 
 ```bash
 # Clone the repository
-git clone https://github.com/opd-ai/desktop-companion
-cd desktop-companion
+git clone https://github.com/opd-ai/DDS
+cd DDS
 
 # Install dependencies
 go mod download
@@ -68,8 +68,8 @@ go build -o companion cmd/companion/main.go
 # Optimized release build  
 go build -ldflags="-s -w" -o companion cmd/companion/main.go
 
-# Cross-platform builds
-make build-all  # Builds for Windows, macOS, and Linux
+# Native build for current platform
+make build  # Builds for current platform only
 ```
 
 ## 🏗️ Architecture & Dependencies
@@ -196,10 +196,9 @@ desktop-companion/
 │   └── config/
 │       └── loader.go              # Configuration file loading
 ├── assets/characters/default/      # Default character files
-├── docs/                         # Additional documentation
 ├── Makefile                       # Build automation
-├── IMPLEMENTATION.md              # Detailed implementation guide
-├── TROUBLESHOOTING.md             # Common issues and solutions
+├── PERFORMANCE_MONITORING.md      # Performance metrics and monitoring
+├── AUDIT.md                       # Code quality and functional audit
 └── LICENSES.md                    # License information
 ```
 
@@ -284,7 +283,7 @@ go build -ldflags="-s -w" -o companion cmd/companion/main.go
 make build  # Creates build/companion
 ```
 
-> **Note**: Cross-platform builds are not supported due to Fyne GUI framework limitations.  
+> **Note**: Due to Fyne GUI framework limitations, cross-platform builds are not supported.  
 > Fyne requires platform-specific CGO libraries for graphics drivers.  
 > Build on the target platform for proper binary distribution.
 ```
@@ -328,7 +327,7 @@ This provides detailed output about:
 - Window creation and positioning
 - Performance metrics and memory usage
 
-See `TROUBLESHOOTING.md` for comprehensive troubleshooting guide.
+For additional help, see the debug output above or check `AUDIT.md` for known issues and resolutions.
 
 ## 🤝 Contributing
 
