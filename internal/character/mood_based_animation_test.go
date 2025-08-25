@@ -2,6 +2,7 @@ package character
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -147,9 +148,9 @@ func TestMoodBasedAnimationWithMissingAnimations(t *testing.T) {
 			"health":    {Initial: 50, Max: 100, DegradationRate: 0.5, CriticalThreshold: 25},
 			"energy":    {Initial: 50, Max: 100, DegradationRate: 1.5, CriticalThreshold: 30},
 		},
-		GameRules: &GameConfig{
-			StatsDecayInterval:             time.Minute,
-			AutoSaveInterval:               5 * time.Minute,
+		GameRules: &GameRulesConfig{
+			StatsDecayInterval:             60,
+			AutoSaveInterval:               300,
 			CriticalStateAnimationPriority: true,
 			DeathEnabled:                   false,
 			EvolutionEnabled:               true,
@@ -262,5 +263,43 @@ func TestMoodBasedAnimationIntegration(t *testing.T) {
 	currentState := char.GetCurrentState()
 	if currentState != "happy" {
 		t.Errorf("After idle timeout with high mood, should be in 'happy' state, got: %s", currentState)
+	}
+}
+
+// Helper function to create test character card without game features
+func createTestCharacterCard() *CharacterCard {
+	return &CharacterCard{
+		Name:        "Test Pet",
+		Description: "A test pet without game features",
+		Animations: map[string]string{
+			"idle":    "idle.gif",
+			"talking": "talking.gif",
+			"happy":   "happy.gif",
+			"sad":     "sad.gif",
+		},
+		Dialogs: []Dialog{
+			{
+				Trigger:   "click",
+				Responses: []string{"Hello!"},
+				Animation: "talking",
+				Cooldown:  5,
+			},
+		},
+		Behavior: Behavior{
+			IdleTimeout:     30,
+			MovementEnabled: false,
+			DefaultSize:     128,
+		},
+	}
+}
+
+// Helper function to create a single test animation file
+func createTestAnimationFile(t *testing.T, dir, filename string) {
+	// Create minimal valid GIF data
+	validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
+
+	err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0644)
+	if err != nil {
+		t.Fatalf("Failed to create test animation file %s: %v", filename, err)
 	}
 }
