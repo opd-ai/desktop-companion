@@ -22,23 +22,19 @@ type RandomEventManager struct {
 // NewRandomEventManager creates a new random event manager from character card configuration
 // Uses current time as seed for pseudo-random event generation
 func NewRandomEventManager(events []RandomEventConfig, enabled bool, interval time.Duration) *RandomEventManager {
-	if !enabled || len(events) == 0 {
-		return &RandomEventManager{
-			enabled: false,
-		}
-	}
-
 	// Initialize with time-based seed for pseudo-randomness
 	source := rand.NewSource(time.Now().UnixNano())
 
-	return &RandomEventManager{
+	rem := &RandomEventManager{
 		events:         events,
-		lastCheck:      time.Now(),
+		lastCheck:      time.Now().Add(-interval), // Set lastCheck in the past so first update can trigger
 		eventCooldowns: make(map[string]time.Time),
-		enabled:        enabled,
+		enabled:        enabled && len(events) > 0, // Only enable if we have events and enabled is true
 		checkInterval:  interval,
 		randomSource:   rand.New(source),
 	}
+
+	return rem
 }
 
 // Update checks for and triggers random events based on elapsed time and probability
@@ -64,7 +60,8 @@ func (rem *RandomEventManager) Update(elapsed time.Duration, gameState *GameStat
 	for _, event := range rem.events {
 		if rem.canTriggerEvent(event, now, gameState) {
 			// Event can trigger - check probability
-			if rem.randomSource.Float64() <= event.Probability {
+			randomValue := rem.randomSource.Float64()
+			if randomValue <= event.Probability {
 				// Event triggered! Record cooldown and return event
 				rem.eventCooldowns[event.Name] = now
 				rem.lastCheck = now
@@ -97,9 +94,7 @@ func (rem *RandomEventManager) canTriggerEvent(event RandomEventConfig, now time
 
 	// Check stat conditions if specified
 	if len(event.Conditions) > 0 {
-		if !gameState.CanSatisfyRequirements(event.Conditions) {
-			return false
-		}
+		return gameState.CanSatisfyRequirements(event.Conditions)
 	}
 
 	return true

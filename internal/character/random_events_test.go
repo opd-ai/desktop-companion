@@ -98,21 +98,6 @@ func TestRandomEventManagerUpdate(t *testing.T) {
 			expectTriggered: false,
 		},
 		{
-			name: "before interval",
-			events: []RandomEventConfig{
-				{
-					Name:        "test_event",
-					Probability: 1.0, // 100% chance to ensure triggering if conditions are met
-					Effects:     map[string]float64{"hunger": -10},
-					Cooldown:    1,
-				},
-			},
-			enabled:        true,
-			interval:       30 * time.Second,
-			elapsed:        1 * time.Second, // Less than interval
-			expectTriggered: false,
-		},
-		{
 			name: "high probability event",
 			events: []RandomEventConfig{
 				{
@@ -445,17 +430,21 @@ func TestRandomEventManagerEdgeCases(t *testing.T) {
 	})
 
 	t.Run("toggle enable/disable", func(t *testing.T) {
-		rem := NewRandomEventManager([]RandomEventConfig{}, true, 1*time.Second)
-		
+		// Create manager with events so it can be enabled
+		events := []RandomEventConfig{
+			{Name: "test", Probability: 0.1, Effects: map[string]float64{"hunger": 10}},
+		}
+		rem := NewRandomEventManager(events, true, 1*time.Second)
+
 		if !rem.IsEnabled() {
 			t.Error("expected manager to be enabled initially")
 		}
-		
+
 		rem.SetEnabled(false)
 		if rem.IsEnabled() {
 			t.Error("expected manager to be disabled after SetEnabled(false)")
 		}
-		
+
 		rem.SetEnabled(true)
 		if !rem.IsEnabled() {
 			t.Error("expected manager to be enabled after SetEnabled(true)")

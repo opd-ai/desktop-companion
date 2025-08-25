@@ -290,7 +290,7 @@ func BenchmarkCharacterCardValidation(b *testing.B) {
 // TestCharacterCardRandomEventsValidation tests validation of random events configuration
 func TestCharacterCardRandomEventsValidation(t *testing.T) {
 	baseCard := getValidCharacterCard()
-	
+
 	tests := []struct {
 		name          string
 		randomEvents  []RandomEventConfig
@@ -476,9 +476,9 @@ func TestCharacterCardRandomEventsValidation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			card := baseCard
 			card.RandomEvents = tt.randomEvents
-			
+
 			err := card.Validate()
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Error("expected validation error, but got none")
@@ -511,7 +511,7 @@ func TestCharacterCardRandomEventsWithStats(t *testing.T) {
 			CriticalThreshold: 15,
 		},
 	}
-	
+
 	tests := []struct {
 		name          string
 		randomEvents  []RandomEventConfig
@@ -564,9 +564,9 @@ func TestCharacterCardRandomEventsWithStats(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			card := baseCard
 			card.RandomEvents = tt.randomEvents
-			
+
 			err := card.Validate()
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Error("expected validation error, but got none")
