@@ -8,8 +8,16 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🎭 **Animated Characters**: Support for multi-frame GIF animations with proper timing
 - 🪟 **Transparent Overlay**: Always-on-top window with system transparency 
 - 🖱️ **Interactive**: Click and drag interactions with animated responses
-- 🎮 **Game Features**: Optional Tamagotchi-style stats (hunger, happiness, health, energy) with time-based degradation *(Phase 1 Complete)*
-- 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Phase 2 Partial)*
+- 🎮 **Tamagotchi Game Features**: Complete virtual pet system with stats, progression, and achievements *(All Phases Complete)*
+  - **Stats System**: Hunger, happiness, health, energy with time-based degradation
+  - **Game Interactions**: Feed, play, pet with stat effects and cooldowns
+  - **Progression System**: Age-based evolution with size changes and animation overrides
+  - **Achievement System**: Track milestones with stat-based requirements and rewards
+  - **Random Events**: Probability-based events affecting character stats
+  - **Critical State Handling**: Special animations and responses for low stats
+  - **Mood-Based Animation**: Dynamic animation selection based on character's overall mood
+- 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Complete)*
+- 📊 **Stats Overlay**: Optional real-time stats display with progress bars *(Complete)*
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Cross-Platform**: Runs on Windows, macOS, and Linux (build on target platform)
 - 🪶 **Lightweight**: <50MB memory usage
@@ -38,6 +46,12 @@ go mod download
 # Add animation GIF files (see SETUP guide below)
 # Then run with default character
 go run cmd/companion/main.go
+
+# Enable Tamagotchi game features
+go run cmd/companion/main.go -game -character assets/characters/default/character_with_game_features.json
+
+# Show stats overlay for game mode
+go run cmd/companion/main.go -game -stats -character assets/characters/default/character_with_game_features.json
 ```
 
 ### 🎬 Animation Setup (Required)
@@ -49,6 +63,8 @@ Before running, you need to add GIF animation files:
    - `talking.gif` - Speaking animation  
    - `happy.gif` - Happy/excited animation
    - `sad.gif` - Sad/disappointed animation
+   - `hungry.gif` - Hungry animation (for game features)
+   - `eating.gif` - Eating animation (for game features)
 
 2. **GIF Requirements**:
    - Format: Animated GIF with transparency
@@ -97,6 +113,38 @@ All dependencies use permissive licenses (BSD-3-Clause) that allow commercial us
 2. **Interact**: Click on the character to trigger dialog responses
 3. **Move**: Drag the character around your desktop (if enabled)
 4. **Configure**: Edit `assets/characters/default/character.json` to customize behavior
+
+### Game Mode Usage
+
+Enable Tamagotchi-style game features with the `-game` flag:
+
+```bash
+# Basic game mode
+go run cmd/companion/main.go -game -character assets/characters/default/character_with_game_features.json
+
+# Game mode with stats overlay
+go run cmd/companion/main.go -game -stats -character assets/characters/default/character_with_game_features.json
+
+# Choose difficulty level
+go run cmd/companion/main.go -game -stats -character assets/characters/easy/character.json      # Beginner
+go run cmd/companion/main.go -game -stats -character assets/characters/normal/character.json    # Normal
+go run cmd/companion/main.go -game -stats -character assets/characters/hard/character.json      # Hard
+go run cmd/companion/main.go -game -stats -character assets/characters/challenge/character.json # Expert
+```
+
+**Game Interactions**:
+- **Click**: Pet your character (increases happiness and health)
+- **Right-click**: Feed your character (increases hunger, shows interaction menu)
+- **Double-click**: Play with your character (increases happiness, decreases energy)
+- **Stats overlay**: Toggle with keyboard shortcut to monitor character's wellbeing
+- **Auto-save**: Game state automatically saves every 5 minutes
+
+**Character Care**:
+- **Monitor Stats**: Hunger, happiness, health, and energy decrease over time
+- **Critical States**: Characters show special animations when stats are low
+- **Progression**: Characters evolve and grow as they age
+- **Achievements**: Unlock rewards by maintaining good care over time
+- **Random Events**: Unexpected events can affect your character's stats
 
 ### Character Cards
 
@@ -155,9 +203,9 @@ Characters are defined using JSON configuration files with this structure:
 - `movementEnabled` (boolean): Allow dragging the character (default: false)
 - `defaultSize` (number, 64-512): Character size in pixels (default: 128)
 
-#### Game Features (Optional - Phase 1 Available)
+#### Game Features (Complete Implementation)
 
-Character cards can include optional Tamagotchi-style game features:
+Character cards can include comprehensive Tamagotchi-style game features:
 
 ```json
 {
@@ -167,31 +215,125 @@ Character cards can include optional Tamagotchi-style game features:
       "max": 100,
       "degradationRate": 1.0,
       "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.5,
+      "criticalThreshold": 25
     }
   },
   "gameRules": {
     "statsDecayInterval": 60,
     "autoSaveInterval": 300,
-    "criticalStateAnimationPriority": true
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
   },
   "interactions": {
     "feed": {
       "triggers": ["rightclick"],
-      "effects": {"hunger": 25},
-      "animations": ["eating"],
-      "responses": ["Yum! Thank you!"],
-      "cooldown": 30
+      "effects": {"hunger": 25, "happiness": 5},
+      "animations": ["eating", "happy"],
+      "responses": ["Yum! Thank you!", "That was delicious!", "I feel much better now!"],
+      "cooldown": 30,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 20, "energy": -15},
+      "animations": ["happy"],
+      "responses": ["This is fun!", "I love playing with you!", "Let's play more!"],
+      "cooldown": 45,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 10, "health": 2},
+      "animations": ["happy"],
+      "responses": ["That feels nice!", "I love attention!", "Pet me more!"],
+      "cooldown": 15
     }
+  },
+  "progression": {
+    "levels": [
+      {
+        "name": "Baby",
+        "requirement": {"age": 0},
+        "size": 64,
+        "animations": {}
+      },
+      {
+        "name": "Child",
+        "requirement": {"age": 86400},
+        "size": 96,
+        "animations": {}
+      },
+      {
+        "name": "Adult",
+        "requirement": {"age": 259200},
+        "size": 128,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Well Fed",
+        "requirement": {
+          "hunger": {"maintainAbove": 80},
+          "maintainAbove": {"duration": 86400}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 10}
+        }
+      },
+      {
+        "name": "Happy Pet",
+        "requirement": {
+          "happiness": {"maintainAbove": 90},
+          "maintainAbove": {"duration": 43200}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 10}
+        }
+      }
+    ]
   }
 }
 ```
 
-**Game Feature Configuration:**
-- `stats`: Define character stats (hunger, happiness, health, energy) with degradation rates
-- `gameRules`: Configure game mechanics (decay intervals, auto-save, animation priorities)
-- `interactions`: Define game interactions (feed, play, pet) with stat effects
+**Game Feature Configuration**:
 
-For complete game features documentation, see `GAME_FEATURES_PHASE1.md`.
+- **Stats System**: Define character stats (hunger, happiness, health, energy) with individual degradation rates and critical thresholds
+- **Game Rules**: Configure game mechanics including decay intervals, auto-save frequency, and feature toggles
+- **Interactions**: Define game interactions (feed, play, pet) with stat effects, requirements, cooldowns, and animations
+- **Progression System**: Age-based evolution with size changes and animation overrides
+- **Achievement System**: Track milestones with complex stat-based requirements and reward stat boosts
+- **Random Events**: Probability-based events that can positively or negatively affect character stats
+- **Critical State Handling**: Special animations and responses when stats drop below thresholds
+- **Mood-Based Animation Selection**: Dynamic idle animation selection based on overall character mood
+
+**Available Difficulty Levels**:
+- **Easy** (`assets/characters/easy/`): Slower stat degradation, easier requirements
+- **Normal** (`assets/characters/normal/`): Balanced gameplay for regular users
+- **Hard** (`assets/characters/hard/`): Faster stat degradation, more challenging requirements
+- **Challenge** (`assets/characters/challenge/`): Extreme difficulty for expert players
+- **Specialist** (`assets/characters/specialist/`): Unique gameplay mechanics and requirements
+
+For complete game features documentation, see `GAME_FEATURES_PHASE1.md` and `PHASE2_IMPLEMENTATION_COMPLETE.md`.
 
 ### Creating Custom Characters
 
@@ -216,6 +358,45 @@ For complete game features documentation, see `GAME_FEATURES_PHASE1.md`.
    go run cmd/companion/main.go -character assets/characters/mycharacter/character.json
    ```
 
+## 🎮 Command-Line Options
+
+The companion supports various command-line flags for different modes and configurations:
+
+```bash
+# Basic options
+go run cmd/companion/main.go [options]
+
+-character <path>     Path to character configuration file (default: "assets/characters/default/character.json")
+-debug               Enable debug logging for troubleshooting
+-version             Show version information
+
+# Game features (Tamagotchi mode)
+-game                Enable Tamagotchi game features (stats, interactions, progression)
+-stats               Show real-time stats overlay (requires -game)
+
+# Performance profiling
+-memprofile <file>   Write memory profile to file for analysis
+-cpuprofile <file>   Write CPU profile to file for analysis
+```
+
+**Example Usage**:
+```bash
+# Standard desktop pet
+go run cmd/companion/main.go
+
+# Game mode with easy difficulty
+go run cmd/companion/main.go -game -stats -character assets/characters/easy/character.json
+
+# Expert challenge mode
+go run cmd/companion/main.go -game -stats -character assets/characters/challenge/character.json
+
+# Debug mode with performance profiling
+go run cmd/companion/main.go -debug -memprofile=mem.prof -cpuprofile=cpu.prof
+
+# Custom character with game features
+go run cmd/companion/main.go -game -stats -character /path/to/my/character.json
+```
+
 ## 🛠️ Development
 
 ### Project Structure
@@ -229,19 +410,34 @@ desktop-companion/
 │   │   ├── animation.go            # GIF animation manager (stdlib)
 │   │   ├── behavior.go             # Character behavior logic
 │   │   ├── game_state.go           # Tamagotchi-style game state management
-│   │   └── card_test.go            # Unit tests
+│   │   ├── progression.go          # Age-based progression and achievements
+│   │   ├── random_events.go        # Probability-based random events system
+│   │   └── *_test.go               # Comprehensive unit tests
 │   ├── ui/
 │   │   ├── window.go              # Transparent window (fyne)
 │   │   ├── renderer.go            # Character rendering
-│   │   └── interaction.go         # Dialog bubbles (fyne)
+│   │   ├── interaction.go         # Dialog bubbles (fyne)
+│   │   ├── stats_overlay.go       # Real-time stats display
+│   │   └── *_test.go              # UI component tests
 │   ├── config/
 │   │   └── loader.go              # Configuration file loading
-│   └── persistence/               # Game state persistence (NEW)
-│       ├── save_manager.go        # JSON-based save/load system
-│       └── save_manager_test.go   # Comprehensive persistence tests
-├── assets/characters/default/      # Default character files
+│   ├── persistence/               # Game state persistence
+│   │   ├── save_manager.go        # JSON-based save/load system
+│   │   └── save_manager_test.go   # Comprehensive persistence tests
+│   └── monitoring/                # Performance monitoring
+│       ├── profiler.go            # Performance profiling and metrics
+│       └── profiler_test.go       # Performance testing
+├── assets/characters/             # Character configurations
+│   ├── default/                   # Basic character without game features
+│   ├── easy/                      # Easy difficulty game character
+│   ├── normal/                    # Normal difficulty game character
+│   ├── hard/                      # Hard difficulty game character
+│   ├── challenge/                 # Expert difficulty game character
+│   └── specialist/                # Unique gameplay mechanics
 ├── Makefile                       # Build automation
 ├── PERFORMANCE_MONITORING.md      # Performance metrics and monitoring
+├── GAME_FEATURES_PHASE1.md        # Game features documentation
+├── PHASE2_IMPLEMENTATION_COMPLETE.md # Implementation status
 ├── AUDIT.md                       # Code quality and functional audit
 └── LICENSES.md                    # License information
 ```
@@ -357,6 +553,21 @@ sudo apt-get install libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev lib
 - Try different desktop environments (GNOME, KDE, XFCE)
 - Check window manager documentation for overlay support
 
+**Game features not working**:
+- Ensure you're using the `-game` flag to enable Tamagotchi features
+- Use character cards with game features (e.g., `character_with_game_features.json`)
+- Check that the character card has `stats`, `interactions`, and `gameRules` sections
+
+**Stats overlay not visible**:
+- Ensure both `-game` and `-stats` flags are enabled
+- Try pressing the stats toggle keyboard shortcut
+- Verify the character card has valid stats configuration
+
+**Save game not loading**:
+- Check permissions on save directory (`~/.local/share/desktop-companion/`)
+- Ensure character name matches between save file and character card
+- Try starting fresh if save file is corrupted (will auto-regenerate)
+
 ### Debug Mode
 
 Enable debug logging for troubleshooting:
@@ -370,6 +581,9 @@ This provides detailed output about:
 - Animation file processing
 - Window creation and positioning
 - Performance metrics and memory usage
+- Game state updates and stat changes (in game mode)
+- Save/load operations and persistence
+- Achievement progress and random events (in game mode)
 
 For additional help, see the debug output above or check `AUDIT.md` for known issues and resolutions.
 
@@ -412,10 +626,15 @@ See [LICENSES.md](LICENSES.md) for complete license information.
 ---
 
 **Minimum System Requirements**:
-- 512MB RAM available
-- 50MB disk space
+- 512MB RAM available (1GB recommended for game mode)
+- 50MB disk space (100MB recommended with save files)
 - OpenGL 2.1 or higher (for hardware acceleration)
 - X11 (Linux), Cocoa (macOS), or Win32 (Windows) display server
 
-**Note**: This application requires GIF animation files to run. See the setup instructions above for details on adding animations.
+**Recommended for Game Mode**:
+- 1GB RAM for smooth stats processing
+- 100MB disk space for save files and multiple character cards
+- SSD storage for faster auto-save operations
+
+**Note**: This application requires GIF animation files to run. See the setup instructions above for details on adding animations. Game features require character cards with `stats`, `interactions`, and `gameRules` configuration sections.
 ````
