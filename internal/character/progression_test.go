@@ -127,25 +127,25 @@ func TestProgressionState_Update_AchievementTracking(t *testing.T) {
 	// First update - should start tracking "Well Fed"
 	_, achievements := ps.Update(gameState, time.Second*30)
 	if len(achievements) != 1 {
-		t.Errorf("Expected 1 achievement (Happy Pet), got %d", len(achievements))
+		t.Errorf("Expected 1 achievement (Happy Pet), got %d: %v", len(achievements), achievements)
 	}
-	if achievements[0] != "Happy Pet" {
+	if len(achievements) > 0 && achievements[0] != "Happy Pet" {
 		t.Errorf("Expected 'Happy Pet' achievement, got '%s'", achievements[0])
 	}
 
 	// Second update - should complete "Well Fed" after duration
 	_, achievements = ps.Update(gameState, time.Second*30) // Total: 1 minute
 	if len(achievements) != 1 {
-		t.Errorf("Expected 1 achievement (Well Fed), got %d", len(achievements))
+		t.Errorf("Expected 1 achievement (Well Fed), got %d: %v", len(achievements), achievements)
 	}
-	if achievements[0] != "Well Fed" {
+	if len(achievements) > 0 && achievements[0] != "Well Fed" {
 		t.Errorf("Expected 'Well Fed' achievement, got '%s'", achievements[0])
 	}
 
 	// Verify both achievements are recorded
 	allAchievements := ps.GetAchievements()
 	if len(allAchievements) != 2 {
-		t.Errorf("Expected 2 total achievements, got %d", len(allAchievements))
+		t.Errorf("Expected 2 total achievements, got %d: %v", len(allAchievements), allAchievements)
 	}
 }
 
