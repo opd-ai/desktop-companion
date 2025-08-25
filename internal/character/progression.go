@@ -1,0 +1,497 @@
+package character
+
+import (
+	"encoding/json"
+	"fmt"
+	"sync"
+	"time"
+)
+
+// ProgressionState manages character level progression and achievements
+// Uses only Go standard library following "lazy programmer" principles
+type ProgressionState struct {
+	mu                   sync.RWMutex
+	CurrentLevel         string              `json:"currentLevel"`
+	Age                  time.Duration       `json:"age"`
+	TotalCareTime        time.Duration       `json:"totalCareTime"`
+	Achievements         []string            `json:"achievements"`
+	InteractionCounts    map[string]int      `json:"interactionCounts"`
+	LastLevelCheck       time.Time           `json:"lastLevelCheck"`
+	AchievementProgress  map[string]Progress `json:"achievementProgress"`
+	Config               *ProgressionConfig  `json:"config,omitempty"`
+}
+
+// Progress tracks achievement progress over time
+type Progress struct {
+	StartTime    time.Time     `json:"startTime"`
+	Duration     time.Duration `json:"duration"`
+	RequiredTime time.Duration `json:"requiredTime"`
+	MetCriteria  bool          `json:"metCriteria"`
+}
+
+// ProgressionConfig defines progression rules from character card JSON
+type ProgressionConfig struct {
+	Levels       []LevelConfig       `json:"levels"`
+	Achievements []AchievementConfig `json:"achievements"`
+}
+
+// LevelConfig defines a character level with requirements and changes
+type LevelConfig struct {
+	Name        string            `json:"name"`
+	Requirement map[string]int64  `json:"requirement"` // age in seconds, other criteria
+	Size        int               `json:"size"`        // Character size at this level
+	Animations  map[string]string `json:"animations"`  // Animation overrides for this level
+}
+
+// AchievementConfig defines an achievement with stat-based requirements
+type AchievementConfig struct {
+	Name        string                            `json:"name"`
+	Requirement map[string]map[string]interface{} `json:"requirement"` // Complex stat requirements
+	Reward      *AchievementReward                `json:"reward,omitempty"`
+}
+
+// AchievementReward defines what the character gets for achieving something
+type AchievementReward struct {
+	StatBoosts map[string]float64 `json:"statBoosts,omitempty"` // Permanent stat increases
+	Animations map[string]string  `json:"animations,omitempty"` // Unlocked animations
+	Size       int                `json:"size,omitempty"`       // Size change
+}
+
+// NewProgressionState creates a new progression state with configuration
+func NewProgressionState(config *ProgressionConfig) *ProgressionState {
+	ps := &ProgressionState{
+		CurrentLevel:        "Baby", // Default starting level
+		Age:                 0,
+		TotalCareTime:       0,
+		Achievements:        make([]string, 0),
+		InteractionCounts:   make(map[string]int),
+		LastLevelCheck:      time.Now(),
+		AchievementProgress: make(map[string]Progress),
+		Config:              config,
+	}
+
+	// Initialize achievement progress tracking
+	if config != nil {
+		for _, achievement := range config.Achievements {
+			ps.AchievementProgress[achievement.Name] = Progress{
+				StartTime:   time.Now(),
+				MetCriteria: false,
+			}
+		}
+	}
+
+	return ps
+}
+
+// Update progression state based on current game state and elapsed time
+// Returns true if level changed, list of newly earned achievements
+func (ps *ProgressionState) Update(gameState *GameState, elapsed time.Duration) (bool, []string) {
+	if ps == nil || ps.Config == nil {
+		return false, nil
+	}
+
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
+	ps.Age += elapsed
+	ps.TotalCareTime += elapsed
+
+	levelChanged := ps.checkLevelProgression()
+	newAchievements := ps.checkAchievements(gameState)
+
+	ps.LastLevelCheck = time.Now()
+
+	return levelChanged, newAchievements
+}
+
+// checkLevelProgression evaluates if character should advance to next level
+func (ps *ProgressionState) checkLevelProgression() bool {
+	if ps.Config == nil {
+		return false
+	}
+
+	currentLevelIndex := ps.getCurrentLevelIndex()
+	ageSeconds := int64(ps.Age.Seconds())
+
+	// Check each level after current level
+	for i := currentLevelIndex + 1; i < len(ps.Config.Levels); i++ {
+		level := ps.Config.Levels[i]
+		
+		// Check age requirement
+		if ageReq, hasAge := level.Requirement["age"]; hasAge {
+			if ageSeconds >= ageReq {
+				ps.CurrentLevel = level.Name
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// getCurrentLevelIndex finds the index of current level in config
+func (ps *ProgressionState) getCurrentLevelIndex() int {
+	if ps.Config == nil {
+		return 0
+	}
+
+	for i, level := range ps.Config.Levels {
+		if level.Name == ps.CurrentLevel {
+			return i
+		}
+	}
+
+	return 0 // Default to first level if current not found
+}
+
+// checkAchievements evaluates achievement progress and completion
+func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
+	if ps.Config == nil || gameState == nil {
+		return nil
+	}
+
+	newAchievements := make([]string, 0)
+
+	for _, achievement := range ps.Config.Achievements {
+		// Skip already earned achievements
+		if ps.hasAchievement(achievement.Name) {
+			continue
+		}
+
+		progress := ps.AchievementProgress[achievement.Name]
+		
+		// Check if current stats meet achievement criteria
+		metCriteria := ps.evaluateAchievementRequirement(achievement.Requirement, gameState)
+		
+		if metCriteria && !progress.MetCriteria {
+			// Just started meeting criteria
+			progress.StartTime = time.Now()
+			progress.MetCriteria = true
+			
+			// Extract required duration if specified
+			if req, hasReq := achievement.Requirement["maintainAbove"]; hasReq {
+				if duration, hasDuration := req["duration"].(float64); hasDuration {
+					progress.RequiredTime = time.Duration(duration) * time.Second
+				}
+			}
+		} else if !metCriteria && progress.MetCriteria {
+			// No longer meeting criteria - reset progress
+			progress.MetCriteria = false
+			progress.Duration = 0
+		}
+
+		if progress.MetCriteria {
+			// Update duration of criteria being met
+			progress.Duration = time.Since(progress.StartTime)
+			
+			// Check if duration requirement is satisfied
+			if progress.RequiredTime > 0 && progress.Duration >= progress.RequiredTime {
+				ps.Achievements = append(ps.Achievements, achievement.Name)
+				newAchievements = append(newAchievements, achievement.Name)
+				
+				// Apply achievement rewards
+				ps.applyAchievementReward(achievement.Reward, gameState)
+			} else if progress.RequiredTime == 0 {
+				// Instant achievement (no duration requirement)
+				ps.Achievements = append(ps.Achievements, achievement.Name)
+				newAchievements = append(newAchievements, achievement.Name)
+				
+				// Apply achievement rewards
+				ps.applyAchievementReward(achievement.Reward, gameState)
+			}
+		}
+
+		ps.AchievementProgress[achievement.Name] = progress
+	}
+
+	return newAchievements
+}
+
+// evaluateAchievementRequirement checks if current game state meets achievement criteria
+func (ps *ProgressionState) evaluateAchievementRequirement(requirement map[string]map[string]interface{}, gameState *GameState) bool {
+	for statName, criteria := range requirement {
+		// Skip special achievement requirement types
+		if statName == "maintainAbove" {
+			continue
+		}
+
+		currentValue := gameState.GetStat(statName)
+		
+		// Check maintainAbove requirement
+		if maintainAbove, hasMA := criteria["maintainAbove"]; hasMA {
+			if threshold, ok := maintainAbove.(float64); ok {
+				if currentValue < threshold {
+					return false
+				}
+			}
+		}
+
+		// Check minimum value requirement
+		if minVal, hasMin := criteria["min"]; hasMin {
+			if threshold, ok := minVal.(float64); ok {
+				if currentValue < threshold {
+					return false
+				}
+			}
+		}
+
+		// Check maximum value requirement
+		if maxVal, hasMax := criteria["max"]; hasMax {
+			if threshold, ok := maxVal.(float64); ok {
+				if currentValue > threshold {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
+}
+
+// applyAchievementReward applies rewards from completing an achievement
+func (ps *ProgressionState) applyAchievementReward(reward *AchievementReward, gameState *GameState) {
+	if reward == nil {
+		return
+	}
+
+	// Apply permanent stat boosts
+	if len(reward.StatBoosts) > 0 {
+		for statName, boost := range reward.StatBoosts {
+			if stat, exists := gameState.Stats[statName]; exists {
+				// Increase the maximum value of the stat
+				stat.Max += boost
+				// Also increase current value to match
+				stat.Current += boost
+			}
+		}
+	}
+
+	// Note: Animation and size rewards would be applied at the UI level
+	// This keeps the progression system focused on data management
+}
+
+// hasAchievement checks if an achievement has already been earned
+func (ps *ProgressionState) hasAchievement(name string) bool {
+	for _, achievement := range ps.Achievements {
+		if achievement == name {
+			return true
+		}
+	}
+	return false
+}
+
+// RecordInteraction increments the count for a specific interaction type
+func (ps *ProgressionState) RecordInteraction(interactionType string) {
+	if ps == nil {
+		return
+	}
+
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
+	ps.InteractionCounts[interactionType]++
+}
+
+// GetCurrentLevel returns the current level configuration
+func (ps *ProgressionState) GetCurrentLevel() *LevelConfig {
+	if ps == nil || ps.Config == nil {
+		return nil
+	}
+
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	for _, level := range ps.Config.Levels {
+		if level.Name == ps.CurrentLevel {
+			return &level
+		}
+	}
+
+	return nil
+}
+
+// GetAge returns the character's current age
+func (ps *ProgressionState) GetAge() time.Duration {
+	if ps == nil {
+		return 0
+	}
+
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	return ps.Age
+}
+
+// GetAchievements returns a copy of earned achievements
+func (ps *ProgressionState) GetAchievements() []string {
+	if ps == nil {
+		return nil
+	}
+
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	achievements := make([]string, len(ps.Achievements))
+	copy(achievements, ps.Achievements)
+	return achievements
+}
+
+// GetInteractionCounts returns a copy of interaction counts
+func (ps *ProgressionState) GetInteractionCounts() map[string]int {
+	if ps == nil {
+		return nil
+	}
+
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	counts := make(map[string]int)
+	for k, v := range ps.InteractionCounts {
+		counts[k] = v
+	}
+	return counts
+}
+
+// GetCurrentSize returns the character size for the current level
+func (ps *ProgressionState) GetCurrentSize() int {
+	currentLevel := ps.GetCurrentLevel()
+	if currentLevel == nil || currentLevel.Size == 0 {
+		return 128 // Default size
+	}
+	return currentLevel.Size
+}
+
+// GetLevelAnimation returns level-specific animation if available
+func (ps *ProgressionState) GetLevelAnimation(animationName string) (string, bool) {
+	currentLevel := ps.GetCurrentLevel()
+	if currentLevel == nil || len(currentLevel.Animations) == 0 {
+		return "", false
+	}
+
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	animation, exists := currentLevel.Animations[animationName]
+	return animation, exists
+}
+
+// MarshalJSON implements custom JSON marshaling for save files
+func (ps *ProgressionState) MarshalJSON() ([]byte, error) {
+	if ps == nil {
+		return []byte("null"), nil
+	}
+
+	ps.mu.RLock()
+	defer ps.mu.RUnlock()
+
+	// Create a serializable version of the struct
+	type Alias ProgressionState
+	return json.Marshal(&struct {
+		*Alias
+		AgeNanos           int64 `json:"ageNanos"`
+		TotalCareTimeNanos int64 `json:"totalCareTimeNanos"`
+	}{
+		Alias:              (*Alias)(ps),
+		AgeNanos:           int64(ps.Age),
+		TotalCareTimeNanos: int64(ps.TotalCareTime),
+	})
+}
+
+// UnmarshalJSON implements custom JSON unmarshaling for save files
+func (ps *ProgressionState) UnmarshalJSON(data []byte) error {
+	type Alias ProgressionState
+	aux := &struct {
+		*Alias
+		AgeNanos           int64 `json:"ageNanos"`
+		TotalCareTimeNanos int64 `json:"totalCareTimeNanos"`
+	}{
+		Alias: (*Alias)(ps),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	ps.Age = time.Duration(aux.AgeNanos)
+	ps.TotalCareTime = time.Duration(aux.TotalCareTimeNanos)
+	return nil
+}
+
+// Validate ensures the progression state has consistent data
+func (ps *ProgressionState) Validate() error {
+	if ps == nil {
+		return fmt.Errorf("progression state is nil")
+	}
+
+	if ps.Age < 0 {
+		return fmt.Errorf("age cannot be negative")
+	}
+
+	if ps.TotalCareTime < 0 {
+		return fmt.Errorf("total care time cannot be negative")
+	}
+
+	if ps.Config != nil {
+		if err := ps.validateConfig(); err != nil {
+			return fmt.Errorf("invalid progression config: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// validateConfig validates the progression configuration
+func (ps *ProgressionState) validateConfig() error {
+	if len(ps.Config.Levels) == 0 {
+		return fmt.Errorf("must have at least one level")
+	}
+
+	// Validate levels
+	for i, level := range ps.Config.Levels {
+		if err := ps.validateLevel(level, i); err != nil {
+			return fmt.Errorf("level %d (%s): %w", i, level.Name, err)
+		}
+	}
+
+	// Validate achievements
+	for i, achievement := range ps.Config.Achievements {
+		if err := ps.validateAchievement(achievement, i); err != nil {
+			return fmt.Errorf("achievement %d (%s): %w", i, achievement.Name, err)
+		}
+	}
+
+	return nil
+}
+
+// validateLevel validates a single level configuration
+func (ps *ProgressionState) validateLevel(level LevelConfig, index int) error {
+	if len(level.Name) == 0 {
+		return fmt.Errorf("name cannot be empty")
+	}
+
+	if level.Size < 32 || level.Size > 1024 {
+		return fmt.Errorf("size must be 32-1024 pixels, got %d", level.Size)
+	}
+
+	// First level should have age requirement of 0
+	if index == 0 {
+		if ageReq, hasAge := level.Requirement["age"]; hasAge && ageReq != 0 {
+			return fmt.Errorf("first level must have age requirement of 0, got %d", ageReq)
+		}
+	}
+
+	return nil
+}
+
+// validateAchievement validates a single achievement configuration
+func (ps *ProgressionState) validateAchievement(achievement AchievementConfig, index int) error {
+	if len(achievement.Name) == 0 {
+		return fmt.Errorf("name cannot be empty")
+	}
+
+	if len(achievement.Requirement) == 0 {
+		return fmt.Errorf("must have at least one requirement")
+	}
+
+	return nil
+}
