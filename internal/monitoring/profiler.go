@@ -103,6 +103,8 @@ func (p *Profiler) startCPUProfilingIfEnabled(cpuProfilePath string, debug bool)
 
 // startMonitoring launches memory and frame rate monitoring goroutines
 func (p *Profiler) startMonitoring(debug bool) {
+	// Perform initial memory reading to avoid race condition in tests
+	p.updateMemoryStats(debug)
 	go p.monitorMemory(debug)
 	go p.monitorFrameRate(debug)
 }
