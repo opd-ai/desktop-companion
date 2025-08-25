@@ -850,12 +850,9 @@ func (c *Character) selectContextualResponse(responses []string, interactionType
 // recordRomanceInteraction records the interaction for the romance memory system
 // Provides foundation for future relationship history and progression features
 func (c *Character) recordRomanceInteraction(interactionType, response string, statsBefore, statsAfter map[string]float64) {
-	// Call existing GameState method if available, otherwise this is a placeholder
-	// for future romance memory system implementation
+	// Use the GameState method to record the romance interaction
 	if c.gameState != nil {
-		// The GameState.RecordRomanceInteraction method needs to be implemented in game_state.go
-		// For now, we'll implement a basic version here or skip this functionality
-		// This would be part of Phase 3 (Romance Events & Memory System)
+		c.gameState.RecordRomanceInteraction(interactionType, response, statsBefore, statsAfter)
 	}
 }
 

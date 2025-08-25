@@ -65,12 +65,15 @@ type RomanceMemory struct {
 // Uses current time as baseline for all time-based calculations
 func NewGameState(statConfigs map[string]StatConfig, config *GameConfig) *GameState {
 	gs := &GameState{
-		Stats:           make(map[string]*Stat),
-		LastDecayUpdate: time.Now(),
-		CreationTime:    time.Now(),
-		TotalPlayTime:   0,
-		Config:          config,
-		Progression:     nil, // Will be set separately if progression is enabled
+		Stats:              make(map[string]*Stat),
+		LastDecayUpdate:    time.Now(),
+		CreationTime:       time.Now(),
+		TotalPlayTime:      0,
+		Config:             config,
+		Progression:        nil, // Will be set separately if progression is enabled
+		RelationshipLevel:  "Stranger", // Default relationship level
+		InteractionHistory: make(map[string][]time.Time),
+		RomanceMemories:    make([]RomanceMemory, 0),
 	}
 
 	// Initialize stats from configuration
