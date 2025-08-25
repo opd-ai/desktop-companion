@@ -153,9 +153,16 @@ func TestMoodBasedAnimationWithMissingAnimations(t *testing.T) {
 		},
 	}
 
+	// Create animations subdirectory and files
+	animDir := filepath.Join(tmpDir, "animations")
+	err = os.MkdirAll(animDir, 0755)
+	if err != nil {
+		t.Fatalf("Failed to create animations directory: %v", err)
+	}
+
 	// Create only idle and talking animations
-	createTestAnimationFile(t, tmpDir, "idle.gif")
-	createTestAnimationFile(t, tmpDir, "talking.gif")
+	createTestAnimationFile(t, animDir, "idle.gif")
+	createTestAnimationFile(t, animDir, "talking.gif")
 
 	char, err := New(card, tmpDir)
 	if err != nil {
