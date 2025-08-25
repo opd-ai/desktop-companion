@@ -135,8 +135,8 @@ func (c *Character) HandleRightClick() string {
 
 // HandleHover processes a hover interaction
 func (c *Character) HandleHover() string {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
+	c.mu.Lock() // Use write lock to properly synchronize cooldown updates
+	defer c.mu.Unlock()
 
 	// Only process hover if not recently interacted
 	if time.Since(c.lastInteraction) < 2*time.Second {
@@ -147,8 +147,8 @@ func (c *Character) HandleHover() string {
 		if dialog.Trigger == "hover" {
 			lastTrigger, exists := c.dialogCooldowns[dialog.Trigger]
 			if !exists || dialog.CanTrigger(lastTrigger) {
-				// Note: We don't update cooldown here to avoid write lock
-				// Hover should be less aggressive than clicks
+				// Update cooldown to prevent rapid hover spam
+				c.dialogCooldowns[dialog.Trigger] = time.Now()
 				return dialog.GetRandomResponse()
 			}
 		}
