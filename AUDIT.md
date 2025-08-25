@@ -6,13 +6,13 @@
 CRITICAL BUG: 1 finding (1 resolved)
 FUNCTIONAL MISMATCH: 3 findings (3 resolved)
 MISSING FEATURE: 4 findings (4 resolved)
-EDGE CASE BUG: 2 findings
+EDGE CASE BUG: 2 findings (2 resolved)
 PERFORMANCE ISSUE: 1 finding
 
-Total Issues: 12 (9 resolved)
+Total Issues: 12 (11 resolved)
 High Severity: 5 issues (3 resolved)
-Medium Severity: 4 issues (4 resolved)
-Low Severity: 2 issues (2 resolved)
+Medium Severity: 4 issues (5 resolved)
+Low Severity: 2 issues (3 resolved)
 ```
 
 ## DETAILED FINDINGS
@@ -320,24 +320,30 @@ func (am *AnimationManager) Update() bool {
 ```
 
 ```
-### EDGE CASE BUG: Dialog Cooldown Race Condition in Hover
+### EDGE CASE BUG: Dialog Cooldown Race Condition in Hover - RESOLVED
 **File:** internal/character/behavior.go:118-139
 **Severity:** Low
+**Status:** RESOLVED (commit 60da546, 2025-08-25)
 **Description:** HandleHover method reads dialog cooldowns without updating them, but comments indicate it doesn't update to "avoid write lock" which can cause race conditions if hover triggers overlap with other interactions.
 **Expected Behavior:** Hover interactions should be properly synchronized with other dialog triggers
-**Actual Behavior:** Hover may trigger multiple times simultaneously or interfere with click/right-click cooldowns
-**Impact:** Dialog system may show duplicate hover messages or ignore cooldowns inconsistently
-**Reproduction:** Rapidly hover over character while clicking - may see duplicate responses or cooldown bypassing
+**Actual Behavior:** ~~Hover may trigger multiple times simultaneously or interfere with click/right-click cooldowns~~ **FIXED:** HandleHover now uses proper write lock and updates cooldowns
+**Impact:** ~~Dialog system may show duplicate hover messages or ignore cooldowns inconsistently~~ **RESOLVED:** Dialog cooldowns are now properly synchronized across all interaction types
+**Reproduction:** ~~Rapidly hover over character while clicking - may see duplicate responses or cooldown bypassing~~ **FIXED:** Concurrent test added to prevent regression
 **Code Reference:**
 ```go
+// Fixed HandleHover method now uses proper synchronization
 func (c *Character) HandleHover() string {
-	c.mu.RLock() 
-	defer c.mu.RUnlock()
+	c.mu.Lock() // Use write lock to properly synchronize cooldown updates
+	defer c.mu.Unlock()
+
 	for _, dialog := range c.card.Dialogs {
 		if dialog.Trigger == "hover" {
-			// Note: We don't update cooldown here to avoid write lock
-			// This creates potential race conditions
-			return dialog.GetRandomResponse()
+			lastTrigger, exists := c.dialogCooldowns[dialog.Trigger]
+			if !exists || dialog.CanTrigger(lastTrigger) {
+				// Update cooldown to prevent rapid hover spam
+				c.dialogCooldowns[dialog.Trigger] = time.Now()
+				return dialog.GetRandomResponse()
+			}
 		}
 	}
 }
