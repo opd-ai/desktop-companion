@@ -1,0 +1,202 @@
+{
+  "name": "Chaos Companion",
+  "description": "An extreme challenge for master pet owners. This chaotic creature has unpredictable needs, rapid stat changes, and requires expert-level care. Only attempt if you've mastered all other difficulty levels!",
+  
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "CHAOS! CHAOS! I NEED CHAOS!",
+        "Everything changes! Nothing stays the same!",
+        "Can you keep up with my madness?",
+        "Unpredictability is my middle name!",
+        "Are you ready for the ultimate challenge?",
+        "I change faster than you can blink!",
+        "Only the most skilled can handle me!"
+      ],
+      "animation": "talking",
+      "cooldown": 12
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Quick! I need something RIGHT NOW!",
+        "No time to waste! Act fast!",
+        "This better be exactly what I need!",
+        "Speed is everything in chaos!",
+        "Can you handle the pressure?"
+      ],
+      "animation": "happy",
+      "cooldown": 8
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 15,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 4.0,
+      "criticalThreshold": 50
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 3.5,
+      "criticalThreshold": 45
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 2.5,
+      "criticalThreshold": 40
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 5.0,
+      "criticalThreshold": 55
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 15,
+    "autoSaveInterval": 60,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 12, "happiness": -2, "energy": 3},
+      "animations": ["eating", "sad"],
+      "responses": [
+        "This isn't quite what I wanted...",
+        "Food is chaos! More! Different!",
+        "I'm already thinking about the next meal!",
+        "Sustenance achieved! But for how long?",
+        "Feed me again in 30 seconds!"
+      ],
+      "cooldown": 90,
+      "requirements": {"hunger": {"max": 60}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 8, "energy": -35, "health": -5},
+      "animations": ["happy", "sad"],
+      "responses": [
+        "CHAOS PLAY! MORE CHAOS!",
+        "That was intense! I need more!",
+        "I'm exhausted but EXCITED!",
+        "Play harder! Challenge me more!",
+        "This chaos feeds my soul!"
+      ],
+      "cooldown": 120,
+      "requirements": {"energy": {"min": 40}}
+    },
+    "stabilize": {
+      "triggers": ["click"],
+      "effects": {"happiness": 3, "health": 8, "energy": -8, "hunger": -5},
+      "animations": ["happy"],
+      "responses": [
+        "Temporary stability... but chaos returns!",
+        "A moment of peace in the storm...",
+        "This won't last long, you know!",
+        "Brief respite from the madness!",
+        "Chaos will return! It always does!"
+      ],
+      "cooldown": 40
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Chaotic Spawn",
+        "requirement": {"age": 0},
+        "size": 96,
+        "animations": {}
+      },
+      {
+        "name": "Chaos Agent",
+        "requirement": {"age": 259200},
+        "size": 112,
+        "animations": {}
+      },
+      {
+        "name": "Master of Chaos",
+        "requirement": {"age": 777600},
+        "size": 144,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Chaos Survivor",
+        "requirement": {
+          "hunger": {"maintainAbove": 30},
+          "happiness": {"maintainAbove": 25},
+          "health": {"maintainAbove": 25},
+          "energy": {"maintainAbove": 30},
+          "maintainAbove": {"duration": 86400}
+        },
+        "reward": {
+          "statBoosts": {"health": 25}
+        }
+      },
+      {
+        "name": "Madness Tamer",
+        "requirement": {
+          "hunger": {"maintainAbove": 40},
+          "happiness": {"maintainAbove": 35},
+          "maintainAbove": {"duration": 172800}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 20, "energy": 15}
+        }
+      },
+      {
+        "name": "Chaos Champion",
+        "requirement": {
+          "age": {"min": 1209600},
+          "hunger": {"maintainAbove": 35},
+          "happiness": {"maintainAbove": 30},
+          "health": {"maintainAbove": 30},
+          "energy": {"maintainAbove": 35}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 30, "happiness": 30, "health": 30, "energy": 30}
+        }
+      },
+      {
+        "name": "Master of All Chaos",
+        "requirement": {
+          "hunger": {"min": 80},
+          "happiness": {"min": 80},
+          "health": {"min": 80},
+          "energy": {"min": 80}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 50, "happiness": 50, "health": 50, "energy": 50}
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "name": "High-Maintenance Pet",
+  "description": "A demanding virtual pet that requires constant attention and skilled care. Only for experienced pet owners who enjoy a real challenge!",
+  
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "I need more attention than this!",
+        "You haven't been caring for me properly...",
+        "I'm quite demanding, you know.",
+        "This level of care is barely acceptable.",
+        "I expect better from you!"
+      ],
+      "animation": "talking",
+      "cooldown": 8
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Finally! I've been waiting forever!",
+        "You better have something good for me.",
+        "This had better be worth my time.",
+        "I suppose you'll do... for now."
+      ],
+      "animation": "sad",
+      "cooldown": 5
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 20,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 2.5,
+      "criticalThreshold": 35
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 2.0,
+      "criticalThreshold": 30
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 25
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 3.0,
+      "criticalThreshold": 40
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 30,
+    "autoSaveInterval": 120,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 15, "happiness": 2},
+      "animations": ["eating"],
+      "responses": [
+        "This will have to do, I suppose.",
+        "Not exactly gourmet, but it's food.",
+        "I've had better meals...",
+        "Next time, try harder to please me."
+      ],
+      "cooldown": 60,
+      "requirements": {"hunger": {"max": 70}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 12, "energy": -25},
+      "animations": ["happy"],
+      "responses": [
+        "That was... adequate.",
+        "I suppose that was mildly entertaining.",
+        "You're getting better at this.",
+        "Try to keep up with me next time!"
+      ],
+      "cooldown": 90,
+      "requirements": {"energy": {"min": 30}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 5, "health": 1},
+      "animations": ["happy"],
+      "responses": [
+        "I suppose that's acceptable.",
+        "You may continue...",
+        "Not bad, but I've had better.",
+        "That will do for now."
+      ],
+      "cooldown": 25
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Demanding Baby",
+        "requirement": {"age": 0},
+        "size": 64,
+        "animations": {}
+      },
+      {
+        "name": "Difficult Child",
+        "requirement": {"age": 172800},
+        "size": 96,
+        "animations": {}
+      },
+      {
+        "name": "Exacting Adult",
+        "requirement": {"age": 518400},
+        "size": 128,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Barely Adequate",
+        "requirement": {
+          "hunger": {"maintainAbove": 60},
+          "maintainAbove": {"duration": 172800}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 5}
+        }
+      },
+      {
+        "name": "Somewhat Pleased",
+        "requirement": {
+          "happiness": {"maintainAbove": 70},
+          "maintainAbove": {"duration": 86400}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 5}
+        }
+      },
+      {
+        "name": "Survival Master",
+        "requirement": {
+          "health": {"min": 80},
+          "hunger": {"min": 50},
+          "happiness": {"min": 50},
+          "energy": {"min": 40}
+        },
+        "reward": {
+          "statBoosts": {"health": 15, "hunger": 10, "happiness": 10, "energy": 10}
+        }
+      },
+      {
+        "name": "Expert Caretaker",
+        "requirement": {
+          "age": {"min": 1209600}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 25, "health": 20}
+        }
+      }
+    ]
+  }
+}

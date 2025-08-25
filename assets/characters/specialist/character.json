@@ -1,0 +1,186 @@
+{
+  "name": "Sleepyhead",
+  "description": "A specialized virtual pet that focuses primarily on energy management. This drowsy companion needs lots of rest and gets tired easily, but rewards good sleep habits.",
+  
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "*yawn* Oh, hello there...",
+        "I'm feeling a bit drowsy...",
+        "Do you mind if I rest my eyes?",
+        "Maybe we could take a nap together?",
+        "*stretches* I could use some energy..."
+      ],
+      "animation": "talking",
+      "cooldown": 7
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "*sleepily* What can I do for you?",
+        "I hope this doesn't require too much energy...",
+        "Maybe something relaxing?",
+        "*yawn* I'm all ears... sort of."
+      ],
+      "animation": "sad",
+      "cooldown": 4
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 25,
+    "movementEnabled": false,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.6,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 3.5,
+      "criticalThreshold": 50
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 45,
+    "autoSaveInterval": 400,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 20, "energy": 5},
+      "animations": ["eating"],
+      "responses": [
+        "*munches sleepily* Thanks...",
+        "This gives me a little energy...",
+        "Food always makes me sleepy...",
+        "*yawn* That hit the spot."
+      ],
+      "cooldown": 35,
+      "requirements": {"hunger": {"max": 85}}
+    },
+    "rest": {
+      "triggers": ["doubleclick"],
+      "effects": {"energy": 45, "happiness": 8, "health": 3},
+      "animations": ["happy"],
+      "responses": [
+        "*contented sigh* Much better!",
+        "That was exactly what I needed!",
+        "I feel so refreshed now!",
+        "Thank you for letting me rest!"
+      ],
+      "cooldown": 20,
+      "requirements": {"energy": {"max": 75}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 8, "energy": -3},
+      "animations": ["happy"],
+      "responses": [
+        "*purrs softly* That's nice...",
+        "Gentle touches are the best...",
+        "This is making me drowsy...",
+        "*sleepy contentment*"
+      ],
+      "cooldown": 12
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Sleepy Baby",
+        "requirement": {"age": 0},
+        "size": 80,
+        "animations": {}
+      },
+      {
+        "name": "Drowsy Child",
+        "requirement": {"age": 64800},
+        "size": 112,
+        "animations": {}
+      },
+      {
+        "name": "Well-Rested Adult",
+        "requirement": {"age": 194400},
+        "size": 144,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Power Napper",
+        "requirement": {
+          "energy": {"maintainAbove": 60},
+          "maintainAbove": {"duration": 64800}
+        },
+        "reward": {
+          "statBoosts": {"energy": 20}
+        }
+      },
+      {
+        "name": "Sleep Champion",
+        "requirement": {
+          "energy": {"maintainAbove": 80},
+          "maintainAbove": {"duration": 43200}
+        },
+        "reward": {
+          "statBoosts": {"energy": 30, "health": 10}
+        }
+      },
+      {
+        "name": "Energy Master",
+        "requirement": {
+          "energy": {"min": 95}
+        },
+        "reward": {
+          "statBoosts": {"energy": 25, "happiness": 15}
+        }
+      },
+      {
+        "name": "Restful Week",
+        "requirement": {
+          "age": {"min": 604800},
+          "energy": {"maintainAbove": 50}
+        },
+        "reward": {
+          "statBoosts": {"energy": 40, "health": 20, "happiness": 15}
+        }
+      }
+    ]
+  }
+}

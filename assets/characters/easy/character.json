@@ -1,0 +1,185 @@
+{
+  "name": "Gentle Companion",
+  "description": "A low-maintenance virtual pet perfect for beginners. This easy-going companion degrades slowly and responds well to basic care.",
+  
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "I'm feeling great today! 😊",
+        "Thanks for taking such good care of me!",
+        "You're the best companion ever!",
+        "Life is wonderful with you around!",
+        "I love spending time with you!"
+      ],
+      "animation": "talking",
+      "cooldown": 3
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "I'm always ready for care!",
+        "What would you like to do?",
+        "Feed me or play with me!",
+        "I'm so easy to please!"
+      ],
+      "animation": "happy",
+      "cooldown": 2
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 45,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 15
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 10
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 5
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 20
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 120,
+    "autoSaveInterval": 600,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 40, "happiness": 10},
+      "animations": ["eating", "happy"],
+      "responses": [
+        "Wow, that was amazing!",
+        "You always know exactly what I need!",
+        "I feel so much better now!",
+        "Thank you for the delicious meal!"
+      ],
+      "cooldown": 15,
+      "requirements": {"hunger": {"max": 90}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 30, "energy": -10},
+      "animations": ["happy"],
+      "responses": [
+        "This is the best game ever!",
+        "I love playing with you!",
+        "More! More! Let's keep playing!",
+        "You make everything so fun!"
+      ],
+      "cooldown": 20,
+      "requirements": {"energy": {"min": 15}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 15, "health": 5},
+      "animations": ["happy"],
+      "responses": [
+        "That feels absolutely wonderful!",
+        "Your touch is so comforting!",
+        "I could get used to this treatment!",
+        "You have magic hands!"
+      ],
+      "cooldown": 8
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Happy Baby",
+        "requirement": {"age": 0},
+        "size": 96,
+        "animations": {}
+      },
+      {
+        "name": "Cheerful Child",
+        "requirement": {"age": 43200},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Content Adult",
+        "requirement": {"age": 129600},
+        "size": 160,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Well Fed",
+        "requirement": {
+          "hunger": {"maintainAbove": 70},
+          "maintainAbove": {"duration": 43200}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 15}
+        }
+      },
+      {
+        "name": "Happy Pet",
+        "requirement": {
+          "happiness": {"maintainAbove": 80},
+          "maintainAbove": {"duration": 21600}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 15}
+        }
+      },
+      {
+        "name": "Healthy",
+        "requirement": {
+          "health": {"min": 90}
+        },
+        "reward": {
+          "statBoosts": {"health": 10}
+        }
+      },
+      {
+        "name": "First Week",
+        "requirement": {
+          "age": {"min": 604800}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 20, "health": 10}
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "name": "Balanced Buddy",
+  "description": "A well-balanced virtual pet that offers a moderate challenge. Perfect for users who want a realistic pet care experience.",
+  
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello there!",
+        "How are you doing?",
+        "I'm glad to see you!",
+        "Thanks for checking on me!",
+        "I appreciate your attention!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "What would you like to do?",
+        "I'm ready for some interaction!",
+        "Let's do something together!",
+        "Right-click for options!"
+      ],
+      "animation": "happy",
+      "cooldown": 3
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.5,
+      "criticalThreshold": 25
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 60,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 25, "happiness": 5},
+      "animations": ["eating", "happy"],
+      "responses": [
+        "Thanks for the meal!",
+        "That was delicious!",
+        "I feel much better now!",
+        "Yum! Just what I needed!"
+      ],
+      "cooldown": 30,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 20, "energy": -15},
+      "animations": ["happy"],
+      "responses": [
+        "This is fun!",
+        "I love playing with you!",
+        "Let's play more!",
+        "Great game!"
+      ],
+      "cooldown": 45,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 10, "health": 2},
+      "animations": ["happy"],
+      "responses": [
+        "That feels nice!",
+        "I love attention!",
+        "Pet me more!",
+        "So soothing!"
+      ],
+      "cooldown": 15
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Baby",
+        "requirement": {"age": 0},
+        "size": 64,
+        "animations": {}
+      },
+      {
+        "name": "Child",
+        "requirement": {"age": 86400},
+        "size": 96,
+        "animations": {}
+      },
+      {
+        "name": "Adult",
+        "requirement": {"age": 259200},
+        "size": 128,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Well Fed",
+        "requirement": {
+          "hunger": {"maintainAbove": 80},
+          "maintainAbove": {"duration": 86400}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 10}
+        }
+      },
+      {
+        "name": "Happy Pet",
+        "requirement": {
+          "happiness": {"maintainAbove": 90},
+          "maintainAbove": {"duration": 43200}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 10}
+        }
+      },
+      {
+        "name": "Healthy",
+        "requirement": {
+          "health": {"min": 95}
+        },
+        "reward": {
+          "statBoosts": {"health": 5}
+        }
+      }
+    ]
+  }
+}
