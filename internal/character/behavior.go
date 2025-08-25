@@ -517,15 +517,15 @@ func (c *Character) selectAnimationFromTriggeredStates(triggeredStates []string)
 func (c *Character) selectIdleAnimation() string {
 	// Default to idle animation
 	defaultIdle := "idle"
-	
+
 	// Check if mood-based animations are enabled
 	if c.gameState == nil || c.gameState.Config == nil || !c.gameState.Config.MoodBasedAnimations {
 		return defaultIdle
 	}
-	
+
 	// Get overall mood (0-100 scale)
 	mood := c.gameState.GetOverallMood()
-	
+
 	// Select animation based on mood thresholds
 	var moodAnimation string
 	switch {
@@ -540,12 +540,12 @@ func (c *Character) selectIdleAnimation() string {
 	default:
 		moodAnimation = "sad" // Very low mood
 	}
-	
+
 	// Check if the selected mood animation exists, fallback to idle if not
 	if _, exists := c.card.Animations[moodAnimation]; exists {
 		return moodAnimation
 	}
-	
+
 	return defaultIdle
 }
 
