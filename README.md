@@ -8,6 +8,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🎭 **Animated Characters**: Support for multi-frame GIF animations with proper timing
 - 🪟 **Transparent Overlay**: Always-on-top window with system transparency 
 - 🖱️ **Interactive**: Click and drag interactions with animated responses
+- 🎮 **Game Features**: Optional Tamagotchi-style stats (hunger, happiness, health, energy) with time-based degradation *(Phase 1 Complete)*
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Cross-Platform**: Runs on Windows, macOS, and Linux (build on target platform)
 - 🪶 **Lightweight**: <50MB memory usage
@@ -152,6 +153,44 @@ Characters are defined using JSON configuration files with this structure:
 - `idleTimeout` (number, 10-300): Seconds before returning to idle animation
 - `movementEnabled` (boolean): Allow dragging the character (default: false)
 - `defaultSize` (number, 64-512): Character size in pixels (default: 128)
+
+#### Game Features (Optional - Phase 1 Available)
+
+Character cards can include optional Tamagotchi-style game features:
+
+```json
+{
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 60,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 25},
+      "animations": ["eating"],
+      "responses": ["Yum! Thank you!"],
+      "cooldown": 30
+    }
+  }
+}
+```
+
+**Game Feature Configuration:**
+- `stats`: Define character stats (hunger, happiness, health, energy) with degradation rates
+- `gameRules`: Configure game mechanics (decay intervals, auto-save, animation priorities)
+- `interactions`: Define game interactions (feed, play, pet) with stat effects
+
+For complete game features documentation, see `GAME_FEATURES_PHASE1.md`.
 
 ### Creating Custom Characters
 

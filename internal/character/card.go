@@ -18,6 +18,10 @@ type CharacterCard struct {
 	Animations  map[string]string `json:"animations"`
 	Dialogs     []Dialog          `json:"dialogs"`
 	Behavior    Behavior          `json:"behavior"`
+	// Game feature extensions (Phase 1 implementation)
+	Stats        map[string]StatConfig        `json:"stats,omitempty"`
+	GameRules    *GameRulesConfig             `json:"gameRules,omitempty"`
+	Interactions map[string]InteractionConfig `json:"interactions,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -33,6 +37,27 @@ type Behavior struct {
 	IdleTimeout     int  `json:"idleTimeout"`     // Seconds before returning to idle
 	MovementEnabled bool `json:"movementEnabled"` // Allow dragging
 	DefaultSize     int  `json:"defaultSize"`     // Character size in pixels
+}
+
+// GameRulesConfig defines game-wide settings for Tamagotchi-style features
+type GameRulesConfig struct {
+	StatsDecayInterval             int  `json:"statsDecayInterval"`             // Seconds between stat degradation
+	AutoSaveInterval               int  `json:"autoSaveInterval"`               // Seconds between auto-saves
+	CriticalStateAnimationPriority bool `json:"criticalStateAnimationPriority"` // Priority for critical animations
+	DeathEnabled                   bool `json:"deathEnabled"`                   // Whether character can die
+	EvolutionEnabled               bool `json:"evolutionEnabled"`               // Whether character evolves
+	MoodBasedAnimations            bool `json:"moodBasedAnimations"`            // Use mood for animation selection
+}
+
+// InteractionConfig defines a game interaction (feed, play, etc.)
+type InteractionConfig struct {
+	Triggers     []string                      `json:"triggers"`     // Input triggers (rightclick, doubleclick, etc.)
+	Effects      map[string]float64            `json:"effects"`      // Stat changes to apply
+	Animations   []string                      `json:"animations"`   // Animations to play
+	Responses    []string                      `json:"responses"`    // Dialog responses
+	Cooldown     int                           `json:"cooldown"`     // Seconds between uses
+	Duration     int                           `json:"duration"`     // Duration of effect (for sleep, etc.)
+	Requirements map[string]map[string]float64 `json:"requirements"` // Stat requirements to use interaction
 }
 
 // LoadCard loads and validates a character card from a JSON file
@@ -76,6 +101,10 @@ func (c *CharacterCard) Validate() error {
 		return fmt.Errorf("behavior: %w", err)
 	}
 
+	if err := c.validateGameFeatures(); err != nil {
+		return fmt.Errorf("game features: %w", err)
+	}
+
 	return nil
 }
 
@@ -95,6 +124,10 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 
 	if err := c.Behavior.Validate(); err != nil {
 		return fmt.Errorf("behavior: %w", err)
+	}
+
+	if err := c.validateGameFeatures(); err != nil {
+		return fmt.Errorf("game features: %w", err)
 	}
 
 	return nil
@@ -282,6 +315,120 @@ func (c *CharacterCard) GetAnimationPath(basePath, animationName string) (string
 	}
 
 	return fullPath, nil
+}
+
+// validateGameFeatures validates game-specific configuration fields
+// This ensures game stats, rules, and interactions are properly configured
+func (c *CharacterCard) validateGameFeatures() error {
+	// Stats validation (optional)
+	if c.Stats != nil {
+		for name, stat := range c.Stats {
+			if err := c.validateStatConfig(name, stat); err != nil {
+				return fmt.Errorf("stat '%s': %w", name, err)
+			}
+		}
+	}
+
+	// Game rules validation (optional)
+	if c.GameRules != nil {
+		if err := c.validateGameRules(); err != nil {
+			return fmt.Errorf("game rules: %w", err)
+		}
+	}
+
+	// Interactions validation (optional)
+	if c.Interactions != nil {
+		for name, interaction := range c.Interactions {
+			if err := c.validateInteractionConfig(name, interaction); err != nil {
+				return fmt.Errorf("interaction '%s': %w", name, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// validateStatConfig ensures a stat configuration is valid
+func (c *CharacterCard) validateStatConfig(name string, stat StatConfig) error {
+	if stat.Max <= 0 {
+		return fmt.Errorf("max value must be positive, got %f", stat.Max)
+	}
+
+	if stat.Initial < 0 || stat.Initial > stat.Max {
+		return fmt.Errorf("initial value (%f) must be between 0 and max (%f)", stat.Initial, stat.Max)
+	}
+
+	if stat.DegradationRate < 0 {
+		return fmt.Errorf("degradation rate cannot be negative, got %f", stat.DegradationRate)
+	}
+
+	if stat.CriticalThreshold < 0 || stat.CriticalThreshold > stat.Max {
+		return fmt.Errorf("critical threshold (%f) must be between 0 and max (%f)", stat.CriticalThreshold, stat.Max)
+	}
+
+	return nil
+}
+
+// validateGameRules ensures game rules configuration is valid
+func (c *CharacterCard) validateGameRules() error {
+	if c.GameRules.StatsDecayInterval < 10 || c.GameRules.StatsDecayInterval > 3600 {
+		return fmt.Errorf("stats decay interval must be 10-3600 seconds, got %d", c.GameRules.StatsDecayInterval)
+	}
+
+	if c.GameRules.AutoSaveInterval < 60 || c.GameRules.AutoSaveInterval > 7200 {
+		return fmt.Errorf("auto save interval must be 60-7200 seconds, got %d", c.GameRules.AutoSaveInterval)
+	}
+
+	return nil
+}
+
+// validateInteractionConfig ensures an interaction configuration is valid
+func (c *CharacterCard) validateInteractionConfig(name string, interaction InteractionConfig) error {
+	if len(interaction.Triggers) == 0 {
+		return fmt.Errorf("must have at least one trigger")
+	}
+
+	// Validate triggers
+	validTriggers := []string{"click", "rightclick", "doubleclick", "shift+click", "hover"}
+	for _, trigger := range interaction.Triggers {
+		if !c.isValidTrigger(trigger, validTriggers) {
+			return fmt.Errorf("invalid trigger '%s', must be one of %v", trigger, validTriggers)
+		}
+	}
+
+	// Validate animations exist
+	for _, animation := range interaction.Animations {
+		if _, exists := c.Animations[animation]; !exists {
+			return fmt.Errorf("animation '%s' not found in animations map", animation)
+		}
+	}
+
+	// Validate responses
+	if len(interaction.Responses) == 0 || len(interaction.Responses) > 10 {
+		return fmt.Errorf("must have 1-10 responses, got %d", len(interaction.Responses))
+	}
+
+	// Validate cooldown
+	if interaction.Cooldown < 0 || interaction.Cooldown > 3600 {
+		return fmt.Errorf("cooldown must be 0-3600 seconds, got %d", interaction.Cooldown)
+	}
+
+	return nil
+}
+
+// isValidTrigger checks if a trigger is in the valid list
+func (c *CharacterCard) isValidTrigger(trigger string, validTriggers []string) bool {
+	for _, valid := range validTriggers {
+		if trigger == valid {
+			return true
+		}
+	}
+	return false
+}
+
+// HasGameFeatures returns true if this character card includes game features
+func (c *CharacterCard) HasGameFeatures() bool {
+	return len(c.Stats) > 0
 }
 
 // GetRandomResponse returns a random response from a dialog's response list
