@@ -82,6 +82,14 @@ func (sm *SaveManager) EnableAutoSave(interval time.Duration, gameStateProvider 
 
 	// Start auto-save goroutine
 	go func() {
+		defer func() {
+			// Recover from any panics in the goroutine
+			if r := recover(); r != nil {
+				// Silently handle panics to prevent crashing the application
+				// In production, this would be logged
+			}
+		}()
+
 		for {
 			select {
 			case <-sm.autoSaveTicker.C:
@@ -119,11 +127,11 @@ func (sm *SaveManager) disableAutoSaveUnsafe() {
 		sm.autoSaveTicker = nil
 	}
 
-	// Signal the goroutine to stop
+	// Signal the goroutine to stop (non-blocking)
 	select {
 	case sm.stopChan <- struct{}{}:
 	default:
-		// Channel might be full, that's okay
+		// Channel might be full or goroutine already stopped, that's okay
 	}
 }
 

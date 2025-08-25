@@ -573,3 +573,62 @@ func TestSaveManagerStatValidationEdgeCases(t *testing.T) {
 		t.Error("Loading data with invalid stats should error")
 	}
 }
+
+// TestSaveManagerMoreEdgeCases tests additional edge cases for better coverage
+func TestSaveManagerMoreEdgeCases(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "save_manager_edge_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	sm := NewSaveManager(tmpDir)
+
+	// Test GetSaveDirectory
+	if sm.GetSaveDirectory() != tmpDir {
+		t.Errorf("Expected save directory %s, got %s", tmpDir, sm.GetSaveDirectory())
+	}
+
+	// Test listing saves in non-existent directory
+	newSM := NewSaveManager(filepath.Join(tmpDir, "nonexistent"))
+	saves, err := newSM.ListSaves()
+	if err != nil {
+		t.Errorf("ListSaves should not error for non-existent directory: %v", err)
+	}
+	if len(saves) != 0 {
+		t.Errorf("Expected 0 saves in non-existent directory, got %d", len(saves))
+	}
+
+	// Test auto-save with nil game state provider
+	sm.EnableAutoSave(50*time.Millisecond, func() *GameSaveData { return nil })
+	time.Sleep(100 * time.Millisecond)
+	sm.DisableAutoSave()
+
+	// Test enable auto-save twice (should stop the first one)
+	sm.EnableAutoSave(50*time.Millisecond, func() *GameSaveData { return createTestSaveData("Test1") })
+	sm.EnableAutoSave(50*time.Millisecond, func() *GameSaveData { return createTestSaveData("Test2") })
+	sm.DisableAutoSave()
+
+	// Test invalid stat data scenarios - create invalid save file to test loading validation
+	invalidSaveData := &GameSaveData{
+		CharacterName: "EdgeTest",
+		SaveVersion:   "1.0",
+		GameState: &GameStateData{
+			Stats: map[string]*StatData{
+				"invalid": nil, // Nil stat should trigger validation error
+			},
+			CreationTime:    time.Now(),
+			LastDecayUpdate: time.Now(),
+		},
+	}
+
+	// Write invalid data directly to file
+	savePath := filepath.Join(tmpDir, "EdgeTest.json")
+	data, _ := json.Marshal(invalidSaveData)
+	os.WriteFile(savePath, data, 0644)
+
+	_, err = sm.LoadGameState("EdgeTest")
+	if err == nil {
+		t.Error("Loading save with nil stat should error")
+	}
+}
