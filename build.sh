@@ -32,22 +32,12 @@ go mod tidy
 echo -e "${YELLOW}Running tests...${NC}"
 go test ./... -v
 
-# Build for current platform (development)
+# Build for current platform
 echo -e "${YELLOW}Building for current platform...${NC}"
 go build -ldflags="-s -w" -o $BUILD_DIR/companion $CMD_PATH
 
-# Cross-platform builds
-echo -e "${YELLOW}Building for Windows (amd64)...${NC}"
-GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o $BUILD_DIR/companion-windows.exe $CMD_PATH
-
-echo -e "${YELLOW}Building for macOS (amd64)...${NC}"
-GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o $BUILD_DIR/companion-macos $CMD_PATH
-
-echo -e "${YELLOW}Building for macOS (arm64)...${NC}"
-GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o $BUILD_DIR/companion-macos-arm64 $CMD_PATH
-
-echo -e "${YELLOW}Building for Linux (amd64)...${NC}"
-GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o $BUILD_DIR/companion-linux $CMD_PATH
+# Note: Cross-platform builds not supported due to Fyne GUI framework limitations
+echo -e "${YELLOW}Note: Cross-platform builds require building on target platform${NC}"
 
 # Display build results
 echo -e "${GREEN}Build completed successfully!${NC}"

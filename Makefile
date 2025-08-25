@@ -1,7 +1,7 @@
-# Cross-Platform Build Makefile for Desktop Companion
-# Uses Go's built-in cross-compilation - no external tools needed
+# Build Makefile for Desktop Companion
+# Note: Due to Fyne GUI framework limitations, only native builds are supported
 
-.PHONY: all build-windows build-macos build-linux build-all clean test deps
+.PHONY: all build clean test deps
 
 # Build configuration
 BINARY_NAME=companion
@@ -30,28 +30,13 @@ clean:
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-# Windows build (64-bit)
-build-windows: $(BUILD_DIR)
-	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME)-windows.exe $(CMD_DIR)/main.go
+# Native build for current platform
+build: $(BUILD_DIR)
+	go build $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME) $(CMD_DIR)/main.go
 
-# macOS build (64-bit Intel)
-build-macos: $(BUILD_DIR)
-	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME)-macos $(CMD_DIR)/main.go
-
-# macOS build (ARM64 Apple Silicon)
-build-macos-arm: $(BUILD_DIR)
-	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME)-macos-arm64 $(CMD_DIR)/main.go
-
-# Linux build (64-bit)
-build-linux: $(BUILD_DIR)
-	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME)-linux $(CMD_DIR)/main.go
-
-# Build for all platforms
-build-all: build-windows build-macos build-macos-arm build-linux
-
-# Development build (current platform)
-build:
-	go build $(LDFLAGS) -o $(BINARY_NAME) $(CMD_DIR)/main.go
+# Note: Cross-platform builds not supported due to Fyne GUI framework limitations
+# Fyne requires platform-specific CGO libraries for OpenGL/graphics drivers
+# Build on the target platform for proper binary distribution
 
 # Run locally
 run:
@@ -92,23 +77,15 @@ install-tools:
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install honnef.co/go/tools/cmd/staticcheck@latest
 
-# Package releases (with assets)
-package-all: build-all
+# Package releases (with assets) - requires manual build on target platforms
+package-native:
 	cd $(BUILD_DIR) && \
 	cp -r ../assets . && \
-	tar -czf $(BINARY_NAME)-windows-amd64.tar.gz $(BINARY_NAME)-windows.exe assets/ && \
-	tar -czf $(BINARY_NAME)-macos-amd64.tar.gz $(BINARY_NAME)-macos assets/ && \
-	tar -czf $(BINARY_NAME)-macos-arm64.tar.gz $(BINARY_NAME)-macos-arm64 assets/ && \
-	tar -czf $(BINARY_NAME)-linux-amd64.tar.gz $(BINARY_NAME)-linux assets/
+	tar -czf $(BINARY_NAME)-$(shell go env GOOS)-$(shell go env GOARCH).tar.gz $(BINARY_NAME) assets/
 
 # Help target
 help:
 	@echo "Available targets:"
-	@echo "  build-all       - Build for all platforms"
-	@echo "  build-windows   - Build for Windows"
-	@echo "  build-macos     - Build for macOS (Intel)"
-	@echo "  build-macos-arm - Build for macOS (Apple Silicon)"
-	@echo "  build-linux     - Build for Linux"
 	@echo "  build           - Build for current platform"
 	@echo "  run             - Run application locally"
 	@echo "  run-debug       - Run with debug output"
@@ -116,4 +93,6 @@ help:
 	@echo "  coverage        - Generate test coverage report"
 	@echo "  clean           - Remove build artifacts"
 	@echo "  deps            - Install/update dependencies"
-	@echo "  package-all     - Create release packages"
+	@echo "  package-native  - Create release package for current platform"
+	@echo ""
+	@echo "Note: Cross-platform builds require building on target platform"

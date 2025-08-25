@@ -196,7 +196,6 @@ desktop-companion/
 │   └── config/
 │       └── loader.go              # Configuration file loading
 ├── assets/characters/default/      # Default character files
-├── build/scripts/                 # Cross-platform build scripts
 ├── docs/                         # Additional documentation
 ├── Makefile                       # Build automation
 ├── IMPLEMENTATION.md              # Detailed implementation guide
@@ -278,23 +277,17 @@ go run cmd/companion/main.go -debug
 ### Release Builds
 
 ```bash
-# Current platform optimized build
+# Native build for current platform
 go build -ldflags="-s -w" -o companion cmd/companion/main.go
 
-# Cross-platform builds (requires make)
-make build-windows  # Creates build/companion-windows.exe
-make build-macos    # Creates build/companion-macos  
-make build-linux    # Creates build/companion-linux
-make build-all      # Builds all platforms
+# Using Makefile
+make build  # Creates build/companion
 ```
 
-### Build Scripts
-
-The `build/scripts/` directory contains platform-specific build optimizations:
-
-- **Windows**: Embeds icon resources, removes console window
-- **macOS**: Creates `.app` bundle with proper metadata
-- **Linux**: Generates `.desktop` file for application menu integration
+> **Note**: Cross-platform builds are not supported due to Fyne GUI framework limitations.  
+> Fyne requires platform-specific CGO libraries for graphics drivers.  
+> Build on the target platform for proper binary distribution.
+```
 
 ## 🔧 Troubleshooting
 
