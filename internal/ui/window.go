@@ -14,17 +14,20 @@ import (
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
-	window    fyne.Window
-	character *character.Character
-	renderer  *CharacterRenderer
-	dialog    *DialogBubble
-	profiler  *monitoring.Profiler
-	debug     bool
+	window       fyne.Window
+	character    *character.Character
+	renderer     *CharacterRenderer
+	dialog       *DialogBubble
+	statsOverlay *StatsOverlay
+	profiler     *monitoring.Profiler
+	debug        bool
+	gameMode     bool
+	showStats    bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
-func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler) *DesktopWindow {
+func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool) *DesktopWindow {
 	// Create window with transparency support
 	window := app.NewWindow("Desktop Companion")
 
@@ -44,6 +47,8 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		character: char,
 		profiler:  profiler,
 		debug:     debug,
+		gameMode:  gameMode,
+		showStats: showStats,
 	}
 
 	// Create character renderer
@@ -51,6 +56,14 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 
 	// Create dialog bubble (initially hidden)
 	dw.dialog = NewDialogBubble()
+
+	// Create stats overlay if game features are enabled
+	if gameMode && char.GetGameState() != nil {
+		dw.statsOverlay = NewStatsOverlay(char)
+		if showStats {
+			dw.statsOverlay.Show()
+		}
+	}
 
 	// Set up window content and interactions
 	dw.setupContent()
@@ -68,11 +81,19 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 
 // setupContent configures the window's visual content
 func (dw *DesktopWindow) setupContent() {
-	// Create container with transparent background for overlay effect
-	content := container.NewWithoutLayout(
+	// Create list of content objects
+	objects := []fyne.CanvasObject{
 		dw.renderer,
 		dw.dialog,
-	)
+	}
+
+	// Add stats overlay if available
+	if dw.statsOverlay != nil {
+		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Create container with transparent background for overlay effect
+	content := container.NewWithoutLayout(objects...)
 
 	dw.window.SetContent(content)
 
@@ -96,12 +117,20 @@ func (dw *DesktopWindow) setupInteractions() {
 	)
 	clickable.SetSize(fyne.NewSize(float32(dw.character.GetSize()), float32(dw.character.GetSize())))
 
-	// Update window content with interactive overlay
-	content := container.NewWithoutLayout(
+	// Create list of content objects for interactive overlay
+	objects := []fyne.CanvasObject{
 		dw.renderer,
 		clickable,
 		dw.dialog,
-	)
+	}
+
+	// Add stats overlay if available
+	if dw.statsOverlay != nil {
+		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Update window content with interactive overlay
+	content := container.NewWithoutLayout(objects...)
 
 	dw.window.SetContent(content)
 }
@@ -121,7 +150,18 @@ func (dw *DesktopWindow) handleClick() {
 
 // handleRightClick processes character right-click interactions
 func (dw *DesktopWindow) handleRightClick() {
-	response := dw.character.HandleRightClick()
+	var response string
+
+	// Check if game mode is enabled and handle game interactions
+	if dw.gameMode && dw.character.GetGameState() != nil {
+		// Try game interaction first (e.g., "feed" for right-click)
+		response = dw.character.HandleGameInteraction("feed")
+	}
+
+	// If no game response, fall back to regular right-click dialog
+	if response == "" {
+		response = dw.character.HandleRightClick()
+	}
 
 	if dw.debug {
 		log.Printf("Character right-clicked, response: %q", response)
@@ -200,11 +240,19 @@ func (dw *DesktopWindow) setupDragging() {
 	// This provides smooth cross-platform drag support without platform-specific code
 	draggable := NewDraggableCharacter(dw, dw.character, dw.debug)
 
-	// Update window content to use draggable character instead of separate clickable overlay
-	content := container.NewWithoutLayout(
+	// Create list of content objects for draggable layout
+	objects := []fyne.CanvasObject{
 		draggable,
 		dw.dialog,
-	)
+	}
+
+	// Add stats overlay if available
+	if dw.statsOverlay != nil {
+		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Update window content to use draggable character instead of separate clickable overlay
+	content := container.NewWithoutLayout(objects...)
 
 	dw.window.SetContent(content)
 
@@ -283,6 +331,20 @@ func (dw *DesktopWindow) SetSize(size int) {
 // GetCharacter returns the character instance for external access
 func (dw *DesktopWindow) GetCharacter() *character.Character {
 	return dw.character
+}
+
+// ToggleStatsOverlay shows/hides the stats overlay if available
+func (dw *DesktopWindow) ToggleStatsOverlay() {
+	if dw.statsOverlay != nil {
+		dw.statsOverlay.Toggle()
+		if dw.debug {
+			if dw.statsOverlay.IsVisible() {
+				log.Println("Stats overlay shown")
+			} else {
+				log.Println("Stats overlay hidden")
+			}
+		}
+	}
 }
 
 // configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities

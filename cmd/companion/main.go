@@ -20,6 +20,8 @@ var (
 	version       = flag.Bool("version", false, "Show version information")
 	memProfile    = flag.String("memprofile", "", "Write memory profile to file")
 	cpuProfile    = flag.String("cpuprofile", "", "Write CPU profile to file")
+	gameMode      = flag.Bool("game", false, "Enable Tamagotchi game features")
+	showStats     = flag.Bool("stats", false, "Show stats overlay")
 )
 
 const appVersion = "1.0.0"
@@ -121,7 +123,7 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 	}
 
 	// Create and show desktop window with profiler integration
-	window := ui.NewDesktopWindow(myApp, char, *debug, profiler)
+	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats)
 
 	if *debug {
 		log.Println("Created desktop window")
