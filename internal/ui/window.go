@@ -6,7 +6,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
@@ -77,25 +76,18 @@ func (dw *DesktopWindow) setupContent() {
 
 // setupInteractions configures mouse interactions with the character
 func (dw *DesktopWindow) setupInteractions() {
-	// Wrap renderer in a button for click detection
-	// This is simpler than implementing custom gesture detection
-	clickable := widget.NewButton("", func() {
-		dw.handleClick()
-	})
-	clickable.Resize(fyne.NewSize(float32(dw.character.GetSize()), float32(dw.character.GetSize())))
-
-	// Make button transparent by removing background
-	clickable.Importance = widget.LowImportance
-
-	// Add right-click support if available
-	if dw.supportsRightClick() {
-		dw.setupRightClick(clickable)
-	}
-
 	// Add dragging support if character allows movement
 	if dw.character.IsMovementEnabled() {
 		dw.setupDragging()
+		return // Draggable character handles all interactions
 	}
+
+	// For non-draggable characters, create custom clickable widget that supports both left and right click
+	clickable := NewClickableWidget(
+		func() { dw.handleClick() },
+		func() { dw.handleRightClick() },
+	)
+	clickable.SetSize(fyne.NewSize(float32(dw.character.GetSize()), float32(dw.character.GetSize())))
 
 	// Update window content with interactive overlay
 	content := container.NewWithoutLayout(
@@ -113,6 +105,19 @@ func (dw *DesktopWindow) handleClick() {
 
 	if dw.debug {
 		log.Printf("Character clicked, response: %q", response)
+	}
+
+	if response != "" {
+		dw.showDialog(response)
+	}
+}
+
+// handleRightClick processes character right-click interactions
+func (dw *DesktopWindow) handleRightClick() {
+	response := dw.character.HandleRightClick()
+
+	if dw.debug {
+		log.Printf("Character right-clicked, response: %q", response)
 	}
 
 	if response != "" {
@@ -148,32 +153,6 @@ func (dw *DesktopWindow) animationLoop() {
 
 		// Refresh renderer to show new animation frame
 		dw.renderer.Refresh()
-	}
-}
-
-// supportsRightClick checks if the platform supports right-click detection
-func (dw *DesktopWindow) supportsRightClick() bool {
-	// Fyne supports right-click on desktop platforms
-	// This could be extended to check specific platform capabilities
-	return true
-}
-
-// setupRightClick configures right-click interaction
-func (dw *DesktopWindow) setupRightClick(widget fyne.Widget) {
-	// Right-click is handled by the DraggableCharacter's TappedSecondary method
-	// when dragging is enabled. For non-draggable characters, we'd need a different approach.
-
-	if !dw.character.IsMovementEnabled() {
-		// For non-draggable characters, we could implement a custom widget that supports right-click
-		// For now, we'll note that right-click works when movement is enabled
-		if dw.debug {
-			log.Println("Right-click available when movement is enabled")
-		}
-		return
-	}
-
-	if dw.debug {
-		log.Println("Right-click configured via draggable character widget")
 	}
 }
 
