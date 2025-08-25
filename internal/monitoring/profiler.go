@@ -14,15 +14,14 @@ import (
 // Profiler handles performance monitoring and memory profiling
 // Uses Go's built-in runtime/pprof package - following "lazy programmer" principle
 type Profiler struct {
-	mu                 sync.RWMutex
-	enabled            bool
-	startTime          time.Time
-	cpuProfile         *os.File
-	ctx                context.Context
-	cancel             context.CancelFunc
-	stats              *PerformanceStats
-	targetMemoryMB     int // Target <50MB
-	targetBinarySizeMB int // Target <10MB
+	mu             sync.RWMutex
+	enabled        bool
+	startTime      time.Time
+	cpuProfile     *os.File
+	ctx            context.Context
+	cancel         context.CancelFunc
+	stats          *PerformanceStats
+	targetMemoryMB int // Target <50MB
 }
 
 // PerformanceStats tracks real-time performance metrics
@@ -40,15 +39,14 @@ type PerformanceStats struct {
 }
 
 // NewProfiler creates a new performance profiler
-func NewProfiler(memoryTargetMB, binarySizeMB int) *Profiler {
+func NewProfiler(memoryTargetMB int) *Profiler {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Profiler{
-		enabled:            false,
-		targetMemoryMB:     memoryTargetMB,
-		targetBinarySizeMB: binarySizeMB,
-		ctx:                ctx,
-		cancel:             cancel,
+		enabled:        false,
+		targetMemoryMB: memoryTargetMB,
+		ctx:            ctx,
+		cancel:         cancel,
 		stats: &PerformanceStats{
 			StartTime: time.Now(),
 		},
@@ -112,8 +110,8 @@ func (p *Profiler) startMonitoring(debug bool) {
 // logStartupIfDebug logs startup message when debug mode is enabled
 func (p *Profiler) logStartupIfDebug(debug bool) {
 	if debug {
-		log.Printf("Performance monitoring started (targets: %dMB memory, %dMB binary)",
-			p.targetMemoryMB, p.targetBinarySizeMB)
+		log.Printf("Performance monitoring started (target: %dMB memory)",
+			p.targetMemoryMB)
 	}
 }
 

@@ -61,7 +61,6 @@ The system automatically monitors and validates these targets:
 | Memory Usage | <50MB | Real-time with warnings |
 | Frame Rate | 30+ FPS | Calculated every 5 seconds |
 | Startup Time | <2 seconds | Measured at startup |
-| Binary Size | <10MB | Build-time tracking |
 
 ## API Reference
 
@@ -69,7 +68,7 @@ The system automatically monitors and validates these targets:
 
 ```go
 // Create profiler with targets
-profiler := monitoring.NewProfiler(50, 10) // 50MB memory, 10MB binary
+profiler := monitoring.NewProfiler(50) // 50MB memory target
 
 // Start monitoring with optional file output
 profiler.Start(memProfile, cpuProfile, debug)
@@ -178,7 +177,6 @@ Production deployments should validate:
 1. **Memory Usage**: Monitor with `-debug` flag
 2. **Frame Rate**: Check for performance warnings
 3. **Startup Time**: Validate <2 second target
-4. **Binary Size**: Verify <10MB per platform
 
 ### Monitoring in Production
 

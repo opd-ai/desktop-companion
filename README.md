@@ -10,7 +10,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🖱️ **Interactive**: Click and drag interactions with animated responses
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Cross-Platform**: Works on Windows, macOS, and Linux
-- 🪶 **Lightweight**: <50MB memory usage, <10MB binary size
+- 🪶 **Lightweight**: <50MB memory usage
 
 ## 🚀 Quick Start
 
@@ -252,7 +252,6 @@ go tool pprof cpu.prof
 - Memory usage: <50MB during normal operation ✅ **MONITORED**
 - Animation framerate: 30+ FPS consistently ✅ **MONITORED**
 - Startup time: <2 seconds ✅ **MONITORED**
-- Binary size: <10MB per platform ✅ **TRACKED**
 
 **Real-time Monitoring**:
 - Memory usage tracking with target validation

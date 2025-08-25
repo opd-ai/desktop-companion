@@ -35,7 +35,7 @@ func main() {
 	configureDebugLogging()
 
 	// Initialize performance profiler
-	profiler := monitoring.NewProfiler(50, 10) // 50MB memory, 10MB binary targets
+	profiler := monitoring.NewProfiler(50) // 50MB memory target
 
 	// Start profiling if requested
 	if err := profiler.Start(*memProfile, *cpuProfile, *debug); err != nil {

@@ -6,7 +6,7 @@ import (
 
 // TestProfilerIntegration tests basic profiler functionality
 func TestProfilerIntegration(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	err := profiler.Start("", "", false)
 	if err != nil {

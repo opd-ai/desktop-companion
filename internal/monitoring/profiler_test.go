@@ -9,7 +9,7 @@ import (
 
 // TestNewProfiler verifies profiler initialization
 func TestNewProfiler(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	if profiler == nil {
 		t.Fatal("NewProfiler returned nil")
@@ -19,10 +19,6 @@ func TestNewProfiler(t *testing.T) {
 		t.Errorf("Expected memory target 50MB, got %d", profiler.targetMemoryMB)
 	}
 
-	if profiler.targetBinarySizeMB != 10 {
-		t.Errorf("Expected binary size target 10MB, got %d", profiler.targetBinarySizeMB)
-	}
-
 	if profiler.enabled {
 		t.Error("Profiler should not be enabled initially")
 	}
@@ -30,7 +26,7 @@ func TestNewProfiler(t *testing.T) {
 
 // TestStartStopProfiler tests basic profiler lifecycle
 func TestStartStopProfiler(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Test start
 	err := profiler.Start("", "", false)
@@ -65,7 +61,7 @@ func TestCPUProfiling(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	cpuProfilePath := filepath.Join(tmpDir, "cpu.prof")
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Start with CPU profiling
 	err = profiler.Start("", cpuProfilePath, false)
@@ -97,7 +93,7 @@ func TestMemoryProfiling(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	memProfilePath := filepath.Join(tmpDir, "mem.prof")
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Start profiler
 	err = profiler.Start("", "", false)
@@ -122,7 +118,7 @@ func TestMemoryProfiling(t *testing.T) {
 
 // TestRecordFrame tests frame recording functionality
 func TestRecordFrame(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Start profiler
 	err := profiler.Start("", "", false)
@@ -147,7 +143,7 @@ func TestRecordFrame(t *testing.T) {
 
 // TestStartupRecording tests startup time recording
 func TestStartupRecording(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Start profiler
 	err := profiler.Start("", "", false)
@@ -172,7 +168,7 @@ func TestStartupRecording(t *testing.T) {
 
 // TestMemoryMonitoring tests memory usage tracking
 func TestMemoryMonitoring(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Start profiler
 	err := profiler.Start("", "", false)
@@ -201,7 +197,7 @@ func TestMemoryMonitoring(t *testing.T) {
 
 // TestTargetValidation tests performance target checking
 func TestTargetValidation(t *testing.T) {
-	profiler := NewProfiler(1, 10) // Very low memory target for testing
+	profiler := NewProfiler(1) // Very low memory target for testing
 
 	// Start profiler
 	err := profiler.Start("", "", false)
@@ -221,7 +217,7 @@ func TestTargetValidation(t *testing.T) {
 
 // TestConcurrentAccess tests thread safety of stats access
 func TestConcurrentAccess(t *testing.T) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 
 	// Start profiler
 	err := profiler.Start("", "", false)
@@ -259,7 +255,7 @@ func TestConcurrentAccess(t *testing.T) {
 
 // BenchmarkRecordFrame benchmarks frame recording performance
 func BenchmarkRecordFrame(b *testing.B) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 	profiler.Start("", "", false)
 	defer profiler.Stop("", false)
 
@@ -271,7 +267,7 @@ func BenchmarkRecordFrame(b *testing.B) {
 
 // BenchmarkGetStats benchmarks stats retrieval performance
 func BenchmarkGetStats(b *testing.B) {
-	profiler := NewProfiler(50, 10)
+	profiler := NewProfiler(50)
 	profiler.Start("", "", false)
 	defer profiler.Stop("", false)
 

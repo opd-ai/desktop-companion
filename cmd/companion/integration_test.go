@@ -86,7 +86,7 @@ func TestMainIntegration(t *testing.T) {
 	}
 
 	// Test profiler integration
-	profiler := monitoring.NewProfiler(50, 10)
+	profiler := monitoring.NewProfiler(50)
 	err = profiler.Start("", "", false)
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
@@ -131,7 +131,7 @@ func TestMainIntegration(t *testing.T) {
 
 // TestPerformanceTargets validates that the application meets performance targets
 func TestPerformanceTargets(t *testing.T) {
-	profiler := monitoring.NewProfiler(50, 10)
+	profiler := monitoring.NewProfiler(50)
 	err := profiler.Start("", "", false)
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
@@ -174,7 +174,7 @@ func TestPerformanceTargets(t *testing.T) {
 
 // TestConcurrentPerformanceMonitoring tests performance monitoring under concurrent load
 func TestConcurrentPerformanceMonitoring(t *testing.T) {
-	profiler := monitoring.NewProfiler(50, 10)
+	profiler := monitoring.NewProfiler(50)
 	err := profiler.Start("", "", false)
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
@@ -223,7 +223,7 @@ func TestProfilerFileOutput(t *testing.T) {
 	cpuProfilePath := filepath.Join(tmpDir, "cpu.prof")
 	memProfilePath := filepath.Join(tmpDir, "mem.prof")
 
-	profiler := monitoring.NewProfiler(50, 10)
+	profiler := monitoring.NewProfiler(50)
 
 	// Start with CPU profiling
 	err = profiler.Start("", cpuProfilePath, false)
