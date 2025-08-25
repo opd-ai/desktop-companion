@@ -7,12 +7,12 @@ CRITICAL BUG: 1 finding (1 resolved)
 FUNCTIONAL MISMATCH: 3 findings (3 resolved)
 MISSING FEATURE: 4 findings (4 resolved)
 EDGE CASE BUG: 2 findings (2 resolved)
-PERFORMANCE ISSUE: 1 finding
+PERFORMANCE ISSUE: 1 finding (1 resolved)
 
-Total Issues: 12 (11 resolved)
-High Severity: 5 issues (3 resolved)
-Medium Severity: 4 issues (5 resolved)
-Low Severity: 2 issues (3 resolved)
+Total Issues: 12 (12 resolved)
+High Severity: 5 issues (5 resolved)
+Medium Severity: 4 issues (4 resolved)
+Low Severity: 2 issues (2 resolved)
 ```
 
 ## DETAILED FINDINGS
@@ -351,27 +351,44 @@ func (c *Character) HandleHover() string {
 ```
 
 ```
-### PERFORMANCE ISSUE: Animation Update Loop Lacks Frame Rate Control
+### PERFORMANCE ISSUE: Animation Update Loop Lacks Frame Rate Control - RESOLVED
 **File:** internal/ui/window.go:144-156
 **Severity:** Medium
+**Status:** RESOLVED (commit a566273, 2025-08-25)
 **Description:** Animation loop runs at fixed 60 FPS (16ms intervals) regardless of system capabilities or actual frame needs, potentially wasting resources on slower systems or when character is idle.
 **Expected Behavior:** Frame rate should be adaptive based on animation requirements and system performance
-**Actual Behavior:** Fixed 60 FPS loop consumes constant CPU and power regardless of actual animation needs
-**Impact:** Unnecessary resource consumption, reduced battery life on laptops, poor performance on low-end systems
-**Reproduction:** Run application and monitor CPU usage - constant overhead even when character is idle
+**Actual Behavior:** ~~Fixed 60 FPS loop consumes constant CPU and power regardless of actual animation needs~~ **FIXED:** Animation loop now uses adaptive frame rate (60 FPS when animating, 10 FPS when idle)
+**Impact:** ~~Unnecessary resource consumption, reduced battery life on laptops, poor performance on low-end systems~~ **RESOLVED:** Significant CPU and power savings when character is idle or animations are slow
+**Reproduction:** ~~Run application and monitor CPU usage - constant overhead even when character is idle~~ **FIXED:** CPU usage now scales with actual animation activity
 **Code Reference:**
 ```go
+// Adaptive animation loop that reduces frame rate when idle
 func (dw *DesktopWindow) animationLoop() {
-	ticker := time.NewTicker(time.Second / 60) // Fixed 60 FPS
-	defer ticker.Stop()
+	maxFPS := time.Second / 60      // 60 FPS when actively animating
+	idleFPS := time.Second / 10     // 10 FPS when idle/no changes
+	
 	for range ticker.C {
-		// Always updates at 60 FPS regardless of need
-		dw.character.Update()
-		if dw.profiler != nil {
-			dw.profiler.RecordFrame()
+		hasChanges := dw.character.Update() // Returns true if visual changes occurred
+		
+		// Switch frame rate based on activity
+		if hasChanges {
+			currentInterval = maxFPS // High frame rate when animating
+		} else if consecutiveNoChanges >= 30 {
+			currentInterval = idleFPS // Low frame rate when idle
 		}
-		dw.renderer.Refresh()
+		
+		// Only refresh renderer when there are actual changes
+		if hasChanges {
+			dw.renderer.Refresh()
+		}
 	}
+}
+
+// Character.Update() now returns bool indicating visual changes
+func (c *Character) Update() bool {
+	frameChanged := c.animationManager.Update()
+	// ... state change logic
+	return frameChanged || stateChanged
 }
 ```
 ```
