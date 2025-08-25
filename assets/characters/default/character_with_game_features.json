@@ -73,7 +73,7 @@
     "autoSaveInterval": 300,
     "criticalStateAnimationPriority": true,
     "deathEnabled": false,
-    "evolutionEnabled": false,
+    "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
 
@@ -101,5 +101,56 @@
       "responses": ["That feels nice!", "I love attention!", "Pet me more!"],
       "cooldown": 15
     }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Baby",
+        "requirement": {"age": 0},
+        "size": 64,
+        "animations": {}
+      },
+      {
+        "name": "Child",
+        "requirement": {"age": 86400},
+        "size": 96,
+        "animations": {}
+      },
+      {
+        "name": "Adult",
+        "requirement": {"age": 259200},
+        "size": 128,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Well Fed",
+        "requirement": {
+          "hunger": {"maintainAbove": 80},
+          "maintainAbove": {"duration": 86400}
+        },
+        "reward": {
+          "statBoosts": {"hunger": 10}
+        }
+      },
+      {
+        "name": "Happy Pet",
+        "requirement": {
+          "happiness": {"maintainAbove": 90},
+          "maintainAbove": {"duration": 43200}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 10}
+        }
+      },
+      {
+        "name": "Healthy",
+        "requirement": {
+          "health": {"min": 95}
+        }
+      }
+    ]
   }
 }

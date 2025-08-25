@@ -10,15 +10,15 @@ import (
 // ProgressionState manages character level progression and achievements
 // Uses only Go standard library following "lazy programmer" principles
 type ProgressionState struct {
-	mu                   sync.RWMutex
-	CurrentLevel         string              `json:"currentLevel"`
-	Age                  time.Duration       `json:"age"`
-	TotalCareTime        time.Duration       `json:"totalCareTime"`
-	Achievements         []string            `json:"achievements"`
-	InteractionCounts    map[string]int      `json:"interactionCounts"`
-	LastLevelCheck       time.Time           `json:"lastLevelCheck"`
-	AchievementProgress  map[string]Progress `json:"achievementProgress"`
-	Config               *ProgressionConfig  `json:"config,omitempty"`
+	mu                  sync.RWMutex
+	CurrentLevel        string              `json:"currentLevel"`
+	Age                 time.Duration       `json:"age"`
+	TotalCareTime       time.Duration       `json:"totalCareTime"`
+	Achievements        []string            `json:"achievements"`
+	InteractionCounts   map[string]int      `json:"interactionCounts"`
+	LastLevelCheck      time.Time           `json:"lastLevelCheck"`
+	AchievementProgress map[string]Progress `json:"achievementProgress"`
+	Config              *ProgressionConfig  `json:"config,omitempty"`
 }
 
 // Progress tracks achievement progress over time
@@ -116,7 +116,7 @@ func (ps *ProgressionState) checkLevelProgression() bool {
 	// Check each level after current level
 	for i := currentLevelIndex + 1; i < len(ps.Config.Levels); i++ {
 		level := ps.Config.Levels[i]
-		
+
 		// Check age requirement
 		if ageReq, hasAge := level.Requirement["age"]; hasAge {
 			if ageSeconds >= ageReq {
@@ -159,20 +159,29 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
 		}
 
 		progress := ps.AchievementProgress[achievement.Name]
-		
+
 		// Check if current stats meet achievement criteria
 		metCriteria := ps.evaluateAchievementRequirement(achievement.Requirement, gameState)
-		
+
 		if metCriteria && !progress.MetCriteria {
 			// Just started meeting criteria
 			progress.StartTime = time.Now()
 			progress.MetCriteria = true
-			
-			// Extract required duration if specified
-			if req, hasReq := achievement.Requirement["maintainAbove"]; hasReq {
-				if duration, hasDuration := req["duration"].(float64); hasDuration {
+
+			// Extract required duration if specified (look for maintainAbove duration)
+			if maintainAbove, hasMA := achievement.Requirement["maintainAbove"]; hasMA {
+				if duration, hasDuration := maintainAbove["duration"].(float64); hasDuration {
 					progress.RequiredTime = time.Duration(duration) * time.Second
 				}
+			}
+
+			// If no duration requirement, award achievement immediately
+			if progress.RequiredTime == 0 {
+				ps.Achievements = append(ps.Achievements, achievement.Name)
+				newAchievements = append(newAchievements, achievement.Name)
+
+				// Apply achievement rewards
+				ps.applyAchievementReward(achievement.Reward, gameState)
 			}
 		} else if !metCriteria && progress.MetCriteria {
 			// No longer meeting criteria - reset progress
@@ -180,22 +189,15 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState) []string {
 			progress.Duration = 0
 		}
 
-		if progress.MetCriteria {
+		if progress.MetCriteria && progress.RequiredTime > 0 {
 			// Update duration of criteria being met
 			progress.Duration = time.Since(progress.StartTime)
-			
+
 			// Check if duration requirement is satisfied
-			if progress.RequiredTime > 0 && progress.Duration >= progress.RequiredTime {
+			if progress.Duration >= progress.RequiredTime {
 				ps.Achievements = append(ps.Achievements, achievement.Name)
 				newAchievements = append(newAchievements, achievement.Name)
-				
-				// Apply achievement rewards
-				ps.applyAchievementReward(achievement.Reward, gameState)
-			} else if progress.RequiredTime == 0 {
-				// Instant achievement (no duration requirement)
-				ps.Achievements = append(ps.Achievements, achievement.Name)
-				newAchievements = append(newAchievements, achievement.Name)
-				
+
 				// Apply achievement rewards
 				ps.applyAchievementReward(achievement.Reward, gameState)
 			}
@@ -216,7 +218,7 @@ func (ps *ProgressionState) evaluateAchievementRequirement(requirement map[strin
 		}
 
 		currentValue := gameState.GetStat(statName)
-		
+
 		// Check maintainAbove requirement
 		if maintainAbove, hasMA := criteria["maintainAbove"]; hasMA {
 			if threshold, ok := maintainAbove.(float64); ok {

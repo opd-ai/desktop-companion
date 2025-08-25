@@ -13,11 +13,12 @@ import (
 // All game mechanics are configurable via JSON without custom code
 type GameState struct {
 	mu              sync.RWMutex
-	Stats           map[string]*Stat `json:"stats"`
-	LastDecayUpdate time.Time        `json:"lastDecayUpdate"`
-	CreationTime    time.Time        `json:"creationTime"`
-	TotalPlayTime   time.Duration    `json:"totalPlayTime"`
-	Config          *GameConfig      `json:"config,omitempty"`
+	Stats           map[string]*Stat  `json:"stats"`
+	LastDecayUpdate time.Time         `json:"lastDecayUpdate"`
+	CreationTime    time.Time         `json:"creationTime"`
+	TotalPlayTime   time.Duration     `json:"totalPlayTime"`
+	Config          *GameConfig       `json:"config,omitempty"`
+	Progression     *ProgressionState `json:"progression,omitempty"`
 }
 
 // Stat represents a game statistic with boundaries and degradation rules
@@ -55,6 +56,7 @@ func NewGameState(statConfigs map[string]StatConfig, config *GameConfig) *GameSt
 		CreationTime:    time.Now(),
 		TotalPlayTime:   0,
 		Config:          config,
+		Progression:     nil, // Will be set separately if progression is enabled
 	}
 
 	// Initialize stats from configuration
@@ -68,6 +70,18 @@ func NewGameState(statConfigs map[string]StatConfig, config *GameConfig) *GameSt
 	}
 
 	return gs
+}
+
+// SetProgression sets the progression system for this game state
+func (gs *GameState) SetProgression(progressionConfig *ProgressionConfig) {
+	if gs == nil || progressionConfig == nil {
+		return
+	}
+
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	gs.Progression = NewProgressionState(progressionConfig)
 }
 
 // Update applies time-based stat degradation and returns triggered states
@@ -87,6 +101,13 @@ func (gs *GameState) Update(elapsed time.Duration) []string {
 	// Update total play time
 	gs.TotalPlayTime += elapsed
 
+	// Update progression if enabled
+	var levelChanged bool
+	var newAchievements []string
+	if gs.Progression != nil {
+		levelChanged, newAchievements = gs.Progression.Update(gs, elapsed)
+	}
+
 	// Only apply degradation if enough time has passed
 	decayInterval := time.Minute
 	if gs.Config != nil && gs.Config.StatsDecayInterval > 0 {
@@ -94,7 +115,15 @@ func (gs *GameState) Update(elapsed time.Duration) []string {
 	}
 
 	if timeSinceLastDecay < decayInterval {
-		return nil
+		// Even if no stat degradation, return progression-based states
+		triggeredStates := make([]string, 0)
+		if levelChanged {
+			triggeredStates = append(triggeredStates, "level_up")
+		}
+		for _, achievement := range newAchievements {
+			triggeredStates = append(triggeredStates, fmt.Sprintf("achievement_%s", achievement))
+		}
+		return triggeredStates
 	}
 
 	// Apply degradation to all stats
@@ -129,6 +158,14 @@ func (gs *GameState) Update(elapsed time.Duration) []string {
 				}
 			}
 		}
+	}
+
+	// Add progression-based states
+	if levelChanged {
+		triggeredStates = append(triggeredStates, "level_up")
+	}
+	for _, achievement := range newAchievements {
+		triggeredStates = append(triggeredStates, fmt.Sprintf("achievement_%s", achievement))
 	}
 
 	gs.LastDecayUpdate = now
@@ -312,6 +349,57 @@ func (gs *GameState) GetOverallMood() float64 {
 	}
 
 	return totalPercentage / float64(len(gs.Stats))
+}
+
+// GetProgression returns a reference to the progression state
+func (gs *GameState) GetProgression() *ProgressionState {
+	if gs == nil {
+		return nil
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	return gs.Progression
+}
+
+// RecordInteraction records an interaction for progression tracking
+func (gs *GameState) RecordInteraction(interactionType string) {
+	if gs == nil || gs.Progression == nil {
+		return
+	}
+
+	gs.mu.RLock()
+	progression := gs.Progression
+	gs.mu.RUnlock()
+
+	if progression != nil {
+		progression.RecordInteraction(interactionType)
+	}
+}
+
+// GetCurrentSize returns the character size based on progression level
+func (gs *GameState) GetCurrentSize() int {
+	if gs == nil || gs.Progression == nil {
+		return 128 // Default size
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	return gs.Progression.GetCurrentSize()
+}
+
+// GetLevelAnimation returns level-specific animation if available
+func (gs *GameState) GetLevelAnimation(animationName string) (string, bool) {
+	if gs == nil || gs.Progression == nil {
+		return "", false
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	return gs.Progression.GetLevelAnimation(animationName)
 }
 
 // MarshalJSON implements custom JSON marshaling for save files

@@ -23,7 +23,7 @@ type CharacterCard struct {
 	GameRules    *GameRulesConfig             `json:"gameRules,omitempty"`
 	Interactions map[string]InteractionConfig `json:"interactions,omitempty"`
 	// Progression features (Phase 3 implementation)
-	Progression  *ProgressionConfig           `json:"progression,omitempty"`
+	Progression *ProgressionConfig `json:"progression,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -434,6 +434,85 @@ func (c *CharacterCard) isValidTrigger(trigger string, validTriggers []string) b
 		}
 	}
 	return false
+}
+
+// validateProgression validates progression configuration (levels and achievements)
+func (c *CharacterCard) validateProgression() error {
+	if c.Progression == nil {
+		return nil // Progression is optional
+	}
+
+	// Validate levels
+	if len(c.Progression.Levels) == 0 {
+		return fmt.Errorf("must have at least one level")
+	}
+
+	for i, level := range c.Progression.Levels {
+		if err := c.validateProgressionLevel(level, i); err != nil {
+			return fmt.Errorf("level %d (%s): %w", i, level.Name, err)
+		}
+	}
+
+	// Validate achievements
+	for i, achievement := range c.Progression.Achievements {
+		if err := c.validateProgressionAchievement(achievement, i); err != nil {
+			return fmt.Errorf("achievement %d (%s): %w", i, achievement.Name, err)
+		}
+	}
+
+	return nil
+}
+
+// validateProgressionLevel validates a single level configuration
+func (c *CharacterCard) validateProgressionLevel(level LevelConfig, index int) error {
+	if len(level.Name) == 0 {
+		return fmt.Errorf("name cannot be empty")
+	}
+
+	if level.Size < 32 || level.Size > 1024 {
+		return fmt.Errorf("size must be 32-1024 pixels, got %d", level.Size)
+	}
+
+	// First level should have age requirement of 0
+	if index == 0 {
+		if ageReq, hasAge := level.Requirement["age"]; hasAge && ageReq != 0 {
+			return fmt.Errorf("first level must have age requirement of 0, got %d", ageReq)
+		}
+	}
+
+	// Validate level-specific animations exist in main animations map
+	for animName := range level.Animations {
+		if _, exists := c.Animations[animName]; !exists {
+			return fmt.Errorf("level animation '%s' not found in main animations map", animName)
+		}
+	}
+
+	return nil
+}
+
+// validateProgressionAchievement validates a single achievement configuration
+func (c *CharacterCard) validateProgressionAchievement(achievement AchievementConfig, index int) error {
+	if len(achievement.Name) == 0 {
+		return fmt.Errorf("name cannot be empty")
+	}
+
+	if len(achievement.Requirement) == 0 {
+		return fmt.Errorf("must have at least one requirement")
+	}
+
+	// Validate that required stats exist in character stats
+	if c.Stats != nil {
+		for statName := range achievement.Requirement {
+			if statName == "maintainAbove" {
+				continue // Special requirement type
+			}
+			if _, exists := c.Stats[statName]; !exists {
+				return fmt.Errorf("achievement requires stat '%s' which is not defined", statName)
+			}
+		}
+	}
+
+	return nil
 }
 
 // HasGameFeatures returns true if this character card includes game features

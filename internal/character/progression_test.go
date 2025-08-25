@@ -50,7 +50,7 @@ func TestProgressionState_Update_LevelProgression(t *testing.T) {
 	config := &ProgressionConfig{
 		Levels: []LevelConfig{
 			{Name: "Baby", Requirement: map[string]int64{"age": 0}, Size: 64},
-			{Name: "Child", Requirement: map[string]int64{"age": 3600}, Size: 96}, // 1 hour
+			{Name: "Child", Requirement: map[string]int64{"age": 3600}, Size: 96},  // 1 hour
 			{Name: "Adult", Requirement: map[string]int64{"age": 7200}, Size: 128}, // 2 hours
 		},
 	}
@@ -104,7 +104,7 @@ func TestProgressionState_Update_AchievementTracking(t *testing.T) {
 			{
 				Name: "Well Fed",
 				Requirement: map[string]map[string]interface{}{
-					"hunger": {"maintainAbove": 80.0},
+					"hunger":        {"maintainAbove": 80.0},
 					"maintainAbove": {"duration": 60.0}, // 1 minute
 				},
 			},
@@ -158,7 +158,7 @@ func TestProgressionState_Update_AchievementReset(t *testing.T) {
 			{
 				Name: "Well Fed",
 				Requirement: map[string]map[string]interface{}{
-					"hunger": {"maintainAbove": 80.0},
+					"hunger":        {"maintainAbove": 80.0},
 					"maintainAbove": {"duration": 120.0}, // 2 minutes
 				},
 			},
@@ -266,7 +266,7 @@ func TestProgressionState_GetLevelAnimation(t *testing.T) {
 	config := &ProgressionConfig{
 		Levels: []LevelConfig{
 			{Name: "Baby", Requirement: map[string]int64{"age": 0}, Size: 64, Animations: map[string]string{
-				"idle": "baby_idle.gif",
+				"idle":  "baby_idle.gif",
 				"happy": "baby_happy.gif",
 			}},
 		},
