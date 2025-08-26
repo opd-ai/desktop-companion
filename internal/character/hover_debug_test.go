@@ -2,6 +2,7 @@ package character
 
 import (
 	"testing"
+	"time"
 )
 
 // TestHoverDialogDebug specifically debugs the hover dialog issue
@@ -58,21 +59,33 @@ func TestHoverDialogDebug(t *testing.T) {
 	t.Logf("selectRomanceDialog(hover) response: '%s'", response)
 
 	// Test HandleHover
-	response = char.HandleHover()
-	t.Logf("HandleHover response: '%s'", response)
+	t.Logf("Last interaction time: %v", char.lastInteraction)
+	t.Logf("Time since last interaction: %v", time.Since(char.lastInteraction))
 
-	// Let me check if requirements are satisfied
+	// Wait for the 2-second guard to pass
+	time.Sleep(3 * time.Second)
+
+	// Reset lastInteraction to ensure the guard doesn't block
+	char.lastInteraction = time.Now().Add(-5 * time.Second)
+
+	t.Logf("After reset - Time since last interaction: %v", time.Since(char.lastInteraction))
+
+	// Clear any existing cooldowns
+	char.dialogCooldowns = make(map[string]time.Time)
+
+	response = char.HandleHover()
+	t.Logf("HandleHover response after reset: '%s'", response) // Let me check if requirements are satisfied
 	if char.card.RomanceDialogs != nil && len(char.card.RomanceDialogs) > 0 {
 		for i, dialog := range char.card.RomanceDialogs {
 			if dialog.Trigger == "hover" {
 				canSatisfy := char.canSatisfyRomanceRequirements(dialog.Requirements)
 				t.Logf("Romance dialog %d (hover) requirements satisfied: %v", i, canSatisfy)
-				
+
 				if dialog.Requirements != nil && dialog.Requirements.Stats != nil {
 					for statName, conditions := range dialog.Requirements.Stats {
 						currentStat := char.gameState.GetStat(statName)
 						t.Logf("  %s: current=%f, conditions=%v", statName, currentStat, conditions)
-						
+
 						// Test the requirements check directly
 						canSatisfyThis := char.gameState.CanSatisfyRequirements(map[string]map[string]float64{statName: conditions})
 						t.Logf("  %s requirement satisfied: %v", statName, canSatisfyThis)

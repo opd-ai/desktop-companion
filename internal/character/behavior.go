@@ -98,6 +98,11 @@ func (c *Character) initializeGameFeatures() {
 	// Initialize game state with stats from character card
 	c.gameState = NewGameState(c.card.Stats, gameConfig)
 
+	// Initialize progression system if configured
+	if c.card.Progression != nil {
+		c.gameState.SetProgression(c.card.Progression)
+	}
+
 	// Initialize random events manager if random events are configured
 	randomEventsEnabled := len(c.card.RandomEvents) > 0
 	checkInterval := 30 * time.Second // Default 30 second check interval
@@ -840,17 +845,25 @@ func (c *Character) calculateDialogScore(dialog DialogExtended) float64 {
 
 		// Romantic content preference
 		if romanticism > 0.6 && (len(response) > 30 || strings.Contains(response, "💕") || strings.Contains(response, "💖")) {
-			baseScore += romanticism
+			baseScore += romanticism * 0.5 // Reduce romanticism bonus to balance with shyness
 		}
 
 		// Shy characters prefer shorter, less dramatic responses
-		if shyness > 0.6 && len(response) < 25 {
-			baseScore += (1.0 - shyness)
+		if shyness > 0.6 {
+			if len(response) < 25 {
+				baseScore += shyness // Bonus for short responses
+			} else {
+				baseScore -= shyness * 0.5 // Penalty for long responses
+			}
 		}
 
-		// Flirty characters prefer bold responses
-		if flirtiness > 0.6 && (strings.Contains(response, "*") || strings.Contains(response, "😘")) {
-			baseScore += flirtiness
+		// Flirty characters prefer bold responses, shy characters avoid them
+		if strings.Contains(response, "*boldly*") || strings.Contains(response, "😘") {
+			if flirtiness > 0.6 {
+				baseScore += flirtiness
+			} else if shyness > 0.6 {
+				baseScore -= shyness * 0.5 // Shy characters avoid bold expressions
+			}
 		}
 	}
 

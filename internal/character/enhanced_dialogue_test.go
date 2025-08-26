@@ -99,6 +99,9 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 		char.gameState.Stats["affection"].Current = 35
 		char.gameState.Stats["trust"].Current = 15
 
+		// Reset lastInteraction to avoid the 2-second guard in HandleHover
+		char.lastInteraction = time.Now().Add(-5 * time.Second)
+
 		response := char.HandleHover()
 		if response != "" {
 			t.Errorf("Expected no hover dialog with insufficient trust, got: %s", response)
@@ -106,6 +109,10 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 
 		// Set sufficient trust
 		char.gameState.Stats["trust"].Current = 25
+
+		// Reset lastInteraction again to avoid the guard
+		char.lastInteraction = time.Now().Add(-5 * time.Second)
+
 		response = char.HandleHover()
 		expectedResponses := []string{"*heart flutters* 💓", "Just being near you makes me happy..."}
 
@@ -294,6 +301,10 @@ func TestInteractionCountRequirements(t *testing.T) {
 		},
 		Personality: &PersonalityConfig{
 			Traits: map[string]float64{"romanticism": 0.8},
+		},
+		Progression: &ProgressionConfig{
+			Levels:       []LevelConfig{},
+			Achievements: []AchievementConfig{},
 		},
 		RomanceDialogs: []DialogExtended{
 			{
