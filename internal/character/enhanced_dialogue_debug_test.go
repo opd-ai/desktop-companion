@@ -2,6 +2,7 @@ package character
 
 import (
 	"testing"
+	"time"
 )
 
 // TestRomanceDialogDebug helps debug the enhanced dialogue system
@@ -42,25 +43,34 @@ func TestRomanceDialogDebug(t *testing.T) {
 	}
 
 	char := createTestCharacterInstance(card, true)
-	
+
 	// Debug: Check if romance features are detected
 	t.Logf("HasRomanceFeatures: %v", char.card.HasRomanceFeatures())
 	t.Logf("GameState is nil: %v", char.gameState == nil)
 	t.Logf("RomanceDialogs count: %d", len(char.card.RomanceDialogs))
-	
+
 	if char.gameState != nil {
 		t.Logf("Initial affection: %f", char.gameState.GetStat("affection"))
-		
+
 		// Set high affection
 		char.gameState.Stats["affection"].Current = 25
 		t.Logf("After setting affection: %f", char.gameState.GetStat("affection"))
-		
+
 		// Test selectRomanceDialog directly
 		response := char.selectRomanceDialog("click")
 		t.Logf("selectRomanceDialog response: %s", response)
-		
-		// Test HandleClick
+
+		// Test HandleClick with debug
+		t.Logf("About to call HandleClick...")
+		t.Logf("HasRomanceFeatures: %v", char.card.HasRomanceFeatures())
+		t.Logf("GameState != nil: %v", char.gameState != nil)
+
 		response = char.HandleClick()
 		t.Logf("HandleClick response: %s", response)
+
+		// Test with cooldown reset
+		char.dialogCooldowns = make(map[string]time.Time)
+		response = char.HandleClick()
+		t.Logf("HandleClick response after cooldown reset: %s", response)
 	}
 }

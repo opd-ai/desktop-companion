@@ -12,10 +12,10 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 		Name:        "Enhanced Dialogue Test Character",
 		Description: "Test character for enhanced dialogue system",
 		Animations: map[string]string{
-			"idle":           "idle.gif",
-			"talking":        "talking.gif",
-			"romantic_idle":  "romantic_idle.gif",
-			"blushing":       "blushing.gif",
+			"idle":          "idle.gif",
+			"talking":       "talking.gif",
+			"romantic_idle": "romantic_idle.gif",
+			"blushing":      "blushing.gif",
 		},
 		Dialogs: []Dialog{
 			{Trigger: "click", Responses: []string{"Hello there!"}, Animation: "talking", Cooldown: 5},
@@ -27,9 +27,9 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 		},
 		Personality: &PersonalityConfig{
 			Traits: map[string]float64{
-				"shyness":      0.6,
-				"romanticism":  0.8,
-				"flirtiness":   0.4,
+				"shyness":     0.6,
+				"romanticism": 0.8,
+				"flirtiness":  0.4,
 			},
 		},
 		RomanceDialogs: []DialogExtended{
@@ -66,7 +66,7 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 	// Test with low affection - should use regular dialog
 	t.Run("low affection uses regular dialog", func(t *testing.T) {
 		char := createTestCharacterInstance(card, true)
-		
+
 		// Ensure affection is low
 		char.gameState.Stats["affection"].Current = 10
 
@@ -79,13 +79,13 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 	// Test with high affection - should use romance dialog
 	t.Run("high affection uses romance dialog", func(t *testing.T) {
 		char := createTestCharacterInstance(card, true)
-		
+
 		// Set high affection
 		char.gameState.Stats["affection"].Current = 25
 
 		response := char.HandleClick()
 		expectedResponses := []string{"Hi sweetheart! 💕", "I was hoping you'd come see me!"}
-		
+
 		if !containsDialog(expectedResponses, response) {
 			t.Errorf("Expected romance dialog with high affection, got: %s", response)
 		}
@@ -94,7 +94,7 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 	// Test hover dialog requirements
 	t.Run("hover dialog requires both affection and trust", func(t *testing.T) {
 		char := createTestCharacterInstance(card, true)
-		
+
 		// Set high affection but low trust
 		char.gameState.Stats["affection"].Current = 35
 		char.gameState.Stats["trust"].Current = 15
@@ -108,7 +108,7 @@ func TestEnhancedDialogueSystem(t *testing.T) {
 		char.gameState.Stats["trust"].Current = 25
 		response = char.HandleHover()
 		expectedResponses := []string{"*heart flutters* 💓", "Just being near you makes me happy..."}
-		
+
 		if !containsDialog(expectedResponses, response) {
 			t.Errorf("Expected hover dialog with sufficient stats, got: %s", response)
 		}
@@ -124,7 +124,7 @@ func TestRomanceDialogCooldowns(t *testing.T) {
 			"idle":          "idle.gif",
 			"romantic_idle": "romantic_idle.gif",
 		},
-		Dialogs: []Dialog{},
+		Dialogs:  []Dialog{},
 		Behavior: Behavior{IdleTimeout: 30, DefaultSize: 128},
 		Stats: map[string]StatConfig{
 			"affection": {Initial: 50, Max: 100, DegradationRate: 0.1, CriticalThreshold: 10},
@@ -150,7 +150,7 @@ func TestRomanceDialogCooldowns(t *testing.T) {
 	}
 
 	char := createTestCharacterInstance(card, true)
-	
+
 	// First click should work
 	response1 := char.HandleClick()
 	if response1 != "Hello love!" {
@@ -180,7 +180,7 @@ func TestDialogScoring(t *testing.T) {
 			"idle":     "idle.gif",
 			"romantic": "romantic.gif",
 		},
-		Dialogs: []Dialog{},
+		Dialogs:  []Dialog{},
 		Behavior: Behavior{IdleTimeout: 30, DefaultSize: 128},
 		Stats: map[string]StatConfig{
 			"affection": {Initial: 60, Max: 100, DegradationRate: 0.1, CriticalThreshold: 10},
@@ -223,15 +223,15 @@ func TestDialogScoring(t *testing.T) {
 	}
 
 	char := createTestCharacterInstance(card, true)
-	
+
 	// Test multiple times to see if shy character prefers shy responses
 	shyResponseCount := 0
 	boldResponseCount := 0
-	
+
 	for i := 0; i < 10; i++ {
 		// Reset cooldown
 		char.dialogCooldowns = make(map[string]time.Time)
-		
+
 		response := char.HandleClick()
 		if response == "Hi... *blushes softly*" {
 			shyResponseCount++
@@ -241,7 +241,7 @@ func TestDialogScoring(t *testing.T) {
 	}
 
 	t.Logf("Shy character responses: %d shy, %d bold", shyResponseCount, boldResponseCount)
-	
+
 	// Shy character should prefer shy responses more often
 	if shyResponseCount < boldResponseCount {
 		t.Errorf("Shy character should prefer shy responses, got %d shy vs %d bold", shyResponseCount, boldResponseCount)
@@ -271,7 +271,7 @@ func TestNoRomanceDialogs(t *testing.T) {
 	}
 
 	char := createTestCharacterInstance(card, true)
-	
+
 	response := char.HandleClick()
 	if response != "Regular hello!" {
 		t.Errorf("Character without romance dialogs should use regular dialog, got: %s", response)
@@ -284,10 +284,10 @@ func TestInteractionCountRequirements(t *testing.T) {
 		Name:        "Interaction Count Test Character",
 		Description: "Test character for interaction count requirements",
 		Animations: map[string]string{
-			"idle":     "idle.gif",
-			"special":  "special.gif",
+			"idle":    "idle.gif",
+			"special": "special.gif",
 		},
-		Dialogs: []Dialog{},
+		Dialogs:  []Dialog{},
 		Behavior: Behavior{IdleTimeout: 30, DefaultSize: 128},
 		Stats: map[string]StatConfig{
 			"affection": {Initial: 50, Max: 100, DegradationRate: 0.1, CriticalThreshold: 10},
@@ -313,7 +313,7 @@ func TestInteractionCountRequirements(t *testing.T) {
 	}
 
 	char := createTestCharacterInstance(card, true)
-	
+
 	// Initially, no interactions recorded - dialog should not be available
 	response := char.HandleClick()
 	if response != "" {

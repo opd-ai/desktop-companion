@@ -733,7 +733,7 @@ func (c *Character) selectRomanceDialog(trigger string) string {
 
 	// Select the best dialog based on relationship context
 	selectedDialog := c.selectBestRomanceDialog(availableDialogs)
-	
+
 	// Trigger the selected dialog
 	c.dialogCooldowns[selectedDialog.Trigger] = time.Now()
 	c.setState(selectedDialog.Animation)
@@ -837,7 +837,7 @@ func (c *Character) calculateDialogScore(dialog DialogExtended) float64 {
 	responses := dialog.Responses
 	if len(responses) > 0 {
 		response := responses[0] // Use first response as representative
-		
+
 		// Romantic content preference
 		if romanticism > 0.6 && (len(response) > 30 || strings.Contains(response, "💕") || strings.Contains(response, "💖")) {
 			baseScore += romanticism
