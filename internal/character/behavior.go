@@ -886,52 +886,89 @@ func (c *Character) selectBestRomanceDialog(availableDialogs []DialogExtended) D
 func (c *Character) calculateDialogScore(dialog DialogExtended) float64 {
 	baseScore := 1.0
 
-	// Consider personality traits
+	// Extract personality traits needed for scoring
 	shyness := c.card.GetPersonalityTrait("shyness")
 	romanticism := c.card.GetPersonalityTrait("romanticism")
 	flirtiness := c.card.GetPersonalityTrait("flirtiness")
 
 	// Get current affection level for context
-	affection := 0.0
+	affection := c.extractCurrentAffection()
+
+	// Apply personality-based scoring adjustments
+	baseScore = c.applyPersonalityScoring(dialog, baseScore, shyness, romanticism, flirtiness)
+
+	// Apply affection-based scoring adjustments
+	baseScore = c.applyAffectionScoring(baseScore, affection, romanticism)
+
+	return baseScore
+}
+
+// extractCurrentAffection retrieves the current affection level from game state
+func (c *Character) extractCurrentAffection() float64 {
 	if affectionStat, exists := c.gameState.Stats["affection"]; exists {
-		affection = affectionStat.Current
+		return affectionStat.Current
 	}
+	return 0.0
+}
 
-	// Score adjustment based on dialog content and personality
-	// This is a heuristic approach - could be enhanced with more sophisticated NLP
+// applyPersonalityScoring adjusts dialog score based on personality traits and response content
+func (c *Character) applyPersonalityScoring(dialog DialogExtended, baseScore, shyness, romanticism, flirtiness float64) float64 {
 	responses := dialog.Responses
-	if len(responses) > 0 {
-		response := responses[0] // Use first response as representative
-
-		// Romantic content preference
-		if romanticism > 0.6 && (len(response) > 30 || strings.Contains(response, "💕") || strings.Contains(response, "💖")) {
-			baseScore += romanticism * 0.5 // Reduce romanticism bonus to balance with shyness
-		}
-
-		// Shy characters prefer shorter, less dramatic responses
-		if shyness > 0.6 {
-			if len(response) < 25 {
-				baseScore += shyness // Bonus for short responses
-			} else {
-				baseScore -= shyness * 0.5 // Penalty for long responses
-			}
-		}
-
-		// Flirty characters prefer bold responses, shy characters avoid them
-		if strings.Contains(response, "*boldly*") || strings.Contains(response, "😘") {
-			if flirtiness > 0.6 {
-				baseScore += flirtiness
-			} else if shyness > 0.6 {
-				baseScore -= shyness * 0.5 // Shy characters avoid bold expressions
-			}
-		}
+	if len(responses) == 0 {
+		return baseScore
 	}
 
-	// Adjust based on current affection level
+	response := responses[0] // Use first response as representative
+
+	// Apply romantic content preferences
+	baseScore = c.applyRomanticContentScoring(response, baseScore, romanticism)
+
+	// Apply shyness-based response length preferences
+	baseScore = c.applyShynessScoring(response, baseScore, shyness)
+
+	// Apply flirtiness and boldness preferences
+	baseScore = c.applyFlirtinessScoring(response, baseScore, flirtiness, shyness)
+
+	return baseScore
+}
+
+// applyRomanticContentScoring adjusts score based on romantic content preference
+func (c *Character) applyRomanticContentScoring(response string, baseScore, romanticism float64) float64 {
+	if romanticism > 0.6 && (len(response) > 30 || strings.Contains(response, "💕") || strings.Contains(response, "💖")) {
+		baseScore += romanticism * 0.5 // Reduce romanticism bonus to balance with shyness
+	}
+	return baseScore
+}
+
+// applyShynessScoring adjusts score based on response length preferences for shy characters
+func (c *Character) applyShynessScoring(response string, baseScore, shyness float64) float64 {
+	if shyness > 0.6 {
+		if len(response) < 25 {
+			baseScore += shyness // Bonus for short responses
+		} else {
+			baseScore -= shyness * 0.5 // Penalty for long responses
+		}
+	}
+	return baseScore
+}
+
+// applyFlirtinessScoring adjusts score based on bold expression preferences
+func (c *Character) applyFlirtinessScoring(response string, baseScore, flirtiness, shyness float64) float64 {
+	if strings.Contains(response, "*boldly*") || strings.Contains(response, "😘") {
+		if flirtiness > 0.6 {
+			baseScore += flirtiness
+		} else if shyness > 0.6 {
+			baseScore -= shyness * 0.5 // Shy characters avoid bold expressions
+		}
+	}
+	return baseScore
+}
+
+// applyAffectionScoring adjusts score based on current affection level and romantic character traits
+func (c *Character) applyAffectionScoring(baseScore, affection, romanticism float64) float64 {
 	if affection > 50 && romanticism > 0.5 {
 		baseScore += 0.5 // Boost romantic dialogs for high-affection romantic characters
 	}
-
 	return baseScore
 }
 
