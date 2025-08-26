@@ -620,6 +620,31 @@ func (c *CharacterCard) validateRandomEvents() error {
 
 // validateRandomEventConfig validates a single random event configuration
 func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index int) error {
+	if err := c.validateEventBasicFields(event); err != nil {
+		return err
+	}
+
+	if err := c.validateEventNumericRanges(event); err != nil {
+		return err
+	}
+
+	if err := c.validateEventAnimations(event); err != nil {
+		return err
+	}
+
+	if err := c.validateEventResponses(event); err != nil {
+		return err
+	}
+
+	if err := c.validateEventStatReferences(event); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateEventBasicFields validates required string fields are not empty
+func (c *CharacterCard) validateEventBasicFields(event RandomEventConfig) error {
 	if len(event.Name) == 0 {
 		return fmt.Errorf("name cannot be empty")
 	}
@@ -628,6 +653,11 @@ func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index
 		return fmt.Errorf("description cannot be empty")
 	}
 
+	return nil
+}
+
+// validateEventNumericRanges validates numeric fields are within acceptable ranges
+func (c *CharacterCard) validateEventNumericRanges(event RandomEventConfig) error {
 	if event.Probability < 0.0 || event.Probability > 1.0 {
 		return fmt.Errorf("probability must be 0.0-1.0, got %f", event.Probability)
 	}
@@ -640,31 +670,45 @@ func (c *CharacterCard) validateRandomEventConfig(event RandomEventConfig, index
 		return fmt.Errorf("duration must be 0-3600 seconds, got %d", event.Duration)
 	}
 
-	// Validate animations exist
+	return nil
+}
+
+// validateEventAnimations validates that all referenced animations exist
+func (c *CharacterCard) validateEventAnimations(event RandomEventConfig) error {
 	for _, animation := range event.Animations {
 		if _, exists := c.Animations[animation]; !exists {
 			return fmt.Errorf("animation '%s' not found in animations map", animation)
 		}
 	}
 
-	// Validate responses
+	return nil
+}
+
+// validateEventResponses validates response count is within limits
+func (c *CharacterCard) validateEventResponses(event RandomEventConfig) error {
 	if len(event.Responses) > 10 {
 		return fmt.Errorf("must have 0-10 responses, got %d", len(event.Responses))
 	}
 
-	// Validate that referenced stats exist when character has stats defined
-	// If no stats are defined, stat references are allowed but will be ignored at runtime
-	if len(c.Stats) > 0 {
-		for statName := range event.Effects {
-			if _, exists := c.Stats[statName]; !exists {
-				return fmt.Errorf("event effects reference stat '%s' which is not defined", statName)
-			}
-		}
+	return nil
+}
 
-		for statName := range event.Conditions {
-			if _, exists := c.Stats[statName]; !exists {
-				return fmt.Errorf("event conditions reference stat '%s' which is not defined", statName)
-			}
+// validateEventStatReferences validates that referenced stats exist when character has stats defined
+func (c *CharacterCard) validateEventStatReferences(event RandomEventConfig) error {
+	// If no stats are defined, stat references are allowed but will be ignored at runtime
+	if len(c.Stats) == 0 {
+		return nil
+	}
+
+	for statName := range event.Effects {
+		if _, exists := c.Stats[statName]; !exists {
+			return fmt.Errorf("event effects reference stat '%s' which is not defined", statName)
+		}
+	}
+
+	for statName := range event.Conditions {
+		if _, exists := c.Stats[statName]; !exists {
+			return fmt.Errorf("event conditions reference stat '%s' which is not defined", statName)
 		}
 	}
 
