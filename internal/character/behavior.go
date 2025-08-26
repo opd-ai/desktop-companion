@@ -185,7 +185,15 @@ func (c *Character) HandleClick() string {
 
 	c.lastInteraction = time.Now()
 
-	// Find click dialog with available cooldown
+	// First check romance dialogs if romance features are enabled
+	if c.card.HasRomanceFeatures() && c.gameState != nil {
+		response := c.selectRomanceDialog("click")
+		if response != "" {
+			return response
+		}
+	}
+
+	// Fall back to regular dialogs
 	for _, dialog := range c.card.Dialogs {
 		if dialog.Trigger == "click" {
 			lastTrigger, exists := c.dialogCooldowns[dialog.Trigger]
