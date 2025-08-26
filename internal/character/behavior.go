@@ -34,6 +34,7 @@ type Character struct {
 	gameState                *GameState
 	gameInteractionCooldowns map[string]time.Time
 	randomEventManager       *RandomEventManager // Added for Phase 3 - random events
+	romanceEventManager      *RandomEventManager // Added for Phase 3 Task 2 - romance events
 }
 
 // New creates a new character instance from a character card
@@ -111,6 +112,10 @@ func (c *Character) initializeGameFeatures() {
 		checkInterval = time.Duration(c.card.GameRules.StatsDecayInterval) * time.Second
 	}
 	c.randomEventManager = NewRandomEventManager(c.card.RandomEvents, randomEventsEnabled, checkInterval)
+
+	// Initialize romance events manager if romance events are configured
+	romanceEventsEnabled := len(c.card.RomanceEvents) > 0
+	c.romanceEventManager = NewRandomEventManager(c.card.RomanceEvents, romanceEventsEnabled, checkInterval)
 }
 
 // Update updates character behavior and animations
