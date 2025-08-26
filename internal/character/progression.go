@@ -211,42 +211,84 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState, elapsed time
 } // evaluateAchievementRequirement checks if current game state meets achievement criteria
 func (ps *ProgressionState) evaluateAchievementRequirement(requirement map[string]map[string]interface{}, gameState *GameState) bool {
 	for statName, criteria := range requirement {
-		// Skip special achievement requirement types
-		if statName == "maintainAbove" {
+		if ps.shouldSkipStatRequirement(statName) {
 			continue
 		}
 
 		currentValue := gameState.GetStat(statName)
-
-		// Check maintainAbove requirement
-		if maintainAbove, hasMA := criteria["maintainAbove"]; hasMA {
-			if threshold, ok := maintainAbove.(float64); ok {
-				if currentValue < threshold {
-					return false
-				}
-			}
-		}
-
-		// Check minimum value requirement
-		if minVal, hasMin := criteria["min"]; hasMin {
-			if threshold, ok := minVal.(float64); ok {
-				if currentValue < threshold {
-					return false
-				}
-			}
-		}
-
-		// Check maximum value requirement
-		if maxVal, hasMax := criteria["max"]; hasMax {
-			if threshold, ok := maxVal.(float64); ok {
-				if currentValue > threshold {
-					return false
-				}
-			}
+		if !ps.validateStatCriteria(criteria, currentValue) {
+			return false
 		}
 	}
 
 	return true
+}
+
+// shouldSkipStatRequirement determines if a stat requirement should be skipped during evaluation
+func (ps *ProgressionState) shouldSkipStatRequirement(statName string) bool {
+	return statName == "maintainAbove"
+}
+
+// validateStatCriteria checks if current value meets all criteria for a specific stat
+func (ps *ProgressionState) validateStatCriteria(criteria map[string]interface{}, currentValue float64) bool {
+	if !ps.checkMaintainAboveRequirement(criteria, currentValue) {
+		return false
+	}
+
+	if !ps.checkMinimumValueRequirement(criteria, currentValue) {
+		return false
+	}
+
+	if !ps.checkMaximumValueRequirement(criteria, currentValue) {
+		return false
+	}
+
+	return true
+}
+
+// checkMaintainAboveRequirement validates maintainAbove threshold requirements
+func (ps *ProgressionState) checkMaintainAboveRequirement(criteria map[string]interface{}, currentValue float64) bool {
+	maintainAbove, hasMA := criteria["maintainAbove"]
+	if !hasMA {
+		return true
+	}
+
+	threshold, ok := maintainAbove.(float64)
+	if !ok {
+		return true
+	}
+
+	return currentValue >= threshold
+}
+
+// checkMinimumValueRequirement validates minimum value requirements
+func (ps *ProgressionState) checkMinimumValueRequirement(criteria map[string]interface{}, currentValue float64) bool {
+	minVal, hasMin := criteria["min"]
+	if !hasMin {
+		return true
+	}
+
+	threshold, ok := minVal.(float64)
+	if !ok {
+		return true
+	}
+
+	return currentValue >= threshold
+}
+
+// checkMaximumValueRequirement validates maximum value requirements
+func (ps *ProgressionState) checkMaximumValueRequirement(criteria map[string]interface{}, currentValue float64) bool {
+	maxVal, hasMax := criteria["max"]
+	if !hasMax {
+		return true
+	}
+
+	threshold, ok := maxVal.(float64)
+	if !ok {
+		return true
+	}
+
+	return currentValue <= threshold
 }
 
 // applyAchievementReward applies rewards from completing an achievement
