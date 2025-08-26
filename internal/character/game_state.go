@@ -8,17 +8,29 @@ import (
 	"time"
 )
 
+// RomanceMemory represents a memory of a romance interaction for tracking
+type RomanceMemory struct {
+	Timestamp       time.Time          `json:"timestamp"`
+	InteractionType string             `json:"interactionType"`
+	StatsBefore     map[string]float64 `json:"statsBefore"`
+	StatsAfter      map[string]float64 `json:"statsAfter"`
+	Response        string             `json:"response"`
+}
+
 // GameState manages Tamagotchi-style stats and progression for a character
 // This follows the "lazy programmer" approach using only Go standard library
 // All game mechanics are configurable via JSON without custom code
 type GameState struct {
-	mu              sync.RWMutex
-	Stats           map[string]*Stat  `json:"stats"`
-	LastDecayUpdate time.Time         `json:"lastDecayUpdate"`
-	CreationTime    time.Time         `json:"creationTime"`
-	TotalPlayTime   time.Duration     `json:"totalPlayTime"`
-	Config          *GameConfig       `json:"config,omitempty"`
-	Progression     *ProgressionState `json:"progression,omitempty"`
+	mu                 sync.RWMutex
+	Stats              map[string]*Stat       `json:"stats"`
+	LastDecayUpdate    time.Time              `json:"lastDecayUpdate"`
+	CreationTime       time.Time              `json:"creationTime"`
+	TotalPlayTime      time.Duration          `json:"totalPlayTime"`
+	Config             *GameConfig            `json:"config,omitempty"`
+	Progression        *ProgressionState      `json:"progression,omitempty"`
+	RelationshipLevel  string                 `json:"relationshipLevel,omitempty"`
+	InteractionHistory map[string][]time.Time `json:"interactionHistory,omitempty"`
+	RomanceMemories    []RomanceMemory        `json:"romanceMemories,omitempty"`
 }
 
 // Stat represents a game statistic with boundaries and degradation rules
@@ -51,12 +63,15 @@ type StatConfig struct {
 // Uses current time as baseline for all time-based calculations
 func NewGameState(statConfigs map[string]StatConfig, config *GameConfig) *GameState {
 	gs := &GameState{
-		Stats:           make(map[string]*Stat),
-		LastDecayUpdate: time.Now(),
-		CreationTime:    time.Now(),
-		TotalPlayTime:   0,
-		Config:          config,
-		Progression:     nil, // Will be set separately if progression is enabled
+		Stats:              make(map[string]*Stat),
+		LastDecayUpdate:    time.Now(),
+		CreationTime:       time.Now(),
+		TotalPlayTime:      0,
+		Config:             config,
+		Progression:        nil,        // Will be set separately if progression is enabled
+		RelationshipLevel:  "Stranger", // Default relationship level
+		InteractionHistory: make(map[string][]time.Time),
+		RomanceMemories:    make([]RomanceMemory, 0),
 	}
 
 	// Initialize stats from configuration
@@ -534,4 +549,188 @@ func (gs *GameState) validateStat(name string, stat *Stat) error {
 	}
 
 	return nil
+}
+
+// RecordRomanceInteraction records an interaction for romance memory system
+func (gs *GameState) RecordRomanceInteraction(interactionType, response string, statsBefore, statsAfter map[string]float64) {
+	if gs == nil {
+		return
+	}
+
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	// Initialize interaction history if needed
+	if gs.InteractionHistory == nil {
+		gs.InteractionHistory = make(map[string][]time.Time)
+	}
+	if gs.RomanceMemories == nil {
+		gs.RomanceMemories = make([]RomanceMemory, 0)
+	}
+
+	// Record in interaction history
+	gs.InteractionHistory[interactionType] = append(
+		gs.InteractionHistory[interactionType],
+		time.Now(),
+	)
+
+	// Record detailed memory
+	memory := RomanceMemory{
+		Timestamp:       time.Now(),
+		InteractionType: interactionType,
+		StatsBefore:     statsBefore,
+		StatsAfter:      statsAfter,
+		Response:        response,
+	}
+	gs.RomanceMemories = append(gs.RomanceMemories, memory)
+
+	// Keep only last 50 memories to prevent unbounded growth
+	if len(gs.RomanceMemories) > 50 {
+		gs.RomanceMemories = gs.RomanceMemories[len(gs.RomanceMemories)-50:]
+	}
+}
+
+// GetInteractionCount returns the number of times an interaction has been performed
+func (gs *GameState) GetInteractionCount(interactionType string) int {
+	if gs == nil || gs.InteractionHistory == nil {
+		return 0
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if interactions, exists := gs.InteractionHistory[interactionType]; exists {
+		return len(interactions)
+	}
+	return 0
+}
+
+// GetRelationshipLevel returns the current relationship level
+func (gs *GameState) GetRelationshipLevel() string {
+	if gs == nil {
+		return "Stranger"
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.RelationshipLevel == "" {
+		return "Stranger" // Default level
+	}
+	return gs.RelationshipLevel
+}
+
+// UpdateRelationshipLevel checks and updates relationship level based on progression
+func (gs *GameState) UpdateRelationshipLevel(progressionConfig *ProgressionConfig) bool {
+	if gs == nil || progressionConfig == nil {
+		return false
+	}
+
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	// Get current age in seconds for level requirements
+	var currentAge int64 = 0
+	if gs.Progression != nil {
+		currentAge = int64(gs.Progression.GetAge().Seconds())
+	}
+
+	// Find the highest level we can achieve
+	var newLevel string = "Stranger"
+	for _, level := range progressionConfig.Levels {
+		// Check if we meet all requirements for this level
+		if gs.meetsRelationshipRequirements(level.Requirement, currentAge) {
+			newLevel = level.Name
+		}
+	}
+
+	// Check if level changed
+	oldLevel := gs.RelationshipLevel
+	if oldLevel == "" {
+		oldLevel = "Stranger"
+	}
+
+	if newLevel != oldLevel {
+		gs.RelationshipLevel = newLevel
+		return true
+	}
+
+	return false
+}
+
+// meetsRelationshipRequirements checks if current stats meet level requirements
+func (gs *GameState) meetsRelationshipRequirements(requirements map[string]int64, currentAge int64) bool {
+	for statName, threshold := range requirements {
+		if statName == "age" {
+			if currentAge < threshold {
+				return false
+			}
+			continue
+		}
+
+		// Check romance stats
+		if stat, exists := gs.Stats[statName]; exists {
+			if stat.Current < float64(threshold) {
+				return false
+			}
+		} else {
+			// Required stat doesn't exist
+			return false
+		}
+	}
+	return true
+}
+
+// GetRomanceStats returns a copy of romance-related stats
+func (gs *GameState) GetRomanceStats() map[string]float64 {
+	if gs == nil {
+		return nil
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	romanceStats := make(map[string]float64)
+	romanceStatNames := []string{"affection", "trust", "intimacy", "jealousy"}
+
+	for _, statName := range romanceStatNames {
+		if stat, exists := gs.Stats[statName]; exists {
+			romanceStats[statName] = stat.Current
+		}
+	}
+
+	return romanceStats
+}
+
+// GetInteractionHistory returns a copy of interaction history
+func (gs *GameState) GetInteractionHistory() map[string][]time.Time {
+	if gs == nil || gs.InteractionHistory == nil {
+		return nil
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	history := make(map[string][]time.Time)
+	for interactionType, timestamps := range gs.InteractionHistory {
+		// Create a copy of the slice
+		history[interactionType] = make([]time.Time, len(timestamps))
+		copy(history[interactionType], timestamps)
+	}
+
+	return history
+}
+
+// GetRomanceMemories returns a copy of romance memories
+func (gs *GameState) GetRomanceMemories() []RomanceMemory {
+	if gs == nil || gs.RomanceMemories == nil {
+		return nil
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	memories := make([]RomanceMemory, len(gs.RomanceMemories))
+	copy(memories, gs.RomanceMemories)
+	return memories
 }

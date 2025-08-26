@@ -539,10 +539,32 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 
 	// Apply personality-modified effects
 	modifiedEffects := c.applyPersonalityToEffects(interaction.Effects, personalityModifier)
+
+	// Record stats before interaction for memory system
+	statsBefore := c.gameState.GetStats()
+
+	// Apply effects
 	c.gameState.ApplyInteractionEffects(modifiedEffects)
 
+	// Record stats after interaction
+	statsAfter := c.gameState.GetStats()
+
 	// Record the romance interaction for memory system
-	c.recordRomanceInteraction(interactionType, modifiedEffects)
+	response := c.selectContextualResponse(interaction.Responses, interactionType)
+	c.recordRomanceInteraction(interactionType, response, statsBefore, statsAfter)
+
+	// Check for relationship level progression
+	if c.card.Progression != nil {
+		levelChanged := c.gameState.UpdateRelationshipLevel(c.card.Progression)
+		if levelChanged {
+			// Log level change for debugging
+			newLevel := c.gameState.GetRelationshipLevel()
+			c.setState("level_up") // Could trigger special animation
+
+			// You could also trigger a special level-up response here
+			_ = newLevel // Use for potential level-up dialogue
+		}
+	}
 
 	// Set cooldown
 	c.gameInteractionCooldowns[interactionType] = time.Now()
@@ -728,13 +750,15 @@ func (c *Character) getFailureResponse(interactionType string) string {
 
 // recordRomanceInteraction records romance interactions for memory and progression tracking
 // Implements the romance memory system outlined in the plan
-func (c *Character) recordRomanceInteraction(interactionType string, effects map[string]float64) {
+func (c *Character) recordRomanceInteraction(interactionType, response string, statsBefore, statsAfter map[string]float64) {
 	if c.gameState == nil {
 		return
 	}
 
-	// Record interaction for relationship progression tracking
-	// This could be extended to influence future random events or dialogue
+	// Record detailed interaction memory
+	c.gameState.RecordRomanceInteraction(interactionType, response, statsBefore, statsAfter)
+
+	// Record interaction for progression tracking
 	c.gameState.RecordInteraction(interactionType)
 }
 

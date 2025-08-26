@@ -3,19 +3,19 @@
   "description": "A virtual dating companion with romance mechanics",
   
   "animations": {
-    "idle": "animations/idle.gif",
-    "talking": "animations/talking.gif",
-    "happy": "animations/happy.gif",
-    "sad": "animations/sad.gif",
-    "hungry": "animations/hungry.gif",
-    "eating": "animations/eating.gif",
-    "blushing": "animations/blushing.gif",
-    "heart_eyes": "animations/heart_eyes.gif",
-    "shy": "animations/shy.gif",
-    "flirty": "animations/flirty.gif",
-    "romantic_idle": "animations/romantic_idle.gif",
-    "jealous": "animations/jealous.gif",
-    "excited_romance": "animations/excited_romance.gif"
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "hungry": "../default/animations/hungry.gif",
+    "eating": "../default/animations/eating.gif",
+    "blushing": "../default/animations/happy.gif",
+    "heart_eyes": "../default/animations/happy.gif",
+    "shy": "../default/animations/sad.gif",
+    "flirty": "../default/animations/happy.gif",
+    "romantic_idle": "../default/animations/idle.gif",
+    "jealous": "../default/animations/sad.gif",
+    "excited_romance": "../default/animations/happy.gif"
   },
 
   "dialogs": [
@@ -133,7 +133,7 @@
       "cooldown": 15
     },
     "compliment": {
-      "triggers": ["shift+click"],
+      "triggers": ["hover"],
       "effects": {"affection": 5, "happiness": 3, "trust": 1},
       "animations": ["blushing", "happy"],
       "responses": [
@@ -145,7 +145,7 @@
       "requirements": {"trust": {"min": 10}}
     },
     "give_gift": {
-      "triggers": ["ctrl+click"],
+      "triggers": ["doubleclick"],
       "effects": {"affection": 10, "happiness": 8, "trust": 2},
       "animations": ["heart_eyes", "excited_romance"],
       "responses": [
@@ -157,7 +157,7 @@
       "requirements": {"affection": {"min": 15}}
     },
     "deep_conversation": {
-      "triggers": ["alt+click"],
+      "triggers": ["shift+click"],
       "effects": {"trust": 8, "affection": 3, "intimacy": 5},
       "animations": ["talking", "romantic_idle"],
       "responses": [
