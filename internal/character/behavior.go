@@ -440,6 +440,219 @@ func (c *Character) HandleGameInteraction(interactionType string) string {
 	return ""
 }
 
+// HandleRomanceInteraction processes romance-specific interactions (compliment, gift, conversation, etc.)
+// Returns response text to display, or empty string if interaction is not available
+// This implements the missing runtime functionality for the JSON-configured romance system
+func (c *Character) HandleRomanceInteraction(interactionType string) string {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// Check if game mode is enabled and romance features are available
+	if c.gameState == nil || !c.card.HasRomanceFeatures() {
+		return ""
+	}
+
+	// Find the interaction configuration
+	interaction, exists := c.card.Interactions[interactionType]
+	if !exists {
+		return ""
+	}
+
+	// Check cooldown
+	lastUsed, exists := c.gameInteractionCooldowns[interactionType]
+	if exists && time.Since(lastUsed) < time.Duration(interaction.Cooldown)*time.Second {
+		return c.getFailureResponse(interactionType)
+	}
+
+	// Check requirements
+	if !c.gameState.CanSatisfyRequirements(interaction.Requirements) {
+		return c.getFailureResponse(interactionType)
+	}
+
+	// Calculate personality modifier for effects
+	personalityModifier := c.calculatePersonalityModifier(interactionType)
+
+	// Apply personality-modified effects
+	modifiedEffects := c.applyPersonalityToEffects(interaction.Effects, personalityModifier)
+	c.gameState.ApplyInteractionEffects(modifiedEffects)
+
+	// Record the romance interaction for memory system
+	c.recordRomanceInteraction(interactionType, modifiedEffects)
+
+	// Set cooldown
+	c.gameInteractionCooldowns[interactionType] = time.Now()
+
+	// Update last interaction time
+	c.lastInteraction = time.Now()
+
+	// Select animation based on personality and context
+	if len(interaction.Animations) > 0 {
+		animationIndex := c.selectRomanceAnimation(interaction.Animations)
+		c.setState(interaction.Animations[animationIndex])
+	}
+
+	// Return contextual response based on personality and current relationship level
+	if len(interaction.Responses) > 0 {
+		return c.selectContextualResponse(interaction.Responses, interactionType)
+	}
+
+	return ""
+}
+
+// calculatePersonalityModifier calculates how personality traits affect interaction effects
+// Uses existing personality configuration from character card
+func (c *Character) calculatePersonalityModifier(interactionType string) float64 {
+	baseModifier := 1.0
+
+	// Get compatibility modifier from character card
+	compatibilityModifier := c.card.GetCompatibilityModifier(interactionType)
+	baseModifier *= compatibilityModifier
+
+	// Apply trait-specific modifiers based on interaction type
+	switch interactionType {
+	case "compliment":
+		// Shy characters are less responsive to compliments initially
+		shyness := c.card.GetPersonalityTrait("shyness")
+		affectionResponsiveness := c.card.GetPersonalityTrait("affection_responsiveness")
+		baseModifier *= (1.0 - shyness*0.3) * affectionResponsiveness
+
+	case "give_gift":
+		// Gift appreciation trait directly affects gift interactions
+		giftAppreciation := c.card.GetCompatibilityModifier("gift_appreciation")
+		baseModifier *= giftAppreciation
+
+	case "deep_conversation":
+		// Conversation lovers get more benefit from deep talks
+		conversationLover := c.card.GetCompatibilityModifier("conversation_lover")
+		baseModifier *= conversationLover
+
+	default:
+		// Use general affection responsiveness for other romance interactions
+		affectionResponsiveness := c.card.GetPersonalityTrait("affection_responsiveness")
+		baseModifier *= affectionResponsiveness
+	}
+
+	return baseModifier
+}
+
+// applyPersonalityToEffects applies personality modifiers to stat effects
+// Ensures personality traits influence the actual stat changes
+func (c *Character) applyPersonalityToEffects(effects map[string]float64, modifier float64) map[string]float64 {
+	modifiedEffects := make(map[string]float64)
+
+	for statName, value := range effects {
+		// Romance stats get personality modifiers, basic stats don't
+		if statName == "affection" || statName == "trust" || statName == "intimacy" {
+			modifiedEffects[statName] = value * modifier
+		} else {
+			modifiedEffects[statName] = value
+		}
+	}
+
+	return modifiedEffects
+}
+
+// selectRomanceAnimation chooses an animation based on personality and context
+// Uses personality traits to influence animation selection for more character-consistent behavior
+func (c *Character) selectRomanceAnimation(animations []string) int {
+	if len(animations) == 0 {
+		return 0
+	}
+
+	// Simple personality-influenced selection
+	shyness := c.card.GetPersonalityTrait("shyness")
+	flirtiness := c.card.GetPersonalityTrait("flirtiness")
+
+	// Shy characters prefer subtle animations, flirty characters prefer bold ones
+	for i, animation := range animations {
+		if shyness > 0.7 && (animation == "shy" || animation == "blushing") {
+			return i
+		}
+		if flirtiness > 0.7 && (animation == "flirty" || animation == "heart_eyes") {
+			return i
+		}
+	}
+
+	// Default to time-based pseudo-random selection
+	return int(time.Now().UnixNano()) % len(animations)
+}
+
+// selectContextualResponse chooses a response based on personality and relationship context
+// Provides more character-consistent dialogue based on current stats and personality
+func (c *Character) selectContextualResponse(responses []string, interactionType string) string {
+	if len(responses) == 0 {
+		return ""
+	}
+
+	// For romance interactions, consider relationship level
+	if c.gameState != nil && len(c.gameState.Stats) > 0 {
+		affection := 0.0
+		if affectionStat, exists := c.gameState.Stats["affection"]; exists {
+			affection = affectionStat.Current
+		}
+
+		// Higher affection characters might have different response styles
+		romanticism := c.card.GetPersonalityTrait("romanticism")
+
+		// Romantic characters with high affection use sweeter responses
+		if romanticism > 0.6 && affection > 40 && len(responses) > 1 {
+			// Prefer responses with romantic language (rough heuristic)
+			for i, response := range responses {
+				if len(response) > 20 { // Longer responses tend to be more romantic
+					return response
+				}
+				_ = i // Use index if needed for more sophisticated selection
+			}
+		}
+	}
+
+	// Default pseudo-random selection
+	index := int(time.Now().UnixNano()) % len(responses)
+	return responses[index]
+}
+
+// getFailureResponse returns an appropriate response when romance interaction fails
+// Provides personality-consistent feedback for failed interactions
+func (c *Character) getFailureResponse(interactionType string) string {
+	shyness := c.card.GetPersonalityTrait("shyness")
+	trustDifficulty := c.card.GetPersonalityTrait("trust_difficulty")
+
+	// Customize failure messages based on personality
+	if shyness > 0.7 {
+		return "I'm... I'm not quite ready for that yet... 😳"
+	}
+
+	if trustDifficulty > 0.6 {
+		return "I need to feel more comfortable first..."
+	}
+
+	// Default failure responses
+	failureResponses := map[string][]string{
+		"compliment":        {"I'm not sure how to respond to that right now...", "Maybe when I know you better?"},
+		"give_gift":         {"That's very thoughtful, but I can't accept that yet.", "Perhaps when we're closer?"},
+		"deep_conversation": {"I'm not ready for such deep talks yet.", "Let's start with lighter conversation?"},
+	}
+
+	if responses, exists := failureResponses[interactionType]; exists && len(responses) > 0 {
+		index := int(time.Now().UnixNano()) % len(responses)
+		return responses[index]
+	}
+
+	return "I'm not ready for that right now..."
+}
+
+// recordRomanceInteraction records romance interactions for memory and progression tracking
+// Implements the romance memory system outlined in the plan
+func (c *Character) recordRomanceInteraction(interactionType string, effects map[string]float64) {
+	if c.gameState == nil {
+		return
+	}
+
+	// Record interaction for relationship progression tracking
+	// This could be extended to influence future random events or dialogue
+	c.gameState.RecordInteraction(interactionType)
+}
+
 // GetGameState returns the current game state (for testing and UI)
 func (c *Character) GetGameState() *GameState {
 	c.mu.RLock()
