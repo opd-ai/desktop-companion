@@ -3,6 +3,7 @@ package character
 import (
 	"fmt"
 	"image"
+	"strings"
 	"sync"
 	"time"
 )
@@ -231,6 +232,15 @@ func (c *Character) HandleHover() string {
 		return ""
 	}
 
+	// First check romance dialogs if romance features are enabled
+	if c.card.HasRomanceFeatures() && c.gameState != nil {
+		response := c.selectRomanceDialog("hover")
+		if response != "" {
+			return response
+		}
+	}
+
+	// Fall back to regular dialogs
 	for _, dialog := range c.card.Dialogs {
 		if dialog.Trigger == "hover" {
 			lastTrigger, exists := c.dialogCooldowns[dialog.Trigger]
@@ -684,6 +694,164 @@ func (c *Character) GetGameState() *GameState {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.gameState
+}
+
+// selectRomanceDialog selects an appropriate romance dialog based on relationship context
+// This implements the enhanced dialogue system from Phase 2 of the dating simulator plan
+func (c *Character) selectRomanceDialog(trigger string) string {
+	if c.card.RomanceDialogs == nil || len(c.card.RomanceDialogs) == 0 {
+		return ""
+	}
+
+	// Find romance dialogs matching the trigger
+	var availableDialogs []DialogExtended
+	for _, dialog := range c.card.RomanceDialogs {
+		if dialog.Trigger == trigger {
+			// Check if requirements are satisfied
+			if c.canSatisfyRomanceRequirements(dialog.Requirements) {
+				// Check cooldown
+				lastTrigger, exists := c.dialogCooldowns[dialog.Trigger]
+				if !exists || dialog.CanTrigger(lastTrigger) {
+					availableDialogs = append(availableDialogs, dialog)
+				}
+			}
+		}
+	}
+
+	// If no romance dialogs are available, return empty
+	if len(availableDialogs) == 0 {
+		return ""
+	}
+
+	// Select the best dialog based on relationship context
+	selectedDialog := c.selectBestRomanceDialog(availableDialogs)
+	
+	// Trigger the selected dialog
+	c.dialogCooldowns[selectedDialog.Trigger] = time.Now()
+	c.setState(selectedDialog.Animation)
+	return selectedDialog.GetRandomResponse()
+}
+
+// canSatisfyRomanceRequirements checks if the current game state satisfies romance requirements
+// Uses existing requirements system but specifically for romance dialogs
+func (c *Character) canSatisfyRomanceRequirements(requirements *RomanceRequirement) bool {
+	if requirements == nil {
+		return true // No requirements means always available
+	}
+
+	// Check stat requirements
+	if requirements.Stats != nil {
+		for statName, conditions := range requirements.Stats {
+			if !c.gameState.CanSatisfyRequirements(map[string]map[string]float64{statName: conditions}) {
+				return false
+			}
+		}
+	}
+
+	// Check relationship level requirements
+	if requirements.RelationshipLevel != "" {
+		// For Phase 2, we'll use progression level as relationship level
+		// This can be enhanced later with dedicated relationship level tracking
+		if c.gameState.Progression != nil {
+			currentLevel := c.gameState.Progression.CurrentLevel
+			if currentLevel != requirements.RelationshipLevel {
+				return false
+			}
+		}
+	}
+
+	// Check interaction count requirements
+	if requirements.InteractionCount != nil {
+		// Use progression system's interaction counts
+		if c.gameState.Progression != nil {
+			interactionCounts := c.gameState.Progression.GetInteractionCounts()
+			for interactionType, conditions := range requirements.InteractionCount {
+				currentCount := interactionCounts[interactionType]
+				for conditionType, threshold := range conditions {
+					switch conditionType {
+					case "min":
+						if currentCount < threshold {
+							return false
+						}
+					case "max":
+						if currentCount > threshold {
+							return false
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return true
+}
+
+// selectBestRomanceDialog chooses the most appropriate dialog from available options
+// Considers personality traits and current relationship context
+func (c *Character) selectBestRomanceDialog(availableDialogs []DialogExtended) DialogExtended {
+	if len(availableDialogs) == 1 {
+		return availableDialogs[0]
+	}
+
+	// Preference scoring based on personality and relationship state
+	bestDialog := availableDialogs[0]
+	bestScore := 0.0
+
+	for _, dialog := range availableDialogs {
+		score := c.calculateDialogScore(dialog)
+		if score > bestScore {
+			bestScore = score
+			bestDialog = dialog
+		}
+	}
+
+	return bestDialog
+}
+
+// calculateDialogScore calculates a score for a dialog based on personality and context
+// Higher scores indicate better matches for the current character state
+func (c *Character) calculateDialogScore(dialog DialogExtended) float64 {
+	baseScore := 1.0
+
+	// Consider personality traits
+	shyness := c.card.GetPersonalityTrait("shyness")
+	romanticism := c.card.GetPersonalityTrait("romanticism")
+	flirtiness := c.card.GetPersonalityTrait("flirtiness")
+
+	// Get current affection level for context
+	affection := 0.0
+	if affectionStat, exists := c.gameState.Stats["affection"]; exists {
+		affection = affectionStat.Current
+	}
+
+	// Score adjustment based on dialog content and personality
+	// This is a heuristic approach - could be enhanced with more sophisticated NLP
+	responses := dialog.Responses
+	if len(responses) > 0 {
+		response := responses[0] // Use first response as representative
+		
+		// Romantic content preference
+		if romanticism > 0.6 && (len(response) > 30 || strings.Contains(response, "💕") || strings.Contains(response, "💖")) {
+			baseScore += romanticism
+		}
+
+		// Shy characters prefer shorter, less dramatic responses
+		if shyness > 0.6 && len(response) < 25 {
+			baseScore += (1.0 - shyness)
+		}
+
+		// Flirty characters prefer bold responses
+		if flirtiness > 0.6 && (strings.Contains(response, "*") || strings.Contains(response, "😘")) {
+			baseScore += flirtiness
+		}
+	}
+
+	// Adjust based on current affection level
+	if affection > 50 && romanticism > 0.5 {
+		baseScore += 0.5 // Boost romantic dialogs for high-affection romantic characters
+	}
+
+	return baseScore
 }
 
 // selectAnimationFromStates chooses the best animation from triggered states
