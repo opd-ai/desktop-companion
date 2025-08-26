@@ -122,57 +122,93 @@ func (c *Character) Update() bool {
 
 	// Update animation frames
 	frameChanged := c.animationManager.Update()
-	stateChanged := false
 
-	// Update game state if enabled
-	if c.gameState != nil {
-		elapsed := time.Since(c.lastStateChange)
-		triggeredStates := c.gameState.Update(elapsed)
+	// Process game state updates and check for state changes
+	stateChanged := c.processGameStateUpdates()
 
-		// Check for random events
-		var triggeredEvent *TriggeredEvent
-		if c.randomEventManager != nil {
-			triggeredEvent = c.randomEventManager.Update(elapsed, c.gameState)
-		}
-
-		// Handle triggered random event
-		if triggeredEvent != nil {
-			// Apply stat effects
-			if triggeredEvent.HasEffects() {
-				c.gameState.ApplyInteractionEffects(triggeredEvent.Effects)
-			}
-
-			// Trigger animation if specified
-			if triggeredEvent.HasAnimations() {
-				animation := triggeredEvent.GetRandomAnimation()
-				if animation != "" && animation != c.currentState {
-					c.setState(animation)
-					stateChanged = true
-				}
-			}
-
-			// Note: Dialog responses from random events would be handled by the UI layer
-			// The character behavior only manages state and animation changes
-		}
-
-		// Handle critical states with higher priority (if no random event animation)
-		if !stateChanged && len(triggeredStates) > 0 {
-			newState := c.selectAnimationFromTriggeredStates(triggeredStates)
-			if newState != "" && newState != c.currentState {
-				c.setState(newState)
-				stateChanged = true
-			}
-		}
-	}
-
-	// Check if we should return to idle state (lower priority than game states)
-	if !stateChanged && c.currentState != "idle" && time.Since(c.lastStateChange) >= c.idleTimeout {
-		idleAnimation := c.selectIdleAnimation()
-		c.setState(idleAnimation)
-		stateChanged = true
+	// Check for idle timeout if no other state changes occurred
+	if !stateChanged {
+		stateChanged = c.checkIdleTimeout()
 	}
 
 	return frameChanged || stateChanged
+}
+
+// processGameStateUpdates handles all game state related updates and returns true if state changed
+func (c *Character) processGameStateUpdates() bool {
+	if c.gameState == nil {
+		return false
+	}
+
+	elapsed := time.Since(c.lastStateChange)
+	triggeredStates := c.gameState.Update(elapsed)
+
+	// Process random events first (highest priority)
+	if c.processRandomEvents(elapsed) {
+		return true
+	}
+
+	// Handle critical states if no random event occurred
+	return c.processCriticalStates(triggeredStates)
+}
+
+// processRandomEvents checks and handles random events, returns true if state changed
+func (c *Character) processRandomEvents(elapsed time.Duration) bool {
+	if c.randomEventManager == nil {
+		return false
+	}
+
+	triggeredEvent := c.randomEventManager.Update(elapsed, c.gameState)
+	if triggeredEvent == nil {
+		return false
+	}
+
+	return c.handleTriggeredEvent(triggeredEvent)
+}
+
+// handleTriggeredEvent processes a triggered random event and returns true if state changed
+func (c *Character) handleTriggeredEvent(triggeredEvent *TriggeredEvent) bool {
+	// Apply stat effects
+	if triggeredEvent.HasEffects() {
+		c.gameState.ApplyInteractionEffects(triggeredEvent.Effects)
+	}
+
+	// Trigger animation if specified
+	if triggeredEvent.HasAnimations() {
+		animation := triggeredEvent.GetRandomAnimation()
+		if animation != "" && animation != c.currentState {
+			c.setState(animation)
+			return true
+		}
+	}
+
+	return false
+}
+
+// processCriticalStates handles critical game states and returns true if state changed
+func (c *Character) processCriticalStates(triggeredStates []string) bool {
+	if len(triggeredStates) == 0 {
+		return false
+	}
+
+	newState := c.selectAnimationFromTriggeredStates(triggeredStates)
+	if newState != "" && newState != c.currentState {
+		c.setState(newState)
+		return true
+	}
+
+	return false
+}
+
+// checkIdleTimeout checks if character should return to idle state
+func (c *Character) checkIdleTimeout() bool {
+	if c.currentState == "idle" || time.Since(c.lastStateChange) < c.idleTimeout {
+		return false
+	}
+
+	idleAnimation := c.selectIdleAnimation()
+	c.setState(idleAnimation)
+	return true
 }
 
 // GetCurrentFrame returns the current animation frame for rendering
