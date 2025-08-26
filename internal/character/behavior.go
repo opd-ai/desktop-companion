@@ -752,50 +752,74 @@ func (c *Character) canSatisfyRomanceRequirements(requirements *RomanceRequireme
 		return true // No requirements means always available
 	}
 
-	// Check stat requirements
-	if requirements.Stats != nil {
-		for statName, conditions := range requirements.Stats {
-			if !c.gameState.CanSatisfyRequirements(map[string]map[string]float64{statName: conditions}) {
+	return c.checkStatRequirements(requirements.Stats) &&
+		c.checkRelationshipLevel(requirements.RelationshipLevel) &&
+		c.checkInteractionCounts(requirements.InteractionCount)
+}
+
+// checkStatRequirements validates that all stat requirements are satisfied
+func (c *Character) checkStatRequirements(stats map[string]map[string]float64) bool {
+	if stats == nil {
+		return true
+	}
+
+	for statName, conditions := range stats {
+		if !c.gameState.CanSatisfyRequirements(map[string]map[string]float64{statName: conditions}) {
+			return false
+		}
+	}
+	return true
+}
+
+// checkRelationshipLevel validates the relationship level requirement
+func (c *Character) checkRelationshipLevel(requiredLevel string) bool {
+	if requiredLevel == "" {
+		return true
+	}
+
+	// For Phase 2, we'll use progression level as relationship level
+	// This can be enhanced later with dedicated relationship level tracking
+	if c.gameState.Progression != nil {
+		currentLevel := c.gameState.Progression.CurrentLevel
+		return currentLevel == requiredLevel
+	}
+	return true
+}
+
+// checkInteractionCounts validates all interaction count requirements
+func (c *Character) checkInteractionCounts(interactionRequirements map[string]map[string]int) bool {
+	if interactionRequirements == nil {
+		return true
+	}
+
+	// Use progression system's interaction counts
+	if c.gameState.Progression == nil {
+		return true
+	}
+
+	interactionCounts := c.gameState.Progression.GetInteractionCounts()
+	for interactionType, conditions := range interactionRequirements {
+		if !c.validateInteractionConditions(interactionCounts[interactionType], conditions) {
+			return false
+		}
+	}
+	return true
+}
+
+// validateInteractionConditions checks if interaction count meets all specified conditions
+func (c *Character) validateInteractionConditions(currentCount int, conditions map[string]int) bool {
+	for conditionType, threshold := range conditions {
+		switch conditionType {
+		case "min":
+			if currentCount < threshold {
+				return false
+			}
+		case "max":
+			if currentCount > threshold {
 				return false
 			}
 		}
 	}
-
-	// Check relationship level requirements
-	if requirements.RelationshipLevel != "" {
-		// For Phase 2, we'll use progression level as relationship level
-		// This can be enhanced later with dedicated relationship level tracking
-		if c.gameState.Progression != nil {
-			currentLevel := c.gameState.Progression.CurrentLevel
-			if currentLevel != requirements.RelationshipLevel {
-				return false
-			}
-		}
-	}
-
-	// Check interaction count requirements
-	if requirements.InteractionCount != nil {
-		// Use progression system's interaction counts
-		if c.gameState.Progression != nil {
-			interactionCounts := c.gameState.Progression.GetInteractionCounts()
-			for interactionType, conditions := range requirements.InteractionCount {
-				currentCount := interactionCounts[interactionType]
-				for conditionType, threshold := range conditions {
-					switch conditionType {
-					case "min":
-						if currentCount < threshold {
-							return false
-						}
-					case "max":
-						if currentCount > threshold {
-							return false
-						}
-					}
-				}
-			}
-		}
-	}
-
 	return true
 }
 
