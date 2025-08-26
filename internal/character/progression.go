@@ -153,61 +153,89 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState, elapsed time
 	newAchievements := make([]string, 0)
 
 	for _, achievement := range ps.Config.Achievements {
-		// Skip already earned achievements
 		if ps.hasAchievement(achievement.Name) {
 			continue
 		}
 
 		progress := ps.AchievementProgress[achievement.Name]
-
-		// Check if current stats meet achievement criteria
 		metCriteria := ps.evaluateAchievementRequirement(achievement.Requirement, gameState)
 
-		if metCriteria && !progress.MetCriteria {
-			// Just started meeting criteria
-			progress.StartTime = time.Now()
-			progress.MetCriteria = true
-			progress.Duration = 0 // Reset duration
-
-			// Extract required duration if specified (look for maintainAbove duration)
-			if maintainAbove, hasMA := achievement.Requirement["maintainAbove"]; hasMA {
-				if duration, hasDuration := maintainAbove["duration"].(float64); hasDuration {
-					progress.RequiredTime = time.Duration(duration) * time.Second
-				}
-			}
-
-			// If no duration requirement, award achievement immediately
-			if progress.RequiredTime == 0 {
-				ps.Achievements = append(ps.Achievements, achievement.Name)
+		if ps.shouldStartProgress(metCriteria, progress) {
+			progress = ps.initializeAchievementProgress(achievement, progress)
+			if earnedImmediately := ps.processInstantAchievement(achievement.Name, achievement.Reward, gameState, progress); earnedImmediately {
 				newAchievements = append(newAchievements, achievement.Name)
-
-				// Apply achievement rewards
-				ps.applyAchievementReward(achievement.Reward, gameState)
 			}
-		} else if !metCriteria && progress.MetCriteria {
-			// No longer meeting criteria - reset progress
-			progress.MetCriteria = false
-			progress.Duration = 0
+		} else if ps.shouldResetProgress(metCriteria, progress) {
+			progress = ps.resetAchievementProgress(progress)
 		}
 
-		if progress.MetCriteria && progress.RequiredTime > 0 {
-			// Update duration using elapsed time from game loop
-			progress.Duration += elapsed
-
-			// Check if duration requirement is satisfied
-			if progress.Duration >= progress.RequiredTime {
-				ps.Achievements = append(ps.Achievements, achievement.Name)
-				newAchievements = append(newAchievements, achievement.Name)
-
-				// Apply achievement rewards
-				ps.applyAchievementReward(achievement.Reward, gameState)
-			}
+		if earnedAfterDuration := ps.processDurationAchievement(achievement.Name, achievement.Reward, gameState, progress, elapsed); earnedAfterDuration {
+			newAchievements = append(newAchievements, achievement.Name)
 		}
 
 		ps.AchievementProgress[achievement.Name] = progress
 	}
 
 	return newAchievements
+}
+
+// shouldStartProgress determines if achievement progress should begin
+func (ps *ProgressionState) shouldStartProgress(metCriteria bool, progress Progress) bool {
+	return metCriteria && !progress.MetCriteria
+}
+
+// shouldResetProgress determines if achievement progress should be reset
+func (ps *ProgressionState) shouldResetProgress(metCriteria bool, progress Progress) bool {
+	return !metCriteria && progress.MetCriteria
+}
+
+// initializeAchievementProgress sets up progress tracking for an achievement
+func (ps *ProgressionState) initializeAchievementProgress(achievement AchievementConfig, progress Progress) Progress {
+	progress.StartTime = time.Now()
+	progress.MetCriteria = true
+	progress.Duration = 0
+	progress.RequiredTime = ps.extractRequiredDuration(achievement.Requirement)
+	return progress
+}
+
+// extractRequiredDuration gets the required duration from achievement requirements
+func (ps *ProgressionState) extractRequiredDuration(requirement map[string]map[string]interface{}) time.Duration {
+	if maintainAbove, hasMA := requirement["maintainAbove"]; hasMA {
+		if duration, hasDuration := maintainAbove["duration"].(float64); hasDuration {
+			return time.Duration(duration) * time.Second
+		}
+	}
+	return 0
+}
+
+// processInstantAchievement handles achievements that are earned immediately
+func (ps *ProgressionState) processInstantAchievement(name string, reward *AchievementReward, gameState *GameState, progress Progress) bool {
+	if progress.RequiredTime == 0 {
+		ps.Achievements = append(ps.Achievements, name)
+		ps.applyAchievementReward(reward, gameState)
+		return true
+	}
+	return false
+}
+
+// processDurationAchievement handles achievements that require sustained criteria
+func (ps *ProgressionState) processDurationAchievement(name string, reward *AchievementReward, gameState *GameState, progress Progress, elapsed time.Duration) bool {
+	if progress.MetCriteria && progress.RequiredTime > 0 {
+		progress.Duration += elapsed
+		if progress.Duration >= progress.RequiredTime {
+			ps.Achievements = append(ps.Achievements, name)
+			ps.applyAchievementReward(reward, gameState)
+			return true
+		}
+	}
+	return false
+}
+
+// resetAchievementProgress resets progress when criteria are no longer met
+func (ps *ProgressionState) resetAchievementProgress(progress Progress) Progress {
+	progress.MetCriteria = false
+	progress.Duration = 0
+	return progress
 } // evaluateAchievementRequirement checks if current game state meets achievement criteria
 func (ps *ProgressionState) evaluateAchievementRequirement(requirement map[string]map[string]interface{}, gameState *GameState) bool {
 	for statName, criteria := range requirement {
