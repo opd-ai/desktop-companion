@@ -102,74 +102,111 @@ func (gs *GameState) Update(elapsed time.Duration) []string {
 	gs.TotalPlayTime += elapsed
 
 	// Update progression if enabled
+	levelChanged, newAchievements := gs.updateProgression(elapsed)
+
+	// Check if enough time has passed for degradation
+	decayInterval := gs.calculateDecayInterval()
+	if timeSinceLastDecay < decayInterval {
+		return gs.buildProgressionStates(levelChanged, newAchievements)
+	}
+
+	// Apply stat degradation and collect triggered states
+	triggeredStates := gs.applyStatDegradation(timeSinceLastDecay)
+
+	// Add progression-based states
+	triggeredStates = append(triggeredStates, gs.buildProgressionStates(levelChanged, newAchievements)...)
+
+	gs.LastDecayUpdate = now
+	return triggeredStates
+}
+
+// updateProgression processes progression updates and returns whether level changed and new achievements
+func (gs *GameState) updateProgression(elapsed time.Duration) (bool, []string) {
 	var levelChanged bool
 	var newAchievements []string
 	if gs.Progression != nil {
 		levelChanged, newAchievements = gs.Progression.Update(gs, elapsed)
 	}
+	return levelChanged, newAchievements
+}
 
-	// Only apply degradation if enough time has passed
+// calculateDecayInterval determines the time interval for stat degradation
+func (gs *GameState) calculateDecayInterval() time.Duration {
 	decayInterval := time.Minute
 	if gs.Config != nil && gs.Config.StatsDecayInterval > 0 {
 		decayInterval = gs.Config.StatsDecayInterval
 	}
+	return decayInterval
+}
 
-	if timeSinceLastDecay < decayInterval {
-		// Even if no stat degradation, return progression-based states
-		triggeredStates := make([]string, 0)
-		if levelChanged {
-			triggeredStates = append(triggeredStates, "level_up")
-		}
-		for _, achievement := range newAchievements {
-			triggeredStates = append(triggeredStates, fmt.Sprintf("achievement_%s", achievement))
-		}
-		return triggeredStates
-	}
-
-	// Apply degradation to all stats
-	minutesElapsed := timeSinceLastDecay.Minutes()
+// buildProgressionStates creates triggered states from progression events
+func (gs *GameState) buildProgressionStates(levelChanged bool, newAchievements []string) []string {
 	triggeredStates := make([]string, 0)
-
-	for name, stat := range gs.Stats {
-		if stat.DegradationRate > 0 {
-			// Calculate degradation amount
-			degradationAmount := stat.DegradationRate * minutesElapsed
-			oldValue := stat.Current
-
-			// Apply degradation with minimum bound of 0
-			stat.Current = math.Max(0, stat.Current-degradationAmount)
-
-			// Check if we crossed the critical threshold
-			if oldValue > stat.CriticalThreshold && stat.Current <= stat.CriticalThreshold {
-				triggeredStates = append(triggeredStates, fmt.Sprintf("%s_critical", name))
-			}
-
-			// Check for specific stat-based states
-			if stat.Current <= stat.CriticalThreshold {
-				switch name {
-				case "hunger":
-					triggeredStates = append(triggeredStates, "hungry")
-				case "happiness":
-					triggeredStates = append(triggeredStates, "sad")
-				case "health":
-					triggeredStates = append(triggeredStates, "sick")
-				case "energy":
-					triggeredStates = append(triggeredStates, "tired")
-				}
-			}
-		}
-	}
-
-	// Add progression-based states
 	if levelChanged {
 		triggeredStates = append(triggeredStates, "level_up")
 	}
 	for _, achievement := range newAchievements {
 		triggeredStates = append(triggeredStates, fmt.Sprintf("achievement_%s", achievement))
 	}
-
-	gs.LastDecayUpdate = now
 	return triggeredStates
+}
+
+// applyStatDegradation processes stat degradation and returns triggered states
+func (gs *GameState) applyStatDegradation(timeSinceLastDecay time.Duration) []string {
+	minutesElapsed := timeSinceLastDecay.Minutes()
+	triggeredStates := make([]string, 0)
+
+	for name, stat := range gs.Stats {
+		if stat.DegradationRate > 0 {
+			statStates := gs.processStatDegradation(name, stat, minutesElapsed)
+			triggeredStates = append(triggeredStates, statStates...)
+		}
+	}
+
+	return triggeredStates
+}
+
+// processStatDegradation handles degradation for a single stat and returns triggered states
+func (gs *GameState) processStatDegradation(name string, stat *Stat, minutesElapsed float64) []string {
+	triggeredStates := make([]string, 0)
+
+	// Calculate degradation amount
+	degradationAmount := stat.DegradationRate * minutesElapsed
+	oldValue := stat.Current
+
+	// Apply degradation with minimum bound of 0
+	stat.Current = math.Max(0, stat.Current-degradationAmount)
+
+	// Check if we crossed the critical threshold
+	if oldValue > stat.CriticalThreshold && stat.Current <= stat.CriticalThreshold {
+		triggeredStates = append(triggeredStates, fmt.Sprintf("%s_critical", name))
+	}
+
+	// Check for specific stat-based states
+	if stat.Current <= stat.CriticalThreshold {
+		stateMapping := gs.getStatStateMapping(name)
+		if stateMapping != "" {
+			triggeredStates = append(triggeredStates, stateMapping)
+		}
+	}
+
+	return triggeredStates
+}
+
+// getStatStateMapping returns the animation state for a critical stat
+func (gs *GameState) getStatStateMapping(statName string) string {
+	switch statName {
+	case "hunger":
+		return "hungry"
+	case "happiness":
+		return "sad"
+	case "health":
+		return "sick"
+	case "energy":
+		return "tired"
+	default:
+		return ""
+	}
 }
 
 // ApplyInteractionEffects modifies stats based on character interactions
