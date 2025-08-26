@@ -33,8 +33,10 @@ type Character struct {
 	// Game features (added for Phase 2)
 	gameState                *GameState
 	gameInteractionCooldowns map[string]time.Time
-	randomEventManager       *RandomEventManager // Added for Phase 3 - random events
-	romanceEventManager      *RandomEventManager // Added for Phase 3 Task 2 - romance events
+	randomEventManager       *RandomEventManager  // Added for Phase 3 - random events
+	romanceEventManager      *RandomEventManager  // Added for Phase 3 Task 2 - romance events
+	lastRomanceEventCheck    time.Time            // Last time romance events were checked
+	romanceEventCooldowns    map[string]time.Time // Romance event cooldown tracking
 }
 
 // New creates a new character instance from a character card
@@ -49,6 +51,8 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 		lastInteraction:          time.Now(),
 		dialogCooldowns:          make(map[string]time.Time),
 		gameInteractionCooldowns: make(map[string]time.Time),
+		romanceEventCooldowns:    make(map[string]time.Time),
+		lastRomanceEventCheck:    time.Now().Add(-30 * time.Second), // Allow immediate first check
 		idleTimeout:              time.Duration(card.Behavior.IdleTimeout) * time.Second,
 		movementEnabled:          card.Behavior.MovementEnabled,
 		size:                     card.Behavior.DefaultSize,
@@ -159,16 +163,112 @@ func (c *Character) processGameStateUpdates() bool {
 
 // processRandomEvents checks and handles random events, returns true if state changed
 func (c *Character) processRandomEvents(elapsed time.Duration) bool {
-	if c.randomEventManager == nil {
-		return false
+	stateChanged := false
+
+	// Process regular random events
+	if c.randomEventManager != nil {
+		triggeredEvent := c.randomEventManager.Update(elapsed, c.gameState)
+		if triggeredEvent != nil {
+			stateChanged = c.handleTriggeredEvent(triggeredEvent) || stateChanged
+		}
 	}
 
-	triggeredEvent := c.randomEventManager.Update(elapsed, c.gameState)
-	if triggeredEvent == nil {
-		return false
+	// Process romance events with memory-based triggering
+	if c.romanceEventManager != nil {
+		triggeredEvent := c.processRomanceEvents(elapsed)
+		if triggeredEvent != nil {
+			stateChanged = c.handleTriggeredEvent(triggeredEvent) || stateChanged
+		}
 	}
 
-	return c.handleTriggeredEvent(triggeredEvent)
+	return stateChanged
+}
+
+// processRomanceEvents handles romance-specific random events with memory-based triggering
+func (c *Character) processRomanceEvents(elapsed time.Duration) *TriggeredEvent {
+	if c.romanceEventManager == nil || c.gameState == nil {
+		return nil
+	}
+
+	// Use custom romance event processing that supports enhanced conditions
+	return c.checkAndTriggerRomanceEvent(elapsed)
+}
+
+// checkAndTriggerRomanceEvent implements romance-specific event logic with memory-based conditions
+func (c *Character) checkAndTriggerRomanceEvent(elapsed time.Duration) *TriggeredEvent {
+	// Note: c.mu is already locked by the caller (Update method)
+
+	// Check if enough time has passed since last romance event check
+	now := time.Now()
+	checkInterval := 30 * time.Second // Same as random events
+	if c.lastRomanceEventCheck.Add(checkInterval).After(now) {
+		return nil
+	}
+	c.lastRomanceEventCheck = now
+
+	// Iterate through romance events and try to trigger one
+	for _, event := range c.card.RomanceEvents {
+		if c.canTriggerRomanceEvent(event, now) {
+			if c.rollEventProbability(event.Probability) {
+				return c.createTriggeredRomanceEvent(event, now)
+			}
+		}
+	}
+
+	return nil
+}
+
+// canTriggerRomanceEvent checks if a romance event can trigger using enhanced condition checking
+func (c *Character) canTriggerRomanceEvent(event RandomEventConfig, now time.Time) bool {
+	// Check event-specific cooldown
+	if lastTrigger, exists := c.romanceEventCooldowns[event.Name]; exists {
+		cooldownDuration := time.Duration(event.Cooldown) * time.Second
+		if now.Sub(lastTrigger) < cooldownDuration {
+			return false
+		}
+	}
+
+	// Use enhanced romance condition checking
+	if len(event.Conditions) > 0 {
+		return c.gameState.CanSatisfyRomanceRequirements(event.Conditions)
+	}
+
+	return true
+}
+
+// rollEventProbability performs probability check for romance event triggering
+func (c *Character) rollEventProbability(probability float64) bool {
+	// Simple probability check using time-based pseudo-randomness
+	randomValue := float64((time.Now().UnixNano() % 10000)) / 10000.0
+	return randomValue <= probability
+}
+
+// createTriggeredRomanceEvent creates a triggered romance event and records the cooldown
+func (c *Character) createTriggeredRomanceEvent(event RandomEventConfig, now time.Time) *TriggeredEvent {
+	// Initialize cooldowns map if needed
+	if c.romanceEventCooldowns == nil {
+		c.romanceEventCooldowns = make(map[string]time.Time)
+	}
+
+	// Record the cooldown
+	c.romanceEventCooldowns[event.Name] = now
+
+	return &TriggeredEvent{
+		Name:        event.Name,
+		Description: event.Description,
+		Effects:     event.Effects,
+		Animations:  event.Animations,
+		Responses:   event.Responses,
+		Duration:    time.Duration(event.Duration) * time.Second,
+	}
+}
+
+// createEnhancedGameStateForRomanceEvents creates a game state with romance context
+func (c *Character) createEnhancedGameStateForRomanceEvents() *GameState {
+	// For romance events, we use the same game state but the romance event manager
+	// will use CanSatisfyRomanceRequirements instead of CanSatisfyRequirements
+	// This allows memory-based and relationship-aware condition checking
+	return c.gameState
 }
 
 // handleTriggeredEvent processes a triggered random event and returns true if state changed

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"strings"
 	"sync"
 	"time"
 )
@@ -356,6 +357,185 @@ func (gs *GameState) CanSatisfyRequirements(requirements map[string]map[string]f
 	}
 
 	return true
+}
+
+// CanSatisfyRomanceRequirements checks if current state meets romance event requirements
+// Supports enhanced conditions like relationship level, interaction history, and memory patterns
+func (gs *GameState) CanSatisfyRomanceRequirements(conditions map[string]map[string]float64) bool {
+	if gs == nil || len(conditions) == 0 {
+		return true
+	}
+
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	// First check standard stat requirements
+	if !gs.canSatisfyStatRequirements(conditions) {
+		return false
+	}
+
+	// Check relationship-specific requirements
+	return gs.canSatisfyRelationshipRequirements(conditions)
+}
+
+// canSatisfyStatRequirements checks standard stat-based conditions
+func (gs *GameState) canSatisfyStatRequirements(conditions map[string]map[string]float64) bool {
+	for statName, constraints := range conditions {
+		// Skip special relationship conditions
+		if statName == "relationshipLevel" || statName == "interactionCount" || statName == "memoryCount" {
+			continue
+		}
+
+		stat, exists := gs.Stats[statName]
+		if !exists {
+			return false
+		}
+
+		// Check minimum requirement
+		if minVal, hasMin := constraints["min"]; hasMin {
+			if stat.Current < minVal {
+				return false
+			}
+		}
+
+		// Check maximum requirement
+		if maxVal, hasMax := constraints["max"]; hasMax {
+			if stat.Current > maxVal {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+// canSatisfyRelationshipRequirements checks relationship and memory-based conditions
+func (gs *GameState) canSatisfyRelationshipRequirements(conditions map[string]map[string]float64) bool {
+	// Check relationship level requirements
+	if levelConditions, hasLevelConditions := conditions["relationshipLevel"]; hasLevelConditions {
+		if !gs.checkRelationshipLevelConditions(levelConditions) {
+			return false
+		}
+	}
+
+	// Check interaction count requirements
+	if interactionConditions, hasInteractionConditions := conditions["interactionCount"]; hasInteractionConditions {
+		if !gs.checkInteractionCountConditions(interactionConditions) {
+			return false
+		}
+	}
+
+	// Check memory-based requirements
+	if memoryConditions, hasMemoryConditions := conditions["memoryCount"]; hasMemoryConditions {
+		if !gs.checkMemoryCountConditions(memoryConditions) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// checkRelationshipLevelConditions validates relationship level requirements
+func (gs *GameState) checkRelationshipLevelConditions(conditions map[string]float64) bool {
+	currentLevel := gs.GetRelationshipLevel()
+
+	// Map relationship levels to numeric values for comparison
+	levelValues := map[string]float64{
+		"Stranger":          0,
+		"Friend":            1,
+		"Close Friend":      2,
+		"Romantic Interest": 3,
+		"Partner":           4,
+	}
+
+	currentValue, exists := levelValues[currentLevel]
+	if !exists {
+		return false
+	}
+
+	// Check minimum level requirement
+	if minLevel, hasMin := conditions["min"]; hasMin {
+		if currentValue < minLevel {
+			return false
+		}
+	}
+
+	// Check maximum level requirement
+	if maxLevel, hasMax := conditions["max"]; hasMax {
+		if currentValue > maxLevel {
+			return false
+		}
+	}
+
+	return true
+}
+
+// checkInteractionCountConditions validates interaction count requirements
+func (gs *GameState) checkInteractionCountConditions(conditions map[string]float64) bool {
+	// Check total interaction count
+	if minTotal, hasMinTotal := conditions["total_min"]; hasMinTotal {
+		totalInteractions := 0
+		for _, interactions := range gs.InteractionHistory {
+			totalInteractions += len(interactions)
+		}
+		if float64(totalInteractions) < minTotal {
+			return false
+		}
+	}
+
+	// Check specific interaction type counts (e.g., compliment_min: 5)
+	for conditionKey, requiredCount := range conditions {
+		if strings.HasSuffix(conditionKey, "_min") {
+			interactionType := strings.TrimSuffix(conditionKey, "_min")
+			actualCount := gs.GetInteractionCount(interactionType)
+			if float64(actualCount) < requiredCount {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+// checkMemoryCountConditions validates memory-based requirements
+func (gs *GameState) checkMemoryCountConditions(conditions map[string]float64) bool {
+	// Check total memory count
+	if minMemories, hasMinMemories := conditions["total_min"]; hasMinMemories {
+		if float64(len(gs.RomanceMemories)) < minMemories {
+			return false
+		}
+	}
+
+	// Check recent memory patterns (e.g., recent_positive_min: 2)
+	if recentPositive, hasRecentPositive := conditions["recent_positive_min"]; hasRecentPositive {
+		recentCount := gs.countRecentPositiveMemories(24 * time.Hour) // Last 24 hours
+		if float64(recentCount) < recentPositive {
+			return false
+		}
+	}
+
+	return true
+}
+
+// countRecentPositiveMemories counts positive interactions in the recent time period
+func (gs *GameState) countRecentPositiveMemories(duration time.Duration) int {
+	now := time.Now()
+	cutoff := now.Add(-duration)
+	count := 0
+
+	for _, memory := range gs.RomanceMemories {
+		if memory.Timestamp.After(cutoff) {
+			// Consider interactions that increased affection or trust as positive
+			if affectionGain, hasAffection := memory.StatsAfter["affection"]; hasAffection {
+				if affectionBefore, hadBefore := memory.StatsBefore["affection"]; hadBefore {
+					if affectionGain > affectionBefore {
+						count++
+					}
+				}
+			}
+		}
+	}
+
+	return count
 }
 
 // GetStatPercentage returns stat value as percentage (0-100) of maximum
