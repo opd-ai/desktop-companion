@@ -41,45 +41,78 @@ func NewRandomEventManager(events []RandomEventConfig, enabled bool, interval ti
 // Returns a TriggeredEvent if an event occurred, nil otherwise
 // This method is called from the main game state update loop
 func (rem *RandomEventManager) Update(elapsed time.Duration, gameState *GameState) *TriggeredEvent {
-	if !rem.enabled || len(rem.events) == 0 || gameState == nil {
+	if !rem.shouldProcessEvents(gameState) {
 		return nil
 	}
 
 	rem.mu.Lock()
 	defer rem.mu.Unlock()
 
-	now := time.Now()
-	timeSinceLastCheck := now.Sub(rem.lastCheck)
-
-	// Only check for events at specified intervals to avoid excessive processing
-	if timeSinceLastCheck < rem.checkInterval {
+	if !rem.isCheckIntervalReached() {
 		return nil
 	}
 
-	// Check each event for potential triggering
-	for _, event := range rem.events {
-		if rem.canTriggerEvent(event, now, gameState) {
-			// Event can trigger - check probability
-			randomValue := rem.randomSource.Float64()
-			if randomValue <= event.Probability {
-				// Event triggered! Record cooldown and return event
-				rem.eventCooldowns[event.Name] = now
-				rem.lastCheck = now
+	return rem.processEventTriggers(gameState)
+}
 
-				return &TriggeredEvent{
-					Name:        event.Name,
-					Description: event.Description,
-					Effects:     event.Effects,
-					Animations:  event.Animations,
-					Responses:   event.Responses,
-					Duration:    time.Duration(event.Duration) * time.Second,
-				}
-			}
+// shouldProcessEvents checks if event processing should proceed
+func (rem *RandomEventManager) shouldProcessEvents(gameState *GameState) bool {
+	return rem.enabled && len(rem.events) > 0 && gameState != nil
+}
+
+// isCheckIntervalReached determines if enough time has passed since last check
+func (rem *RandomEventManager) isCheckIntervalReached() bool {
+	now := time.Now()
+	timeSinceLastCheck := now.Sub(rem.lastCheck)
+	return timeSinceLastCheck >= rem.checkInterval
+}
+
+// processEventTriggers iterates through events and attempts to trigger one
+func (rem *RandomEventManager) processEventTriggers(gameState *GameState) *TriggeredEvent {
+	now := time.Now()
+
+	for _, event := range rem.events {
+		if triggeredEvent := rem.attemptEventTrigger(event, now, gameState); triggeredEvent != nil {
+			rem.lastCheck = now
+			return triggeredEvent
 		}
 	}
 
 	rem.lastCheck = now
 	return nil
+}
+
+// attemptEventTrigger tries to trigger a single event and returns result
+func (rem *RandomEventManager) attemptEventTrigger(event RandomEventConfig, now time.Time, gameState *GameState) *TriggeredEvent {
+	if !rem.canTriggerEvent(event, now, gameState) {
+		return nil
+	}
+
+	if !rem.rollEventProbability(event.Probability) {
+		return nil
+	}
+
+	return rem.createTriggeredEvent(event, now)
+}
+
+// rollEventProbability performs probability check for event triggering
+func (rem *RandomEventManager) rollEventProbability(probability float64) bool {
+	randomValue := rem.randomSource.Float64()
+	return randomValue <= probability
+}
+
+// createTriggeredEvent creates and records a triggered event
+func (rem *RandomEventManager) createTriggeredEvent(event RandomEventConfig, now time.Time) *TriggeredEvent {
+	rem.eventCooldowns[event.Name] = now
+
+	return &TriggeredEvent{
+		Name:        event.Name,
+		Description: event.Description,
+		Effects:     event.Effects,
+		Animations:  event.Animations,
+		Responses:   event.Responses,
+		Duration:    time.Duration(event.Duration) * time.Second,
+	}
 }
 
 // canTriggerEvent checks if an event can currently trigger based on cooldowns and conditions
