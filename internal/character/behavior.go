@@ -458,6 +458,12 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 		return ""
 	}
 
+	// Check if this is a romance interaction by examining the effects
+	// Romance interactions should affect romance-specific stats
+	if !c.isRomanceInteraction(interaction) {
+		return ""
+	}
+
 	// Check cooldown
 	lastUsed, exists := c.gameInteractionCooldowns[interactionType]
 	if exists && time.Since(lastUsed) < time.Duration(interaction.Cooldown)*time.Second {
@@ -497,6 +503,26 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 	}
 
 	return ""
+}
+
+// isRomanceInteraction determines if an interaction is romance-related by checking its effects
+// Romance interactions are identified by affecting romance-specific stats
+func (c *Character) isRomanceInteraction(interaction InteractionConfig) bool {
+	romanceStats := map[string]bool{
+		"affection": true,
+		"trust":     true,
+		"intimacy":  true,
+		"jealousy":  true,
+	}
+
+	// Check if any of the interaction effects target romance stats
+	for statName := range interaction.Effects {
+		if romanceStats[statName] {
+			return true
+		}
+	}
+
+	return false
 }
 
 // calculatePersonalityModifier calculates how personality traits affect interaction effects

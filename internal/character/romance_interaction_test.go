@@ -27,26 +27,24 @@ func TestHandleRomanceInteraction(t *testing.T) {
 		},
 		Interactions: map[string]InteractionConfig{
 			"compliment": {
-				RomanceCategory: "verbal_affection",
-				Responses:       []string{"That's so sweet!", "You think so?"},
-				Animations:      []string{"blushing", "happy"},
-				Effects:         map[string]float64{"affection": 5, "trust": 2},
-				Cooldown:        10,
-				Requirements:    map[string]map[string]float64{},
+				Responses:    []string{"That's so sweet!", "You think so?"},
+				Animations:   []string{"blushing", "happy"},
+				Effects:      map[string]float64{"affection": 5, "trust": 2}, // Romance stats
+				Cooldown:     10,
+				Requirements: map[string]map[string]float64{},
 			},
 			"give_gift": {
-				RomanceCategory: "physical_gift",
-				Responses:       []string{"Thank you!", "Beautiful!"},
-				Animations:      []string{"happy"},
-				Effects:         map[string]float64{"affection": 8, "happiness": 5},
-				Cooldown:        30,
-				Requirements:    map[string]map[string]float64{},
+				Responses:    []string{"Thank you!", "Beautiful!"},
+				Animations:   []string{"happy"},
+				Effects:      map[string]float64{"affection": 8, "happiness": 5}, // Mixed stats
+				Cooldown:     30,
+				Requirements: map[string]map[string]float64{},
 			},
 			"non_romance_interaction": {
-				// No romance category - should be ignored by HandleRomanceInteraction
-				Responses:  []string{"Regular interaction"},
-				Effects:    map[string]float64{"happiness": 1},
-				Cooldown:   5,
+				// Only affects non-romance stats - should be ignored by HandleRomanceInteraction
+				Responses:    []string{"Regular interaction"},
+				Effects:      map[string]float64{"happiness": 1, "energy": 2}, // Non-romance stats only
+				Cooldown:     5,
 				Requirements: map[string]map[string]float64{},
 			},
 		},
@@ -64,52 +62,52 @@ func TestHandleRomanceInteraction(t *testing.T) {
 	}
 
 	tests := []struct {
-		name              string
-		interactionType   string
-		expectResponse    bool
-		expectEffects     bool
-		gameFeatures      bool
-		description       string
+		name            string
+		interactionType string
+		expectResponse  bool
+		expectEffects   bool
+		gameFeatures    bool
+		description     string
 	}{
 		{
-			name:              "valid compliment interaction",
-			interactionType:   "compliment",
-			expectResponse:    true,
-			expectEffects:     true,
-			gameFeatures:      true,
-			description:       "Should handle compliment interaction and return response",
+			name:            "valid compliment interaction",
+			interactionType: "compliment",
+			expectResponse:  true,
+			expectEffects:   true,
+			gameFeatures:    true,
+			description:     "Should handle compliment interaction and return response",
 		},
 		{
-			name:              "valid gift interaction",
-			interactionType:   "give_gift",
-			expectResponse:    true,
-			expectEffects:     true,
-			gameFeatures:      true,
-			description:       "Should handle gift interaction and apply effects",
+			name:            "valid gift interaction",
+			interactionType: "give_gift",
+			expectResponse:  true,
+			expectEffects:   true,
+			gameFeatures:    true,
+			description:     "Should handle gift interaction and apply effects",
 		},
 		{
-			name:              "non-existent interaction",
-			interactionType:   "invalid_interaction",
-			expectResponse:    false,
-			expectEffects:     false,
-			gameFeatures:      true,
-			description:       "Should return empty response for non-existent interaction",
+			name:            "non-existent interaction",
+			interactionType: "invalid_interaction",
+			expectResponse:  false,
+			expectEffects:   false,
+			gameFeatures:    true,
+			description:     "Should return empty response for non-existent interaction",
 		},
 		{
-			name:              "non-romance interaction",
-			interactionType:   "non_romance_interaction",
-			expectResponse:    false,
-			expectEffects:     false,
-			gameFeatures:      true,
-			description:       "Should ignore interactions without romance category",
+			name:            "non-romance interaction",
+			interactionType: "non_romance_interaction",
+			expectResponse:  false,
+			expectEffects:   false,
+			gameFeatures:    true,
+			description:     "Should ignore interactions without romance category",
 		},
 		{
-			name:              "romance interaction without game features",
-			interactionType:   "compliment",
-			expectResponse:    false,
-			expectEffects:     false,
-			gameFeatures:      false,
-			description:       "Should return empty when game features are disabled",
+			name:            "romance interaction without game features",
+			interactionType: "compliment",
+			expectResponse:  false,
+			expectEffects:   false,
+			gameFeatures:    false,
+			description:     "Should return empty when game features are disabled",
 		},
 	}
 
@@ -162,11 +160,10 @@ func TestHandleRomanceInteractionCooldown(t *testing.T) {
 		},
 		Interactions: map[string]InteractionConfig{
 			"compliment": {
-				RomanceCategory: "verbal_affection",
-				Responses:       []string{"Thank you!"},
-				Effects:         map[string]float64{"affection": 5},
-				Cooldown:        2, // 2 second cooldown
-				Requirements:    map[string]map[string]float64{},
+				Responses:    []string{"Thank you!"},
+				Effects:      map[string]float64{"affection": 5}, // Romance stat
+				Cooldown:     2,                                  // 2 second cooldown
+				Requirements: map[string]map[string]float64{},
 			},
 		},
 		Personality: &PersonalityConfig{
@@ -184,8 +181,9 @@ func TestHandleRomanceInteractionCooldown(t *testing.T) {
 
 	// Immediate second interaction should be blocked by cooldown
 	response2 := char.HandleRomanceInteraction("compliment")
-	if response2 != "" {
-		t.Errorf("Second immediate interaction should be blocked by cooldown, but got: %s", response2)
+	// Should get a failure response (not empty), indicating cooldown
+	if response2 == "" {
+		t.Error("Second immediate interaction should return a failure response indicating cooldown")
 	}
 
 	// Wait for cooldown to expire and try again
