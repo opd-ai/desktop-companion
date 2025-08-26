@@ -169,7 +169,9 @@ func (ps *ProgressionState) checkAchievements(gameState *GameState, elapsed time
 			progress = ps.resetAchievementProgress(progress)
 		}
 
-		if earnedAfterDuration := ps.processDurationAchievement(achievement.Name, achievement.Reward, gameState, progress, elapsed); earnedAfterDuration {
+		var earnedAfterDuration bool
+		progress, earnedAfterDuration = ps.processDurationAchievement(achievement.Name, achievement.Reward, gameState, progress, elapsed)
+		if earnedAfterDuration {
 			newAchievements = append(newAchievements, achievement.Name)
 		}
 
@@ -219,16 +221,16 @@ func (ps *ProgressionState) processInstantAchievement(name string, reward *Achie
 }
 
 // processDurationAchievement handles achievements that require sustained criteria
-func (ps *ProgressionState) processDurationAchievement(name string, reward *AchievementReward, gameState *GameState, progress Progress, elapsed time.Duration) bool {
+func (ps *ProgressionState) processDurationAchievement(name string, reward *AchievementReward, gameState *GameState, progress Progress, elapsed time.Duration) (Progress, bool) {
 	if progress.MetCriteria && progress.RequiredTime > 0 {
 		progress.Duration += elapsed
 		if progress.Duration >= progress.RequiredTime {
 			ps.Achievements = append(ps.Achievements, name)
 			ps.applyAchievementReward(reward, gameState)
-			return true
+			return progress, true
 		}
 	}
-	return false
+	return progress, false
 }
 
 // resetAchievementProgress resets progress when criteria are no longer met
