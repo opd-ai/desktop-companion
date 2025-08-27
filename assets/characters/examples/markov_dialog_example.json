@@ -1,0 +1,83 @@
+{
+  "name": "Dialog Backend Example",
+  "description": "Character demonstrating advanced dialog system with Markov chain generation",
+  "animations": {
+    "idle": "idle.gif",
+    "talking": "talking.gif",
+    "happy": "happy.gif",
+    "thinking": "thinking.gif",
+    "blushing": "blushing.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello! Nice to see you!",
+        "How are you doing today?",
+        "I'm always happy when you visit!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "How can I help you?",
+        "What would you like to do?"
+      ],
+      "animation": "thinking",
+      "cooldown": 3
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": false,
+    "defaultSize": 128
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.7,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": false,
+        "trainingData": [
+          "Hello there! I'm so happy to see you today!",
+          "Thank you for spending time with me, it means everything.",
+          "I hope you're having a wonderful day, you deserve happiness.",
+          "Your presence always brightens my mood, I'm grateful for you.",
+          "What would you like to talk about? I'm here to listen.",
+          "You always know how to make me smile, thank you for that.",
+          "I'm feeling grateful for this moment we're sharing together.",
+          "Your kindness and care touch my heart deeply.",
+          "Every conversation with you is a precious gift to me.",
+          "I love how comfortable I feel when we talk together."
+        ],
+        "forbiddenWords": ["hate", "stupid", "boring"],
+        "fallbackPhrases": [
+          "I'm happy to see you!",
+          "Thank you for being here with me.",
+          "You always make me smile."
+        ]
+      },
+      "simple_random": {
+        "type": "basic",
+        "personalityInfluence": 0.3,
+        "responseVariation": 0.2,
+        "useDialogHistory": false,
+        "preferRomanceDialogs": false
+      }
+    }
+  }
+}

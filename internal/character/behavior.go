@@ -42,6 +42,11 @@ type Character struct {
 	jealousyManager       *JealousyManager       // Jealousy mechanics and consequences
 	compatibilityAnalyzer *CompatibilityAnalyzer // Advanced compatibility algorithms
 	crisisRecoveryManager *CrisisRecoveryManager // Relationship crisis and recovery systems
+
+	// Dialog backend integration (Phase 1)
+	dialogManager      *DialogManager // Advanced dialog system manager
+	useAdvancedDialogs bool           // Whether to use advanced dialog system
+	debug              bool           // Debug logging for dialog system
 }
 
 // New creates a new character instance from a character card
@@ -66,6 +71,13 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 	// Initialize game features if the character card has them
 	if card.HasGameFeatures() {
 		char.initializeGameFeatures()
+	}
+
+	// Initialize dialog system if the character card has backend configuration
+	if card.HasDialogBackend() {
+		if err := char.initializeDialogSystem(); err != nil {
+			return nil, fmt.Errorf("failed to initialize dialog system: %w", err)
+		}
 	}
 
 	// Load all animations from the character card
@@ -235,6 +247,60 @@ func (c *Character) createPersonalityBasedCrisisThresholds() map[string]float64 
 	thresholds["affection"] = 10.0 + (affectionResponsiveness * 10.0) // 10-20 range
 
 	return thresholds
+}
+
+// initializeDialogSystem sets up the advanced dialog system with configured backends
+// Called during character creation if dialog backend configuration is enabled
+func (c *Character) initializeDialogSystem() error {
+	if c.card.DialogBackend == nil || !c.card.DialogBackend.Enabled {
+		return nil
+	}
+
+	// Enable debug mode if configured
+	c.debug = c.card.DialogBackend.DebugMode
+
+	// Create dialog manager
+	c.dialogManager = NewDialogManager(c.debug)
+	c.useAdvancedDialogs = true
+
+	// Register available backends
+	c.dialogManager.RegisterBackend("simple_random", NewSimpleRandomBackend())
+	c.dialogManager.RegisterBackend("markov_chain", NewMarkovChainBackend())
+
+	// Set default backend
+	if err := c.dialogManager.SetDefaultBackend(c.card.DialogBackend.DefaultBackend); err != nil {
+		return fmt.Errorf("failed to set default backend: %w", err)
+	}
+
+	// Set fallback chain if configured
+	if len(c.card.DialogBackend.FallbackChain) > 0 {
+		if err := c.dialogManager.SetFallbackChain(c.card.DialogBackend.FallbackChain); err != nil {
+			return fmt.Errorf("failed to set fallback chain: %w", err)
+		}
+	}
+
+	// Initialize configured backends with their JSON configurations
+	return c.configureBackends()
+}
+
+// configureBackends initializes each configured backend with its JSON configuration
+func (c *Character) configureBackends() error {
+	if c.card.DialogBackend == nil || c.card.DialogBackend.Backends == nil {
+		return nil
+	}
+
+	for backendName, config := range c.card.DialogBackend.Backends {
+		backend, exists := c.dialogManager.backends[backendName]
+		if !exists {
+			continue // Skip unknown backends
+		}
+
+		if err := backend.Initialize(config, c); err != nil {
+			return fmt.Errorf("failed to initialize backend '%s': %w", backendName, err)
+		}
+	}
+
+	return nil
 }
 
 // Update updates character behavior and animations
@@ -524,12 +590,33 @@ func (c *Character) GetCurrentFrame() image.Image {
 
 // HandleClick processes a click interaction on the character
 // Returns dialog text to display, or empty string if no dialog should show
+// HandleClick processes a click interaction, using advanced dialog system if enabled
 func (c *Character) HandleClick() string {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	c.lastInteraction = time.Now()
 
+	// Try advanced dialog system first
+	if c.useAdvancedDialogs && c.dialogManager != nil {
+		context := c.buildDialogContext("click")
+		response, err := c.dialogManager.GenerateDialog(context)
+		if err == nil && response.Confidence >= c.card.DialogBackend.ConfidenceThreshold {
+			c.setState(response.Animation)
+			// Update dialog memory for learning if enabled
+			if c.card.DialogBackend.MemoryEnabled {
+				c.updateDialogMemory(response, context)
+			}
+			return response.Text
+		}
+	}
+
+	// Fallback to existing logic
+	return c.handleClickFallback()
+}
+
+// handleClickFallback implements the original click handling logic
+func (c *Character) handleClickFallback() string {
 	// First check romance dialogs if romance features are enabled
 	if c.card.HasRomanceFeatures() && c.gameState != nil {
 		response := c.selectRomanceDialog("click")
@@ -554,13 +641,33 @@ func (c *Character) HandleClick() string {
 	return "" // No dialog available due to cooldowns
 }
 
-// HandleRightClick processes a right-click interaction
+// HandleRightClick processes a right-click interaction, using advanced dialog system if enabled
 func (c *Character) HandleRightClick() string {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	c.lastInteraction = time.Now()
 
+	// Try advanced dialog system first
+	if c.useAdvancedDialogs && c.dialogManager != nil {
+		context := c.buildDialogContext("rightclick")
+		response, err := c.dialogManager.GenerateDialog(context)
+		if err == nil && response.Confidence >= c.card.DialogBackend.ConfidenceThreshold {
+			c.setState(response.Animation)
+			// Update dialog memory for learning if enabled
+			if c.card.DialogBackend.MemoryEnabled {
+				c.updateDialogMemory(response, context)
+			}
+			return response.Text
+		}
+	}
+
+	// Fallback to existing logic
+	return c.handleRightClickFallback()
+}
+
+// handleRightClickFallback implements the original right-click handling logic
+func (c *Character) handleRightClickFallback() string {
 	for _, dialog := range c.card.Dialogs {
 		if dialog.Trigger == "rightclick" {
 			lastTrigger, exists := c.dialogCooldowns[dialog.Trigger]
@@ -1561,4 +1668,144 @@ func (c *Character) CanUseGameInteraction(interactionType string) bool {
 
 	// Check requirements
 	return c.gameState.CanSatisfyRequirements(interaction.Requirements)
+}
+
+// buildDialogContext creates a comprehensive context for dialog generation
+func (c *Character) buildDialogContext(trigger string) DialogContext {
+	context := DialogContext{
+		Trigger:       trigger,
+		InteractionID: fmt.Sprintf("%s_%d", trigger, time.Now().UnixNano()),
+		Timestamp:     time.Now(),
+	}
+
+	// Add character state context
+	if c.gameState != nil {
+		context.CurrentStats = c.gameState.GetStats()
+		context.CurrentMood = c.gameState.GetOverallMood()
+		context.RelationshipLevel = c.gameState.GetRelationshipLevel()
+		context.InteractionHistory = c.buildInteractionHistory()
+	}
+
+	// Add personality traits
+	if c.card.Personality != nil && c.card.Personality.Traits != nil {
+		context.PersonalityTraits = make(map[string]float64)
+		for trait, value := range c.card.Personality.Traits {
+			context.PersonalityTraits[trait] = value
+		}
+	}
+
+	// Set current animation
+	context.CurrentAnimation = c.currentState
+
+	// Add time of day context
+	context.TimeOfDay = c.getTimeOfDay()
+
+	// Add fallback responses from existing dialogs
+	context.FallbackResponses = c.getFallbackResponses(trigger)
+	context.FallbackAnimation = c.getFallbackAnimation(trigger)
+
+	return context
+}
+
+// buildInteractionHistory builds a recent interaction history for context
+func (c *Character) buildInteractionHistory() []InteractionRecord {
+	// For now, return empty history - future enhancement could track interactions
+	// This would integrate with the existing game state memory system
+	return []InteractionRecord{}
+}
+
+// getTimeOfDay returns a simple time of day categorization
+func (c *Character) getTimeOfDay() string {
+	hour := time.Now().Hour()
+	switch {
+	case hour >= 6 && hour < 12:
+		return "morning"
+	case hour >= 12 && hour < 18:
+		return "afternoon"
+	case hour >= 18 && hour < 22:
+		return "evening"
+	default:
+		return "night"
+	}
+}
+
+// getFallbackResponses gets fallback responses from existing dialogs for the trigger
+func (c *Character) getFallbackResponses(trigger string) []string {
+	var responses []string
+
+	// Collect from basic dialogs
+	for _, dialog := range c.card.Dialogs {
+		if dialog.Trigger == trigger {
+			responses = append(responses, dialog.Responses...)
+		}
+	}
+
+	// Collect from romance dialogs if available
+	if c.card.HasRomanceFeatures() {
+		for _, dialog := range c.card.RomanceDialogs {
+			if dialog.Trigger == trigger {
+				responses = append(responses, dialog.Responses...)
+			}
+		}
+	}
+
+	return responses
+}
+
+// getFallbackAnimation gets the fallback animation for a trigger
+func (c *Character) getFallbackAnimation(trigger string) string {
+	// Check basic dialogs
+	for _, dialog := range c.card.Dialogs {
+		if dialog.Trigger == trigger && dialog.Animation != "" {
+			return dialog.Animation
+		}
+	}
+
+	// Check romance dialogs
+	for _, dialog := range c.card.RomanceDialogs {
+		if dialog.Trigger == trigger && dialog.Animation != "" {
+			return dialog.Animation
+		}
+	}
+
+	// Default animation based on trigger
+	switch trigger {
+	case "click":
+		return "talking"
+	case "rightclick":
+		return "thinking"
+	case "hover":
+		return "idle"
+	default:
+		return "talking"
+	}
+}
+
+// updateDialogMemory records dialog interactions for learning and adaptation
+func (c *Character) updateDialogMemory(response DialogResponse, context DialogContext) {
+	if c.gameState == nil || !c.card.DialogBackend.MemoryEnabled {
+		return
+	}
+
+	// Record high-importance responses in character memory
+	if response.MemoryImportance > 0.7 {
+		// This would integrate with the existing memory system
+		// For now, we could record in the game state or a separate dialog memory system
+
+		// Future enhancement: implement DialogMemory struct and storage
+		// c.gameState.RecordDialogMemory(DialogMemory{
+		//     Text: response.Text,
+		//     Context: context.Trigger,
+		//     Timestamp: time.Now(),
+		//     EmotionalTone: response.EmotionalTone,
+		//     Topics: response.Topics,
+		// })
+	}
+
+	// Update backend memory for learning if enabled
+	if c.card.DialogBackend.LearningEnabled && c.dialogManager != nil {
+		// For now, we don't have user feedback, so we pass nil
+		// Future enhancement could track user interactions to determine positive/negative feedback
+		c.dialogManager.UpdateBackendMemory(context, response, nil)
+	}
 }

@@ -30,6 +30,8 @@ type CharacterCard struct {
 	Personality    *PersonalityConfig  `json:"personality,omitempty"`
 	RomanceDialogs []DialogExtended    `json:"romanceDialogs,omitempty"`
 	RomanceEvents  []RandomEventConfig `json:"romanceEvents,omitempty"`
+	// Advanced dialog system (Phase 1)
+	DialogBackend *DialogBackendConfig `json:"dialogBackend,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -135,6 +137,7 @@ func LoadCard(path string) (*CharacterCard, error) {
 
 // Validate ensures the character card has valid configuration
 // Implements comprehensive validation to prevent runtime errors
+// Validate ensures the character card has valid configuration
 func (c *CharacterCard) Validate() error {
 	if err := c.validateBasicFields(); err != nil {
 		return err
@@ -166,6 +169,10 @@ func (c *CharacterCard) Validate() error {
 
 	if err := c.validateRomanceFeatures(); err != nil {
 		return fmt.Errorf("romance features: %w", err)
+	}
+
+	if err := c.validateDialogBackend(); err != nil {
+		return fmt.Errorf("dialog backend: %w", err)
 	}
 
 	return nil
@@ -203,6 +210,10 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 
 	if err := c.validateRomanceFeatures(); err != nil {
 		return fmt.Errorf("romance features: %w", err)
+	}
+
+	if err := c.validateDialogBackend(); err != nil {
+		return fmt.Errorf("dialog backend: %w", err)
 	}
 
 	return nil
@@ -881,9 +892,23 @@ func (c *CharacterCard) validateRomanceRequirements(req *RomanceRequirement) err
 	return nil
 }
 
+// validateDialogBackend ensures dialog backend configuration is valid when enabled
+func (c *CharacterCard) validateDialogBackend() error {
+	if c.DialogBackend == nil {
+		return nil // Optional feature, validation not required when absent
+	}
+
+	return ValidateBackendConfig(*c.DialogBackend)
+}
+
 // HasRomanceFeatures returns true if this character card includes romance features
 func (c *CharacterCard) HasRomanceFeatures() bool {
 	return c.Personality != nil || len(c.RomanceDialogs) > 0 || len(c.RomanceEvents) > 0
+}
+
+// HasDialogBackend returns true if this character card has dialog backend configuration enabled
+func (c *CharacterCard) HasDialogBackend() bool {
+	return c.DialogBackend != nil && c.DialogBackend.Enabled
 }
 
 // GetPersonalityTrait returns the value of a personality trait, defaulting to 0.5 if not found
