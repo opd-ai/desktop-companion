@@ -2,7 +2,6 @@ package character
 
 import (
 	"fmt"
-	"runtime"
 	"testing"
 	"time"
 )
@@ -16,26 +15,26 @@ func TestRomanceConfigValidation(t *testing.T) {
 		errorMsg string
 	}{
 		{
-			name: "valid comprehensive romance character",
-			card: createValidRomanceCard(),
+			name:    "valid comprehensive romance character",
+			card:    createValidRomanceCard(),
 			wantErr: false,
 		},
 		{
-			name: "invalid personality trait out of bounds",
-			card: createInvalidPersonalityCard(),
-			wantErr: true,
+			name:     "invalid personality trait out of bounds",
+			card:     createInvalidPersonalityCard(),
+			wantErr:  true,
 			errorMsg: "personality trait",
 		},
 		{
-			name: "invalid compatibility modifier too high",
-			card: createInvalidCompatibilityCard(),
-			wantErr: true,
+			name:     "invalid compatibility modifier too high",
+			card:     createInvalidCompatibilityCard(),
+			wantErr:  true,
 			errorMsg: "compatibility modifier",
 		},
 		{
-			name: "invalid romance dialog requirements",
-			card: createInvalidRomanceDialogCard(),
-			wantErr: true,
+			name:     "invalid romance dialog requirements",
+			card:     createInvalidRomanceDialogCard(),
+			wantErr:  true,
 			errorMsg: "romance dialog",
 		},
 	}
@@ -61,7 +60,7 @@ func TestRomanceConfigValidation(t *testing.T) {
 // TestRomanceInteractionLogic tests romance interaction processing without animation files
 func TestRomanceInteractionLogic(t *testing.T) {
 	card := createValidRomanceCard()
-	
+
 	// Create character manually to bypass animation loading
 	character := &Character{
 		card:                     &card,
@@ -108,7 +107,7 @@ func TestRomanceInteractionLogic(t *testing.T) {
 // TestRomanceMemorySystemBounds tests romance memory management limits
 func TestRomanceMemorySystemBounds(t *testing.T) {
 	card := createValidRomanceCard()
-	
+
 	// Create minimal character for testing
 	character := &Character{
 		card:                     &card,
@@ -319,9 +318,9 @@ func createInvalidRomanceDialogCard() CharacterCard {
 
 // stringContains checks if a string contains a substring (helper for tests)
 func stringContains(s, substr string) bool {
-	return len(s) >= len(substr) && s[len(s)-len(substr):] == substr || 
-		   len(substr) == 0 || 
-		   (len(s) > len(substr) && containsAt(s, substr))
+	return len(s) >= len(substr) && s[len(s)-len(substr):] == substr ||
+		len(substr) == 0 ||
+		(len(s) > len(substr) && containsAt(s, substr))
 }
 
 func containsAt(s, substr string) bool {
