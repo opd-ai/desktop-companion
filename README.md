@@ -1,7 +1,7 @@
 ````markdown
 # Desktop Companion (DDS)
 
-A lightweight, cross-platform virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
+A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features
 
@@ -27,8 +27,8 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Complete)*
 - 📊 **Stats Overlay**: Optional real-time stats display with progress bars *(Complete)*
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
-- 🌍 **Cross-Platform**: Runs on Windows, macOS, and Linux (build on target platform)
-- 🪶 **Lightweight**: <50MB memory usage
+- 🌍 **Platform-Native**: Runs on Windows, macOS, and Linux (requires building on target platform)
+- 🪶 **Lightweight**: ≤50MB memory usage
 
 ## 🚀 Quick Start
 
@@ -37,7 +37,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - Go 1.21 or higher
 - C compiler (gcc/clang) for CGO dependencies
 - Platform-specific requirements:
-  - **Linux**: X11 development libraries (`libx11-dev`, `libxcursor-dev`, `libxrandr-dev`, `libxinerama-dev`, `libxi-dev`, `libgl1-mesa-dev`)
+  - **Linux**: X11 or Wayland display environment
   - **macOS**: Xcode command line tools
   - **Windows**: TDM-GCC or Visual Studio Build Tools
 
@@ -364,11 +364,8 @@ Character cards can include comprehensive Tamagotchi-style game features:
 - **Challenge** (`assets/characters/challenge/`): Extreme difficulty for expert players
 - **Specialist** (`assets/characters/specialist/`): Unique gameplay mechanics and requirements
 
-For complete game features documentation, see `GAME_FEATURES_PHASE1.md` and `PHASE2_IMPLEMENTATION_COMPLETE.md`.
-
 **📚 Documentation Suite:**
 - **`SCHEMA_DOCUMENTATION.md`**: Complete JSON schema reference with all properties and validation rules
-- **`CHARACTER_CREATION_TUTORIAL.md`**: Step-by-step guide to creating custom characters
 - **`ROMANCE_SCENARIOS.md`**: Example romance progression scenarios and strategies  
 - **`CHARACTER_ARCHETYPES.md`**: Detailed comparison of the three romance archetypes
 
@@ -472,14 +469,10 @@ desktop-companion/
 │   ├── challenge/                 # Expert difficulty game character
 │   └── specialist/                # Unique gameplay mechanics
 ├── Makefile                       # Build automation
-├── PERFORMANCE_MONITORING.md      # Performance metrics and monitoring
-├── GAME_FEATURES_PHASE1.md        # Game features documentation
-├── PHASE2_IMPLEMENTATION_COMPLETE.md # Implementation status
 ├── CHARACTER_ARCHETYPES.md        # Romance archetype comparison guide
 ├── SCHEMA_DOCUMENTATION.md        # Complete JSON schema reference
-├── CHARACTER_CREATION_TUTORIAL.md # Step-by-step character creation guide
 ├── ROMANCE_SCENARIOS.md           # Example romance progression scenarios
-├── AUDIT.md                       # Code quality and functional audit
+├── PHASE4_TASK2_COMPLETE.md       # Implementation status
 └── LICENSES.md                    # License information
 ```
 
@@ -528,7 +521,7 @@ go tool pprof cpu.prof
 ```
 
 **Performance Targets**:
-- Memory usage: <50MB during normal operation ✅ **MONITORED**
+- Memory usage: ≤50MB during normal operation ✅ **MONITORED**
 - Animation framerate: 30+ FPS consistently ✅ **MONITORED**
 - Startup time: <2 seconds ✅ **MONITORED**
 
@@ -564,10 +557,9 @@ go build -ldflags="-s -w" -o companion cmd/companion/main.go
 make build  # Creates build/companion
 ```
 
-> **Note**: Due to Fyne GUI framework limitations, cross-platform builds are not supported.  
+> **Note**: Due to Fyne GUI framework limitations, cross-compilation is not supported.  
 > Fyne requires platform-specific CGO libraries for graphics drivers.  
 > Build on the target platform for proper binary distribution.
-```
 
 ## 🔧 Troubleshooting
 
