@@ -1,0 +1,44 @@
+{
+  "chainOrder": 2,
+  "minWords": 3,
+  "maxWords": 12,
+  "temperatureMin": 0.4,
+  "temperatureMax": 0.7,
+  "useDialogHistory": true,
+  "usePersonality": false,
+  "triggerSpecific": false,
+  "personalityBoost": 0.0,
+  "moodInfluence": 0.1,
+  "statAwareness": 0.0,
+  "relationshipWeight": 0.2,
+  "timeOfDayWeight": 0.0,
+  "memoryDecay": 0.95,
+  "learningRate": 0.1,
+  "adaptationSteps": 10,
+  "coherenceThreshold": 0.6,
+  "similarityPenalty": 0.3,
+  "qualityFilters": {
+    "minCoherence": 0.5,
+    "maxRepetition": 0.4,
+    "requireComplete": false,
+    "grammarCheck": true,
+    "minUniqueWords": 2,
+    "maxSimilarity": 0.7
+  },
+  "trainingData": [
+    "Hello! How are you doing today?",
+    "It's wonderful to see you again!",
+    "Thank you for spending time with me.",
+    "I hope you're having a great day!",
+    "What would you like to talk about?",
+    "I'm here if you need someone to chat with.",
+    "Your presence always brightens my day.",
+    "I enjoy our conversations so much."
+  ],
+  "fallbackPhrases": [
+    "I'm happy to see you!",
+    "Thanks for being here with me.",
+    "You always know how to make me smile.",
+    "I'm grateful for your company."
+  ]
+}

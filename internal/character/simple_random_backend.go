@@ -95,6 +95,14 @@ func (s *SimpleRandomBackend) GenerateResponse(context DialogContext) (DialogRes
 
 // selectDialogUsingExistingLogic uses the same logic as the existing HandleClick/HandleRightClick methods
 func (s *SimpleRandomBackend) selectDialogUsingExistingLogic(context DialogContext) string {
+	// If no character reference, fall back to context fallback responses
+	if s.character == nil || s.character.card == nil {
+		if len(context.FallbackResponses) > 0 {
+			return context.FallbackResponses[int(time.Now().UnixNano())%len(context.FallbackResponses)]
+		}
+		return "Hello!"
+	}
+
 	// First try romance dialogs if enabled and character has romance features
 	if s.config.PreferRomanceDialogs && s.character.card.HasRomanceFeatures() {
 		if romanceResponse := s.selectRomanceDialog(context); romanceResponse != "" {
@@ -108,6 +116,11 @@ func (s *SimpleRandomBackend) selectDialogUsingExistingLogic(context DialogConte
 
 // selectRomanceDialog attempts to select a romance dialog using existing logic
 func (s *SimpleRandomBackend) selectRomanceDialog(context DialogContext) string {
+	// Safety check
+	if s.character == nil || s.character.card == nil {
+		return ""
+	}
+
 	// Replicate the romance dialog selection logic from the existing system
 	for _, dialog := range s.character.card.RomanceDialogs {
 		if !s.matchesTrigger(dialog.Trigger, context.Trigger) {
@@ -131,6 +144,11 @@ func (s *SimpleRandomBackend) selectRomanceDialog(context DialogContext) string 
 
 // selectBasicDialog selects from basic dialogs using existing logic
 func (s *SimpleRandomBackend) selectBasicDialog(context DialogContext) string {
+	// Safety check
+	if s.character == nil || s.character.card == nil {
+		return ""
+	}
+
 	for _, dialog := range s.character.card.Dialogs {
 		if !s.matchesTrigger(dialog.Trigger, context.Trigger) {
 			continue

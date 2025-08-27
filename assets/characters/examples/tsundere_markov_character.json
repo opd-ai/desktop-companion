@@ -1,0 +1,153 @@
+{
+  "name": "Tsundere Companion",
+  "description": "A tsundere character with Markov chain dialog generation",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "blushing": "../default/animations/happy.gif",
+    "angry": "../default/animations/sad.gif",
+    "tsundere_idle": "../default/animations/idle.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "It's not like I was waiting for you or anything...",
+        "Don't get the wrong idea! I just happened to be here...",
+        "Hmph! You're finally here, took you long enough!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Why are you looking at me like that? It's embarrassing...",
+        "Don't think this means I need you around or anything!",
+        "I was perfectly fine on my own! ...But I guess you can stay."
+      ],
+      "animation": "blushing",
+      "cooldown": 3
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 25,
+    "movementEnabled": true,
+    "defaultSize": 130
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "pride": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 30
+    },
+    "affection": {
+      "initial": 10,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 5
+    },
+    "stubbornness": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 0.05,
+      "criticalThreshold": 50
+    }
+  },
+
+  "interactions": {
+    "compliment": {
+      "triggers": ["hover"],
+      "effects": {"affection": 8, "pride": -5},
+      "animations": ["blushing", "angry"],
+      "responses": ["*blushes* S-stop being so nice to me! It's confusing!", "Hmph! Whatever..."],
+      "cooldown": 45
+    },
+    "give_gift": {
+      "triggers": ["doubleclick"],
+      "effects": {"affection": 12, "pride": -3, "stubbornness": -2},
+      "animations": ["blushing", "happy"],
+      "responses": ["I-I suppose I can accept this... just this once!", "Don't think this means anything special!"],
+      "cooldown": 120
+    }
+  },
+
+  "personality": {
+    "traits": {
+      "tsundere_level": 0.9,
+      "pride": 0.8,
+      "hidden_kindness": 0.7,
+      "stubbornness": 0.8,
+      "emotional_conflict": 0.9
+    }
+  },
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 15,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.9,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.6,
+        "moodInfluence": 0.4,
+        "statAwareness": 0.3,
+        "relationshipWeight": 0.6,
+        "timeOfDayWeight": 0.2,
+        "memoryDecay": 0.92,
+        "learningRate": 0.15,
+        "adaptationSteps": 8,
+        "coherenceThreshold": 0.65,
+        "similarityPenalty": 0.35,
+        "trainingData": [
+          "It's not like I was waiting for you or anything...",
+          "Don't get the wrong idea! I just happened to be here...",
+          "Hmph! You're finally here, took you long enough!",
+          "I-I wasn't lonely without you! Don't be ridiculous!",
+          "Why are you looking at me like that? It's embarrassing...",
+          "*crosses arms* Fine, I guess you can stay... for now.",
+          "I suppose you're not completely terrible company...",
+          "Don't think this means I need you around or anything!",
+          "*blushes* S-stop being so nice to me! It's confusing!",
+          "I was perfectly fine on my own! ...But I guess you can stay.",
+          "You're such an idiot... but maybe that's not entirely bad.",
+          "Hmph! If you insist on staying, don't expect me to entertain you!",
+          "*looks away* I might have missed you a tiny bit... just a little!",
+          "Don't make me say embarrassing things! You should just know!",
+          "I'm only putting up with you because... because I have to!"
+        ],
+        "requiredWords": ["hmph", "idiot", "embarrassing", "fine", "whatever"],
+        "forbiddenWords": ["love", "adore", "precious", "darling"],
+        "fallbackPhrases": [
+          "It's not like I care or anything...",
+          "Hmph! You're so annoying sometimes...",
+          "Don't get the wrong idea about this!",
+          "I-I wasn't waiting for you!",
+          "Fine, whatever you say...",
+          "*looks away stubbornly* I don't need you!"
+        ]
+      }
+    }
+  }
+}

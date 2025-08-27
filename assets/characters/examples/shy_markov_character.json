@@ -1,0 +1,152 @@
+{
+  "name": "Shy Companion",
+  "description": "A gentle, shy character with Markov chain dialog generation",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "blushing": "../default/animations/happy.gif",
+    "shy": "../default/animations/sad.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Um... h-hello there...",
+        "I-I'm a bit nervous, but happy to see you!",
+        "Th-thank you for being so kind to me..."
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "I hope I'm not bothering you too much...",
+        "S-sorry if I seem a little shy around you...",
+        "Your kindness means so much to me..."
+      ],
+      "animation": "shy",
+      "cooldown": 3
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": false,
+    "defaultSize": 120
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.5,
+      "criticalThreshold": 15
+    },
+    "confidence": {
+      "initial": 20,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 5
+    },
+    "comfort": {
+      "initial": 50,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    }
+  },
+
+  "interactions": {
+    "gentle_pat": {
+      "triggers": ["click"],
+      "effects": {"happiness": 8, "comfort": 10, "confidence": 2},
+      "animations": ["blushing", "happy"],
+      "responses": ["*blushes softly* That feels nice...", "Thank you for being so gentle..."],
+      "cooldown": 20
+    },
+    "encourage": {
+      "triggers": ["hover"],
+      "effects": {"confidence": 5, "happiness": 5},
+      "animations": ["shy", "happy"],
+      "responses": ["*looks up shyly* Really? Thank you...", "Your encouragement means a lot..."],
+      "cooldown": 30
+    }
+  },
+
+  "personality": {
+    "traits": {
+      "shyness": 0.9,
+      "sensitivity": 0.8,
+      "gentleness": 0.9,
+      "trust_building": 0.6,
+      "nervousness": 0.7
+    }
+  },
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.5,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 2,
+        "maxWords": 8,
+        "temperatureMin": 0.6,
+        "temperatureMax": 1.0,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": false,
+        "personalityBoost": 0.3,
+        "moodInfluence": 0.7,
+        "statAwareness": 0.2,
+        "relationshipWeight": 0.3,
+        "timeOfDayWeight": 0.1,
+        "memoryDecay": 0.98,
+        "learningRate": 0.05,
+        "adaptationSteps": 20,
+        "coherenceThreshold": 0.5,
+        "similarityPenalty": 0.2,
+        "trainingData": [
+          "Um... h-hello there...",
+          "I-I'm a bit nervous, but happy to see you!",
+          "Th-thank you for being so kind to me...",
+          "I hope I'm not bothering you too much...",
+          "*blushes* You're really nice to me...",
+          "S-sorry if I seem a little shy around you...",
+          "I appreciate your patience with me, really...",
+          "You make me feel safe and comfortable...",
+          "*fidgets nervously* I enjoy talking with you...",
+          "I-I hope we can be good friends...",
+          "Your kindness means so much to me...",
+          "I'm still learning how to express myself...",
+          "*looks down shyly* Thank you for understanding...",
+          "I feel a little less nervous when you're here...",
+          "You're very gentle with me, I notice that..."
+        ],
+        "requiredWords": ["thank", "nervous", "shy", "gentle", "kind"],
+        "forbiddenWords": ["loud", "aggressive", "demanding", "pushy"],
+        "fallbackPhrases": [
+          "I-I'm happy you're here...",
+          "Thank you for being patient with me...",
+          "*blushes softly* You're very kind...",
+          "I hope I'm doing okay...",
+          "Your gentleness means a lot to me...",
+          "I feel safe when you're around..."
+        ]
+      }
+    }
+  }
+}

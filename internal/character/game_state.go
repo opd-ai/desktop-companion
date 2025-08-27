@@ -18,6 +18,19 @@ type RomanceMemory struct {
 	Response        string             `json:"response"`
 }
 
+// DialogMemory represents a memory of a dialog interaction for learning and adaptation
+type DialogMemory struct {
+	Timestamp        time.Time     `json:"timestamp"`
+	Trigger          string        `json:"trigger"`
+	Response         string        `json:"response"`
+	EmotionalTone    string        `json:"emotionalTone"`
+	Topics           []string      `json:"topics"`
+	MemoryImportance float64       `json:"memoryImportance"`
+	BackendUsed      string        `json:"backendUsed"`
+	Confidence       float64       `json:"confidence"`
+	UserFeedback     *UserFeedback `json:"userFeedback,omitempty"`
+}
+
 // GameState manages Tamagotchi-style stats and progression for a character
 // This follows the "lazy programmer" approach using only Go standard library
 // All game mechanics are configurable via JSON without custom code
@@ -32,6 +45,7 @@ type GameState struct {
 	RelationshipLevel  string                 `json:"relationshipLevel,omitempty"`
 	InteractionHistory map[string][]time.Time `json:"interactionHistory,omitempty"`
 	RomanceMemories    []RomanceMemory        `json:"romanceMemories,omitempty"`
+	DialogMemories     []DialogMemory         `json:"dialogMemories,omitempty"`
 }
 
 // Stat represents a game statistic with boundaries and degradation rules
@@ -73,6 +87,7 @@ func NewGameState(statConfigs map[string]StatConfig, config *GameConfig) *GameSt
 		RelationshipLevel:  "Stranger", // Default relationship level
 		InteractionHistory: make(map[string][]time.Time),
 		RomanceMemories:    make([]RomanceMemory, 0),
+		DialogMemories:     make([]DialogMemory, 0),
 	}
 
 	// Initialize stats from configuration
@@ -913,4 +928,96 @@ func (gs *GameState) GetRomanceMemories() []RomanceMemory {
 	memories := make([]RomanceMemory, len(gs.RomanceMemories))
 	copy(memories, gs.RomanceMemories)
 	return memories
+}
+
+// RecordDialogMemory records a dialog interaction for learning and adaptation
+func (gs *GameState) RecordDialogMemory(memory DialogMemory) {
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	// Initialize if nil
+	if gs.DialogMemories == nil {
+		gs.DialogMemories = make([]DialogMemory, 0)
+	}
+
+	gs.DialogMemories = append(gs.DialogMemories, memory)
+
+	// Limit memory storage to prevent excessive growth
+	const maxDialogMemories = 100
+	if len(gs.DialogMemories) > maxDialogMemories {
+		// Remove oldest memories, keeping the most recent ones
+		start := len(gs.DialogMemories) - maxDialogMemories
+		gs.DialogMemories = gs.DialogMemories[start:]
+	}
+}
+
+// GetDialogMemories returns a copy of dialog memories
+func (gs *GameState) GetDialogMemories() []DialogMemory {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil {
+		return []DialogMemory{}
+	}
+
+	memories := make([]DialogMemory, len(gs.DialogMemories))
+	copy(memories, gs.DialogMemories)
+	return memories
+}
+
+// GetRecentDialogMemories returns recent dialog memories (last N)
+func (gs *GameState) GetRecentDialogMemories(count int) []DialogMemory {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil || len(gs.DialogMemories) == 0 {
+		return []DialogMemory{}
+	}
+
+	start := len(gs.DialogMemories) - count
+	if start < 0 {
+		start = 0
+	}
+
+	memories := make([]DialogMemory, len(gs.DialogMemories[start:]))
+	copy(memories, gs.DialogMemories[start:])
+	return memories
+}
+
+// GetDialogMemoriesByTrigger returns dialog memories filtered by trigger type
+func (gs *GameState) GetDialogMemoriesByTrigger(trigger string) []DialogMemory {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil {
+		return []DialogMemory{}
+	}
+
+	var filtered []DialogMemory
+	for _, memory := range gs.DialogMemories {
+		if memory.Trigger == trigger {
+			filtered = append(filtered, memory)
+		}
+	}
+
+	return filtered
+}
+
+// GetHighImportanceDialogMemories returns dialog memories with high importance scores
+func (gs *GameState) GetHighImportanceDialogMemories(minImportance float64) []DialogMemory {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil {
+		return []DialogMemory{}
+	}
+
+	var important []DialogMemory
+	for _, memory := range gs.DialogMemories {
+		if memory.MemoryImportance >= minImportance {
+			important = append(important, memory)
+		}
+	}
+
+	return important
 }

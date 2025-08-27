@@ -1783,29 +1783,35 @@ func (c *Character) getFallbackAnimation(trigger string) string {
 
 // updateDialogMemory records dialog interactions for learning and adaptation
 func (c *Character) updateDialogMemory(response DialogResponse, context DialogContext) {
-	if c.gameState == nil || !c.card.DialogBackend.MemoryEnabled {
+	if c.gameState == nil {
 		return
 	}
 
-	// Record high-importance responses in character memory
-	if response.MemoryImportance > 0.7 {
-		// This would integrate with the existing memory system
-		// For now, we could record in the game state or a separate dialog memory system
-
-		// Future enhancement: implement DialogMemory struct and storage
-		// c.gameState.RecordDialogMemory(DialogMemory{
-		//     Text: response.Text,
-		//     Context: context.Trigger,
-		//     Timestamp: time.Now(),
-		//     EmotionalTone: response.EmotionalTone,
-		//     Topics: response.Topics,
-		// })
+	// Check if memory is enabled in dialog backend configuration
+	memoryEnabled := false
+	if c.card.DialogBackend != nil && c.card.DialogBackend.MemoryEnabled {
+		memoryEnabled = true
 	}
 
-	// Update backend memory for learning if enabled
-	if c.card.DialogBackend.LearningEnabled && c.dialogManager != nil {
-		// For now, we don't have user feedback, so we pass nil
-		// Future enhancement could track user interactions to determine positive/negative feedback
-		c.dialogManager.UpdateBackendMemory(context, response, nil)
+	// Record high-importance responses in character memory
+	if memoryEnabled && response.MemoryImportance > 0.7 {
+		memory := DialogMemory{
+			Timestamp:        time.Now(),
+			Trigger:          context.Trigger,
+			Response:         response.Text,
+			EmotionalTone:    response.EmotionalTone,
+			Topics:           response.Topics,
+			MemoryImportance: response.MemoryImportance,
+			BackendUsed:      response.ResponseType,
+			Confidence:       response.Confidence,
+		}
+
+		c.gameState.RecordDialogMemory(memory)
+
+		// Optional: Also update backend memory for learning
+		if c.dialogManager != nil {
+			// No user feedback available at this time, but the backend can still learn
+			c.dialogManager.UpdateBackendMemory(context, response, nil)
+		}
 	}
 }

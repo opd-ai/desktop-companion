@@ -309,6 +309,62 @@
     }
   ],
 
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 4,
+        "maxWords": 18,
+        "temperatureMin": 0.3,
+        "temperatureMax": 0.8,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.5,
+        "moodInfluence": 0.3,
+        "statAwareness": 0.4,
+        "relationshipWeight": 0.8,
+        "timeOfDayWeight": 0.2,
+        "memoryDecay": 0.9,
+        "learningRate": 0.2,
+        "adaptationSteps": 5,
+        "coherenceThreshold": 0.7,
+        "similarityPenalty": 0.4,
+        "trainingData": [
+          "Every interaction with you makes my heart flutter with excitement.",
+          "I cherish these precious moments we share together, my darling.",
+          "Your love gives me strength and fills my days with happiness.",
+          "When you're near, everything feels perfect and wonderfully complete.",
+          "Your smile lights up my entire world and brightens my soul.",
+          "I treasure every second we spend together, my beloved.",
+          "You make my heart skip a beat every time I see you.",
+          "Being with you feels like coming home to pure happiness.",
+          "Your gentle presence fills me with warmth and comfort.",
+          "I dream about our beautiful future together, so bright.",
+          "You understand me in ways no one else ever could before.",
+          "Thank you for being my everything, my precious one.",
+          "I fall in love with you more deeply every single day.",
+          "Your tender touch makes all my worries simply disappear.",
+          "You're the missing piece that makes my soul feel complete."
+        ],
+        "forbiddenWords": ["hate", "ugly", "stupid", "disgusting", "annoying"],
+        "requiredWords": ["love", "heart", "precious", "darling", "cherish", "treasure"],
+        "fallbackPhrases": [
+          "You mean so much to me, my darling.",
+          "I'm so happy you're here with me.",
+          "Thank you for caring about me so deeply.",
+          "Your love fills my heart with warmth.",
+          "I treasure every moment we share together.",
+          "You make everything in life feel magical."
+        ]
+      }
+    }
+  },
+
   "romanceEvents": [
     {
       "name": "Love Letter Memory",

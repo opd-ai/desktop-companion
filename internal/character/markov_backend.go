@@ -54,6 +54,16 @@ type MarkovConfig struct {
 	CoherenceThreshold float64  `json:"coherenceThreshold"` // Minimum coherence for accepting response (0-1)
 	SimilarityPenalty  float64  `json:"similarityPenalty"`  // Penalty for responses too similar to recent ones (0-1)
 	FallbackPhrases    []string `json:"fallbackPhrases"`    // High-quality fallback responses
+
+	// Advanced quality filters
+	QualityFilters struct {
+		MinCoherence    float64 `json:"minCoherence"`    // Minimum coherence score for responses (0-1)
+		MaxRepetition   float64 `json:"maxRepetition"`   // Maximum word repetition ratio (0-1)
+		RequireComplete bool    `json:"requireComplete"` // Require complete sentences
+		GrammarCheck    bool    `json:"grammarCheck"`    // Enable basic grammar validation
+		MinUniqueWords  int     `json:"minUniqueWords"`  // Minimum unique words in response
+		MaxSimilarity   float64 `json:"maxSimilarity"`   // Maximum similarity to recent responses (0-1)
+	} `json:"qualityFilters,omitempty"`
 }
 
 // MarkovChain represents a single Markov chain for text generation
@@ -493,7 +503,7 @@ func (m *MarkovChainBackend) validateResponse(text string, context DialogContext
 		return false
 	}
 
-	// Coherence check (basic - real implementation could be more sophisticated)
+	// Basic coherence check
 	if m.config.CoherenceThreshold > 0 {
 		coherence := m.calculateCoherence(text)
 		if coherence < m.config.CoherenceThreshold {
@@ -508,7 +518,222 @@ func (m *MarkovChainBackend) validateResponse(text string, context DialogContext
 		}
 	}
 
+	// Advanced quality filters
+	if !m.validateQualityFilters(text, context) {
+		return false
+	}
+
 	return true
+}
+
+// validateQualityFilters applies advanced quality validation
+func (m *MarkovChainBackend) validateQualityFilters(text string, context DialogContext) bool {
+	// Skip if no quality filters configured
+	if m.config.QualityFilters.MinCoherence == 0 && m.config.QualityFilters.MaxRepetition == 0 &&
+		!m.config.QualityFilters.RequireComplete && !m.config.QualityFilters.GrammarCheck &&
+		m.config.QualityFilters.MinUniqueWords == 0 && m.config.QualityFilters.MaxSimilarity == 0 {
+		return true
+	}
+
+	words := strings.Fields(text)
+
+	// Enhanced coherence check
+	if m.config.QualityFilters.MinCoherence > 0 {
+		coherence := m.calculateAdvancedCoherence(text)
+		if coherence < m.config.QualityFilters.MinCoherence {
+			return false
+		}
+	}
+
+	// Word repetition check
+	if m.config.QualityFilters.MaxRepetition > 0 {
+		repetition := m.calculateWordRepetition(words)
+		if repetition > m.config.QualityFilters.MaxRepetition {
+			return false
+		}
+	}
+
+	// Complete sentence check
+	if m.config.QualityFilters.RequireComplete {
+		if !m.isCompleteSentence(text) {
+			return false
+		}
+	}
+
+	// Basic grammar check
+	if m.config.QualityFilters.GrammarCheck {
+		if !m.passesBasicGrammarCheck(text) {
+			return false
+		}
+	}
+
+	// Unique words check
+	if m.config.QualityFilters.MinUniqueWords > 0 {
+		uniqueWords := m.countUniqueWords(words)
+		if uniqueWords < m.config.QualityFilters.MinUniqueWords {
+			return false
+		}
+	}
+
+	// Similarity check against recent responses
+	if m.config.QualityFilters.MaxSimilarity > 0 {
+		similarity := m.calculateSimilarityToRecent(text, context)
+		if similarity > m.config.QualityFilters.MaxSimilarity {
+			return false
+		}
+	}
+
+	return true
+}
+
+// calculateAdvancedCoherence provides enhanced coherence analysis
+func (m *MarkovChainBackend) calculateAdvancedCoherence(text string) float64 {
+	words := strings.Fields(text)
+	if len(words) < 2 {
+		return 0.5
+	}
+
+	coherenceScore := 1.0
+
+	// Check for excessive repetition
+	wordCounts := make(map[string]int)
+	for _, word := range words {
+		wordCounts[strings.ToLower(word)]++
+	}
+
+	totalRepetition := 0
+	for _, count := range wordCounts {
+		if count > 1 {
+			totalRepetition += count - 1
+		}
+	}
+
+	repetitionPenalty := float64(totalRepetition) / float64(len(words))
+	coherenceScore -= repetitionPenalty * 0.3
+
+	// Check for proper word ordering (basic heuristic)
+	properOrderBonus := m.checkWordOrdering(words)
+	coherenceScore += properOrderBonus * 0.2
+
+	// Clamp result
+	if coherenceScore < 0 {
+		coherenceScore = 0
+	}
+	if coherenceScore > 1 {
+		coherenceScore = 1
+	}
+
+	return coherenceScore
+}
+
+// calculateWordRepetition calculates the repetition ratio in the text
+func (m *MarkovChainBackend) calculateWordRepetition(words []string) float64 {
+	if len(words) == 0 {
+		return 0
+	}
+
+	wordCounts := make(map[string]int)
+	for _, word := range words {
+		wordCounts[strings.ToLower(word)]++
+	}
+
+	totalRepeated := 0
+	for _, count := range wordCounts {
+		if count > 1 {
+			totalRepeated += count - 1
+		}
+	}
+
+	return float64(totalRepeated) / float64(len(words))
+}
+
+// isCompleteSentence checks if the text forms complete sentences
+func (m *MarkovChainBackend) isCompleteSentence(text string) bool {
+	text = strings.TrimSpace(text)
+	if len(text) == 0 {
+		return false
+	}
+
+	// Check for sentence-ending punctuation
+	lastChar := text[len(text)-1]
+	return lastChar == '.' || lastChar == '!' || lastChar == '?'
+}
+
+// passesBasicGrammarCheck performs basic grammar validation
+func (m *MarkovChainBackend) passesBasicGrammarCheck(text string) bool {
+	// Very basic grammar checks:
+	// 1. Starts with capital letter (unless it's a special case like "*blushes*")
+	// 2. Has proper spacing
+	// 3. No double punctuation (except "..." or "!!")
+
+	text = strings.TrimSpace(text)
+	if len(text) == 0 {
+		return false
+	}
+
+	// Allow special formatting like "*blushes*" or "(whispers)"
+	if strings.HasPrefix(text, "*") || strings.HasPrefix(text, "(") {
+		return true
+	}
+
+	// Check capitalization
+	firstChar := rune(text[0])
+	if !('A' <= firstChar && firstChar <= 'Z') {
+		return false
+	}
+
+	// Check for excessive punctuation
+	if strings.Contains(text, "???") || strings.Contains(text, "!!!") ||
+		strings.Contains(text, ".,") || strings.Contains(text, ".!") {
+		return false
+	}
+
+	return true
+}
+
+// countUniqueWords counts unique words in the word list
+func (m *MarkovChainBackend) countUniqueWords(words []string) int {
+	uniqueWords := make(map[string]bool)
+	for _, word := range words {
+		cleanWord := strings.ToLower(strings.Trim(word, ".,!?"))
+		if len(cleanWord) > 0 {
+			uniqueWords[cleanWord] = true
+		}
+	}
+	return len(uniqueWords)
+}
+
+// checkWordOrdering provides a basic check for reasonable word ordering
+func (m *MarkovChainBackend) checkWordOrdering(words []string) float64 {
+	if len(words) < 2 {
+		return 0.5
+	}
+
+	// Very basic heuristic: check if articles/determiners are followed by nouns
+	// This is a simplified implementation for demonstration
+	score := 0.0
+	checks := 0
+
+	for i := 0; i < len(words)-1; i++ {
+		word := strings.ToLower(words[i])
+		nextWord := strings.ToLower(words[i+1])
+
+		// Check if articles are followed by reasonable words
+		if word == "the" || word == "a" || word == "an" {
+			checks++
+			// Avoid common grammar mistakes
+			if nextWord != "the" && nextWord != "a" && nextWord != "an" &&
+				nextWord != "." && nextWord != "," && nextWord != "!" {
+				score++
+			}
+		}
+	}
+
+	if checks == 0 {
+		return 0.5 // Neutral if no applicable checks
+	}
+
+	return score / float64(checks)
 }
 
 // calculateCoherence estimates text coherence (simplified implementation)
