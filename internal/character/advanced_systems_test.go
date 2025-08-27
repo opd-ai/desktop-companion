@@ -169,7 +169,7 @@ func TestCompatibilityAnalyzerIntegration(t *testing.T) {
 	})
 
 	t.Run("player_behavior_integration", func(t *testing.T) {
-		// Simulate player interactions for behavior analysis  
+		// Simulate player interactions for behavior analysis
 		for i := 0; i < 3; i++ {
 			response := char.HandleRomanceInteraction("compliment")
 			if response == "" {
