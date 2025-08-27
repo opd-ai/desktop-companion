@@ -4,21 +4,23 @@
 You are an expert Go developer working on the **Desktop Dating Simulator (DDS)**, a sophisticated cross-platform virtual companion application that combines desktop pet functionality with advanced dating simulator mechanics. This project has evolved from a simple animated character into a comprehensive interactive relationship platform while maintaining the "lazy programmer" philosophy.
 
 ## Current Project Status
-- **Version**: Go 1.24.5 compatible
+- **Version**: Go 1.24.5 compatible (verified runtime environment)
 - **Architecture**: Complete 4-phase implementation with production-ready release
 - **Features**: Full Tamagotchi game mechanics + advanced romance system + AI-powered dialog generation
-- **Testing**: 335 tests across 6 modules with comprehensive coverage
-- **Documentation**: 72,000+ characters of user guides and technical documentation
-- **Release Status**: 100% production-ready with optimized builds and packaging
+- **Testing**: 335+ tests across 6 modules with measured coverage: Character 62.2%, Config 93.5%, Persistence 83.2%, Monitoring 71.6%
+- **Documentation**: 72,000+ characters of user guides and technical documentation across 18 character archetypes
+- **Release Status**: 100% production-ready with optimized builds (22MB binaries) and packaging (11MB releases)
+- **Codebase**: 56 internal Go files + 11 command files across 7 packages
 
 ## Technical Stack
 
 ### Core Dependencies
-- **Primary Language**: Go 1.21+ (currently tested on Go 1.24.5)
+- **Primary Language**: Go 1.21+ (currently verified on Go 1.24.5 runtime)
 - **GUI Framework**: Fyne v2.4.5 (BSD-3-Clause) - Cross-platform native transparency support
 - **Standard Library**: Extensive use of `encoding/json`, `image/gif`, `sync`, `time`, `context`
 - **Testing**: Go's built-in testing framework with benchmarks and race detection
-- **Build System**: Makefile with native platform builds (cross-compilation not supported due to Fyne)
+- **Build System**: Makefile with native platform builds (cross-compilation not supported due to Fyne CGO requirements)
+- **Development Tools**: goimports, staticcheck for code quality (installed via Makefile targets)
 
 ### Project Philosophy
 You embody the principle that the best code is often the code you don't have to write. Your approach prioritizes:
@@ -38,7 +40,7 @@ Apply these mandatory patterns when working with this codebase:
 - Use JSON-first configuration for all character behavior (90%+ configurable without code changes)
 - Implement validation in `card.go` using Go's `encoding/json` with comprehensive error handling
 - Support backward compatibility - existing characters must continue working unchanged
-- Follow the template inheritance system for character archetypes (`assets/characters/`)
+- Support 14 character archetypes: default, easy, normal, hard, challenge, specialist, romance, tsundere, flirty, slow_burn, romance_flirty, romance_slowburn, romance_supportive, romance_tsundere
 
 **Animation Management**:
 - Use `AnimationManager` for all GIF-based character animations
@@ -94,11 +96,16 @@ Apply these mandatory patterns when working with this codebase:
 ### 3. Testing and Quality Standards
 
 **Test Coverage Requirements**:
-- Maintain high coverage for core systems (81.0% character system, 93.5% configuration)
+- Maintain high coverage for core systems (Character 62.2%, Config 93.5%, Persistence 83.2%, Monitoring 71.6%)
 - Include comprehensive unit tests for all business logic
 - Use table-driven tests for validation and character card testing
 - Implement benchmark tests for performance-critical paths
-- Support race detection with `go test -race`
+**Build and Release Standards**:
+- Support development and optimized builds via Makefile
+- Use `-ldflags="-s -w"` for release builds to reduce binary size
+- Package releases with complete asset bundles (animations + character cards)
+- Maintain cross-platform support (Windows, macOS, Linux) with platform-specific builds
+- Note: Cross-compilation not supported due to Fyne CGO requirements
 
 **Build and Release Standards**:
 - Support development and optimized builds via Makefile
@@ -123,9 +130,40 @@ Apply these mandatory patterns when working with this codebase:
 
 **Character Asset Management**:
 - All animations must be GIF format with transparency support
-- Support 14 character archetypes: default, easy, normal, hard, challenge, specialist, romance, tsundere, flirty, slow_burn, romance_flirty, romance_slowburn, romance_supportive, romance_tsundere
+- Support 18 character archetypes: default, easy, normal, hard, challenge, specialist, romance, tsundere, flirty, slow_burn, romance_flirty, romance_slowburn, romance_supportive, romance_tsundere, markov_example, plus templates and examples
 - Validate character cards using comprehensive schema checking
 - Support template inheritance for character archetype families
+
+## Project Context & Architecture
+
+**Desktop Companion Application**:
+- Virtual desktop pet with transparent overlay functionality
+- Always-on-top window with system-native transparency support  
+- Cross-platform compatibility (Windows, macOS, Linux) via Fyne framework
+- Memory-efficient design targeting ≤50MB usage with 30+ FPS animation
+
+**Package Structure** (67 total Go files):
+```
+internal/ (56 files)
+├── character/     # Core character logic, validation, romance system
+├── config/        # Configuration management and JSON loading
+├── dialog/        # Advanced dialog backends and Markov chain generation  
+├── monitoring/    # Performance monitoring and profiling
+├── persistence/   # Save/load system with auto-save functionality
+├── testing/       # Test utilities and shared testing infrastructure
+└── ui/           # Fyne-based GUI components and animation rendering
+
+cmd/ (11 files)
+├── companion/     # Main desktop application entry point
+└── dialog_example/ # CLI example for dialog system testing
+```
+
+**Key Features by Module**:
+- **Character System**: Romance progression, personality traits, stat management, achievement tracking
+- **Animation Management**: GIF-based character animations with frame timing and state management
+- **Dialog System**: AI-powered response generation with memory and personality integration
+- **Game Mechanics**: Tamagotchi-style virtual pet features with time-based stat degradation
+- **Romance Features**: Relationship levels, memory system, personality-driven interactions, crisis recovery
 
 ## Library Selection and Implementation Guidance
 
@@ -309,11 +347,14 @@ Remember: The laziest code is the code that's already been written, tested, and 
 ## Update History
 - **Last Updated**: August 27, 2025
 - **Key Changes**: 
-  - Updated Go version to 1.24.5 (from unspecified version)
+  - Updated Go version verification to 1.24.5 runtime environment
   - Added comprehensive AI dialog backend system with Markov chain generation
   - Integrated advanced romance features with personality-driven interactions
-  - Implemented production-ready release with 335 tests and performance monitoring
-  - Added 14 character archetypes including 3 romance personality types
-  - Enhanced documentation suite to 72,000+ characters
-  - Achieved 100% release readiness with optimized builds and packaging
+  - Implemented production-ready release with 335+ tests and measured coverage
+  - Expanded to 18 character archetypes (14 main + 4 romance variants)
+  - Enhanced documentation suite to 72,000+ characters across multiple guides
+  - Achieved 100% release readiness with optimized builds (22MB) and packaging (11MB)
+  - Added build toolchain with goimports and staticcheck integration
+  - Implemented comprehensive codebase complexity analysis with go-stats-generator
   - Added dialog memory system and learning capabilities
+  - Enhanced character asset management with template inheritance system
