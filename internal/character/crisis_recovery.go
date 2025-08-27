@@ -58,10 +58,10 @@ func NewCrisisRecoveryManager(enabled bool, thresholds map[string]float64) *Cris
 		enabled:          enabled,
 		activeCrises:     make([]RelationshipCrisis, 0),
 		crisisThresholds: thresholds,
-		checkInterval:    60 * time.Second, // Check every minute
-		lastCheck:        time.Now(),
-		recoveryBonus:    1.2, // 20% bonus to recovery interactions
-		maxActiveCrises:  2,   // Maximum 2 crises at once
+		checkInterval:    60 * time.Second,                  // Check every minute
+		lastCheck:        time.Now().Add(-61 * time.Second), // Allow immediate first check
+		recoveryBonus:    1.2,                               // 20% bonus to recovery interactions
+		maxActiveCrises:  2,                                 // Maximum 2 crises at once
 	}
 }
 
