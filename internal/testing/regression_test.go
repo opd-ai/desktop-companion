@@ -510,28 +510,28 @@ func (s *RegressionTestSuite) createStubAnimationFiles(t *testing.T, card *chara
 	gifData := []byte{
 		// GIF Header
 		0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // "GIF89a"
-		
+
 		// Logical Screen Descriptor
 		0x01, 0x00, // width = 1
-		0x01, 0x00, // height = 1 
-		0x00,       // packed fields (no global color table)
-		0x00,       // background color index
-		0x00,       // pixel aspect ratio
-		
+		0x01, 0x00, // height = 1
+		0x00, // packed fields (no global color table)
+		0x00, // background color index
+		0x00, // pixel aspect ratio
+
 		// Image Descriptor
 		0x2C,       // image separator
 		0x00, 0x00, // left position
 		0x00, 0x00, // top position
 		0x01, 0x00, // width = 1
 		0x01, 0x00, // height = 1
-		0x00,       // packed fields (no local color table)
-		
+		0x00, // packed fields (no local color table)
+
 		// Image Data
 		0x02,       // LZW minimum code size
 		0x02,       // data sub-block size
 		0x44, 0x01, // LZW encoded single pixel
-		0x00,       // data sub-block terminator
-		
+		0x00, // data sub-block terminator
+
 		// Trailer
 		0x3B, // GIF trailer
 	}
@@ -539,7 +539,7 @@ func (s *RegressionTestSuite) createStubAnimationFiles(t *testing.T, card *chara
 	// Create animation files for all referenced animations
 	for _, animPath := range card.Animations {
 		fullPath := filepath.Join(s.tempDir, animPath)
-		
+
 		// Create directory if it doesn't exist
 		dir := filepath.Dir(fullPath)
 		if err := os.MkdirAll(dir, 0755); err != nil {
@@ -552,7 +552,7 @@ func (s *RegressionTestSuite) createStubAnimationFiles(t *testing.T, card *chara
 			t.Logf("Warning: Could not create stub animation file %s: %v", fullPath, err)
 		}
 	}
-}// BenchmarkFullSystemPerformance benchmarks overall system performance
+} // BenchmarkFullSystemPerformance benchmarks overall system performance
 func BenchmarkFullSystemPerformance(b *testing.B) {
 	// Create temporary directory for benchmarking
 	tempDir, err := os.MkdirTemp("", "benchmark_test")
@@ -581,32 +581,32 @@ func BenchmarkFullSystemPerformance(b *testing.B) {
 	gifData := []byte{
 		// GIF Header
 		0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // "GIF89a"
-		
+
 		// Logical Screen Descriptor
 		0x01, 0x00, // width = 1
-		0x01, 0x00, // height = 1 
-		0x00,       // packed fields (no global color table)
-		0x00,       // background color index
-		0x00,       // pixel aspect ratio
-		
+		0x01, 0x00, // height = 1
+		0x00, // packed fields (no global color table)
+		0x00, // background color index
+		0x00, // pixel aspect ratio
+
 		// Image Descriptor
 		0x2C,       // image separator
 		0x00, 0x00, // left position
 		0x00, 0x00, // top position
 		0x01, 0x00, // width = 1
 		0x01, 0x00, // height = 1
-		0x00,       // packed fields (no local color table)
-		
+		0x00, // packed fields (no local color table)
+
 		// Image Data
 		0x02,       // LZW minimum code size
 		0x02,       // data sub-block size
 		0x44, 0x01, // LZW encoded single pixel
-		0x00,       // data sub-block terminator
-		
+		0x00, // data sub-block terminator
+
 		// Trailer
 		0x3B, // GIF trailer
 	}
-	
+
 	for _, animPath := range card.Animations {
 		fullPath := filepath.Join(tempDir, animPath)
 		os.MkdirAll(filepath.Dir(fullPath), 0755)
