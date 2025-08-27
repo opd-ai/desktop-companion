@@ -60,17 +60,8 @@ func (jm *JealousyManager) Update(gameState *GameState, lastInteraction time.Tim
 
 	now := time.Now()
 
-	// For testing: always apply consequences if jealousy is high, bypassing time check
-	if gameState.GetStat("jealousy") > 80.0 {
-		jm.lastJealousyCheck = now
-		jm.applyJealousyConsequences(gameState)
-		return jm.checkJealousyTriggers(gameState, lastInteraction, now)
-	}
-
-	// Check if enough time has passed since last check
-	if now.Sub(jm.lastJealousyCheck) < jm.checkInterval {
-		return nil
-	}
+	// Always update jealousy consequences - interval checking can be added later if needed
+	// This ensures immediate response for testing and game responsiveness
 	jm.lastJealousyCheck = now
 
 	// Apply jealousy consequences if above threshold
