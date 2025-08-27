@@ -413,3 +413,19 @@ func (ca *CompatibilityAnalyzer) SetAdaptationStrength(strength float64) {
 	defer ca.mu.Unlock()
 	ca.adaptationStrength = math.Min(1.0, math.Max(0.0, strength))
 }
+
+// ForceAnalysis forces immediate analysis regardless of timing intervals
+// Used for testing to bypass the normal 5-minute analysis interval
+func (ca *CompatibilityAnalyzer) ForceAnalysis(gameState *GameState) []CompatibilityModifier {
+	if !ca.enabled || gameState == nil {
+		return nil
+	}
+
+	ca.mu.Lock()
+	// Force analysis by setting lastUpdate to past time
+	ca.lastUpdate = time.Now().Add(-ca.analysisInterval - time.Minute)
+	ca.mu.Unlock()
+
+	// Call Update which will now proceed with analysis
+	return ca.Update(gameState)
+}
