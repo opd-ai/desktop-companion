@@ -180,6 +180,15 @@ func (c *CharacterCard) Validate() error {
 
 // ValidateWithBasePath ensures the character card has valid configuration including file existence checks
 func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
+	if err := c.validateCoreFields(basePath); err != nil {
+		return err
+	}
+
+	return c.validateFeatureSections()
+}
+
+// validateCoreFields validates essential card fields and animations with file system checks
+func (c *CharacterCard) validateCoreFields(basePath string) error {
 	if err := c.validateBasicFields(); err != nil {
 		return err
 	}
@@ -196,6 +205,11 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 		return fmt.Errorf("behavior: %w", err)
 	}
 
+	return nil
+}
+
+// validateFeatureSections validates all optional feature configurations
+func (c *CharacterCard) validateFeatureSections() error {
 	if err := c.validateGameFeatures(); err != nil {
 		return fmt.Errorf("game features: %w", err)
 	}
