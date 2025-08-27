@@ -512,13 +512,13 @@ func (crm *CrisisRecoveryManager) hasActiveCrises() bool {
 // Safe for concurrent access
 func (crm *CrisisRecoveryManager) GetActiveCrises() []RelationshipCrisis {
 	if !crm.enabled {
-		return nil
+		return []RelationshipCrisis{} // Return empty slice instead of nil
 	}
 
 	crm.mu.RLock()
 	defer crm.mu.RUnlock()
 
-	var activeCrises []RelationshipCrisis
+	activeCrises := make([]RelationshipCrisis, 0) // Initialize empty slice explicitly
 	for _, crisis := range crm.activeCrises {
 		if crisis.IsActive {
 			activeCrises = append(activeCrises, crisis)
