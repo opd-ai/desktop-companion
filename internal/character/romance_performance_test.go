@@ -388,12 +388,8 @@ func createTestRomanceCharacter() CharacterCard {
 		Name:        "Performance Test Romance",
 		Description: "Character for performance testing",
 		Animations: map[string]string{
-			"idle":            "idle.gif",
-			"talking":         "talking.gif",
-			"romantic":        "romantic.gif",
-			"blushing":        "blushing.gif",
-			"heart_eyes":      "heart_eyes.gif",
-			"excited_romance": "excited_romance.gif",
+			"idle":    "test.gif",  // Use placeholder animations
+			"talking": "test.gif",
 		},
 		Dialogs: []Dialog{
 			{Trigger: "click", Responses: []string{"Hello!"}, Animation: "talking"},
