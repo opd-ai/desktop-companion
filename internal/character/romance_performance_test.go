@@ -469,7 +469,7 @@ func createTestRomanceCharacter() CharacterCard {
 				Dialog: Dialog{
 					Trigger:   "click",
 					Responses: []string{"Hi sweetheart! 💕", "I was hoping you'd visit!"},
-					Animation: "romantic",
+					Animation: "talking",
 				},
 				Requirements: &RomanceRequirement{
 					Stats: map[string]map[string]float64{
