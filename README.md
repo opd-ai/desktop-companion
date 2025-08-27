@@ -26,6 +26,12 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **JSON-Configurable**: 90%+ of romance behavior customizable through character cards
 - 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Complete)*
 - 📊 **Stats Overlay**: Optional real-time stats display with progress bars *(Complete)*
+- 🤖 **AI-Powered Dialog**: Advanced Markov chain text generation with personality-driven responses *(Complete)*
+  - **Intelligent Backends**: Configurable dialog systems with multiple AI backends
+  - **Personality Integration**: Responses adapt to character traits, mood, and relationship state
+  - **Memory System**: Characters learn and reference past interactions
+  - **Context Awareness**: Dialog varies based on triggers, relationship level, and character stats
+  - **Quality Control**: Multi-layered filtering ensures coherent, character-appropriate responses
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Platform-Native**: Runs on Windows, macOS, and Linux (requires building on target platform)
 - 🪶 **Lightweight**: ≤50MB memory usage
@@ -34,7 +40,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 
 ### Prerequisites
 
-- Go 1.21 or higher
+- Go 1.21 or higher (currently verified on Go 1.24.5)
 - C compiler (gcc/clang) for CGO dependencies
 - Platform-specific requirements:
   - **Linux**: X11 or Wayland display environment
@@ -149,6 +155,10 @@ go run cmd/companion/main.go -game -stats -character assets/characters/romance/c
 go run cmd/companion/main.go -game -stats -character assets/characters/tsundere/character.json   # Shy, defensive, slow-burn
 go run cmd/companion/main.go -game -stats -character assets/characters/flirty/character.json     # Outgoing, playful, fast-paced  
 go run cmd/companion/main.go -game -stats -character assets/characters/slow_burn/character.json  # Thoughtful, realistic, long-term
+
+# AI-Powered Dialog Examples
+go run cmd/companion/main.go -character assets/characters/markov_example/character.json         # Basic Markov dialog
+go run cmd/companion/main.go -character assets/characters/examples/markov_dialog_example.json  # Advanced dialog system
 ```
 
 **Game Interactions**:
@@ -167,13 +177,20 @@ go run cmd/companion/main.go -game -stats -character assets/characters/slow_burn
 
 ### Romance Character Archetypes
 
-The dating simulator includes three distinct character personalities, each offering a unique romantic experience:
+The dating simulator includes multiple distinct character personalities and variants, each offering a unique romantic experience:
 
 | Archetype | Difficulty | Progression | Best For |
 |-----------|------------|-------------|----------|
 | **Tsundere** | Hard | Slow (8+ days) | Patient players who enjoy character development |
 | **Flirty Extrovert** | Easy | Fast (4+ days) | Players wanting immediate gratification |
 | **Slow Burn** | Expert | Very Slow (16+ days) | Long-term commitment and realistic pacing |
+
+**Romance Variants Available:**
+- `romance/` - Balanced romance character
+- `romance_flirty/` - Romance with flirty personality traits
+- `romance_slowburn/` - Romance with slow-burn characteristics  
+- `romance_supportive/` - Romance with supportive personality
+- `romance_tsundere/` - Romance with tsundere elements
 
 See `CHARACTER_ARCHETYPES.md` for detailed personality profiles, strategy guides, and customization options.
 
@@ -206,6 +223,26 @@ Characters are defined using JSON configuration files with this structure:
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.7,
+        "usePersonality": true,
+        "trainingData": [
+          "Character-specific training phrases here",
+          "Include personality-appropriate language",
+          "Mix different emotional tones"
+        ]
+      }
+    }
   }
 }
 ```
@@ -233,6 +270,17 @@ Characters are defined using JSON configuration files with this structure:
 - `idleTimeout` (number, 10-300): Seconds before returning to idle animation
 - `movementEnabled` (boolean): Allow dragging the character (default: false)
 - `defaultSize` (number, 64-512): Character size in pixels (default: 128)
+
+#### Dialog Backend Configuration (Optional)
+
+- `dialogBackend.enabled` (boolean): Enable AI-powered dialog generation
+- `dialogBackend.defaultBackend` (string): Primary backend to use ("markov_chain", "simple_random")
+- `dialogBackend.confidenceThreshold` (number, 0-1): Minimum confidence for generated responses
+- `dialogBackend.backends` (object): Backend-specific configuration
+  - `markov_chain.chainOrder` (number, 1-5): Complexity of text generation (2 recommended)
+  - `markov_chain.temperatureMin/Max` (number, 0-2): Randomness range for responses
+  - `markov_chain.usePersonality` (boolean): Enable personality-driven generation
+  - `markov_chain.trainingData` (array): Character-specific training phrases
 
 #### Game Features (Complete Implementation)
 
@@ -368,6 +416,8 @@ Character cards can include comprehensive Tamagotchi-style game features:
 - **`SCHEMA_DOCUMENTATION.md`**: Complete JSON schema reference with all properties and validation rules
 - **`ROMANCE_SCENARIOS.md`**: Example romance progression scenarios and strategies  
 - **`CHARACTER_ARCHETYPES.md`**: Detailed comparison of the three romance archetypes
+- **`DIALOG_BACKEND_GUIDE.md`**: Complete guide to AI-powered dialog configuration
+- **`MARKOV_DIALOG_CONFIGURATION_GUIDE.md`**: Detailed Markov chain setup and customization
 
 ### Creating Custom Characters
 
@@ -436,7 +486,7 @@ go run cmd/companion/main.go -game -stats -character /path/to/my/character.json
 ### Project Structure
 
 ```
-desktop-companion/
+DDS/
 ├── cmd/companion/main.go           # Application entry point
 ├── internal/
 │   ├── character/
