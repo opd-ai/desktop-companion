@@ -1,0 +1,383 @@
+{
+  "name": "Tsundere Companion",
+  "description": "A shy companion who struggles to express feelings directly - classic tsundere personality",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "hungry": "../default/animations/hungry.gif",
+    "eating": "../default/animations/eating.gif",
+    "blushing": "../default/animations/happy.gif",
+    "heart_eyes": "../default/animations/happy.gif",
+    "shy": "../default/animations/sad.gif",
+    "flirty": "../default/animations/happy.gif",
+    "romantic_idle": "../default/animations/idle.gif",
+    "jealous": "../default/animations/sad.gif",
+    "excited_romance": "../default/animations/happy.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "W-what do you want?! 😤",
+        "I-it's not like I was waiting for you or anything!",
+        "Don't get the wrong idea, okay?!",
+        "You're being awfully persistent today..."
+      ],
+      "animation": "shy",
+      "cooldown": 8
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Don't poke me like that! 😠",
+        "What are you trying to do?!",
+        "That's... kind of annoying, you know!"
+      ],
+      "animation": "jealous",
+      "cooldown": 10
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 45,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.2,
+      "criticalThreshold": 25
+    },
+    "happiness": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 15
+    },
+    "energy": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 1.3,
+      "criticalThreshold": 30
+    },
+    "affection": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 5
+    },
+    "trust": {
+      "initial": 5,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 2
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 10,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 60
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 90,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 20, "happiness": 3},
+      "animations": ["shy", "eating"],
+      "responses": ["I... I guess I was a little hungry...", "Don't think this means anything special!", "Thanks... I suppose..."],
+      "cooldown": 45,
+      "requirements": {"hunger": {"max": 75}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 15, "energy": -20},
+      "animations": ["happy"],
+      "responses": ["This is... kind of fun, I guess...", "Don't expect me to admit I enjoyed that!", "W-whatever! It was okay..."],
+      "cooldown": 60,
+      "requirements": {"energy": {"min": 25}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 8, "health": 1, "affection": 1},
+      "animations": ["shy", "blushing"],
+      "responses": ["H-hey! Don't just touch me without asking!", "That's... not completely terrible...", "I-I don't hate it..."],
+      "cooldown": 20
+    },
+    "compliment": {
+      "triggers": ["hover"],
+      "effects": {"affection": 3, "happiness": 2, "trust": 0.5, "jealousy": -2},
+      "animations": ["blushing", "shy"],
+      "responses": [
+        "Y-you think so?! Don't say embarrassing things! 😳",
+        "I-it's not like I care about your opinion!",
+        "That's... um... t-thank you... I guess...",
+        "Don't say stuff like that! It makes me... confused! 💕"
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 8}}
+    },
+    "give_gift": {
+      "triggers": ["shift+doubleclick"],
+      "effects": {"affection": 6, "happiness": 5, "trust": 1.5, "jealousy": -5},
+      "animations": ["heart_eyes", "shy"],
+      "responses": [
+        "W-what's this for?! I didn't ask for anything! 🎁",
+        "Don't think this makes us close or anything!",
+        "I-I suppose I can accept this... just this once!",
+        "You... you got this for me? *quietly pleased* 💝"
+      ],
+      "cooldown": 180,
+      "requirements": {"affection": {"min": 10}, "trust": {"min": 15}}
+    },
+    "deep_conversation": {
+      "triggers": ["shift+click"],
+      "effects": {"trust": 5, "affection": 2, "intimacy": 3, "jealousy": -3},
+      "animations": ["talking", "shy"],
+      "responses": [
+        "Why are you asking such personal things?!",
+        "I... I guess I can tell you... just a little...",
+        "You're really persistent, aren't you?",
+        "Fine! But don't tell anyone I said this!"
+      ],
+      "cooldown": 120,
+      "requirements": {"trust": {"min": 25}}
+    },
+    "apology": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 8, "affection": 5, "jealousy": -20, "happiness": 6},
+      "animations": ["shy", "blushing"],
+      "responses": [
+        "W-well... I guess you mean it... Fine, I forgive you! 💕",
+        "You better not do it again! But... thank you...",
+        "Hmph! At least you apologized properly... I appreciate it... 🤗"
+      ],
+      "cooldown": 240,
+      "requirements": {"jealousy": {"min": 35}}
+    },
+    "reassurance": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"trust": 6, "affection": 4, "jealousy": -15, "happiness": 7},
+      "animations": ["romantic_idle", "shy"],
+      "responses": [
+        "You... you really mean that? I-I feel better... 💓",
+        "Sometimes I need to hear that... Thank you...",
+        "I... I trust you... Don't make me regret it! 💕"
+      ],
+      "cooldown": 150,
+      "requirements": {"jealousy": {"min": 25}}
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Stranger",
+        "requirement": {"age": 0},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Reluctant Acquaintance",
+        "requirement": {"age": 172800, "affection": 8, "trust": 15},
+        "size": 130,
+        "animations": {}
+      },
+      {
+        "name": "Begrudging Friend",
+        "requirement": {"age": 345600, "affection": 20, "trust": 30},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Tsundere in Love",
+        "requirement": {"age": 518400, "affection": 45, "trust": 50, "intimacy": 25},
+        "size": 136,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Breaking Down Walls",
+        "requirement": {
+          "trust": {"min": 30}
+        }
+      },
+      {
+        "name": "Honest Feelings",
+        "requirement": {
+          "affection": {"min": 35},
+          "trust": {"min": 40}
+        }
+      },
+      {
+        "name": "Dere Side Revealed",
+        "requirement": {
+          "affection": {"min": 50},
+          "trust": {"min": 45},
+          "intimacy": {"min": 20}
+        }
+      }
+    ]
+  },
+
+  "personality": {
+    "traits": {
+      "shyness": 0.9,
+      "romanticism": 0.7,
+      "jealousy_prone": 0.8,
+      "trust_difficulty": 0.8,
+      "affection_responsiveness": 0.6,
+      "flirtiness": 0.2
+    },
+    "compatibility": {
+      "consistent_interaction": 1.5,
+      "variety_preference": 0.7,
+      "gift_appreciation": 1.8,
+      "conversation_lover": 0.9
+    }
+  },
+
+  "romanceDialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "I-I've been thinking about you... Don't get any weird ideas! 💕",
+        "Maybe... maybe I do like spending time with you...",
+        "You're not completely terrible, I guess... 💖"
+      ],
+      "animation": "blushing",
+      "cooldown": 8,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 30}
+        }
+      }
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "*tries to hide blush* W-what are you looking at?! 💓",
+        "Stop staring! It makes my heart race...",
+        "I... I don't mind when you're close... but don't tell anyone!"
+      ],
+      "animation": "shy",
+      "cooldown": 15,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 40},
+          "intimacy": {"min": 15}
+        }
+      }
+    }
+  ],
+
+  "romanceEvents": [
+    {
+      "name": "Tsundere Confession Struggle",
+      "description": "Character struggles with conflicting feelings",
+      "probability": 0.08,
+      "effects": {"affection": 2, "jealousy": 5, "happiness": -1},
+      "animations": ["shy", "jealous"],
+      "responses": [
+        "I... I don't understand these feelings! It's confusing! 😤",
+        "Why do you make me feel so weird?!",
+        "I-it's not like I... *trails off in embarrassment*"
+      ],
+      "cooldown": 1200,
+      "conditions": {"affection": {"min": 15}, "trust": {"min": 10}}
+    },
+    {
+      "name": "Jealousy Spike",
+      "description": "Character becomes suddenly jealous",
+      "probability": 0.12,
+      "effects": {"jealousy": 20, "trust": -3, "happiness": -5},
+      "animations": ["jealous", "sad"],
+      "responses": [
+        "You better not be thinking about anyone else! 😠",
+        "I-I don't care what you do! But... don't ignore me...",
+        "Am I... am I not good enough for you?!"
+      ],
+      "cooldown": 1800,
+      "conditions": {"affection": {"min": 20}, "trust": {"max": 50}}
+    },
+    {
+      "name": "Dere Moment",
+      "description": "Character shows her sweet side briefly",
+      "probability": 0.06,
+      "effects": {"affection": 8, "happiness": 10, "intimacy": 3},
+      "animations": ["blushing", "happy"],
+      "responses": [
+        "You... you're really important to me... *quickly looks away* 💕",
+        "I-I'm glad you're here... Don't make me say it again!",
+        "Sometimes I think... maybe this feeling isn't so bad... 💖"
+      ],
+      "cooldown": 2400,
+      "conditions": {"affection": {"min": 35}, "trust": {"min": 30}}
+    },
+    {
+      "name": "Gift Appreciation Hidden",
+      "description": "Character secretly treasures gifts received",
+      "probability": 0.10,
+      "effects": {"affection": 5, "happiness": 8, "trust": 2},
+      "animations": ["shy", "blushing"],
+      "responses": [
+        "I... I keep thinking about that gift... Not that it matters! 🎁",
+        "Don't think I'm sentimental! But... I do treasure it...",
+        "You remembered what I like... That's... nice... 💝"
+      ],
+      "cooldown": 900,
+      "conditions": {
+        "affection": {"min": 25},
+        "interactionCount": {"give_gift_min": 2}
+      }
+    },
+    {
+      "name": "Trust Building Realization",
+      "description": "Character realizes she's starting to trust",
+      "probability": 0.07,
+      "effects": {"trust": 6, "affection": 3, "happiness": 4},
+      "animations": ["talking", "shy"],
+      "responses": [
+        "I... I think I can trust you... Just a little! 🤗",
+        "You've been... consistent... I appreciate that...",
+        "Maybe... maybe you're different from the others... 💓"
+      ],
+      "cooldown": 1500,
+      "conditions": {
+        "trust": {"min": 30},
+        "memoryCount": {"total_min": 5}
+      }
+    }
+  ]
+}

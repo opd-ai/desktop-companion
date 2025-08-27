@@ -1072,20 +1072,13 @@ func (so *StatsOverlay) addRelationshipLevelDisplay(level string) {
 **Tasks:**
 1. **Character Variety** (2 days)
    - Create multiple romance character templates
-   - Different personality archetypes (shy, outgoing, tsundere, etc.)
-   - Specialized animation sets
 
-2. **Advanced Customization** (2 days)
-   - Complex dialogue branching systems
-   - User-customizable personality traits
-   - Modular romance feature system
-
-3. **Documentation & Examples** (2 days)
+2. **Documentation & Examples** (2 days)
    - Comprehensive JSON schema documentation
    - Character creation tutorials
    - Example romance scenarios
 
-4. **Final Testing & Release** (1 day)
+3. **Final Testing & Release** (1 day)
    - Full regression testing
    - Performance benchmarking
    - Release preparation

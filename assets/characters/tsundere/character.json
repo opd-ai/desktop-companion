@@ -1,0 +1,414 @@
+{
+  "name": "Tsundere Companion",
+  "description": "A shy, initially defensive companion who slowly reveals their romantic side",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "hungry": "../default/animations/hungry.gif",
+    "eating": "../default/animations/eating.gif",
+    "blushing": "../default/animations/sad.gif",
+    "heart_eyes": "../default/animations/happy.gif",
+    "shy": "../default/animations/sad.gif",
+    "flirty": "../default/animations/idle.gif",
+    "romantic_idle": "../default/animations/idle.gif",
+    "jealous": "../default/animations/sad.gif",
+    "excited_romance": "../default/animations/happy.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "I-it's not like I wanted to see you or anything...",
+        "What do you want? I'm busy!",
+        "Don't get the wrong idea about me caring!",
+        "You're... here again..."
+      ],
+      "animation": "shy",
+      "cooldown": 8
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "I don't need your help! ...but if you insist...",
+        "F-fine! I'll let you do something for me!",
+        "Don't think this means anything special!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 45,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 1.2,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.5,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 5
+    },
+    "trust": {
+      "initial": 5,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 2
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 10,
+      "max": 100,
+      "degradationRate": 1.5,
+      "criticalThreshold": 70
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 60,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 25, "happiness": 3},
+      "animations": ["eating", "shy"],
+      "responses": [
+        "I-I wasn't hungry anyway... but this is okay.",
+        "Don't think I owe you anything for this!",
+        "It's... not bad, I guess."
+      ],
+      "cooldown": 45,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 15, "energy": -15, "affection": 2},
+      "animations": ["happy", "shy"],
+      "responses": [
+        "I only played because I was bored!",
+        "This is... kind of fun. But don't get used to it!",
+        "I-I didn't enjoy that or anything!"
+      ],
+      "cooldown": 60,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 8, "health": 2, "affection": 1},
+      "animations": ["blushing", "shy"],
+      "responses": [
+        "H-hey! Don't just touch me like that!",
+        "That... that's not entirely unpleasant...",
+        "I didn't say you could stop... I mean, whatever!"
+      ],
+      "cooldown": 25
+    },
+    "compliment": {
+      "triggers": ["hover"],
+      "effects": {"affection": 3, "happiness": 5, "trust": 1},
+      "animations": ["blushing", "shy"],
+      "responses": [
+        "Y-you really think so? ...Not that I care!",
+        "I already knew that! You don't need to tell me!",
+        "That's... nice to hear... B-but don't let it go to your head!"
+      ],
+      "cooldown": 80,
+      "requirements": {"trust": {"min": 15}}
+    },
+    "give_gift": {
+      "triggers": ["ctrl+click"],
+      "effects": {"affection": 8, "happiness": 12, "trust": 3},
+      "animations": ["heart_eyes", "blushing"],
+      "responses": [
+        "I-I don't need your gifts! ...but I'll keep it.",
+        "This is actually... really nice. Thank you... I guess.",
+        "You remembered what I like? That's... surprisingly thoughtful."
+      ],
+      "cooldown": 180,
+      "requirements": {"affection": {"min": 20}}
+    },
+    "deep_conversation": {
+      "triggers": ["shift+click"],
+      "effects": {"trust": 6, "affection": 4, "intimacy": 3},
+      "animations": ["talking", "shy"],
+      "responses": [
+        "I... I don't usually talk about this with people...",
+        "You actually listen to me. That's... rare.",
+        "Maybe you're not as bad as I thought..."
+      ],
+      "cooldown": 120,
+      "requirements": {"trust": {"min": 25}}
+    },
+    "apology": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 10, "affection": 6, "jealousy": -20, "happiness": 8},
+      "animations": ["shy", "blushing"],
+      "responses": [
+        "F-fine! I accept your apology... This time!",
+        "You better not make me worry like that again!",
+        "I... I forgive you. But don't think this makes us even!"
+      ],
+      "cooldown": 200,
+      "requirements": {"jealousy": {"min": 40}}
+    },
+    "reassurance": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"trust": 8, "affection": 5, "jealousy": -15, "happiness": 6},
+      "animations": ["romantic_idle", "shy"],
+      "responses": [
+        "I... I needed to hear that. Thank you...",
+        "You really mean that? ...Okay, I believe you.",
+        "I'm sorry for doubting you... I just get scared sometimes."
+      ],
+      "cooldown": 150,
+      "requirements": {"jealousy": {"min": 25}}
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Distant Stranger",
+        "requirement": {"age": 0},
+        "size": 120,
+        "animations": {}
+      },
+      {
+        "name": "Reluctant Acquaintance",
+        "requirement": {"age": 172800, "affection": 10, "trust": 15},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Tsundere Friend",
+        "requirement": {"age": 345600, "affection": 25, "trust": 30},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Shy Romantic",
+        "requirement": {"age": 518400, "affection": 45, "trust": 50, "intimacy": 20},
+        "size": 136,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      },
+      {
+        "name": "Devoted Partner",
+        "requirement": {"age": 691200, "affection": 70, "trust": 70, "intimacy": 50},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Ice Breaker",
+        "requirement": {
+          "trust": {"min": 20}
+        }
+      },
+      {
+        "name": "Melting Heart",
+        "requirement": {
+          "affection": {"min": 30}
+        }
+      },
+      {
+        "name": "True Feelings",
+        "requirement": {
+          "affection": {"min": 60},
+          "trust": {"min": 60}
+        }
+      }
+    ]
+  },
+
+  "personality": {
+    "traits": {
+      "shyness": 0.9,
+      "romanticism": 0.8,
+      "jealousy_prone": 0.7,
+      "trust_difficulty": 0.8,
+      "affection_responsiveness": 0.6,
+      "flirtiness": 0.2
+    },
+    "compatibility": {
+      "consistent_interaction": 1.5,
+      "variety_preference": 0.8,
+      "gift_appreciation": 1.2,
+      "conversation_lover": 1.4
+    }
+  },
+
+  "romanceDialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "I-I might actually like having you around...",
+        "You're not terrible, I suppose...",
+        "Don't think this means I care about you or anything!"
+      ],
+      "animation": "blushing",
+      "cooldown": 8,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 20, "max": 50}
+        }
+      }
+    },
+    {
+      "trigger": "click",
+      "responses": [
+        "I... I really care about you, okay?",
+        "You make me feel things I've never felt before...",
+        "I love you... there, I said it! Are you happy now?!"
+      ],
+      "animation": "heart_eyes",
+      "cooldown": 10,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 60},
+          "trust": {"min": 50}
+        }
+      }
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "*blushes furiously* W-what are you looking at?!",
+        "Don't stare at me like that! It's embarrassing!",
+        "I-if you keep looking at me like that, I might..."
+      ],
+      "animation": "shy",
+      "cooldown": 15,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 15},
+          "intimacy": {"min": 10}
+        }
+      }
+    }
+  ],
+
+  "romanceEvents": [
+    {
+      "name": "Tsundere Defense Mechanism",
+      "description": "Character pushes away but immediately regrets it",
+      "probability": 0.08,
+      "effects": {"trust": -2, "affection": 3, "happiness": -5},
+      "animations": ["sad", "shy"],
+      "responses": [
+        "I... I didn't mean to be so harsh just now...",
+        "Why do I always push people away when they get close?",
+        "I'm sorry... I don't know how to handle these feelings..."
+      ],
+      "cooldown": 1200,
+      "conditions": {"affection": {"min": 20}, "trust": {"min": 15}}
+    },
+    {
+      "name": "Jealous Outburst",
+      "description": "Character becomes irrationally jealous",
+      "probability": 0.12,
+      "effects": {"jealousy": 20, "trust": -3, "happiness": -8},
+      "animations": ["jealous", "sad"],
+      "responses": [
+        "You're not talking to anyone else, right?!",
+        "I-I don't care if you have other friends! But...",
+        "Promise me I'm special to you... please?"
+      ],
+      "cooldown": 1800,
+      "conditions": {"affection": {"min": 30}, "jealousy": {"max": 60}}
+    },
+    {
+      "name": "Vulnerable Moment",
+      "description": "Character shows their true feelings",
+      "probability": 0.06,
+      "effects": {"intimacy": 5, "trust": 4, "affection": 2},
+      "animations": ["romantic_idle", "blushing"],
+      "responses": [
+        "I... I'm glad you're here with me...",
+        "You're the first person who's been patient with me...",
+        "I'm scared of getting hurt, but... I trust you."
+      ],
+      "cooldown": 2400,
+      "conditions": {"trust": {"min": 40}, "affection": {"min": 35}}
+    },
+    {
+      "name": "Gift Appreciation Conflict",
+      "description": "Character struggles to accept kindness",
+      "probability": 0.10,
+      "effects": {"affection": 6, "happiness": 4, "trust": 3},
+      "animations": ["blushing", "shy"],
+      "responses": [
+        "I-I don't deserve such nice things from you...",
+        "Why are you so kind to someone like me?",
+        "Thank you... I'll treasure this, even if I act like I don't."
+      ],
+      "cooldown": 900,
+      "conditions": {
+        "affection": {"min": 25},
+        "interactionCount": {"give_gift_min": 2}
+      }
+    },
+    {
+      "name": "Progress Recognition",
+      "description": "Character acknowledges relationship growth",
+      "probability": 0.05,
+      "effects": {"trust": 8, "affection": 5, "happiness": 10},
+      "animations": ["happy", "romantic_idle"],
+      "responses": [
+        "I can't believe how much I've changed since meeting you...",
+        "You've helped me become a better person...",
+        "I used to be so cold, but you melted my heart..."
+      ],
+      "cooldown": 3600,
+      "conditions": {
+        "relationshipLevel": {"min": 3},
+        "trust": {"min": 45}
+      }
+    }
+  ]
+}
