@@ -270,6 +270,12 @@ func TestRomanceInteractionFlow(t *testing.T) {
 				"romanticism": 0.8,
 			},
 		},
+		GameRules: &GameRulesConfig{
+			StatsDecayInterval:             60,
+			AutoSaveInterval:               300,
+			CriticalStateAnimationPriority: true,
+			MoodBasedAnimations:            true,
+		},
 	}
 
 	character, err := New(card, "/workspaces/DDS/assets/characters/romance")
