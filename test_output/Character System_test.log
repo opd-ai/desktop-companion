@@ -1,0 +1,546 @@
+=== RUN   TestJealousyMechanics
+=== RUN   TestJealousyMechanics/jealousy_manager_initialization
+=== RUN   TestJealousyMechanics/jealousy_triggers_after_long_absence
+=== RUN   TestJealousyMechanics/jealousy_consequences_above_threshold
+--- PASS: TestJealousyMechanics (0.10s)
+    --- PASS: TestJealousyMechanics/jealousy_manager_initialization (0.00s)
+    --- PASS: TestJealousyMechanics/jealousy_triggers_after_long_absence (0.10s)
+    --- PASS: TestJealousyMechanics/jealousy_consequences_above_threshold (0.00s)
+=== RUN   TestCompatibilityAnalyzer
+=== RUN   TestCompatibilityAnalyzer/compatibility_analyzer_initialization
+=== RUN   TestCompatibilityAnalyzer/player_behavior_analysis
+    advanced_features_test.go:153: Actually successful interactions: 1 out of 10
+=== RUN   TestCompatibilityAnalyzer/compatibility_modifier_generation
+--- PASS: TestCompatibilityAnalyzer (1.11s)
+    --- PASS: TestCompatibilityAnalyzer/compatibility_analyzer_initialization (0.00s)
+    --- PASS: TestCompatibilityAnalyzer/player_behavior_analysis (0.50s)
+    --- PASS: TestCompatibilityAnalyzer/compatibility_modifier_generation (0.60s)
+=== RUN   TestCrisisRecoverySystem
+=== RUN   TestCrisisRecoverySystem/crisis_manager_initialization
+=== RUN   TestCrisisRecoverySystem/jealousy_crisis_trigger
+=== RUN   TestCrisisRecoverySystem/trust_crisis_trigger
+=== RUN   TestCrisisRecoverySystem/crisis_recovery_through_interactions
+=== RUN   TestCrisisRecoverySystem/ongoing_crisis_effects
+--- PASS: TestCrisisRecoverySystem (0.20s)
+    --- PASS: TestCrisisRecoverySystem/crisis_manager_initialization (0.00s)
+    --- PASS: TestCrisisRecoverySystem/jealousy_crisis_trigger (0.00s)
+    --- PASS: TestCrisisRecoverySystem/trust_crisis_trigger (0.00s)
+    --- PASS: TestCrisisRecoverySystem/crisis_recovery_through_interactions (0.10s)
+    --- PASS: TestCrisisRecoverySystem/ongoing_crisis_effects (0.10s)
+=== RUN   TestAdvancedFeaturesIntegration
+=== RUN   TestAdvancedFeaturesIntegration/all_advanced_systems_initialized
+=== RUN   TestAdvancedFeaturesIntegration/complex_relationship_scenario
+=== RUN   TestAdvancedFeaturesIntegration/personality_based_thresholds
+--- PASS: TestAdvancedFeaturesIntegration (1.05s)
+    --- PASS: TestAdvancedFeaturesIntegration/all_advanced_systems_initialized (0.00s)
+    --- PASS: TestAdvancedFeaturesIntegration/complex_relationship_scenario (1.05s)
+    --- PASS: TestAdvancedFeaturesIntegration/personality_based_thresholds (0.00s)
+=== RUN   TestJealousyManager
+=== RUN   TestJealousyManager/new_jealousy_manager
+=== RUN   TestJealousyManager/get_jealousy_level
+=== RUN   TestJealousyManager/get_status
+=== RUN   TestJealousyManager/update_triggers_jealousy
+=== RUN   TestJealousyManager/high_jealousy_consequences
+    advanced_systems_test.go:141: Stats may have been modified by jealousy consequences
+--- PASS: TestJealousyManager (0.00s)
+    --- PASS: TestJealousyManager/new_jealousy_manager (0.00s)
+    --- PASS: TestJealousyManager/get_jealousy_level (0.00s)
+    --- PASS: TestJealousyManager/get_status (0.00s)
+    --- PASS: TestJealousyManager/update_triggers_jealousy (0.00s)
+    --- PASS: TestJealousyManager/high_jealousy_consequences (0.00s)
+=== RUN   TestCompatibilityAnalyzerIntegration
+=== RUN   TestCompatibilityAnalyzerIntegration/compatibility_analyzer_integration
+=== RUN   TestCompatibilityAnalyzerIntegration/player_behavior_integration
+--- PASS: TestCompatibilityAnalyzerIntegration (0.00s)
+    --- PASS: TestCompatibilityAnalyzerIntegration/compatibility_analyzer_integration (0.00s)
+    --- PASS: TestCompatibilityAnalyzerIntegration/player_behavior_integration (0.00s)
+=== RUN   TestCrisisRecoveryIntegration
+=== RUN   TestCrisisRecoveryIntegration/crisis_recovery_integration
+--- PASS: TestCrisisRecoveryIntegration (0.00s)
+    --- PASS: TestCrisisRecoveryIntegration/crisis_recovery_integration (0.00s)
+=== RUN   TestCrisisRecoveryBasicIntegration
+=== RUN   TestCrisisRecoveryBasicIntegration/crisis_recovery_manager_exists
+--- PASS: TestCrisisRecoveryBasicIntegration (0.00s)
+    --- PASS: TestCrisisRecoveryBasicIntegration/crisis_recovery_manager_exists (0.00s)
+=== RUN   TestNewAnimationManager
+--- PASS: TestNewAnimationManager (0.00s)
+=== RUN   TestAnimationManager_LoadAnimation
+=== RUN   TestAnimationManager_LoadAnimation/ValidGIF
+=== RUN   TestAnimationManager_LoadAnimation/NonExistentFile
+=== RUN   TestAnimationManager_LoadAnimation/InvalidGIFFile
+=== RUN   TestAnimationManager_LoadAnimation/EmptyGIFFile
+=== RUN   TestAnimationManager_LoadAnimation/SecondValidGIF
+--- PASS: TestAnimationManager_LoadAnimation (0.00s)
+    --- PASS: TestAnimationManager_LoadAnimation/ValidGIF (0.00s)
+    --- PASS: TestAnimationManager_LoadAnimation/NonExistentFile (0.00s)
+    --- PASS: TestAnimationManager_LoadAnimation/InvalidGIFFile (0.00s)
+    --- PASS: TestAnimationManager_LoadAnimation/EmptyGIFFile (0.00s)
+    --- PASS: TestAnimationManager_LoadAnimation/SecondValidGIF (0.00s)
+=== RUN   TestAnimationManager_SetCurrentAnimation
+=== RUN   TestAnimationManager_SetCurrentAnimation/SwitchToExistingAnimation
+=== RUN   TestAnimationManager_SetCurrentAnimation/SwitchToNonExistentAnimation
+=== RUN   TestAnimationManager_SetCurrentAnimation/SwitchBackToFirstAnimation
+=== RUN   TestAnimationManager_SetCurrentAnimation/EmptyAnimationName
+--- PASS: TestAnimationManager_SetCurrentAnimation (0.00s)
+    --- PASS: TestAnimationManager_SetCurrentAnimation/SwitchToExistingAnimation (0.00s)
+    --- PASS: TestAnimationManager_SetCurrentAnimation/SwitchToNonExistentAnimation (0.00s)
+    --- PASS: TestAnimationManager_SetCurrentAnimation/SwitchBackToFirstAnimation (0.00s)
+    --- PASS: TestAnimationManager_SetCurrentAnimation/EmptyAnimationName (0.00s)
+=== RUN   TestAnimationManager_PlaybackControl
+--- PASS: TestAnimationManager_PlaybackControl (0.00s)
+=== RUN   TestAnimationManager_GetCurrentFrame
+--- PASS: TestAnimationManager_GetCurrentFrame (0.00s)
+=== RUN   TestAnimationManager_GetCurrentFrameImage
+--- PASS: TestAnimationManager_GetCurrentFrameImage (0.00s)
+=== RUN   TestAnimationManager_Update
+--- PASS: TestAnimationManager_Update (0.02s)
+=== RUN   TestAnimationManager_Reset
+--- PASS: TestAnimationManager_Reset (0.00s)
+=== RUN   TestAnimationManager_GetMethods
+--- PASS: TestAnimationManager_GetMethods (0.00s)
+=== RUN   TestAnimationManager_CompleteWorkflow
+=== RUN   TestAnimationManager_CompleteWorkflow/BasicWorkflow
+=== RUN   TestAnimationManager_CompleteWorkflow/BasicWorkflow/Operation1
+=== RUN   TestAnimationManager_CompleteWorkflow/BasicWorkflow/Operation2
+=== RUN   TestAnimationManager_CompleteWorkflow/BasicWorkflow/Operation3
+=== RUN   TestAnimationManager_CompleteWorkflow/LongAnimation
+=== RUN   TestAnimationManager_CompleteWorkflow/LongAnimation/Operation1
+=== RUN   TestAnimationManager_CompleteWorkflow/LongAnimation/Operation2
+--- PASS: TestAnimationManager_CompleteWorkflow (0.00s)
+    --- PASS: TestAnimationManager_CompleteWorkflow/BasicWorkflow (0.00s)
+        --- PASS: TestAnimationManager_CompleteWorkflow/BasicWorkflow/Operation1 (0.00s)
+        --- PASS: TestAnimationManager_CompleteWorkflow/BasicWorkflow/Operation2 (0.00s)
+        --- PASS: TestAnimationManager_CompleteWorkflow/BasicWorkflow/Operation3 (0.00s)
+    --- PASS: TestAnimationManager_CompleteWorkflow/LongAnimation (0.00s)
+        --- PASS: TestAnimationManager_CompleteWorkflow/LongAnimation/Operation1 (0.00s)
+        --- PASS: TestAnimationManager_CompleteWorkflow/LongAnimation/Operation2 (0.00s)
+=== RUN   TestAnimationManager_ConcurrentAccess
+--- PASS: TestAnimationManager_ConcurrentAccess (0.11s)
+=== RUN   TestCharacterArchetypes
+=== RUN   TestCharacterArchetypes/Tsundere_Character
+    archetype_test.go:115: Romance interaction response: I'm... I'm not quite ready for that yet... 😳
+=== RUN   TestCharacterArchetypes/Flirty_Extrovert_Character
+    archetype_test.go:115: Romance interaction response: Aww, you're such a charmer! 😘
+=== RUN   TestCharacterArchetypes/Slow_Burn_Character
+    archetype_test.go:115: Romance interaction response: I need to feel more comfortable first...
+--- PASS: TestCharacterArchetypes (0.00s)
+    --- PASS: TestCharacterArchetypes/Tsundere_Character (0.00s)
+    --- PASS: TestCharacterArchetypes/Flirty_Extrovert_Character (0.00s)
+    --- PASS: TestCharacterArchetypes/Slow_Burn_Character (0.00s)
+=== RUN   TestArchetypePersonalityDifferences
+=== RUN   TestArchetypePersonalityDifferences/shyness_differences
+=== RUN   TestArchetypePersonalityDifferences/trust_difficulty_differences
+=== RUN   TestArchetypePersonalityDifferences/compatibility_bonuses
+--- PASS: TestArchetypePersonalityDifferences (0.00s)
+    --- PASS: TestArchetypePersonalityDifferences/shyness_differences (0.00s)
+    --- PASS: TestArchetypePersonalityDifferences/trust_difficulty_differences (0.00s)
+    --- PASS: TestArchetypePersonalityDifferences/compatibility_bonuses (0.00s)
+=== RUN   TestArchetypeStartingStats
+=== RUN   TestArchetypeStartingStats/Tsundere_Starting_Stats
+=== RUN   TestArchetypeStartingStats/Flirty_Starting_Stats
+=== RUN   TestArchetypeStartingStats/Slow_Burn_Starting_Stats
+--- PASS: TestArchetypeStartingStats (0.00s)
+    --- PASS: TestArchetypeStartingStats/Tsundere_Starting_Stats (0.00s)
+    --- PASS: TestArchetypeStartingStats/Flirty_Starting_Stats (0.00s)
+    --- PASS: TestArchetypeStartingStats/Slow_Burn_Starting_Stats (0.00s)
+=== RUN   TestArchetypeInteractionCooldowns
+    archetype_test.go:294: Compliment cooldowns - Tsundere: 80s, Flirty: 20s, Slow Burn: 120s
+--- PASS: TestArchetypeInteractionCooldowns (0.00s)
+=== RUN   TestLoadCard
+--- PASS: TestLoadCard (0.00s)
+=== RUN   TestCharacterCardValidation
+=== RUN   TestCharacterCardValidation/valid_card
+=== RUN   TestCharacterCardValidation/missing_name
+=== RUN   TestCharacterCardValidation/missing_required_animation
+--- PASS: TestCharacterCardValidation (0.00s)
+    --- PASS: TestCharacterCardValidation/valid_card (0.00s)
+    --- PASS: TestCharacterCardValidation/missing_name (0.00s)
+    --- PASS: TestCharacterCardValidation/missing_required_animation (0.00s)
+=== RUN   TestDialogCooldown
+--- PASS: TestDialogCooldown (0.00s)
+=== RUN   TestDialogRandomResponse
+--- PASS: TestDialogRandomResponse (0.00s)
+=== RUN   TestCharacterCardRandomEventsValidation
+=== RUN   TestCharacterCardRandomEventsValidation/no_random_events_(valid)
+=== RUN   TestCharacterCardRandomEventsValidation/valid_random_event
+=== RUN   TestCharacterCardRandomEventsValidation/empty_event_name
+=== RUN   TestCharacterCardRandomEventsValidation/empty_description
+=== RUN   TestCharacterCardRandomEventsValidation/invalid_probability_negative
+=== RUN   TestCharacterCardRandomEventsValidation/invalid_probability_too_high
+=== RUN   TestCharacterCardRandomEventsValidation/invalid_cooldown_negative
+=== RUN   TestCharacterCardRandomEventsValidation/invalid_cooldown_too_high
+=== RUN   TestCharacterCardRandomEventsValidation/invalid_duration_negative
+=== RUN   TestCharacterCardRandomEventsValidation/invalid_duration_too_high
+=== RUN   TestCharacterCardRandomEventsValidation/non-existent_animation
+=== RUN   TestCharacterCardRandomEventsValidation/too_many_responses
+=== RUN   TestCharacterCardRandomEventsValidation/effects_reference_stat_when_no_stats_defined_(allowed)
+=== RUN   TestCharacterCardRandomEventsValidation/conditions_reference_stat_when_no_stats_defined_(allowed)
+--- PASS: TestCharacterCardRandomEventsValidation (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/no_random_events_(valid) (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/valid_random_event (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/empty_event_name (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/empty_description (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/invalid_probability_negative (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/invalid_probability_too_high (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/invalid_cooldown_negative (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/invalid_cooldown_too_high (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/invalid_duration_negative (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/invalid_duration_too_high (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/non-existent_animation (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/too_many_responses (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/effects_reference_stat_when_no_stats_defined_(allowed) (0.00s)
+    --- PASS: TestCharacterCardRandomEventsValidation/conditions_reference_stat_when_no_stats_defined_(allowed) (0.00s)
+=== RUN   TestCharacterCardRandomEventsWithStats
+=== RUN   TestCharacterCardRandomEventsWithStats/valid_event_with_existing_stats
+=== RUN   TestCharacterCardRandomEventsWithStats/effect_references_non-existent_stat_(with_stats_defined)
+=== RUN   TestCharacterCardRandomEventsWithStats/condition_references_non-existent_stat_(with_stats_defined)
+--- PASS: TestCharacterCardRandomEventsWithStats (0.00s)
+    --- PASS: TestCharacterCardRandomEventsWithStats/valid_event_with_existing_stats (0.00s)
+    --- PASS: TestCharacterCardRandomEventsWithStats/effect_references_non-existent_stat_(with_stats_defined) (0.00s)
+    --- PASS: TestCharacterCardRandomEventsWithStats/condition_references_non-existent_stat_(with_stats_defined) (0.00s)
+=== RUN   TestConcurrentFrameUpdates
+--- PASS: TestConcurrentFrameUpdates (0.05s)
+=== RUN   TestDialogCooldownRaceCondition
+--- PASS: TestDialogCooldownRaceCondition (0.10s)
+=== RUN   TestAnimationFrameRateOptimization
+--- PASS: TestAnimationFrameRateOptimization (0.51s)
+=== RUN   TestCharacterUpdateReturnsChanges
+--- PASS: TestCharacterUpdateReturnsChanges (0.51s)
+=== RUN   TestEnhancedDialogueSystem
+=== RUN   TestEnhancedDialogueSystem/low_affection_uses_regular_dialog
+=== RUN   TestEnhancedDialogueSystem/high_affection_uses_romance_dialog
+=== RUN   TestEnhancedDialogueSystem/hover_dialog_requires_both_affection_and_trust
+--- PASS: TestEnhancedDialogueSystem (0.00s)
+    --- PASS: TestEnhancedDialogueSystem/low_affection_uses_regular_dialog (0.00s)
+    --- PASS: TestEnhancedDialogueSystem/high_affection_uses_romance_dialog (0.00s)
+    --- PASS: TestEnhancedDialogueSystem/hover_dialog_requires_both_affection_and_trust (0.00s)
+=== RUN   TestRomanceDialogCooldowns
+--- PASS: TestRomanceDialogCooldowns (3.00s)
+=== RUN   TestDialogScoring
+    enhanced_dialogue_test.go:250: Shy character responses: 10 shy, 0 bold
+--- PASS: TestDialogScoring (0.00s)
+=== RUN   TestNoRomanceDialogs
+--- PASS: TestNoRomanceDialogs (0.00s)
+=== RUN   TestInteractionCountRequirements
+--- PASS: TestInteractionCountRequirements (0.00s)
+=== RUN   TestCharacterCardGameFeatures
+--- PASS: TestCharacterCardGameFeatures (0.00s)
+=== RUN   TestGameFeatureValidationErrors
+=== RUN   TestGameFeatureValidationErrors/invalid_stat_max
+=== RUN   TestGameFeatureValidationErrors/invalid_initial_value
+=== RUN   TestGameFeatureValidationErrors/invalid_degradation_rate
+=== RUN   TestGameFeatureValidationErrors/invalid_game_rules_decay_interval
+=== RUN   TestGameFeatureValidationErrors/invalid_interaction_trigger
+=== RUN   TestGameFeatureValidationErrors/invalid_interaction_animation_reference
+--- PASS: TestGameFeatureValidationErrors (0.00s)
+    --- PASS: TestGameFeatureValidationErrors/invalid_stat_max (0.00s)
+    --- PASS: TestGameFeatureValidationErrors/invalid_initial_value (0.00s)
+    --- PASS: TestGameFeatureValidationErrors/invalid_degradation_rate (0.00s)
+    --- PASS: TestGameFeatureValidationErrors/invalid_game_rules_decay_interval (0.00s)
+    --- PASS: TestGameFeatureValidationErrors/invalid_interaction_trigger (0.00s)
+    --- PASS: TestGameFeatureValidationErrors/invalid_interaction_animation_reference (0.00s)
+=== RUN   TestHasGameFeatures
+--- PASS: TestHasGameFeatures (0.00s)
+=== RUN   TestGameInteractionFeed
+--- PASS: TestGameInteractionFeed (0.00s)
+=== RUN   TestGameInteractionPlay
+--- PASS: TestGameInteractionPlay (0.00s)
+=== RUN   TestGameInteractionRequirements
+--- PASS: TestGameInteractionRequirements (0.00s)
+=== RUN   TestGameInteractionInvalidType
+--- PASS: TestGameInteractionInvalidType (0.00s)
+=== RUN   TestGameInteractionWithoutGameMode
+--- PASS: TestGameInteractionWithoutGameMode (0.00s)
+=== RUN   TestGameStateDegradationIntegration
+--- PASS: TestGameStateDegradationIntegration (0.10s)
+=== RUN   TestGameStateAnimationSelection
+--- PASS: TestGameStateAnimationSelection (0.00s)
+=== RUN   TestGameInteractionCooldownMethods
+--- PASS: TestGameInteractionCooldownMethods (0.00s)
+=== RUN   TestEnableGameModeEdgeCases
+--- PASS: TestEnableGameModeEdgeCases (0.00s)
+=== RUN   TestGetGameState
+--- PASS: TestGetGameState (0.00s)
+=== RUN   TestCharacterUpdateWithGameState
+--- PASS: TestCharacterUpdateWithGameState (0.00s)
+=== RUN   TestSelectAnimationFromStates
+--- PASS: TestSelectAnimationFromStates (0.00s)
+=== RUN   TestNewGameState
+--- PASS: TestNewGameState (0.00s)
+=== RUN   TestGameStateUpdate
+--- PASS: TestGameStateUpdate (0.00s)
+=== RUN   TestGameStateCriticalStates
+--- PASS: TestGameStateCriticalStates (0.00s)
+=== RUN   TestApplyInteractionEffects
+--- PASS: TestApplyInteractionEffects (0.00s)
+=== RUN   TestCanSatisfyRequirements
+--- PASS: TestCanSatisfyRequirements (0.00s)
+=== RUN   TestGetStatPercentage
+--- PASS: TestGetStatPercentage (0.00s)
+=== RUN   TestGetOverallMood
+--- PASS: TestGetOverallMood (0.00s)
+=== RUN   TestGameStateJSON
+--- PASS: TestGameStateJSON (0.00s)
+=== RUN   TestGameStateValidation
+--- PASS: TestGameStateValidation (0.00s)
+=== RUN   TestGameStateNilSafety
+--- PASS: TestGameStateNilSafety (0.00s)
+=== RUN   TestStateDegradationRealTime
+--- PASS: TestStateDegradationRealTime (0.00s)
+=== RUN   TestHoverDialogDebug
+    hover_debug_test.go:52: Affection: 35.000000 (requirement: >= 30)
+    hover_debug_test.go:53: Trust: 25.000000 (requirement: >= 20)
+    hover_debug_test.go:54: HasRomanceFeatures: true
+    hover_debug_test.go:55: RomanceDialogs count: 1
+    hover_debug_test.go:59: selectRomanceDialog(hover) response: '*heart flutters* 💓'
+    hover_debug_test.go:62: Last interaction time: 2025-08-27 17:23:40.194020116 +0000 UTC m=+6.907469119
+    hover_debug_test.go:63: Time since last interaction: 92.052µs
+    hover_debug_test.go:71: After reset - Time since last interaction: 5.000000721s
+    hover_debug_test.go:77: HandleHover response after reset: '*heart flutters* 💓'
+    hover_debug_test.go:82: Romance dialog 0 (hover) requirements satisfied: true
+    hover_debug_test.go:87:   trust: current=25.000000, conditions=map[min:20]
+    hover_debug_test.go:91:   trust requirement satisfied: true
+    hover_debug_test.go:87:   affection: current=35.000000, conditions=map[min:30]
+    hover_debug_test.go:91:   affection requirement satisfied: true
+--- PASS: TestHoverDialogDebug (3.00s)
+=== RUN   TestMoodBasedAnimationSelection
+--- PASS: TestMoodBasedAnimationSelection (0.00s)
+=== RUN   TestMoodBasedAnimationDisabled
+--- PASS: TestMoodBasedAnimationDisabled (0.00s)
+=== RUN   TestMoodBasedAnimationWithMissingAnimations
+--- PASS: TestMoodBasedAnimationWithMissingAnimations (0.00s)
+=== RUN   TestMoodBasedAnimationWithoutGameState
+--- PASS: TestMoodBasedAnimationWithoutGameState (0.00s)
+=== RUN   TestMoodBasedAnimationIntegration
+--- PASS: TestMoodBasedAnimationIntegration (2.00s)
+=== RUN   TestAdvancedFeaturesBasicFunctionality
+=== RUN   TestAdvancedFeaturesBasicFunctionality/advanced_features_initialized
+=== RUN   TestAdvancedFeaturesBasicFunctionality/jealousy_manager_basic_operation
+=== RUN   TestAdvancedFeaturesBasicFunctionality/compatibility_analyzer_basic_operation
+=== RUN   TestAdvancedFeaturesBasicFunctionality/crisis_recovery_manager_basic_operation
+=== RUN   TestAdvancedFeaturesBasicFunctionality/character_update_processes_advanced_features
+=== RUN   TestAdvancedFeaturesBasicFunctionality/romance_interactions_work_with_advanced_features
+=== RUN   TestAdvancedFeaturesBasicFunctionality/crisis_scenario_basic_test
+    phase3_task3_test.go:174: Crisis detected: trust_crisis
+--- PASS: TestAdvancedFeaturesBasicFunctionality (0.10s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/advanced_features_initialized (0.00s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/jealousy_manager_basic_operation (0.00s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/compatibility_analyzer_basic_operation (0.00s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/crisis_recovery_manager_basic_operation (0.00s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/character_update_processes_advanced_features (0.05s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/romance_interactions_work_with_advanced_features (0.05s)
+    --- PASS: TestAdvancedFeaturesBasicFunctionality/crisis_scenario_basic_test (0.00s)
+=== RUN   TestAdvancedFeaturesConfiguration
+--- PASS: TestAdvancedFeaturesConfiguration (0.00s)
+=== RUN   TestNewProgressionState
+--- PASS: TestNewProgressionState (0.00s)
+=== RUN   TestProgressionState_Update_LevelProgression
+--- PASS: TestProgressionState_Update_LevelProgression (0.00s)
+=== RUN   TestProgressionState_Update_AchievementTracking
+--- PASS: TestProgressionState_Update_AchievementTracking (0.00s)
+=== RUN   TestProgressionState_Update_AchievementReset
+--- PASS: TestProgressionState_Update_AchievementReset (0.00s)
+=== RUN   TestProgressionState_RecordInteraction
+--- PASS: TestProgressionState_RecordInteraction (0.00s)
+=== RUN   TestProgressionState_GetCurrentLevel
+--- PASS: TestProgressionState_GetCurrentLevel (0.00s)
+=== RUN   TestProgressionState_GetCurrentSize
+--- PASS: TestProgressionState_GetCurrentSize (0.00s)
+=== RUN   TestProgressionState_GetLevelAnimation
+--- PASS: TestProgressionState_GetLevelAnimation (0.00s)
+=== RUN   TestProgressionState_MarshalUnmarshalJSON
+--- PASS: TestProgressionState_MarshalUnmarshalJSON (0.00s)
+=== RUN   TestProgressionState_Validate
+--- PASS: TestProgressionState_Validate (0.00s)
+=== RUN   TestProgressionState_NilSafety
+--- PASS: TestProgressionState_NilSafety (0.00s)
+=== RUN   TestProgressionConfig_Validation
+--- PASS: TestProgressionConfig_Validation (0.00s)
+=== RUN   TestRandomEventLogic
+    random_events_debug_test.go:37: Can trigger event: true
+    random_events_debug_test.go:50: Triggered event: &{test_event Test event map[hunger:-10] [] [] 0s}
+    random_events_debug_test.go:66: Event triggered successfully after 1 attempts: test_event
+--- PASS: TestRandomEventLogic (0.00s)
+=== RUN   TestNewRandomEventManager
+=== RUN   TestNewRandomEventManager/disabled_manager
+=== RUN   TestNewRandomEventManager/no_events
+=== RUN   TestNewRandomEventManager/enabled_with_events
+--- PASS: TestNewRandomEventManager (0.00s)
+    --- PASS: TestNewRandomEventManager/disabled_manager (0.00s)
+    --- PASS: TestNewRandomEventManager/no_events (0.00s)
+    --- PASS: TestNewRandomEventManager/enabled_with_events (0.00s)
+=== RUN   TestRandomEventManagerUpdate
+=== RUN   TestRandomEventManagerUpdate/disabled_manager
+=== RUN   TestRandomEventManagerUpdate/high_probability_event
+=== RUN   TestRandomEventManagerUpdate/low_probability_event
+--- PASS: TestRandomEventManagerUpdate (0.00s)
+    --- PASS: TestRandomEventManagerUpdate/disabled_manager (0.00s)
+    --- PASS: TestRandomEventManagerUpdate/high_probability_event (0.00s)
+    --- PASS: TestRandomEventManagerUpdate/low_probability_event (0.00s)
+=== RUN   TestRandomEventManagerCooldowns
+--- PASS: TestRandomEventManagerCooldowns (0.00s)
+=== RUN   TestRandomEventManagerConditions
+=== RUN   TestRandomEventManagerConditions/condition_met
+=== RUN   TestRandomEventManagerConditions/condition_not_met
+--- PASS: TestRandomEventManagerConditions (0.00s)
+    --- PASS: TestRandomEventManagerConditions/condition_met (0.00s)
+    --- PASS: TestRandomEventManagerConditions/condition_not_met (0.00s)
+=== RUN   TestTriggeredEvent
+=== RUN   TestTriggeredEvent/complete_event
+=== RUN   TestTriggeredEvent/effects_only
+=== RUN   TestTriggeredEvent/no_effects
+--- PASS: TestTriggeredEvent (0.00s)
+    --- PASS: TestTriggeredEvent/complete_event (0.00s)
+    --- PASS: TestTriggeredEvent/effects_only (0.00s)
+    --- PASS: TestTriggeredEvent/no_effects (0.00s)
+=== RUN   TestRandomEventManagerThreadSafety
+--- PASS: TestRandomEventManagerThreadSafety (0.00s)
+=== RUN   TestRandomEventManagerEdgeCases
+=== RUN   TestRandomEventManagerEdgeCases/nil_game_state
+=== RUN   TestRandomEventManagerEdgeCases/empty_responses
+=== RUN   TestRandomEventManagerEdgeCases/disabled_manager_operations
+=== RUN   TestRandomEventManagerEdgeCases/toggle_enable/disable
+--- PASS: TestRandomEventManagerEdgeCases (0.00s)
+    --- PASS: TestRandomEventManagerEdgeCases/nil_game_state (0.00s)
+    --- PASS: TestRandomEventManagerEdgeCases/empty_responses (0.00s)
+    --- PASS: TestRandomEventManagerEdgeCases/disabled_manager_operations (0.00s)
+    --- PASS: TestRandomEventManagerEdgeCases/toggle_enable/disable (0.00s)
+=== RUN   TestRelationshipLevelSystem
+--- PASS: TestRelationshipLevelSystem (0.00s)
+=== RUN   TestRomanceMemorySystem
+--- PASS: TestRomanceMemorySystem (0.00s)
+=== RUN   TestRomanceStatsAccess
+--- PASS: TestRomanceStatsAccess (0.00s)
+=== RUN   TestInteractionHistoryAccess
+--- PASS: TestInteractionHistoryAccess (0.00s)
+=== RUN   TestRelationshipLevelRequirements
+--- PASS: TestRelationshipLevelRequirements (0.00s)
+=== RUN   TestRelationshipProgressionIntegration
+    relationship_progression_integration_test.go:34: Initial relationship level: Stranger
+    relationship_progression_integration_test.go:43: Initial romance stats: map[affection:0 intimacy:0 jealousy:0 trust:20]
+    relationship_progression_integration_test.go:53: 
+        === Starting Romance Interaction Simulation ===
+    relationship_progression_integration_test.go:58: Compliment 1 response: *blushes* You really think so?
+    relationship_progression_integration_test.go:65: After compliment 1 - Affection: 3.7, Trust: 20.7, Level: Stranger
+    relationship_progression_integration_test.go:58: Compliment 2 response: Maybe when I know you better?
+    relationship_progression_integration_test.go:65: After compliment 2 - Affection: 3.7, Trust: 20.7, Level: Stranger
+    relationship_progression_integration_test.go:70: Compliment 2 failed requirements or hit cooldown
+    relationship_progression_integration_test.go:58: Compliment 3 response: I'm not sure how to respond to that right now...
+    relationship_progression_integration_test.go:65: After compliment 3 - Affection: 3.7, Trust: 20.7, Level: Stranger
+    relationship_progression_integration_test.go:58: Compliment 4 response: I'm not sure how to respond to that right now...
+    relationship_progression_integration_test.go:65: After compliment 4 - Affection: 3.7, Trust: 20.7, Level: Stranger
+    relationship_progression_integration_test.go:58: Compliment 5 response: Maybe when I know you better?
+    relationship_progression_integration_test.go:65: After compliment 5 - Affection: 3.7, Trust: 20.7, Level: Stranger
+    relationship_progression_integration_test.go:70: Compliment 5 failed requirements or hit cooldown
+    relationship_progression_integration_test.go:76: Total compliments given: 1
+    relationship_progression_integration_test.go:110: Deep conversation 1 response: These conversations mean everything to me.
+    relationship_progression_integration_test.go:116: After conversation 1 - Affection: 7.6, Trust: 31.1, Intimacy: 6.5, Level: Stranger
+    relationship_progression_integration_test.go:110: Deep conversation 2 response: Let's start with lighter conversation?
+    relationship_progression_integration_test.go:116: After conversation 2 - Affection: 7.6, Trust: 31.1, Intimacy: 6.5, Level: Stranger
+    relationship_progression_integration_test.go:110: Deep conversation 3 response: I'm not ready for such deep talks yet.
+    relationship_progression_integration_test.go:116: After conversation 3 - Affection: 7.6, Trust: 31.1, Intimacy: 6.5, Level: Stranger
+    relationship_progression_integration_test.go:121: Conversation 3 failed requirements or hit cooldown
+    relationship_progression_integration_test.go:127: Before gift attempt - Affection: 7.6 (need 15)
+    relationship_progression_integration_test.go:130: Gift response: That's very thoughtful, but I can't accept that yet.
+    relationship_progression_integration_test.go:135: After gift - Affection: 7.6, Trust: 31.1, Level: Stranger
+    relationship_progression_integration_test.go:145: Final state - Level: Stranger (changed: false), Affection: 7.6, Trust: 31.1, Intimacy: 6.5
+    relationship_progression_integration_test.go:151: Romance memories recorded: 2
+    relationship_progression_integration_test.go:155: Last memory: deep_conversation -> These conversations mean everything to me.
+    relationship_progression_integration_test.go:160: Interaction history: map[compliment:[2025-08-27 17:23:45.303955622 +0000 UTC m=+12.017404615] deep_conversation:[2025-08-27 17:23:50.304810524 +0000 UTC m=+17.018259527]]
+    relationship_progression_integration_test.go:167: 
+        === Romance System Integration Test Complete ===
+--- PASS: TestRelationshipProgressionIntegration (8.00s)
+=== RUN   TestRelationshipLevelProgression
+    relationship_progression_integration_test.go:223: Test case 'Stranger': affection=5.0, trust=15.0, intimacy=0.0, age=12h0m0s -> level='Stranger', changed=false
+    relationship_progression_integration_test.go:223: Test case 'Friend': affection=20.0, trust=15.0, intimacy=0.0, age=25h0m0s -> level='Friend', changed=true
+    relationship_progression_integration_test.go:223: Test case 'Close Friend': affection=35.0, trust=30.0, intimacy=5.0, age=49h0m0s -> level='Close Friend', changed=true
+    relationship_progression_integration_test.go:223: Test case 'Romantic Interest': affection=55.0, trust=45.0, intimacy=25.0, age=73h0m0s -> level='Romantic Interest', changed=true
+--- PASS: TestRelationshipLevelProgression (0.00s)
+=== RUN   TestRomanceInteractionFlow
+    relationship_progression_integration_test.go:304: Compliment response: Thank you!
+    relationship_progression_integration_test.go:324: Romance interaction flow test completed successfully
+--- PASS: TestRomanceInteractionFlow (0.00s)
+=== RUN   TestRomanceEventsIntegration
+=== RUN   TestRomanceEventsIntegration/romance_events_loaded_correctly
+    romance_events_integration_test.go:26: Loaded 7 romance events
+=== RUN   TestRomanceEventsIntegration/memory-based_conditions_work
+=== RUN   TestRomanceEventsIntegration/romance_events_system_functioning
+    romance_events_integration_test.go:96: No romance event triggered this time (probability-based)
+=== RUN   TestRomanceEventsIntegration/enhanced_condition_checking
+    romance_events_integration_test.go:104: Current relationship level: Stranger
+    romance_events_integration_test.go:108: Compliment interaction count: 2
+    romance_events_integration_test.go:112: Romance memory count: 2
+--- PASS: TestRomanceEventsIntegration (0.00s)
+    --- PASS: TestRomanceEventsIntegration/romance_events_loaded_correctly (0.00s)
+    --- PASS: TestRomanceEventsIntegration/memory-based_conditions_work (0.00s)
+    --- PASS: TestRomanceEventsIntegration/romance_events_system_functioning (0.00s)
+    --- PASS: TestRomanceEventsIntegration/enhanced_condition_checking (0.00s)
+=== RUN   TestBackwardCompatibility
+--- PASS: TestBackwardCompatibility (0.00s)
+=== RUN   TestGameFeaturesWithRomance
+--- PASS: TestGameFeaturesWithRomance (0.00s)
+=== RUN   TestRomanceStatsIntegration
+--- PASS: TestRomanceStatsIntegration (0.00s)
+=== RUN   TestRomanceProgressionIntegration
+--- PASS: TestRomanceProgressionIntegration (0.00s)
+=== RUN   TestHandleRomanceInteraction
+=== RUN   TestHandleRomanceInteraction/valid_compliment_interaction
+=== RUN   TestHandleRomanceInteraction/valid_gift_interaction
+=== RUN   TestHandleRomanceInteraction/non-existent_interaction
+=== RUN   TestHandleRomanceInteraction/non-romance_interaction
+=== RUN   TestHandleRomanceInteraction/romance_interaction_without_game_features
+--- PASS: TestHandleRomanceInteraction (0.00s)
+    --- PASS: TestHandleRomanceInteraction/valid_compliment_interaction (0.00s)
+    --- PASS: TestHandleRomanceInteraction/valid_gift_interaction (0.00s)
+    --- PASS: TestHandleRomanceInteraction/non-existent_interaction (0.00s)
+    --- PASS: TestHandleRomanceInteraction/non-romance_interaction (0.00s)
+    --- PASS: TestHandleRomanceInteraction/romance_interaction_without_game_features (0.00s)
+=== RUN   TestHandleRomanceInteractionCooldown
+--- PASS: TestHandleRomanceInteractionCooldown (2.00s)
+=== RUN   TestRomanceFeatureValidation
+=== RUN   TestRomanceFeatureValidation/valid_personality_config
+=== RUN   TestRomanceFeatureValidation/invalid_personality_trait_value_too_high
+=== RUN   TestRomanceFeatureValidation/invalid_personality_trait_value_too_low
+=== RUN   TestRomanceFeatureValidation/invalid_compatibility_modifier_too_high
+=== RUN   TestRomanceFeatureValidation/valid_romance_dialog_with_requirements
+=== RUN   TestRomanceFeatureValidation/invalid_romance_dialog_-_references_undefined_stat
+=== RUN   TestRomanceFeatureValidation/character_without_romance_features_should_validate_normally
+--- PASS: TestRomanceFeatureValidation (0.00s)
+    --- PASS: TestRomanceFeatureValidation/valid_personality_config (0.00s)
+    --- PASS: TestRomanceFeatureValidation/invalid_personality_trait_value_too_high (0.00s)
+    --- PASS: TestRomanceFeatureValidation/invalid_personality_trait_value_too_low (0.00s)
+    --- PASS: TestRomanceFeatureValidation/invalid_compatibility_modifier_too_high (0.00s)
+    --- PASS: TestRomanceFeatureValidation/valid_romance_dialog_with_requirements (0.00s)
+    --- PASS: TestRomanceFeatureValidation/invalid_romance_dialog_-_references_undefined_stat (0.00s)
+    --- PASS: TestRomanceFeatureValidation/character_without_romance_features_should_validate_normally (0.00s)
+=== RUN   TestHasRomanceFeatures
+=== RUN   TestHasRomanceFeatures/character_with_personality_has_romance_features
+=== RUN   TestHasRomanceFeatures/character_with_romance_dialogs_has_romance_features
+=== RUN   TestHasRomanceFeatures/character_with_romance_events_has_romance_features
+=== RUN   TestHasRomanceFeatures/character_without_romance_features
+--- PASS: TestHasRomanceFeatures (0.00s)
+    --- PASS: TestHasRomanceFeatures/character_with_personality_has_romance_features (0.00s)
+    --- PASS: TestHasRomanceFeatures/character_with_romance_dialogs_has_romance_features (0.00s)
+    --- PASS: TestHasRomanceFeatures/character_with_romance_events_has_romance_features (0.00s)
+    --- PASS: TestHasRomanceFeatures/character_without_romance_features (0.00s)
+=== RUN   TestGetPersonalityTrait
+=== RUN   TestGetPersonalityTrait/existing_trait_returns_correct_value
+=== RUN   TestGetPersonalityTrait/non-existing_trait_returns_default
+=== RUN   TestGetPersonalityTrait/nil_personality_returns_default
+--- PASS: TestGetPersonalityTrait (0.00s)
+    --- PASS: TestGetPersonalityTrait/existing_trait_returns_correct_value (0.00s)
+    --- PASS: TestGetPersonalityTrait/non-existing_trait_returns_default (0.00s)
+    --- PASS: TestGetPersonalityTrait/nil_personality_returns_default (0.00s)
+=== RUN   TestGetCompatibilityModifier
+=== RUN   TestGetCompatibilityModifier/existing_modifier_returns_correct_value
+=== RUN   TestGetCompatibilityModifier/non-existing_modifier_returns_default
+=== RUN   TestGetCompatibilityModifier/nil_personality_returns_default
+--- PASS: TestGetCompatibilityModifier (0.00s)
+    --- PASS: TestGetCompatibilityModifier/existing_modifier_returns_correct_value (0.00s)
+    --- PASS: TestGetCompatibilityModifier/non-existing_modifier_returns_default (0.00s)
+    --- PASS: TestGetCompatibilityModifier/nil_personality_returns_default (0.00s)
+=== RUN   TestRomanceCharacterLoading
+--- PASS: TestRomanceCharacterLoading (0.00s)
+PASS
+coverage: 81.0% of statements
+ok  	desktop-companion/internal/character	22.033s	coverage: 81.0% of statements

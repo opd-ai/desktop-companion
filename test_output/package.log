@@ -1,0 +1,5 @@
+Makefile:35: warning: overriding recipe for target 'build'
+Makefile:31: warning: ignoring old recipe for target 'build'
+cd build && \
+cp -r ../assets . && \
+tar -czf companion-linux-amd64.tar.gz companion assets/

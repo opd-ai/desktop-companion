@@ -1,0 +1,39 @@
+=== RUN   TestDraggableCharacterCreation
+    draggable_test.go:43: Skipping test due to missing animation files - this is expected in unit tests
+--- SKIP: TestDraggableCharacterCreation (0.00s)
+=== RUN   TestInteractionHandling
+    draggable_test.go:116: Skipping test due to missing animation files
+--- SKIP: TestInteractionHandling (0.00s)
+=== RUN   TestDragEventHandling
+    draggable_test.go:158: Skipping test due to missing animation files
+--- SKIP: TestDragEventHandling (0.00s)
+=== RUN   TestCooldownRespected
+    draggable_test.go:234: Skipping test due to missing animation files
+--- SKIP: TestCooldownRespected (0.00s)
+=== RUN   TestNewStatsOverlay
+--- PASS: TestNewStatsOverlay (0.01s)
+=== RUN   TestNewStatsOverlayWithoutGameFeatures
+--- PASS: TestNewStatsOverlayWithoutGameFeatures (0.00s)
+=== RUN   TestStatsOverlayToggle
+--- PASS: TestStatsOverlayToggle (0.00s)
+=== RUN   TestStatsOverlayShow
+--- PASS: TestStatsOverlayShow (0.00s)
+=== RUN   TestStatsOverlayHide
+--- PASS: TestStatsOverlayHide (0.00s)
+=== RUN   TestStatsOverlayUpdateDisplay
+--- PASS: TestStatsOverlayUpdateDisplay (0.00s)
+=== RUN   TestStatsOverlayWithoutGameState
+--- PASS: TestStatsOverlayWithoutGameState (0.00s)
+=== RUN   TestStatsOverlayRenderer
+--- PASS: TestStatsOverlayRenderer (0.00s)
+=== RUN   TestStatsOverlayGetContainer
+--- PASS: TestStatsOverlayGetContainer (0.00s)
+=== RUN   TestStatsOverlayUpdateLoop
+--- PASS: TestStatsOverlayUpdateLoop (0.20s)
+=== RUN   TestCapitalizeFirst
+--- PASS: TestCapitalizeFirst (0.00s)
+=== RUN   TestContains
+--- PASS: TestContains (0.00s)
+PASS
+coverage: 20.7% of statements
+ok  	desktop-companion/internal/ui	0.225s	coverage: 20.7% of statements

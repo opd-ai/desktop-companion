@@ -1,0 +1,29 @@
+=== RUN   TestSaveManagerBasicOperations
+--- PASS: TestSaveManagerBasicOperations (0.00s)
+=== RUN   TestSaveManagerNewGame
+--- PASS: TestSaveManagerNewGame (0.00s)
+=== RUN   TestSaveManagerDeleteSave
+--- PASS: TestSaveManagerDeleteSave (0.00s)
+=== RUN   TestSaveManagerListSaves
+--- PASS: TestSaveManagerListSaves (0.00s)
+=== RUN   TestSaveManagerValidation
+--- PASS: TestSaveManagerValidation (0.00s)
+=== RUN   TestSaveManagerAutoSave
+--- PASS: TestSaveManagerAutoSave (0.25s)
+=== RUN   TestSaveManagerAtomicWrites
+--- PASS: TestSaveManagerAtomicWrites (0.00s)
+=== RUN   TestSaveManagerConcurrency
+--- PASS: TestSaveManagerConcurrency (0.00s)
+=== RUN   TestSaveManagerDirectoryCreation
+--- PASS: TestSaveManagerDirectoryCreation (0.00s)
+=== RUN   TestSaveManagerFilenameSanitization
+--- PASS: TestSaveManagerFilenameSanitization (0.00s)
+=== RUN   TestSaveManagerCloseMethod
+--- PASS: TestSaveManagerCloseMethod (0.00s)
+=== RUN   TestSaveManagerStatValidationEdgeCases
+--- PASS: TestSaveManagerStatValidationEdgeCases (0.00s)
+=== RUN   TestSaveManagerMoreEdgeCases
+--- PASS: TestSaveManagerMoreEdgeCases (0.10s)
+PASS
+coverage: 83.2% of statements
+ok  	desktop-companion/internal/persistence	0.361s	coverage: 83.2% of statements

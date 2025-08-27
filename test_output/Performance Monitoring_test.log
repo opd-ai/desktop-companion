@@ -1,0 +1,23 @@
+=== RUN   TestProfilerIntegration
+--- PASS: TestProfilerIntegration (0.00s)
+=== RUN   TestNewProfiler
+--- PASS: TestNewProfiler (0.00s)
+=== RUN   TestStartStopProfiler
+--- PASS: TestStartStopProfiler (0.10s)
+=== RUN   TestCPUProfiling
+--- PASS: TestCPUProfiling (0.20s)
+=== RUN   TestMemoryProfiling
+--- PASS: TestMemoryProfiling (0.10s)
+=== RUN   TestRecordFrame
+--- PASS: TestRecordFrame (0.00s)
+=== RUN   TestStartupRecording
+--- PASS: TestStartupRecording (0.05s)
+=== RUN   TestMemoryMonitoring
+--- PASS: TestMemoryMonitoring (1.10s)
+=== RUN   TestTargetValidation
+--- PASS: TestTargetValidation (1.10s)
+=== RUN   TestConcurrentAccess
+--- PASS: TestConcurrentAccess (0.00s)
+PASS
+coverage: 71.6% of statements
+ok  	desktop-companion/internal/monitoring	2.660s	coverage: 71.6% of statements

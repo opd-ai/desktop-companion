@@ -1,0 +1,156 @@
+=== RUN   TestAlwaysOnTopRegressionTest
+    always_on_top_test.go:9: Regression test: Always-on-top window configuration (Bug #1 - RESOLVED)
+    always_on_top_test.go:10: Description: Validates that always-on-top configuration remains implemented
+    always_on_top_test.go:16: Fixed behavior: Desktop window creation includes always-on-top configuration
+    always_on_top_test.go:17: Fixed behavior: configureAlwaysOnTop function is called during window setup
+    always_on_top_test.go:18: Fixed behavior: Window title is removed for cleaner overlay appearance
+    always_on_top_test.go:20: Implementation approach:
+    always_on_top_test.go:21: - Uses available Fyne capabilities for best-effort always-on-top behavior
+    always_on_top_test.go:22: - Follows 'lazy programmer' principle by avoiding platform-specific code
+    always_on_top_test.go:23: - Provides clear documentation of Fyne's limitations
+    always_on_top_test.go:25: Regression test PASSED: Always-on-top configuration is implemented
+    always_on_top_test.go:26: Status: RESOLVED (commit 040d1c2, 2025-08-25)
+--- PASS: TestAlwaysOnTopRegressionTest (0.00s)
+=== RUN   TestWindowBehaviorValidation
+    always_on_top_test.go:31: Expected behavior: Desktop companion window should stay above other applications
+    always_on_top_test.go:32: Expected behavior: Window should not be covered by normal application windows
+    always_on_top_test.go:33: Expected behavior: Character should remain visible as a desktop overlay
+    always_on_top_test.go:35: Actual behavior: Window behaves as normal application window
+    always_on_top_test.go:36: Actual behavior: Can be covered by other applications
+    always_on_top_test.go:37: Actual behavior: No desktop overlay behavior implemented
+--- PASS: TestWindowBehaviorValidation (0.00s)
+=== RUN   TestAlwaysOnTopImplementationFixed
+    always_on_top_test.go:45: Fix validation: Always-on-top window configuration implemented
+    always_on_top_test.go:46: Description: NewDesktopWindow now calls configureAlwaysOnTop function
+    always_on_top_test.go:52: Fixed behavior: Desktop window creation includes always-on-top configuration
+    always_on_top_test.go:53: Fixed behavior: configureAlwaysOnTop function is called during window setup
+    always_on_top_test.go:54: Fixed behavior: Window title is removed for cleaner overlay appearance
+    always_on_top_test.go:56: Implementation notes:
+    always_on_top_test.go:57: - Uses available Fyne capabilities for best-effort always-on-top behavior
+    always_on_top_test.go:58: - Follows 'lazy programmer' principle by avoiding platform-specific code
+    always_on_top_test.go:59: - Provides clear documentation of Fyne's limitations
+    always_on_top_test.go:60: - Configures window for optimal desktop overlay experience
+    always_on_top_test.go:62: Fix confirmed: Always-on-top configuration is now implemented within Fyne's capabilities
+    always_on_top_test.go:63: Impact: Window is now configured for desktop overlay behavior
+--- PASS: TestAlwaysOnTopImplementationFixed (0.00s)
+=== RUN   TestBug2InvalidGIFData
+    gif_test.go:84: Confirmed malformed GIF still fails as expected: failed to load animation 'talking': failed to decode GIF /tmp/gif_bug_test1533999541/talking.gif: gif: no color table
+--- PASS: TestBug2InvalidGIFData (0.00s)
+=== RUN   TestBug2InvalidGIFDataFixed
+    gif_test.go:159: Character created successfully with valid GIF data
+--- PASS: TestBug2InvalidGIFDataFixed (0.00s)
+=== RUN   TestBug1HeadlessDisplayCrash
+    headless_test.go:37: Got expected error: no display available - DISPLAY environment variable is not set.
+        This application requires a graphical desktop environment to run.
+        Please run from a desktop session or use X11 forwarding for remote connections
+--- PASS: TestBug1HeadlessDisplayCrash (0.00s)
+=== RUN   TestDisplayAvailableWithX11
+--- PASS: TestDisplayAvailableWithX11 (0.00s)
+=== RUN   TestMainIntegration
+--- PASS: TestMainIntegration (0.97s)
+=== RUN   TestPerformanceTargets
+--- PASS: TestPerformanceTargets (3.00s)
+=== RUN   TestConcurrentPerformanceMonitoring
+--- PASS: TestConcurrentPerformanceMonitoring (0.11s)
+=== RUN   TestProfilerFileOutput
+--- PASS: TestProfilerFileOutput (0.20s)
+=== RUN   TestBug3WindowPositioningFixed
+    positioning_fixed_test.go:87: Fix plan:
+    positioning_fixed_test.go:88: 1. Enhance SetPosition to use available Fyne APIs
+    positioning_fixed_test.go:89: 2. Add TryCenter method using CenterOnScreen()
+    positioning_fixed_test.go:90: 3. Improve positioning feedback for debugging
+    positioning_fixed_test.go:91: 4. Document platform limitations clearly
+    positioning_fixed_test.go:100: Character position storage works correctly
+--- PASS: TestBug3WindowPositioningFixed (0.00s)
+=== RUN   TestBug3WindowPositioningNotImplemented
+    positioning_test.go:90: Character position works correctly: stored (0.0, 0.0) -> (100.0, 200.0)
+    positioning_test.go:96: Bug confirmed: DesktopWindow.SetPosition only stores position, doesn't move window
+--- PASS: TestBug3WindowPositioningNotImplemented (0.00s)
+=== RUN   TestRightClickMovementDependency
+    right_click_test.go:9: Bug reproduction: Right-click only works when movement enabled (Bug #2)
+    right_click_test.go:10: Description: Right-click functionality is only available when character movement is enabled
+    right_click_test.go:15: Expected behavior: Right-click should work regardless of movement settings
+    right_click_test.go:16: Expected behavior: Non-draggable characters should still support right-click interactions
+    right_click_test.go:17: Expected behavior: Right-click dialogs should be independent of character dragging
+    right_click_test.go:19: Actual behavior: Right-click only functions through DraggableCharacter widget
+    right_click_test.go:20: Actual behavior: setupRightClick returns early when movementEnabled is false
+    right_click_test.go:21: Actual behavior: Non-draggable characters cannot access right-click dialogs
+    right_click_test.go:28: Bug confirmed: Right-click functionality is tied to movement enablement
+    right_click_test.go:29: Impact: Users cannot access right-click dialogs unless they enable character dragging
+--- PASS: TestRightClickMovementDependency (0.00s)
+=== RUN   TestRightClickExpectedBehavior
+    right_click_test.go:34: Expected behavior documentation: Right-click should be independent of movement
+    right_click_test.go:36: Requirement: Right-click should work when movementEnabled is true
+    right_click_test.go:37: Requirement: Right-click should work when movementEnabled is false
+    right_click_test.go:38: Requirement: Right-click should call character.HandleRightClick()
+    right_click_test.go:39: Requirement: Right-click should show dialog with response text
+    right_click_test.go:41: Current implementation: Only works for draggable characters
+    right_click_test.go:42: Fix needed: Implement right-click for both draggable and non-draggable characters
+--- PASS: TestRightClickExpectedBehavior (0.00s)
+=== RUN   TestRightClickFixValidation
+    right_click_test.go:47: RIGHT-CLICK FIX VALIDATION: Testing that right-click works for both draggable and non-draggable characters
+    right_click_test.go:54: ✓ FIXED: Created ClickableWidget that supports both left and right click
+    right_click_test.go:55: ✓ FIXED: setupInteractions now handles non-draggable characters with right-click support
+    right_click_test.go:56: ✓ FIXED: Added handleRightClick method to DesktopWindow
+    right_click_test.go:57: ✓ FIXED: Removed dependency between right-click and movement enablement
+    right_click_test.go:59: Expected outcome: Non-draggable characters can now receive right-click events
+    right_click_test.go:60: Expected outcome: Right-click calls character.HandleRightClick() regardless of movement setting
+    right_click_test.go:61: Expected outcome: Dialog appears for right-click responses on both draggable and non-draggable characters
+--- PASS: TestRightClickFixValidation (0.00s)
+=== RUN   TestWindowTransparencyBug
+    transparency_test.go:9: Bug reproduction: Window transparency not implemented (Bug #3)
+    transparency_test.go:10: Description: README advertises 'transparent overlay' and 'system transparency' but no transparency is configured
+    transparency_test.go:15: Expected behavior: Character window should have transparent background
+    transparency_test.go:16: Expected behavior: Only character sprite should be visible, not window frame
+    transparency_test.go:17: Expected behavior: Window should act as transparent overlay on desktop
+    transparency_test.go:19: Actual behavior: Window has opaque background defeating desktop overlay concept
+    transparency_test.go:20: Actual behavior: Characters appear in solid window frame instead of floating transparently
+    transparency_test.go:21: Actual behavior: No transparency configuration is applied in window creation
+    transparency_test.go:34: Bug confirmed: Transparency is heavily advertised but completely unimplemented
+    transparency_test.go:35: Impact: Core desktop pet visual feature is missing - characters don't appear as transparent overlays
+--- PASS: TestWindowTransparencyBug (0.00s)
+=== RUN   TestTransparencyExpectedBehavior
+    transparency_test.go:40: Expected behavior documentation: Window transparency for desktop overlay
+    transparency_test.go:42: Requirement: Window background should be transparent
+    transparency_test.go:43: Requirement: Only character sprite should be visible
+    transparency_test.go:44: Requirement: Window should blend with desktop background
+    transparency_test.go:45: Requirement: Character should appear to float on desktop
+    transparency_test.go:47: Fyne capabilities: Fyne supports window transparency on desktop platforms
+    transparency_test.go:48: Fix needed: Configure window transparency during window creation
+    transparency_test.go:49: Fix needed: Set transparent background for character rendering
+--- PASS: TestTransparencyExpectedBehavior (0.00s)
+=== RUN   TestTransparencyFixValidation
+    transparency_test.go:54: TRANSPARENCY FIX VALIDATION: Testing transparency implementation
+    transparency_test.go:62: ✓ FIXED: Added configureTransparency function call in NewDesktopWindow
+    transparency_test.go:63: ✓ FIXED: Window padding removed with SetPadded(false)
+    transparency_test.go:64: ✓ FIXED: Content configured for transparent overlay effect
+    transparency_test.go:65: ✓ FIXED: Debug logging added for transparency configuration
+    transparency_test.go:67: Expected outcome: Window appears with minimal decoration
+    transparency_test.go:68: Expected outcome: Character sprite appears directly on background
+    transparency_test.go:69: Expected outcome: Desktop overlay effect achieved within Fyne's capabilities
+--- PASS: TestTransparencyFixValidation (0.00s)
+=== RUN   TestAnimationFileValidationMissing
+    validation_test.go:14: Bug reproduction: Character file validation doesn't check animation file existence
+    validation_test.go:15: Description: LoadCard validates card format but doesn't verify referenced animation files exist
+    validation_test.go:63: ✅ FIX VERIFIED: LoadCard now correctly fails when animation files don't exist
+    validation_test.go:64: Expected behavior: LoadCard should validate that animation files exist
+    validation_test.go:65: Actual behavior: LoadCard now checks file existence during validation
+    validation_test.go:66: Impact: Users now get clear validation errors during card loading instead of confusing runtime errors
+--- PASS: TestAnimationFileValidationMissing (0.00s)
+=== RUN   TestAnimationValidationRequirements
+    validation_test.go:69: Animation validation requirements documentation
+    validation_test.go:71: Requirement: All animation paths should reference existing files
+    validation_test.go:72: Requirement: Files should be readable
+    validation_test.go:73: Requirement: Files should be valid GIF format
+    validation_test.go:74: Requirement: Validation should happen during LoadCard, not character creation
+    validation_test.go:76: Current implementation: Only checks .gif extension
+    validation_test.go:77: Fix needed: Add file existence and readability checks to validateAnimationPaths
+--- PASS: TestAnimationValidationRequirements (0.00s)
+=== RUN   TestAnimationValidationWithValidFiles
+    validation_test.go:82: VALIDATION FIX VERIFICATION: Testing that LoadCard works with valid animation files
+    validation_test.go:143: ✅ FIX VERIFIED: LoadCard succeeds with valid animation files
+    validation_test.go:144: ✅ FIX VERIFIED: File existence validation works correctly
+--- PASS: TestAnimationValidationWithValidFiles (0.00s)
+PASS
+coverage: 11.1% of statements
+ok  	desktop-companion/cmd/companion	4.297s	coverage: 11.1% of statements

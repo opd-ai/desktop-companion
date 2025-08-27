@@ -1,0 +1,8 @@
+goos: linux
+goarch: amd64
+pkg: desktop-companion/internal/monitoring
+cpu: AMD EPYC 7763 64-Core Processor                
+BenchmarkRecordFrame-2   	33372501	        65.84 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGetStats-2      	157454886	        15.02 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	desktop-companion/internal/monitoring	8.839s
