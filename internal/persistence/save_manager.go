@@ -62,7 +62,7 @@ func NewSaveManager(savePath string) *SaveManager {
 		savePath: savePath,
 		autoSave: false,
 		interval: 5 * time.Minute, // Default auto-save interval
-		stopChan: make(chan struct{}),
+		stopChan: make(chan struct{}, 1), // Buffered channel to prevent blocking
 	}
 }
 
