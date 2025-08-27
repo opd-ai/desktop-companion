@@ -167,6 +167,42 @@
       ],
       "cooldown": 90,
       "requirements": {"trust": {"min": 20}}
+    },
+    "apology": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 12, "affection": 8, "jealousy": -15, "happiness": 10},
+      "animations": ["shy", "blushing", "happy"],
+      "responses": [
+        "Thank you for apologizing... That means a lot to me. 💕",
+        "I appreciate you taking responsibility. I forgive you. 🤗",
+        "Your apology shows how much you care. I feel better now. 💖"
+      ],
+      "cooldown": 180,
+      "requirements": {"jealousy": {"min": 30}}
+    },
+    "reassurance": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"trust": 10, "affection": 6, "jealousy": -10, "happiness": 8},
+      "animations": ["romantic_idle", "happy", "blushing"],
+      "responses": [
+        "Your reassurance makes me feel so much better... 💓",
+        "I needed to hear that. Thank you for being patient. 🤗",
+        "You always know how to calm my worries. I love you. 💕"
+      ],
+      "cooldown": 120,
+      "requirements": {"jealousy": {"min": 20}}
+    },
+    "consistent_care": {
+      "triggers": ["daily_interaction_bonus"],
+      "effects": {"trust": 15, "affection": 5, "happiness": 12},
+      "animations": ["heart_eyes", "excited_romance"],
+      "responses": [
+        "You're so consistent and caring... It means everything! 💖",
+        "I can always count on you. You make me feel so secure. 🤗",
+        "Your daily attention shows how much you care. I trust you completely. 💕"
+      ],
+      "cooldown": 86400,
+      "requirements": {"affection": {"min": 10}}
     }
   },
 

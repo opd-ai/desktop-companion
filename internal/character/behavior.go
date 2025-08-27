@@ -37,6 +37,11 @@ type Character struct {
 	romanceEventManager      *RandomEventManager  // Added for Phase 3 Task 2 - romance events
 	lastRomanceEventCheck    time.Time            // Last time romance events were checked
 	romanceEventCooldowns    map[string]time.Time // Romance event cooldown tracking
+
+	// Advanced features (added for Phase 3 Task 3)
+	jealousyManager       *JealousyManager       // Jealousy mechanics and consequences
+	compatibilityAnalyzer *CompatibilityAnalyzer // Advanced compatibility algorithms
+	crisisRecoveryManager *CrisisRecoveryManager // Relationship crisis and recovery systems
 }
 
 // New creates a new character instance from a character card
@@ -120,6 +125,116 @@ func (c *Character) initializeGameFeatures() {
 	// Initialize romance events manager if romance events are configured
 	romanceEventsEnabled := len(c.card.RomanceEvents) > 0
 	c.romanceEventManager = NewRandomEventManager(c.card.RomanceEvents, romanceEventsEnabled, checkInterval)
+
+	// Initialize advanced features if romance features are enabled
+	if c.card.HasRomanceFeatures() {
+		c.initializeAdvancedFeatures()
+	}
+}
+
+// initializeAdvancedFeatures sets up Phase 3 Task 3 advanced romance systems
+// Called only for characters with romance features enabled
+func (c *Character) initializeAdvancedFeatures() {
+	// Initialize jealousy mechanics if jealousy-prone personality trait exists
+	jealousyProne := c.card.GetPersonalityTrait("jealousy_prone")
+	jealousyEnabled := jealousyProne > 0.3 // Enable if character is somewhat jealousy-prone
+
+	// Create default jealousy triggers based on personality
+	jealousyTriggers := c.createDefaultJealousyTriggers(jealousyProne)
+	jealousyThreshold := 70.0 + (jealousyProne * 20.0) // Threshold from 70-90 based on trait
+
+	c.jealousyManager = NewJealousyManager(jealousyTriggers, jealousyEnabled, jealousyThreshold)
+
+	// Initialize compatibility analyzer with adaptation strength based on personality
+	adaptationStrength := 0.5 // Default moderate adaptation
+	if affectionResponsiveness := c.card.GetPersonalityTrait("affection_responsiveness"); affectionResponsiveness > 0 {
+		adaptationStrength = affectionResponsiveness * 0.8 // Scale to 0-0.8 range
+	}
+
+	c.compatibilityAnalyzer = NewCompatibilityAnalyzer(true, adaptationStrength)
+
+	// Initialize crisis recovery manager with personality-based thresholds
+	crisisThresholds := c.createPersonalityBasedCrisisThresholds()
+	c.crisisRecoveryManager = NewCrisisRecoveryManager(true, crisisThresholds)
+}
+
+// createDefaultJealousyTriggers creates jealousy triggers based on personality traits
+// Uses JSON-configurable approach but provides sensible defaults
+func (c *Character) createDefaultJealousyTriggers(jealousyProne float64) []JealousyTrigger {
+	if jealousyProne < 0.3 {
+		return []JealousyTrigger{} // Not jealousy-prone enough for triggers
+	}
+
+	// Base trigger timing - more jealous characters trigger sooner
+	baseTriggerTime := time.Duration(120-int(jealousyProne*60)) * time.Minute // 60-120 minutes
+
+	triggers := []JealousyTrigger{
+		{
+			Name:              "neglect_jealousy",
+			Description:       "Character feels neglected due to lack of interaction",
+			InteractionGap:    baseTriggerTime,
+			JealousyIncrement: 10.0 + (jealousyProne * 15.0), // 10-25 jealousy based on trait
+			TrustPenalty:      2.0 + (jealousyProne * 3.0),   // 2-5 trust penalty
+			Conditions: map[string]float64{
+				"affection": 20.0, // Must have some affection to feel jealous
+			},
+			Responses: []string{
+				"Where have you been? I've been waiting for you... 😔",
+				"Are you spending time with someone else?",
+				"I feel like you're ignoring me... 💔",
+			},
+			Animations:  []string{"jealous", "sad"},
+			Probability: 0.3 + (jealousyProne * 0.4), // 30-70% based on trait
+		},
+		{
+			Name:              "attention_jealousy",
+			Description:       "Character wants more attention and feels insecure",
+			InteractionGap:    baseTriggerTime / 2,          // Triggers more frequently
+			JealousyIncrement: 5.0 + (jealousyProne * 10.0), // 5-15 jealousy
+			TrustPenalty:      1.0 + (jealousyProne * 2.0),  // 1-3 trust penalty
+			Conditions: map[string]float64{
+				"affection": 30.0, // Requires moderate affection
+				"jealousy":  10.0, // Some existing jealousy
+			},
+			Responses: []string{
+				"Do you still find me interesting? 🥺",
+				"I need to know you care about me...",
+				"Am I not enough for you anymore? 😢",
+			},
+			Animations:  []string{"shy", "sad"},
+			Probability: 0.2 + (jealousyProne * 0.3), // 20-50% based on trait
+		},
+	}
+
+	return triggers
+}
+
+// createPersonalityBasedCrisisThresholds creates crisis thresholds based on personality
+// More sensitive personalities have higher thresholds (trigger crises easier)
+func (c *Character) createPersonalityBasedCrisisThresholds() map[string]float64 {
+	// Base thresholds
+	thresholds := map[string]float64{
+		"jealousy":  80.0,
+		"trust":     15.0,
+		"affection": 10.0,
+		"happiness": 20.0,
+	}
+
+	// Adjust based on personality traits
+	jealousyProne := c.card.GetPersonalityTrait("jealousy_prone")
+	trustDifficulty := c.card.GetPersonalityTrait("trust_difficulty")
+	affectionResponsiveness := c.card.GetPersonalityTrait("affection_responsiveness")
+
+	// More jealousy-prone characters trigger jealousy crises easier
+	thresholds["jealousy"] = 80.0 - (jealousyProne * 20.0) // 60-80 range
+
+	// Characters with trust difficulty trigger trust crises easier
+	thresholds["trust"] = 15.0 + (trustDifficulty * 10.0) // 15-25 range
+
+	// Highly affection-responsive characters trigger affection crises easier
+	thresholds["affection"] = 10.0 + (affectionResponsiveness * 10.0) // 10-20 range
+
+	return thresholds
 }
 
 // Update updates character behavior and animations
@@ -181,7 +296,91 @@ func (c *Character) processRandomEvents(elapsed time.Duration) bool {
 		}
 	}
 
+	// Process advanced romance features (Phase 3 Task 3)
+	if c.card.HasRomanceFeatures() {
+		stateChanged = c.processAdvancedRomanceFeatures() || stateChanged
+	}
+
 	return stateChanged
+}
+
+// processAdvancedRomanceFeatures handles Phase 3 Task 3 advanced systems
+// Processes jealousy, compatibility analysis, and crisis management
+func (c *Character) processAdvancedRomanceFeatures() bool {
+	stateChanged := false
+
+	// Process jealousy mechanics
+	if c.jealousyManager != nil {
+		jealousyEvent := c.jealousyManager.Update(c.gameState, c.lastInteraction)
+		if jealousyEvent != nil {
+			stateChanged = c.handleTriggeredEvent(jealousyEvent) || stateChanged
+		}
+	}
+
+	// Process compatibility analysis and adaptation
+	if c.compatibilityAnalyzer != nil {
+		compatibilityModifiers := c.compatibilityAnalyzer.Update(c.gameState)
+		if len(compatibilityModifiers) > 0 {
+			// Apply compatibility modifiers to future interactions
+			// This affects how personality traits influence interaction outcomes
+			c.applyCompatibilityModifiers(compatibilityModifiers)
+		}
+	}
+
+	// Process crisis management
+	if c.crisisRecoveryManager != nil {
+		crisisEvent, inCrisis := c.crisisRecoveryManager.Update(c.gameState)
+		if crisisEvent != nil {
+			stateChanged = c.handleTriggeredEvent(crisisEvent) || stateChanged
+		}
+
+		// Store crisis state for other systems to use
+		c.setInCrisisMode(inCrisis)
+	}
+
+	return stateChanged
+}
+
+// applyCompatibilityModifiers updates character behavior based on compatibility analysis
+// Modifies interaction effectiveness based on learned player preferences
+func (c *Character) applyCompatibilityModifiers(modifiers []CompatibilityModifier) {
+	// Store modifiers for use in personality calculations
+	// This is a simple approach - in a more complex system, these could be
+	// stored in the game state or character card for persistence
+
+	// For now, we apply them by temporarily adjusting personality traits
+	// This demonstrates the concept without requiring complex state management
+	for _, modifier := range modifiers {
+		switch modifier.StatName {
+		case "consistent_interaction_bonus":
+			// Boost consistent interaction compatibility
+			if c.card.Personality != nil && c.card.Personality.Compatibility != nil {
+				c.card.Personality.Compatibility["consistent_interaction"] *= modifier.ModifierValue
+			}
+		case "variety_preference_bonus":
+			// Boost variety preference
+			if c.card.Personality != nil && c.card.Personality.Compatibility != nil {
+				c.card.Personality.Compatibility["variety_preference"] *= modifier.ModifierValue
+			}
+		case "interaction_responsiveness_bonus":
+			// General interaction responsiveness boost
+			if c.card.Personality != nil && c.card.Personality.Traits != nil {
+				c.card.Personality.Traits["affection_responsiveness"] *= modifier.ModifierValue
+			}
+		}
+	}
+}
+
+// setInCrisisMode updates character state to reflect crisis mode
+// Can be used by other systems to adjust behavior during crises
+func (c *Character) setInCrisisMode(inCrisis bool) {
+	// For now, this is just a placeholder for crisis state management
+	// In a more complex system, this could affect dialogue selection,
+	// animation priorities, interaction availability, etc.
+
+	// The crisis state is already being handled by the crisis manager's
+	// ongoing effects and event generation
+	_ = inCrisis // Placeholder to prevent unused variable warning
 }
 
 // processRomanceEvents handles romance-specific random events with memory-based triggering
@@ -681,6 +880,19 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 	if len(interaction.Animations) > 0 {
 		animationIndex := c.selectRomanceAnimation(interaction.Animations)
 		c.setState(interaction.Animations[animationIndex])
+	}
+
+	// Check for crisis recovery (Phase 3 Task 3)
+	if c.crisisRecoveryManager != nil {
+		recoveryEvent := c.crisisRecoveryManager.CheckRecovery(c.gameState, interactionType)
+		if recoveryEvent != nil {
+			// Crisis was resolved! Override normal response with recovery response
+			c.handleTriggeredEvent(recoveryEvent)
+			if len(recoveryEvent.Responses) > 0 {
+				recoveryResponse := recoveryEvent.Responses[int(time.Now().UnixNano())%len(recoveryEvent.Responses)]
+				return recoveryResponse
+			}
+		}
 	}
 
 	// Return contextual response based on personality and current relationship level
