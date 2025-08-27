@@ -149,32 +149,70 @@ func (dm *DialogManager) SetFallbackChain(backends []string) error {
 
 // GenerateDialog produces a dialog response using the configured backend chain
 func (dm *DialogManager) GenerateDialog(context DialogContext) (DialogResponse, error) {
-	// Try default backend first
-	if dm.defaultBackend != "" {
-		if backend, exists := dm.backends[dm.defaultBackend]; exists {
-			if backend.CanHandle(context) {
-				response, err := backend.GenerateResponse(context)
-				if err == nil && response.Confidence > 0.5 {
-					return response, nil
-				}
-			}
-		}
+	// Attempt response generation using default backend first
+	if response, success := dm.tryDefaultBackend(context); success {
+		return response, nil
 	}
 
-	// Try fallback chain
-	for _, backendName := range dm.fallbackChain {
-		if backend, exists := dm.backends[backendName]; exists {
-			if backend.CanHandle(context) {
-				response, err := backend.GenerateResponse(context)
-				if err == nil {
-					return response, nil
-				}
-			}
-		}
+	// Try fallback chain if default backend fails
+	if response, success := dm.tryFallbackChain(context); success {
+		return response, nil
 	}
 
 	// Final fallback: use provided fallback responses
 	return dm.createFallbackResponse(context), nil
+}
+
+// tryDefaultBackend attempts to generate response using the configured default backend
+func (dm *DialogManager) tryDefaultBackend(context DialogContext) (DialogResponse, bool) {
+	if dm.defaultBackend == "" {
+		return DialogResponse{}, false
+	}
+
+	backend, exists := dm.backends[dm.defaultBackend]
+	if !exists {
+		return DialogResponse{}, false
+	}
+
+	if !backend.CanHandle(context) {
+		return DialogResponse{}, false
+	}
+
+	response, err := backend.GenerateResponse(context)
+	if err != nil || response.Confidence <= 0.5 {
+		return DialogResponse{}, false
+	}
+
+	return response, true
+}
+
+// tryFallbackChain attempts to generate response using the fallback backend chain
+func (dm *DialogManager) tryFallbackChain(context DialogContext) (DialogResponse, bool) {
+	for _, backendName := range dm.fallbackChain {
+		if response, success := dm.tryFallbackBackend(backendName, context); success {
+			return response, true
+		}
+	}
+	return DialogResponse{}, false
+}
+
+// tryFallbackBackend attempts to generate response using a specific fallback backend
+func (dm *DialogManager) tryFallbackBackend(backendName string, context DialogContext) (DialogResponse, bool) {
+	backend, exists := dm.backends[backendName]
+	if !exists {
+		return DialogResponse{}, false
+	}
+
+	if !backend.CanHandle(context) {
+		return DialogResponse{}, false
+	}
+
+	response, err := backend.GenerateResponse(context)
+	if err != nil {
+		return DialogResponse{}, false
+	}
+
+	return response, true
 }
 
 // createFallbackResponse generates a basic response when all backends fail

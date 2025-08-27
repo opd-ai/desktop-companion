@@ -256,12 +256,33 @@ func (m *MarkovChainBackend) GenerateResponse(context DialogContext) (DialogResp
 		return DialogResponse{}, fmt.Errorf("backend not initialized")
 	}
 
-	// Select appropriate chain
-	chain := m.selectChain(context.Trigger)
-	if chain == nil {
-		return DialogResponse{}, fmt.Errorf("no chain available for trigger: %s", context.Trigger)
+	// Select and validate chain availability
+	chain, err := m.validateChainAvailability(context.Trigger)
+	if err != nil {
+		return DialogResponse{}, err
 	}
 
+	// Generate response text with context-aware parameters
+	text, confidence, err := m.generateContextualResponse(chain, context)
+	if err != nil {
+		return DialogResponse{}, err
+	}
+
+	// Build complete dialog response with metadata
+	return m.buildDialogResponse(text, confidence, context), nil
+}
+
+// validateChainAvailability selects and validates that an appropriate chain exists
+func (m *MarkovChainBackend) validateChainAvailability(trigger string) (*MarkovChain, error) {
+	chain := m.selectChain(trigger)
+	if chain == nil {
+		return nil, fmt.Errorf("no chain available for trigger: %s", trigger)
+	}
+	return chain, nil
+}
+
+// generateContextualResponse creates response text using chain generation with context parameters
+func (m *MarkovChainBackend) generateContextualResponse(chain *MarkovChain, context DialogContext) (string, float64, error) {
 	// Calculate generation parameters based on context
 	temperature := m.calculateTemperature(context)
 	targetWords := m.calculateTargetWords(context)
@@ -278,19 +299,21 @@ func (m *MarkovChainBackend) GenerateResponse(context DialogContext) (DialogResp
 		confidence = 0.3
 	}
 
-	// Select appropriate animation
-	animation := m.selectAnimation(text, context)
+	return text, confidence, nil
+}
 
+// buildDialogResponse constructs the complete DialogResponse with all metadata fields
+func (m *MarkovChainBackend) buildDialogResponse(text string, confidence float64, context DialogContext) DialogResponse {
 	return DialogResponse{
 		Text:             text,
-		Animation:        animation,
+		Animation:        m.selectAnimation(text, context),
 		Confidence:       confidence,
 		ResponseType:     m.classifyResponseType(text, context),
 		EmotionalTone:    m.detectEmotionalTone(text, context),
 		Topics:           m.extractTopics(text),
 		MemoryImportance: m.calculateMemoryImportance(text, context),
 		LearningValue:    confidence * 0.8, // High confidence responses are more valuable for learning
-	}, nil
+	}
 }
 
 // selectChain chooses the appropriate Markov chain based on trigger and configuration
