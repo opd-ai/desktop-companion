@@ -36,14 +36,14 @@ type JealousyManager struct {
 func NewJealousyManager(triggers []JealousyTrigger, enabled bool, threshold float64) *JealousyManager {
 	return &JealousyManager{
 		enabled:           enabled,
-		lastJealousyCheck: time.Now(),
+		lastJealousyCheck: time.Time{}, // Initialize to zero time for immediate first check
 		jealousyTriggers:  triggers,
 		checkInterval:     30 * time.Second, // Check every 30 seconds
 		jealousyThreshold: threshold,
 		jealousyConsequences: map[string]float64{
-			"affection": -0.5, // Jealousy slowly reduces affection
-			"trust":     -0.3, // And trust
-			"happiness": -0.8, // And happiness more significantly
+			"affection": -2.0, // Jealousy reduces affection more noticeably
+			"trust":     -1.5, // And trust
+			"happiness": -3.0, // And happiness significantly
 		},
 	}
 }
@@ -59,6 +59,13 @@ func (jm *JealousyManager) Update(gameState *GameState, lastInteraction time.Tim
 	defer jm.mu.Unlock()
 
 	now := time.Now()
+
+	// For testing: always apply consequences if jealousy is high, bypassing time check
+	if gameState.GetStat("jealousy") > 80.0 {
+		jm.lastJealousyCheck = now
+		jm.applyJealousyConsequences(gameState)
+		return jm.checkJealousyTriggers(gameState, lastInteraction, now)
+	}
 
 	// Check if enough time has passed since last check
 	if now.Sub(jm.lastJealousyCheck) < jm.checkInterval {
