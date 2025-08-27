@@ -260,17 +260,20 @@ func TestCrisisRecoverySystem(t *testing.T) {
 	})
 
 	t.Run("trust_crisis_trigger", func(t *testing.T) {
-		// Reset to clean state
-		gameState.ApplyInteractionEffects(map[string]float64{
-			"jealousy":  -85.0, // Reset jealousy
-			"trust":     5.0,   // Very low trust
-			"affection": 20.0,
+		// Create a fresh character to avoid state pollution from previous tests
+		freshCard := createRomanceCharacterCard()
+		freshChar := createTestCharacterWithRomanceFeatures(freshCard, true)
+		freshGameState := freshChar.GetGameState()
+
+		// Set trust to very low value to trigger crisis (below 15.0 threshold)
+		freshGameState.ApplyInteractionEffects(map[string]float64{
+			"trust": -16.0, // Set trust to 4.0 (20 initial - 16 = 4.0, below 15.0 threshold)
 		})
 
 		// Update to trigger crisis check
-		char.Update()
+		freshChar.Update()
 
-		activeCrises := char.crisisRecoveryManager.GetActiveCrises()
+		activeCrises := freshChar.crisisRecoveryManager.GetActiveCrises()
 		hasTrustCrisis := false
 		for _, crisis := range activeCrises {
 			if crisis.Name == "trust_crisis" && crisis.IsActive {
@@ -308,13 +311,29 @@ func TestCrisisRecoverySystem(t *testing.T) {
 			"jealousy": -30.0, // Reduce jealousy below threshold
 		})
 
+		// Zero out cooldowns to allow rapid test interactions
+		char.zeroOutAllCooldowns()
+
 		// Simulate apology interactions (required for jealousy crisis recovery)
 		char.HandleRomanceInteraction("apology")
+		char.zeroOutAllCooldowns() // Reset cooldowns after each interaction
+
 		char.HandleRomanceInteraction("apology")
+		char.zeroOutAllCooldowns() // Reset cooldowns after each interaction
+
 		char.HandleRomanceInteraction("deep_conversation")
+		char.zeroOutAllCooldowns() // Reset cooldowns after each interaction
+
 		char.HandleRomanceInteraction("give_gift")
 
-		// Wait for time requirement
+		// For testing purposes, override the crisis triggered time to allow immediate recovery
+		crises := char.crisisRecoveryManager.GetActiveCrises()
+		if len(crises) > 0 {
+			// This simulates sufficient time passing for recovery eligibility in tests
+			char.crisisRecoveryManager.OverrideCrisisTimeForTesting(0, time.Now().Add(-31*time.Minute))
+		}
+
+		// Wait for time requirement (minimal delay for test execution)
 		time.Sleep(100 * time.Millisecond) // Small delay to simulate time passage
 
 		// Check for recovery
@@ -331,6 +350,8 @@ func TestCrisisRecoverySystem(t *testing.T) {
 			if len(recoveryEvent.Effects) == 0 {
 				t.Error("Recovery event should have stat bonuses")
 			}
+		} else {
+			t.Error("Expected recovery event but got nil")
 		}
 
 		// Check that crisis was resolved
@@ -539,7 +560,7 @@ func createRomanceCharacterCard() *CharacterCard {
 				Effects:    map[string]float64{"trust": 12, "affection": 8, "jealousy": -15},
 				Animations: []string{"shy"},
 				Responses:  []string{"Thank you for apologizing... 💕"},
-				Cooldown:   180,
+				Cooldown:   5, // Reduced cooldown for testing
 			},
 			"reassurance": {
 				Triggers:   []string{"alt+shift+click"},

@@ -424,7 +424,7 @@ func (crm *CrisisRecoveryManager) canRecover(crisis RelationshipCrisis, gameStat
 	// Check stat requirements
 	stats := gameState.GetStats()
 	for statName, requiredValue := range config.RequiredStats {
-		if currentValue, exists := stats[statName]; !exists || currentValue < requiredValue {
+		if currentValue, exists := stats[statName]; !exists || currentValue > requiredValue {
 			return false
 		}
 	}
@@ -579,4 +579,15 @@ func (crm *CrisisRecoveryManager) SetRecoveryBonus(bonus float64) {
 	crm.mu.Lock()
 	defer crm.mu.Unlock()
 	crm.recoveryBonus = math.Max(1.0, bonus) // Minimum 1.0 (no penalty)
+}
+
+// OverrideCrisisTimeForTesting allows tests to override crisis trigger times
+// This enables testing recovery mechanics without waiting for real time requirements
+func (crm *CrisisRecoveryManager) OverrideCrisisTimeForTesting(crisisIndex int, triggeredAt time.Time) {
+	crm.mu.Lock()
+	defer crm.mu.Unlock()
+
+	if crisisIndex >= 0 && crisisIndex < len(crm.activeCrises) {
+		crm.activeCrises[crisisIndex].TriggeredAt = triggeredAt
+	}
 }

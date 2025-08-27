@@ -1079,6 +1079,19 @@ func (c *Character) recordRomanceInteraction(interactionType, response string, s
 	c.gameState.RecordInteraction(interactionType)
 }
 
+// zeroOutAllCooldowns resets all interaction cooldowns to zero for testing purposes
+// This allows tests to perform multiple interactions rapidly without cooldown restrictions
+func (c *Character) zeroOutAllCooldowns() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// Clear dialog cooldowns
+	c.dialogCooldowns = make(map[string]time.Time)
+
+	// Clear game interaction cooldowns
+	c.gameInteractionCooldowns = make(map[string]time.Time)
+}
+
 // GetGameState returns the current game state (for testing and UI)
 func (c *Character) GetGameState() *GameState {
 	c.mu.RLock()
