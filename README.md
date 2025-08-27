@@ -144,6 +144,11 @@ go run cmd/companion/main.go -game -stats -character assets/characters/challenge
 
 # Experience romance features
 go run cmd/companion/main.go -game -stats -character assets/characters/romance/character.json   # Romance simulator
+
+# Romance Character Archetypes (Phase 4 Complete!)
+go run cmd/companion/main.go -game -stats -character assets/characters/tsundere/character.json   # Shy, defensive, slow-burn
+go run cmd/companion/main.go -game -stats -character assets/characters/flirty/character.json     # Outgoing, playful, fast-paced  
+go run cmd/companion/main.go -game -stats -character assets/characters/slow_burn/character.json  # Thoughtful, realistic, long-term
 ```
 
 **Game Interactions**:
@@ -159,6 +164,18 @@ go run cmd/companion/main.go -game -stats -character assets/characters/romance/c
 - **Progression**: Characters evolve and grow as they age
 - **Achievements**: Unlock rewards by maintaining good care over time
 - **Random Events**: Unexpected events can affect your character's stats
+
+### Romance Character Archetypes
+
+The dating simulator includes three distinct character personalities, each offering a unique romantic experience:
+
+| Archetype | Difficulty | Progression | Best For |
+|-----------|------------|-------------|----------|
+| **Tsundere** | Hard | Slow (8+ days) | Patient players who enjoy character development |
+| **Flirty Extrovert** | Easy | Fast (4+ days) | Players wanting immediate gratification |
+| **Slow Burn** | Expert | Very Slow (16+ days) | Long-term commitment and realistic pacing |
+
+See `CHARACTER_ARCHETYPES.md` for detailed personality profiles, strategy guides, and customization options.
 
 ### Character Cards
 

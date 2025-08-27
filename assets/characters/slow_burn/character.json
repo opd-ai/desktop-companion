@@ -1,0 +1,465 @@
+{
+    "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif",
+    "blushing": "animations/sad.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "flirty": "animations/idle.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/sad.gif",
+    "excited_romance": "animations/happy.gif"
+  },
+  "name": "Slow Burn Romance",
+  "description": "A thoughtful, reserved companion who values deep connection and takes time to open up",
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello. It's nice to see you again.",
+        "I appreciate your company.",
+        "How has your day been?",
+        "Thank you for spending time with me."
+      ],
+      "animation": "talking",
+      "cooldown": 12
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Is there something I can help you with?",
+        "I'm here if you need anything.",
+        "What would you like to do together?"
+      ],
+      "animation": "idle",
+      "cooldown": 8
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 60,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "hunger": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 75,
+      "max": 100,
+      "degradationRate": 0.6,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.05,
+      "criticalThreshold": 5
+    },
+    "trust": {
+      "initial": 10,
+      "max": 100,
+      "degradationRate": 0.02,
+      "criticalThreshold": 2
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 2.5,
+      "criticalThreshold": 90
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 90,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 20, "happiness": 2, "trust": 1},
+      "animations": ["eating", "happy"],
+      "responses": [
+        "Thank you for the meal. It's quite good.",
+        "I appreciate your thoughtfulness.",
+        "This is exactly what I needed."
+      ],
+      "cooldown": 60,
+      "requirements": {"hunger": {"max": 85}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 12, "energy": -20, "affection": 1, "trust": 1},
+      "animations": ["happy"],
+      "responses": [
+        "That was... actually quite enjoyable.",
+        "I don't usually play, but this was nice.",
+        "Thank you for including me in this."
+      ],
+      "cooldown": 90,
+      "requirements": {"energy": {"min": 25}, "trust": {"min": 10}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 6, "health": 1, "trust": 1},
+      "animations": ["happy"],
+      "responses": [
+        "That's... comforting.",
+        "I appreciate gentle gestures like this.",
+        "Your touch is very calming."
+      ],
+      "cooldown": 30,
+      "requirements": {"trust": {"min": 5}}
+    },
+    "compliment": {
+      "triggers": ["hover"],
+      "effects": {"affection": 2, "happiness": 3, "trust": 1},
+      "animations": ["blushing", "happy"],
+      "responses": [
+        "That's very kind of you to say.",
+        "I... thank you. That means a lot.",
+        "Your words are always so thoughtful."
+      ],
+      "cooldown": 120,
+      "requirements": {"trust": {"min": 15}}
+    },
+    "give_gift": {
+          "name": "Give Gift",
+          "triggers": ["shift+click"],
+          "animation": "happy",
+          "effects": {
+            "affection": 2,
+            "trust": 3
+          },
+          "requirements": {
+            "affection": {"min": 20},
+            "trust": {"min": 30}
+          },
+          "cooldown": 3600,
+          "responses": ["This is really thoughtful, thank you.", "I appreciate the consideration."]
+        },
+    "deep_conversation": {
+      "triggers": ["shift+click"],
+      "effects": {"trust": 8, "affection": 3, "intimacy": 5},
+      "animations": ["talking", "romantic_idle"],
+      "responses": [
+        "I enjoy our meaningful conversations.",
+        "It's rare to find someone who truly listens.",
+        "Thank you for understanding me."
+      ],
+      "cooldown": 150,
+      "requirements": {"trust": {"min": 30}}
+    },
+    "intimate_moment": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"intimacy": 8, "affection": 5, "trust": 2},
+      "animations": ["romantic_idle", "blushing"],
+      "responses": [
+        "This feels... right. Thank you for being patient.",
+        "I've never felt this comfortable with anyone before.",
+        "You make me feel safe to be vulnerable."
+      ],
+      "cooldown": 300,
+      "requirements": {"trust": {"min": 50}, "affection": {"min": 40}, "intimacy": {"min": 25}}
+    },
+    "commitment_talk": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 12, "affection": 8, "intimacy": 10},
+      "animations": ["romantic_idle", "heart_eyes"],
+      "responses": [
+        "I've been thinking about us too... This is serious for me.",
+        "You mean more to me than I ever thought possible.",
+        "I'm ready to take this relationship to the next level."
+      ],
+      "cooldown": 600,
+      "requirements": {"trust": {"min": 70}, "affection": {"min": 60}, "intimacy": {"min": 50}}
+    },
+    "apology": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 15, "affection": 6, "jealousy": -20, "happiness": 8},
+      "animations": ["talking", "happy"],
+      "responses": [
+        "I accept your apology. These things take time to work through.",
+        "Thank you for being mature about this. I appreciate it.",
+        "Your sincerity means everything to me. We'll be okay."
+      ],
+      "cooldown": 300,
+      "requirements": {"jealousy": {"min": 30}}
+    },
+    "reassurance": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"trust": 18, "affection": 5, "jealousy": -15, "happiness": 6},
+      "animations": ["romantic_idle", "happy"],
+      "responses": [
+        "Thank you for your patience. I needed to hear that.",
+        "Your reassurance helps me trust in what we have.",
+        "I'm learning to believe in us, thanks to you."
+      ],
+      "cooldown": 240,
+      "requirements": {"jealousy": {"min": 20}}
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Polite Acquaintance",
+        "requirement": {"age": 0},
+        "size": 124,
+        "animations": {}
+      },
+      {
+        "name": "Trusted Friend",
+        "requirement": {"age": 345600, "trust": 25, "affection": 10},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Close Confidant",
+        "requirement": {"age": 691200, "trust": 45, "affection": 25},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Emotional Partner",
+        "requirement": {"age": 1036800, "trust": 65, "affection": 45, "intimacy": 30},
+        "size": 136,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      },
+      {
+        "name": "Life Partner",
+        "requirement": {"age": 1382400, "trust": 85, "affection": 70, "intimacy": 60},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Trust",
+        "requirement": {
+          "trust": {"min": 30}
+        }
+      },
+      {
+        "name": "Deep Connection",
+        "requirement": {
+          "trust": {"min": 60},
+          "affection": {"min": 40}
+        }
+      },
+      {
+        "name": "Soulmate Bond",
+        "requirement": {
+          "trust": {"min": 80},
+          "affection": {"min": 75},
+          "intimacy": {"min": 65}
+        }
+      }
+    ]
+  },
+
+  "personality": {
+    "traits": {
+      "shyness": 0.7,
+      "romanticism": 0.6,
+      "jealousy_prone": 0.1,
+      "trust_difficulty": 0.9,
+      "affection_responsiveness": 0.4,
+      "flirtiness": 0.1
+    },
+    "compatibility": {
+      "consistent_interaction": 2.0,
+      "variety_preference": 0.6,
+      "gift_appreciation": 1.3,
+      "conversation_lover": 2.2
+    }
+  },
+
+  "romanceDialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "I find myself looking forward to seeing you...",
+        "You've become quite important to me.",
+        "I never expected to feel this way about someone."
+      ],
+      "animation": "talking",
+      "cooldown": 15,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 30},
+          "trust": {"min": 40}
+        }
+      }
+    },
+    {
+      "trigger": "click",
+      "responses": [
+        "I love you. Those words used to scare me, but not with you.",
+        "You've shown me what real love feels like.",
+        "I want to spend my life with you."
+      ],
+      "animation": "romantic_idle",
+      "cooldown": 20,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 65},
+          "trust": {"min": 70},
+          "intimacy": {"min": 50}
+        }
+      }
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "I feel calm when you're near me.",
+        "Your presence is comforting.",
+        "I'm grateful for your patience with me."
+      ],
+      "animation": "happy",
+      "cooldown": 25,
+      "requirements": {
+        "stats": {
+          "trust": {"min": 35},
+          "intimacy": {"min": 15}
+        }
+      }
+    }
+  ],
+
+  "romanceEvents": [
+    {
+      "name": "Trust Building Moment",
+      "description": "Character reflects on growing trust",
+      "probability": 0.06,
+      "effects": {"trust": 3, "affection": 2, "happiness": 5},
+      "animations": ["talking", "happy"],
+      "responses": [
+        "I'm learning to trust you more each day...",
+        "You've shown me that not everyone will hurt me.",
+        "Thank you for being so patient while I learn to open up."
+      ],
+      "cooldown": 2400,
+      "conditions": {"trust": {"min": 25}, "affection": {"min": 15}}
+    },
+    {
+      "name": "Vulnerability Moment",
+      "description": "Character opens up about deeper feelings",
+      "probability": 0.04,
+      "effects": {"intimacy": 6, "trust": 4, "affection": 3},
+      "animations": ["romantic_idle", "blushing"],
+      "responses": [
+        "I never thought I could feel this close to someone...",
+        "You make me want to be vulnerable, and that scares and excites me.",
+        "I'm sharing parts of myself I've never shown anyone."
+      ],
+      "cooldown": 3600,
+      "conditions": {"trust": {"min": 45}, "intimacy": {"min": 20}}
+    },
+    {
+      "name": "Appreciation for Patience",
+      "description": "Character values partner's understanding",
+      "probability": 0.08,
+      "effects": {"affection": 5, "trust": 6, "happiness": 4},
+      "animations": ["happy", "romantic_idle"],
+      "responses": [
+        "Your patience means everything to me...",
+        "Thank you for not rushing me. This feels right.",
+        "I appreciate how you let me set the pace."
+      ],
+      "cooldown": 1800,
+      "conditions": {"trust": {"min": 35}, "affection": {"min": 25}}
+    },
+    {
+      "name": "Deep Conversation Reflection",
+      "description": "Character treasures meaningful talks",
+      "probability": 0.10,
+      "effects": {"trust": 8, "intimacy": 4, "happiness": 6},
+      "animations": ["talking", "happy"],
+      "responses": [
+        "Our conversations mean so much to me...",
+        "I love how we can talk about anything and everything.",
+        "You really listen to me, and that's so rare.",
+        "These deep talks are bringing us closer together."
+      ],
+      "cooldown": 1200,
+      "conditions": {
+        "trust": {"min": 40},
+        "interactionCount": {"deep_conversation_min": 3}
+      }
+    },
+    {
+      "name": "Commitment Consideration",
+      "description": "Character thinks about the future together",
+      "probability": 0.03,
+      "effects": {"intimacy": 10, "affection": 8, "trust": 5},
+      "animations": ["romantic_idle", "heart_eyes"],
+      "responses": [
+        "I've been thinking about what we could be together...",
+        "For the first time, I can imagine a future with someone.",
+        "You make me want to plan a life together.",
+        "I never believed in 'forever' until I met you."
+      ],
+      "cooldown": 4800,
+      "conditions": {
+        "trust": {"min": 65},
+        "affection": {"min": 55},
+        "intimacy": {"min": 45}
+      }
+    },
+    {
+      "name": "Relationship Milestone Recognition",
+      "description": "Character acknowledges relationship progress",
+      "probability": 0.05,
+      "effects": {"trust": 7, "affection": 6, "intimacy": 5, "happiness": 8},
+      "animations": ["happy", "romantic_idle"],
+      "responses": [
+        "I can't believe how far we've come together...",
+        "This relationship has changed me in the best ways.",
+        "Every milestone with you feels so meaningful.",
+        "We've built something truly special together."
+      ],
+      "cooldown": 3600,
+      "conditions": {
+        "relationshipLevel": {"min": 3},
+        "memoryCount": {"total_min": 20}
+      }
+    }
+  ]
+}

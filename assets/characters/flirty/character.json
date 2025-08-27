@@ -3,19 +3,19 @@
   "description": "An outgoing, playful companion who loves attention and isn't shy about romance",
   
   "animations": {
-    "idle": "../default/animations/idle.gif",
-    "talking": "../default/animations/talking.gif",
-    "happy": "../default/animations/happy.gif",
-    "sad": "../default/animations/sad.gif",
-    "hungry": "../default/animations/hungry.gif",
-    "eating": "../default/animations/eating.gif",
-    "blushing": "../default/animations/happy.gif",
-    "heart_eyes": "../default/animations/happy.gif",
-    "shy": "../default/animations/idle.gif",
-    "flirty": "../default/animations/happy.gif",
-    "romantic_idle": "../default/animations/happy.gif",
-    "jealous": "../default/animations/sad.gif",
-    "excited_romance": "../default/animations/happy.gif"
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif",
+    "blushing": "animations/sad.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "flirty": "animations/happy.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/sad.gif",
+    "excited_romance": "animations/happy.gif"
   },
 
   "dialogs": [
@@ -157,7 +157,7 @@
       "requirements": {"trust": {"min": 5}}
     },
     "give_gift": {
-      "triggers": ["ctrl+click"],
+      "triggers": ["alt+shift+click"],
       "effects": {"affection": 15, "happiness": 12, "trust": 3, "intimacy": 3},
       "animations": ["excited_romance", "heart_eyes"],
       "responses": [
@@ -181,29 +181,35 @@
       "requirements": {"trust": {"min": 15}}
     },
     "flirt_back": {
-      "triggers": ["alt+click"],
-      "effects": {"affection": 12, "intimacy": 10, "happiness": 8},
-      "animations": ["flirty", "heart_eyes"],
-      "responses": [
-        "*winks* Hey there, handsome! 😉",
-        "You're looking pretty irresistible yourself! 😘",
-        "Is it getting hot in here, or is it just us? 🔥"
-      ],
-      "cooldown": 30,
-      "requirements": {"affection": {"min": 20}}
-    },
-    "romantic_gesture": {
-      "triggers": ["ctrl+alt+click"],
-      "effects": {"affection": 18, "intimacy": 15, "trust": 5, "happiness": 15},
-      "animations": ["heart_eyes", "excited_romance"],
-      "responses": [
-        "Oh my! You're so romantic! My heart is racing! 💓",
-        "I'm melting! That was absolutely perfect! 😍",
-        "You know exactly how to make me feel special! 💖"
-      ],
-      "cooldown": 90,
-      "requirements": {"affection": {"min": 35}, "intimacy": {"min": 20}}
-    },
+          "name": "Flirt Back",
+          "triggers": ["doubleclick"],
+          "animation": "happy",
+          "effects": {
+            "affection": 4,
+            "intimacy": 3
+          },
+          "requirements": {
+            "affection": {"min": 5}
+          },
+          "cooldown": 600,
+          "responses": ["Ooh, I like this side of you! 😏", "Keep that energy coming!"]
+        },
+        "romantic_gesture": {
+          "name": "Romantic Gesture",
+          "triggers": ["ctrl+shift+click"],
+          "animation": "happy",
+          "effects": {
+            "affection": 6,
+            "intimacy": 4,
+            "trust": 1
+          },
+          "requirements": {
+            "affection": {"min": 25},
+            "intimacy": {"min": 15}
+          },
+          "cooldown": 1200,
+          "responses": ["That's exactly what I wanted! 💕", "You know just how to make my heart race!"]
+        },
     "apology": {
       "triggers": ["ctrl+shift+click"],
       "effects": {"trust": 12, "affection": 10, "jealousy": -25, "happiness": 12},

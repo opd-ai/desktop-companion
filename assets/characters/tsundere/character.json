@@ -3,19 +3,19 @@
   "description": "A shy, initially defensive companion who slowly reveals their romantic side",
   
   "animations": {
-    "idle": "../default/animations/idle.gif",
-    "talking": "../default/animations/talking.gif",
-    "happy": "../default/animations/happy.gif",
-    "sad": "../default/animations/sad.gif",
-    "hungry": "../default/animations/hungry.gif",
-    "eating": "../default/animations/eating.gif",
-    "blushing": "../default/animations/sad.gif",
-    "heart_eyes": "../default/animations/happy.gif",
-    "shy": "../default/animations/sad.gif",
-    "flirty": "../default/animations/idle.gif",
-    "romantic_idle": "../default/animations/idle.gif",
-    "jealous": "../default/animations/sad.gif",
-    "excited_romance": "../default/animations/happy.gif"
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif",
+    "blushing": "animations/sad.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "flirty": "animations/idle.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/sad.gif",
+    "excited_romance": "animations/happy.gif"
   },
 
   "dialogs": [
@@ -157,17 +157,19 @@
       "requirements": {"trust": {"min": 15}}
     },
     "give_gift": {
-      "triggers": ["ctrl+click"],
-      "effects": {"affection": 8, "happiness": 12, "trust": 3},
-      "animations": ["heart_eyes", "blushing"],
-      "responses": [
-        "I-I don't need your gifts! ...but I'll keep it.",
-        "This is actually... really nice. Thank you... I guess.",
-        "You remembered what I like? That's... surprisingly thoughtful."
-      ],
-      "cooldown": 180,
-      "requirements": {"affection": {"min": 20}}
-    },
+          "name": "Give Gift",
+          "triggers": ["shift+click"],
+          "animation": "happy",
+          "effects": {
+            "affection": 3,
+            "trust": 2
+          },
+          "requirements": {
+            "affection": {"min": 15}
+          },
+          "cooldown": 2700,
+          "responses": ["T-thanks... I guess...", "You didn't have to... but thank you."]
+        },
     "deep_conversation": {
       "triggers": ["shift+click"],
       "effects": {"trust": 6, "affection": 4, "intimacy": 3},
