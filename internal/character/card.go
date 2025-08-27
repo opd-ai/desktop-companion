@@ -463,8 +463,11 @@ func (c *CharacterCard) validateInteractionConfig(name string, interaction Inter
 		return fmt.Errorf("must have at least one trigger")
 	}
 
-	// Validate triggers
-	validTriggers := []string{"click", "rightclick", "doubleclick", "shift+click", "hover"}
+	// Validate triggers - includes basic triggers and crisis recovery triggers
+	validTriggers := []string{
+		"click", "rightclick", "doubleclick", "shift+click", "hover",
+		"ctrl+shift+click", "alt+shift+click", "daily_interaction_bonus",
+	}
 	for _, trigger := range interaction.Triggers {
 		if !c.isValidTrigger(trigger, validTriggers) {
 			return fmt.Errorf("invalid trigger '%s', must be one of %v", trigger, validTriggers)
@@ -483,9 +486,19 @@ func (c *CharacterCard) validateInteractionConfig(name string, interaction Inter
 		return fmt.Errorf("must have 1-10 responses, got %d", len(interaction.Responses))
 	}
 
-	// Validate cooldown
-	if interaction.Cooldown < 0 || interaction.Cooldown > 3600 {
-		return fmt.Errorf("cooldown must be 0-3600 seconds, got %d", interaction.Cooldown)
+	// Validate cooldown - allow extended cooldowns for special triggers
+	maxCooldown := 3600 // Default 1 hour for most interactions
+
+	// Special triggers can have longer cooldowns
+	for _, trigger := range interaction.Triggers {
+		if trigger == "daily_interaction_bonus" {
+			maxCooldown = 86400 // Allow 24 hours for daily interactions
+			break
+		}
+	}
+
+	if interaction.Cooldown < 0 || interaction.Cooldown > maxCooldown {
+		return fmt.Errorf("cooldown must be 0-%d seconds, got %d", maxCooldown, interaction.Cooldown)
 	}
 
 	return nil
