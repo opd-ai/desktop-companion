@@ -272,7 +272,7 @@ func TestRomanceInteractionFlow(t *testing.T) {
 		},
 	}
 
-	character, err := New(card, "../../assets/characters")
+	character, err := New(card, "/workspaces/DDS/assets/characters/romance")
 	if err != nil {
 		t.Fatalf("Failed to create character: %v", err)
 	}
