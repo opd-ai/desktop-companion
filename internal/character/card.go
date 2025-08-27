@@ -459,49 +459,85 @@ func (c *CharacterCard) validateGameRules() error {
 
 // validateInteractionConfig ensures an interaction configuration is valid
 func (c *CharacterCard) validateInteractionConfig(name string, interaction InteractionConfig) error {
-	if len(interaction.Triggers) == 0 {
+	if err := c.validateInteractionTriggers(interaction.Triggers); err != nil {
+		return err
+	}
+
+	if err := c.validateInteractionAnimations(interaction.Animations); err != nil {
+		return err
+	}
+
+	if err := c.validateInteractionResponses(interaction.Responses); err != nil {
+		return err
+	}
+
+	if err := c.validateInteractionCooldown(interaction.Cooldown, interaction.Triggers); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateInteractionTriggers validates that interaction triggers are valid and non-empty
+func (c *CharacterCard) validateInteractionTriggers(triggers []string) error {
+	if len(triggers) == 0 {
 		return fmt.Errorf("must have at least one trigger")
 	}
 
-	// Validate triggers - includes basic triggers and crisis recovery triggers
 	validTriggers := []string{
 		"click", "rightclick", "doubleclick", "shift+click", "hover",
 		"ctrl+shift+click", "alt+shift+click", "daily_interaction_bonus",
 	}
-	for _, trigger := range interaction.Triggers {
+
+	for _, trigger := range triggers {
 		if !c.isValidTrigger(trigger, validTriggers) {
 			return fmt.Errorf("invalid trigger '%s', must be one of %v", trigger, validTriggers)
 		}
 	}
 
-	// Validate animations exist
-	for _, animation := range interaction.Animations {
+	return nil
+}
+
+// validateInteractionAnimations validates that all referenced animations exist in the animations map
+func (c *CharacterCard) validateInteractionAnimations(animations []string) error {
+	for _, animation := range animations {
 		if _, exists := c.Animations[animation]; !exists {
 			return fmt.Errorf("animation '%s' not found in animations map", animation)
 		}
 	}
+	return nil
+}
 
-	// Validate responses
-	if len(interaction.Responses) == 0 || len(interaction.Responses) > 10 {
-		return fmt.Errorf("must have 1-10 responses, got %d", len(interaction.Responses))
+// validateInteractionResponses validates that responses count is within acceptable limits
+func (c *CharacterCard) validateInteractionResponses(responses []string) error {
+	if len(responses) == 0 || len(responses) > 10 {
+		return fmt.Errorf("must have 1-10 responses, got %d", len(responses))
 	}
+	return nil
+}
 
-	// Validate cooldown - allow extended cooldowns for special triggers
-	maxCooldown := 3600 // Default 1 hour for most interactions
+// validateInteractionCooldown validates cooldown duration based on trigger types
+func (c *CharacterCard) validateInteractionCooldown(cooldown int, triggers []string) error {
+	maxCooldown := c.calculateMaxCooldown(triggers)
 
-	// Special triggers can have longer cooldowns
-	for _, trigger := range interaction.Triggers {
-		if trigger == "daily_interaction_bonus" {
-			maxCooldown = 86400 // Allow 24 hours for daily interactions
-			break
-		}
-	}
-
-	if interaction.Cooldown < 0 || interaction.Cooldown > maxCooldown {
-		return fmt.Errorf("cooldown must be 0-%d seconds, got %d", maxCooldown, interaction.Cooldown)
+	if cooldown < 0 || cooldown > maxCooldown {
+		return fmt.Errorf("cooldown must be 0-%d seconds, got %d", maxCooldown, cooldown)
 	}
 
 	return nil
+}
+
+// calculateMaxCooldown determines the maximum allowed cooldown based on trigger types
+func (c *CharacterCard) calculateMaxCooldown(triggers []string) int {
+	maxCooldown := 3600 // Default 1 hour for most interactions
+
+	for _, trigger := range triggers {
+		if trigger == "daily_interaction_bonus" {
+			return 86400 // Allow 24 hours for daily interactions
+		}
+	}
+
+	return maxCooldown
 }
 
 // isValidTrigger checks if a trigger is in the valid list

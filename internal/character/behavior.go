@@ -810,34 +810,63 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
+	// Validate interaction preconditions
+	interaction, ok := c.validateRomanceInteraction(interactionType)
+	if !ok {
+		return ""
+	}
+
+	// Check interaction requirements
+	if !c.checkRomanceRequirements(interaction, interactionType) {
+		return c.getFailureResponse(interactionType)
+	}
+
+	// Process the interaction effects and record stats
+	response := c.processRomanceEffects(interaction, interactionType)
+
+	// Handle post-interaction updates
+	c.handlePostRomanceInteraction(interaction, interactionType)
+
+	// Check for crisis recovery and return appropriate response
+	return c.checkCrisisRecoveryResponse(interaction, interactionType, response)
+}
+
+// validateRomanceInteraction checks if the romance interaction is valid and available
+func (c *Character) validateRomanceInteraction(interactionType string) (InteractionConfig, bool) {
 	// Check if game mode is enabled and romance features are available
 	if c.gameState == nil || !c.card.HasRomanceFeatures() {
-		return ""
+		return InteractionConfig{}, false
 	}
 
 	// Find the interaction configuration
 	interaction, exists := c.card.Interactions[interactionType]
 	if !exists {
-		return ""
+		return InteractionConfig{}, false
 	}
 
 	// Check if this is a romance interaction by examining the effects
 	// Romance interactions should affect romance-specific stats
 	if !c.isRomanceInteraction(interaction) {
-		return ""
+		return InteractionConfig{}, false
 	}
 
+	return interaction, true
+}
+
+// checkRomanceRequirements verifies cooldown and prerequisite requirements
+func (c *Character) checkRomanceRequirements(interaction InteractionConfig, interactionType string) bool {
 	// Check cooldown
 	lastUsed, exists := c.gameInteractionCooldowns[interactionType]
 	if exists && time.Since(lastUsed) < time.Duration(interaction.Cooldown)*time.Second {
-		return c.getFailureResponse(interactionType)
+		return false
 	}
 
 	// Check requirements
-	if !c.gameState.CanSatisfyRequirements(interaction.Requirements) {
-		return c.getFailureResponse(interactionType)
-	}
+	return c.gameState.CanSatisfyRequirements(interaction.Requirements)
+}
 
+// processRomanceEffects handles personality modification, effect application, and response generation
+func (c *Character) processRomanceEffects(interaction InteractionConfig, interactionType string) string {
 	// Calculate personality modifier for effects
 	personalityModifier := c.calculatePersonalityModifier(interactionType)
 
@@ -857,7 +886,23 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 	response := c.selectContextualResponse(interaction.Responses, interactionType)
 	c.recordRomanceInteraction(interactionType, response, statsBefore, statsAfter)
 
+	return response
+}
+
+// handlePostRomanceInteraction manages progression, cooldowns, and animations after interaction
+func (c *Character) handlePostRomanceInteraction(interaction InteractionConfig, interactionType string) {
 	// Check for relationship level progression
+	c.updateRelationshipProgression()
+
+	// Set cooldown and update interaction time
+	c.updateInteractionCooldown(interactionType)
+
+	// Set appropriate animation
+	c.setRomanceAnimation(interaction)
+}
+
+// updateRelationshipProgression checks and handles relationship level changes
+func (c *Character) updateRelationshipProgression() {
 	if c.card.Progression != nil {
 		levelChanged := c.gameState.UpdateRelationshipLevel(c.card.Progression)
 		if levelChanged {
@@ -869,19 +914,28 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 			_ = newLevel // Use for potential level-up dialogue
 		}
 	}
+}
 
+// updateInteractionCooldown sets cooldown and updates last interaction time
+func (c *Character) updateInteractionCooldown(interactionType string) {
 	// Set cooldown
 	c.gameInteractionCooldowns[interactionType] = time.Now()
 
 	// Update last interaction time
 	c.lastInteraction = time.Now()
+}
 
+// setRomanceAnimation selects and sets animation based on interaction configuration
+func (c *Character) setRomanceAnimation(interaction InteractionConfig) {
 	// Select animation based on personality and context
 	if len(interaction.Animations) > 0 {
 		animationIndex := c.selectRomanceAnimation(interaction.Animations)
 		c.setState(interaction.Animations[animationIndex])
 	}
+}
 
+// checkCrisisRecoveryResponse handles crisis recovery and returns the final response
+func (c *Character) checkCrisisRecoveryResponse(interaction InteractionConfig, interactionType, defaultResponse string) string {
 	// Check for crisis recovery (Phase 3 Task 3)
 	if c.crisisRecoveryManager != nil {
 		recoveryEvent := c.crisisRecoveryManager.CheckRecovery(c.gameState, interactionType)
@@ -900,7 +954,7 @@ func (c *Character) HandleRomanceInteraction(interactionType string) string {
 		return c.selectContextualResponse(interaction.Responses, interactionType)
 	}
 
-	return ""
+	return defaultResponse
 }
 
 // isRomanceInteraction determines if an interaction is romance-related by checking its effects
