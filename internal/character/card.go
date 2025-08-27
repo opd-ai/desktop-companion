@@ -139,6 +139,23 @@ func LoadCard(path string) (*CharacterCard, error) {
 // Implements comprehensive validation to prevent runtime errors
 // Validate ensures the character card has valid configuration
 func (c *CharacterCard) Validate() error {
+	if err := c.validateCoreElements(); err != nil {
+		return err
+	}
+
+	if err := c.validateGameSystems(); err != nil {
+		return err
+	}
+
+	if err := c.validateRomanceSystems(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateCoreElements validates basic character configuration and assets
+func (c *CharacterCard) validateCoreElements() error {
 	if err := c.validateBasicFields(); err != nil {
 		return err
 	}
@@ -155,6 +172,11 @@ func (c *CharacterCard) Validate() error {
 		return fmt.Errorf("behavior: %w", err)
 	}
 
+	return nil
+}
+
+// validateGameSystems validates game mechanics and progression systems
+func (c *CharacterCard) validateGameSystems() error {
 	if err := c.validateGameFeatures(); err != nil {
 		return fmt.Errorf("game features: %w", err)
 	}
@@ -167,6 +189,11 @@ func (c *CharacterCard) Validate() error {
 		return fmt.Errorf("random events: %w", err)
 	}
 
+	return nil
+}
+
+// validateRomanceSystems validates romance features and dialog backend
+func (c *CharacterCard) validateRomanceSystems() error {
 	if err := c.validateRomanceFeatures(); err != nil {
 		return fmt.Errorf("romance features: %w", err)
 	}
