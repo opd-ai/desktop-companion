@@ -529,61 +529,78 @@ func (m *MarkovChainBackend) validateResponse(text string, context DialogContext
 // validateQualityFilters applies advanced quality validation
 func (m *MarkovChainBackend) validateQualityFilters(text string, context DialogContext) bool {
 	// Skip if no quality filters configured
-	if m.config.QualityFilters.MinCoherence == 0 && m.config.QualityFilters.MaxRepetition == 0 &&
-		!m.config.QualityFilters.RequireComplete && !m.config.QualityFilters.GrammarCheck &&
-		m.config.QualityFilters.MinUniqueWords == 0 && m.config.QualityFilters.MaxSimilarity == 0 {
+	if m.hasNoActiveFilters() {
 		return true
 	}
 
 	words := strings.Fields(text)
 
-	// Enhanced coherence check
-	if m.config.QualityFilters.MinCoherence > 0 {
-		coherence := m.calculateAdvancedCoherence(text)
-		if coherence < m.config.QualityFilters.MinCoherence {
-			return false
-		}
-	}
+	// Run all validation checks in sequence
+	return m.validateCoherence(text) &&
+		m.validateRepetition(words) &&
+		m.validateCompleteness(text) &&
+		m.validateGrammar(text) &&
+		m.validateUniqueWords(words) &&
+		m.validateSimilarity(text, context)
+}
 
-	// Word repetition check
-	if m.config.QualityFilters.MaxRepetition > 0 {
-		repetition := m.calculateWordRepetition(words)
-		if repetition > m.config.QualityFilters.MaxRepetition {
-			return false
-		}
-	}
+// hasNoActiveFilters checks if any quality filters are enabled
+func (m *MarkovChainBackend) hasNoActiveFilters() bool {
+	return m.config.QualityFilters.MinCoherence == 0 && m.config.QualityFilters.MaxRepetition == 0 &&
+		!m.config.QualityFilters.RequireComplete && !m.config.QualityFilters.GrammarCheck &&
+		m.config.QualityFilters.MinUniqueWords == 0 && m.config.QualityFilters.MaxSimilarity == 0
+}
 
-	// Complete sentence check
-	if m.config.QualityFilters.RequireComplete {
-		if !m.isCompleteSentence(text) {
-			return false
-		}
+// validateCoherence checks if text meets coherence requirements
+func (m *MarkovChainBackend) validateCoherence(text string) bool {
+	if m.config.QualityFilters.MinCoherence == 0 {
+		return true
 	}
+	coherence := m.calculateAdvancedCoherence(text)
+	return coherence >= m.config.QualityFilters.MinCoherence
+}
 
-	// Basic grammar check
-	if m.config.QualityFilters.GrammarCheck {
-		if !m.passesBasicGrammarCheck(text) {
-			return false
-		}
+// validateRepetition checks if text meets repetition limits
+func (m *MarkovChainBackend) validateRepetition(words []string) bool {
+	if m.config.QualityFilters.MaxRepetition == 0 {
+		return true
 	}
+	repetition := m.calculateWordRepetition(words)
+	return repetition <= m.config.QualityFilters.MaxRepetition
+}
 
-	// Unique words check
-	if m.config.QualityFilters.MinUniqueWords > 0 {
-		uniqueWords := m.countUniqueWords(words)
-		if uniqueWords < m.config.QualityFilters.MinUniqueWords {
-			return false
-		}
+// validateCompleteness checks if text forms complete sentences when required
+func (m *MarkovChainBackend) validateCompleteness(text string) bool {
+	if !m.config.QualityFilters.RequireComplete {
+		return true
 	}
+	return m.isCompleteSentence(text)
+}
 
-	// Similarity check against recent responses
-	if m.config.QualityFilters.MaxSimilarity > 0 {
-		similarity := m.calculateSimilarityToRecent(text, context)
-		if similarity > m.config.QualityFilters.MaxSimilarity {
-			return false
-		}
+// validateGrammar checks if text passes basic grammar rules when enabled
+func (m *MarkovChainBackend) validateGrammar(text string) bool {
+	if !m.config.QualityFilters.GrammarCheck {
+		return true
 	}
+	return m.passesBasicGrammarCheck(text)
+}
 
-	return true
+// validateUniqueWords checks if text meets minimum unique word requirements
+func (m *MarkovChainBackend) validateUniqueWords(words []string) bool {
+	if m.config.QualityFilters.MinUniqueWords == 0 {
+		return true
+	}
+	uniqueWords := m.countUniqueWords(words)
+	return uniqueWords >= m.config.QualityFilters.MinUniqueWords
+}
+
+// validateSimilarity checks if text meets similarity thresholds against recent responses
+func (m *MarkovChainBackend) validateSimilarity(text string, context DialogContext) bool {
+	if m.config.QualityFilters.MaxSimilarity == 0 {
+		return true
+	}
+	similarity := m.calculateSimilarityToRecent(text, context)
+	return similarity <= m.config.QualityFilters.MaxSimilarity
 }
 
 // calculateAdvancedCoherence provides enhanced coherence analysis
