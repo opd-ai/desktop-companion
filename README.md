@@ -366,6 +366,12 @@ Character cards can include comprehensive Tamagotchi-style game features:
 
 For complete game features documentation, see `GAME_FEATURES_PHASE1.md` and `PHASE2_IMPLEMENTATION_COMPLETE.md`.
 
+**📚 Documentation Suite:**
+- **`SCHEMA_DOCUMENTATION.md`**: Complete JSON schema reference with all properties and validation rules
+- **`CHARACTER_CREATION_TUTORIAL.md`**: Step-by-step guide to creating custom characters
+- **`ROMANCE_SCENARIOS.md`**: Example romance progression scenarios and strategies  
+- **`CHARACTER_ARCHETYPES.md`**: Detailed comparison of the three romance archetypes
+
 ### Creating Custom Characters
 
 1. **Create character directory**:
@@ -469,6 +475,10 @@ desktop-companion/
 ├── PERFORMANCE_MONITORING.md      # Performance metrics and monitoring
 ├── GAME_FEATURES_PHASE1.md        # Game features documentation
 ├── PHASE2_IMPLEMENTATION_COMPLETE.md # Implementation status
+├── CHARACTER_ARCHETYPES.md        # Romance archetype comparison guide
+├── SCHEMA_DOCUMENTATION.md        # Complete JSON schema reference
+├── CHARACTER_CREATION_TUTORIAL.md # Step-by-step character creation guide
+├── ROMANCE_SCENARIOS.md           # Example romance progression scenarios
 ├── AUDIT.md                       # Code quality and functional audit
 └── LICENSES.md                    # License information
 ```
