@@ -186,51 +186,76 @@ func (dw *DesktopWindow) showDialog(text string) {
 // animationLoop runs the character animation update loop
 // Uses adaptive frame rate based on animation needs to optimize performance
 func (dw *DesktopWindow) animationLoop() {
-	maxFPS := time.Second / 60  // 60 FPS when actively animating
-	idleFPS := time.Second / 10 // 10 FPS when idle/no changes
-	currentInterval := maxFPS   // Start with high frame rate
-
+	maxFPS, idleFPS, currentInterval := dw.initializeFrameRates()
 	ticker := time.NewTicker(currentInterval)
 	defer ticker.Stop()
 
 	consecutiveNoChanges := 0
 
 	for range ticker.C {
-		// Update character behavior and animations
 		hasChanges := dw.character.Update()
+		currentInterval, consecutiveNoChanges = dw.handleFrameRateAdaptation(
+			hasChanges, consecutiveNoChanges, currentInterval, maxFPS, idleFPS, ticker)
+		dw.processFrameUpdates(hasChanges)
+	}
+}
 
-		// Track consecutive frames without changes for adaptive frame rate
-		if hasChanges {
-			consecutiveNoChanges = 0
-			// Switch to high frame rate when animating
-			if currentInterval != maxFPS {
-				currentInterval = maxFPS
-				ticker.Reset(currentInterval)
-				if dw.debug {
-					log.Printf("Animation active: switching to %v FPS", time.Second/currentInterval)
-				}
-			}
-		} else {
-			consecutiveNoChanges++
-			// After 30 frames (0.5 seconds) with no changes, reduce frame rate
-			if consecutiveNoChanges >= 30 && currentInterval != idleFPS {
-				currentInterval = idleFPS
-				ticker.Reset(currentInterval)
-				if dw.debug {
-					log.Printf("Animation idle: switching to %v FPS for power saving", time.Second/currentInterval)
-				}
-			}
-		}
+// initializeFrameRates sets up the frame rate configuration for the animation loop
+func (dw *DesktopWindow) initializeFrameRates() (maxFPS, idleFPS, currentInterval time.Duration) {
+	maxFPS = time.Second / 60  // 60 FPS when actively animating
+	idleFPS = time.Second / 10 // 10 FPS when idle/no changes
+	currentInterval = maxFPS   // Start with high frame rate
+	return maxFPS, idleFPS, currentInterval
+}
 
-		// Record frame for performance monitoring
-		if dw.profiler != nil {
-			dw.profiler.RecordFrame()
-		}
+// handleFrameRateAdaptation manages adaptive frame rate switching based on animation state
+func (dw *DesktopWindow) handleFrameRateAdaptation(hasChanges bool, consecutiveNoChanges int,
+	currentInterval, maxFPS, idleFPS time.Duration, ticker *time.Ticker) (time.Duration, int) {
 
-		// Only refresh renderer when there are actual changes
-		if hasChanges {
-			dw.renderer.Refresh()
+	if hasChanges {
+		return dw.handleActiveAnimation(currentInterval, maxFPS, ticker), 0
+	}
+	return dw.handleIdleAnimation(consecutiveNoChanges, currentInterval, idleFPS, ticker)
+}
+
+// handleActiveAnimation switches to high frame rate when character is actively animating
+func (dw *DesktopWindow) handleActiveAnimation(currentInterval, maxFPS time.Duration, ticker *time.Ticker) time.Duration {
+	if currentInterval != maxFPS {
+		ticker.Reset(maxFPS)
+		if dw.debug {
+			log.Printf("Animation active: switching to %v FPS", time.Second/maxFPS)
 		}
+		return maxFPS
+	}
+	return currentInterval
+}
+
+// handleIdleAnimation switches to low frame rate after consecutive frames without changes
+func (dw *DesktopWindow) handleIdleAnimation(consecutiveNoChanges int, currentInterval, idleFPS time.Duration,
+	ticker *time.Ticker) (time.Duration, int) {
+
+	consecutiveNoChanges++
+	// After 30 frames (0.5 seconds) with no changes, reduce frame rate
+	if consecutiveNoChanges >= 30 && currentInterval != idleFPS {
+		ticker.Reset(idleFPS)
+		if dw.debug {
+			log.Printf("Animation idle: switching to %v FPS for power saving", time.Second/idleFPS)
+		}
+		return idleFPS, consecutiveNoChanges
+	}
+	return currentInterval, consecutiveNoChanges
+}
+
+// processFrameUpdates handles performance monitoring and rendering updates
+func (dw *DesktopWindow) processFrameUpdates(hasChanges bool) {
+	// Record frame for performance monitoring
+	if dw.profiler != nil {
+		dw.profiler.RecordFrame()
+	}
+
+	// Only refresh renderer when there are actual changes
+	if hasChanges {
+		dw.renderer.Refresh()
 	}
 }
 
