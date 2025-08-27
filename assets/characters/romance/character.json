@@ -301,6 +301,96 @@
       ],
       "cooldown": 900,
       "conditions": {"affection": {"min": 40}, "intimacy": {"min": 15}}
+    },
+    {
+      "name": "Sweet Memory Flashback",
+      "description": "Character remembers recent positive interactions",
+      "probability": 0.12,
+      "effects": {"affection": 4, "trust": 2, "happiness": 6},
+      "animations": ["blushing", "excited_romance"],
+      "responses": [
+        "Those sweet moments we shared recently... 💕",
+        "I keep thinking about how nice you've been to me!",
+        "Every interaction with you makes me happier!",
+        "I cherish all our memories together... 💖"
+      ],
+      "cooldown": 600,
+      "conditions": {
+        "affection": {"min": 30},
+        "memoryCount": {"recent_positive_min": 2}
+      }
+    },
+    {
+      "name": "Relationship Milestone Reflection",
+      "description": "Character reflects on relationship progress",
+      "probability": 0.06,
+      "effects": {"trust": 5, "intimacy": 3, "happiness": 8},
+      "animations": ["romantic_idle", "heart_eyes"],
+      "responses": [
+        "I can't believe how close we've become... 💓",
+        "Our relationship has grown so beautifully!",
+        "I feel so connected to you now...",
+        "This is what true partnership feels like! 💖"
+      ],
+      "cooldown": 1200,
+      "conditions": {
+        "relationshipLevel": {"min": 2},
+        "interactionCount": {"total_min": 10}
+      }
+    },
+    {
+      "name": "Frequent Compliment Appreciation",
+      "description": "Character appreciates being complimented regularly",
+      "probability": 0.15,
+      "effects": {"affection": 6, "trust": 3, "happiness": 4},
+      "animations": ["shy", "blushing"],
+      "responses": [
+        "You always know just what to say to make me smile! 😊",
+        "I love how you make me feel so special...",
+        "Your compliments mean the world to me! 💕",
+        "You have such a way with words! 💖"
+      ],
+      "cooldown": 480,
+      "conditions": {
+        "affection": {"min": 25},
+        "interactionCount": {"compliment_min": 5}
+      }
+    },
+    {
+      "name": "Gift Memory Warmth",
+      "description": "Character feels warm thinking about gifts received",
+      "probability": 0.10,
+      "effects": {"affection": 7, "happiness": 9, "intimacy": 2},
+      "animations": ["heart_eyes", "happy"],
+      "responses": [
+        "I still get butterflies thinking about the gifts you've given me! 🎁",
+        "You're so thoughtful... I treasure everything from you! 💝",
+        "Every gift reminds me how much you care! 💖",
+        "I feel so spoiled by your generosity! 💕"
+      ],
+      "cooldown": 720,
+      "conditions": {
+        "affection": {"min": 35},
+        "interactionCount": {"give_gift_min": 3}
+      }
+    },
+    {
+      "name": "Trust Building Reflection",
+      "description": "Character feels secure in the growing trust",
+      "probability": 0.07,
+      "effects": {"trust": 8, "affection": 3, "happiness": 5},
+      "animations": ["romantic_idle", "happy"],
+      "responses": [
+        "I feel so safe and secure with you... 🤗",
+        "You've shown me what real trust feels like!",
+        "I can be completely myself around you! 💓",
+        "Thank you for being so patient and understanding..."
+      ],
+      "cooldown": 900,
+      "conditions": {
+        "trust": {"min": 40},
+        "memoryCount": {"total_min": 8}
+      }
     }
   ]
 }
