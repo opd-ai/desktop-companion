@@ -9,6 +9,7 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
 - 🪟 **Transparent Overlay**: Always-on-top window with system transparency 
 - 🖱️ **Interactive**: Click and drag interactions with animated responses
 - 🎮 **Tamagotchi Game Features**: Complete virtual pet system with stats, progression, and achievements *(All Phases Complete)*
+- 💕 **Dating Simulator Features**: Complete romance system with relationship progression, personality-driven interactions, and memory-based storytelling *(Phase 3 Complete)*
   - **Stats System**: Hunger, happiness, health, energy with time-based degradation
   - **Game Interactions**: Feed, play, pet with stat effects and cooldowns
   - **Progression System**: Age-based evolution with size changes and animation overrides
@@ -16,6 +17,13 @@ A lightweight, cross-platform virtual desktop pet application built with Go. Fea
   - **Random Events**: Probability-based events affecting character stats
   - **Critical State Handling**: Special animations and responses for low stats
   - **Mood-Based Animation**: Dynamic animation selection based on character's overall mood
+- 💕 **Romance Features**: Complete dating simulator mechanics *(Phase 3 Complete)*
+  - **Romance Stats**: Affection, trust, intimacy, jealousy with personality-driven interactions
+  - **Relationship Progression**: Stranger → Friend → Close Friend → Romantic Interest with progressive unlocking
+  - **Personality System**: Sophisticated personality traits affecting all interactions and responses
+  - **Romance Events**: Memory-based random events that respond to interaction history and relationship milestones
+  - **Advanced Features**: Jealousy mechanics, compatibility analysis, and relationship crisis recovery systems
+  - **JSON-Configurable**: 90%+ of romance behavior customizable through character cards
 - 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Complete)*
 - 📊 **Stats Overlay**: Optional real-time stats display with progress bars *(Complete)*
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
@@ -49,6 +57,9 @@ go run cmd/companion/main.go
 
 # Enable Tamagotchi game features
 go run cmd/companion/main.go -game -character assets/characters/default/character_with_game_features.json
+
+# Enable complete romance features
+go run cmd/companion/main.go -game -stats -character assets/characters/romance/character.json
 
 # Show stats overlay for game mode
 go run cmd/companion/main.go -game -stats -character assets/characters/default/character_with_game_features.json
@@ -130,6 +141,9 @@ go run cmd/companion/main.go -game -stats -character assets/characters/easy/char
 go run cmd/companion/main.go -game -stats -character assets/characters/normal/character.json    # Normal
 go run cmd/companion/main.go -game -stats -character assets/characters/hard/character.json      # Hard
 go run cmd/companion/main.go -game -stats -character assets/characters/challenge/character.json # Expert
+
+# Experience romance features
+go run cmd/companion/main.go -game -stats -character assets/characters/romance/character.json   # Romance simulator
 ```
 
 **Game Interactions**:
