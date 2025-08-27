@@ -72,6 +72,12 @@ func (sm *SaveManager) EnableAutoSave(interval time.Duration, gameStateProvider 
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 
+	sm.prepareAutoSaveState(interval)
+	sm.startAutoSaveGoroutine(gameStateProvider)
+}
+
+// prepareAutoSaveState configures the auto-save state and ticker
+func (sm *SaveManager) prepareAutoSaveState(interval time.Duration) {
 	if sm.autoSave {
 		sm.disableAutoSaveUnsafe() // Stop existing auto-save
 	}
@@ -79,32 +85,45 @@ func (sm *SaveManager) EnableAutoSave(interval time.Duration, gameStateProvider 
 	sm.autoSave = true
 	sm.interval = interval
 	sm.autoSaveTicker = time.NewTicker(interval)
+}
 
-	// Start auto-save goroutine
+// startAutoSaveGoroutine launches the background auto-save process
+func (sm *SaveManager) startAutoSaveGoroutine(gameStateProvider func() *GameSaveData) {
 	go func() {
-		defer func() {
-			// Recover from any panics in the goroutine
-			if r := recover(); r != nil {
-				// Silently handle panics to prevent crashing the application
-				// In production, this would be logged
-			}
-		}()
-
-		for {
-			select {
-			case <-sm.autoSaveTicker.C:
-				if gameData := gameStateProvider(); gameData != nil {
-					if err := sm.SaveGameState(gameData.CharacterName, gameData); err != nil {
-						// Log error but don't crash the application
-						// In a production app, this might go to a logger
-						_ = err
-					}
-				}
-			case <-sm.stopChan:
-				return
-			}
-		}
+		defer sm.recoverFromPanic()
+		sm.runAutoSaveLoop(gameStateProvider)
 	}()
+}
+
+// runAutoSaveLoop executes the main auto-save loop with ticker and stop channel
+func (sm *SaveManager) runAutoSaveLoop(gameStateProvider func() *GameSaveData) {
+	for {
+		select {
+		case <-sm.autoSaveTicker.C:
+			sm.performAutoSave(gameStateProvider)
+		case <-sm.stopChan:
+			return
+		}
+	}
+}
+
+// performAutoSave executes a single auto-save operation if game data is available
+func (sm *SaveManager) performAutoSave(gameStateProvider func() *GameSaveData) {
+	if gameData := gameStateProvider(); gameData != nil {
+		if err := sm.SaveGameState(gameData.CharacterName, gameData); err != nil {
+			// Log error but don't crash the application
+			// In a production app, this might go to a logger
+			_ = err
+		}
+	}
+}
+
+// recoverFromPanic handles any panics in the auto-save goroutine
+func (sm *SaveManager) recoverFromPanic() {
+	if r := recover(); r != nil {
+		// Silently handle panics to prevent crashing the application
+		// In production, this would be logged
+	}
 }
 
 // DisableAutoSave stops the automatic saving goroutine
