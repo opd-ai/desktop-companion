@@ -707,12 +707,34 @@ func (c *CharacterCard) validateEventStatReferences(event RandomEventConfig) err
 	}
 
 	for statName := range event.Conditions {
+		// Allow special romance condition types
+		if c.isSpecialRomanceCondition(statName) {
+			continue
+		}
+
 		if _, exists := c.Stats[statName]; !exists {
 			return fmt.Errorf("event conditions reference stat '%s' which is not defined", statName)
 		}
 	}
 
 	return nil
+}
+
+// isSpecialRomanceCondition checks if a condition name is a special romance condition type
+func (c *CharacterCard) isSpecialRomanceCondition(conditionName string) bool {
+	specialConditions := []string{
+		"relationshipLevel",
+		"interactionCount",
+		"memoryCount",
+	}
+
+	for _, special := range specialConditions {
+		if conditionName == special {
+			return true
+		}
+	}
+
+	return false
 }
 
 // Romance feature validation methods (Dating Simulator Phase 1)
