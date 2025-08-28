@@ -82,20 +82,51 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 	}
 
 	// Load all animations from the character card
+	// Use resilient loading - log failures but continue with valid animations
+	var loadedAnimations []string
+	var failedAnimations []string
+
 	for name := range card.Animations {
 		fullPath, err := card.GetAnimationPath(basePath, name)
 		if err != nil {
-			return nil, fmt.Errorf("failed to resolve animation path for '%s': %w", name, err)
+			failedAnimations = append(failedAnimations, name)
+			fmt.Printf("Warning: failed to resolve animation path for '%s': %v\n", name, err)
+			continue
 		}
 
 		if err := char.animationManager.LoadAnimation(name, fullPath); err != nil {
-			return nil, fmt.Errorf("failed to load animation '%s': %w", name, err)
+			failedAnimations = append(failedAnimations, name)
+			fmt.Printf("Warning: failed to load animation '%s': %v\n", name, err)
+			continue
 		}
+
+		loadedAnimations = append(loadedAnimations, name)
 	}
 
-	// Set initial animation to idle
-	if err := char.animationManager.SetCurrentAnimation("idle"); err != nil {
-		return nil, fmt.Errorf("failed to set initial animation: %w", err)
+	// Only fail if no animations could be loaded at all
+	if len(loadedAnimations) == 0 && len(card.Animations) > 0 {
+		return nil, fmt.Errorf("failed to load any animations (attempted %d, all failed)", len(card.Animations))
+	}
+
+	// Report success with any partial failures
+	if len(failedAnimations) > 0 {
+		fmt.Printf("Character loaded with %d/%d animations (failed: %v)\n",
+			len(loadedAnimations), len(card.Animations), failedAnimations)
+	}
+
+	// Set initial animation - prefer "idle" but fall back to any loaded animation
+	if len(loadedAnimations) > 0 {
+		// Try to set "idle" first
+		if err := char.animationManager.SetCurrentAnimation("idle"); err != nil {
+			// If idle failed, try the first available animation
+			if err := char.animationManager.SetCurrentAnimation(loadedAnimations[0]); err != nil {
+				return nil, fmt.Errorf("failed to set any initial animation: %w", err)
+			}
+			fmt.Printf("Warning: 'idle' animation not available, using '%s' instead\n", loadedAnimations[0])
+		}
+	} else {
+		// No animations loaded - character can still function but will be static
+		fmt.Println("Warning: No animations loaded - character will be static")
 	}
 
 	return char, nil

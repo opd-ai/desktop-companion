@@ -32,3 +32,4 @@ go.work.sum
 # .vscode/
 /build
 /companion
+/main
