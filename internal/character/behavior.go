@@ -1,6 +1,7 @@
 package character
 
 import (
+	"desktop-companion/internal/dialog"
 	"fmt"
 	"image"
 	"strings"
@@ -44,9 +45,9 @@ type Character struct {
 	crisisRecoveryManager *CrisisRecoveryManager // Relationship crisis and recovery systems
 
 	// Dialog backend integration (Phase 1)
-	dialogManager      *DialogManager // Advanced dialog system manager
-	useAdvancedDialogs bool           // Whether to use advanced dialog system
-	debug              bool           // Debug logging for dialog system
+	dialogManager      *dialog.DialogManager // Advanced dialog system manager
+	useAdvancedDialogs bool                  // Whether to use advanced dialog system
+	debug              bool                  // Debug logging for dialog system
 }
 
 // New creates a new character instance from a character card
@@ -260,12 +261,12 @@ func (c *Character) initializeDialogSystem() error {
 	c.debug = c.card.DialogBackend.DebugMode
 
 	// Create dialog manager
-	c.dialogManager = NewDialogManager(c.debug)
+	c.dialogManager = dialog.NewDialogManager(c.debug)
 	c.useAdvancedDialogs = true
 
 	// Register available backends
-	c.dialogManager.RegisterBackend("simple_random", NewSimpleRandomBackend())
-	c.dialogManager.RegisterBackend("markov_chain", NewMarkovChainBackend())
+	c.dialogManager.RegisterBackend("simple_random", dialog.NewSimpleRandomBackend())
+	c.dialogManager.RegisterBackend("markov_chain", dialog.NewMarkovChainBackend())
 
 	// Set default backend
 	if err := c.dialogManager.SetDefaultBackend(c.card.DialogBackend.DefaultBackend); err != nil {
@@ -1671,8 +1672,8 @@ func (c *Character) CanUseGameInteraction(interactionType string) bool {
 }
 
 // buildDialogContext creates a comprehensive context for dialog generation
-func (c *Character) buildDialogContext(trigger string) DialogContext {
-	context := DialogContext{
+func (c *Character) buildDialogContext(trigger string) dialog.DialogContext {
+	context := dialog.DialogContext{
 		Trigger:       trigger,
 		InteractionID: fmt.Sprintf("%s_%d", trigger, time.Now().UnixNano()),
 		Timestamp:     time.Now(),
@@ -1708,10 +1709,10 @@ func (c *Character) buildDialogContext(trigger string) DialogContext {
 }
 
 // buildInteractionHistory builds a recent interaction history for context
-func (c *Character) buildInteractionHistory() []InteractionRecord {
+func (c *Character) buildInteractionHistory() []dialog.InteractionRecord {
 	// For now, return empty history - future enhancement could track interactions
 	// This would integrate with the existing game state memory system
-	return []InteractionRecord{}
+	return []dialog.InteractionRecord{}
 }
 
 // getTimeOfDay returns a simple time of day categorization
@@ -1782,7 +1783,7 @@ func (c *Character) getFallbackAnimation(trigger string) string {
 }
 
 // updateDialogMemory records dialog interactions for learning and adaptation
-func (c *Character) updateDialogMemory(response DialogResponse, context DialogContext) {
+func (c *Character) updateDialogMemory(response dialog.DialogResponse, context dialog.DialogContext) {
 	if c.gameState == nil {
 		return
 	}

@@ -1,6 +1,7 @@
 package character
 
 import (
+	"desktop-companion/internal/dialog"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -20,15 +21,15 @@ type RomanceMemory struct {
 
 // DialogMemory represents a memory of a dialog interaction for learning and adaptation
 type DialogMemory struct {
-	Timestamp        time.Time     `json:"timestamp"`
-	Trigger          string        `json:"trigger"`
-	Response         string        `json:"response"`
-	EmotionalTone    string        `json:"emotionalTone"`
-	Topics           []string      `json:"topics"`
-	MemoryImportance float64       `json:"memoryImportance"`
-	BackendUsed      string        `json:"backendUsed"`
-	Confidence       float64       `json:"confidence"`
-	UserFeedback     *UserFeedback `json:"userFeedback,omitempty"`
+	Timestamp        time.Time            `json:"timestamp"`
+	Trigger          string               `json:"trigger"`
+	Response         string               `json:"response"`
+	EmotionalTone    string               `json:"emotionalTone"`
+	Topics           []string             `json:"topics"`
+	MemoryImportance float64              `json:"memoryImportance"`
+	BackendUsed      string               `json:"backendUsed"`
+	Confidence       float64              `json:"confidence"`
+	UserFeedback     *dialog.UserFeedback `json:"userFeedback,omitempty"`
 }
 
 // GameState manages Tamagotchi-style stats and progression for a character

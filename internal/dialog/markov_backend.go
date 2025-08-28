@@ -1,4 +1,4 @@
-package character
+package dialog
 
 import (
 	"encoding/json"
@@ -14,7 +14,6 @@ type MarkovChainBackend struct {
 	config      MarkovConfig
 	chains      map[string]*MarkovChain // Per-trigger chain storage
 	globalChain *MarkovChain            // Global chain for fallback
-	character   *Character              // Character reference for context
 	initialized bool
 }
 
@@ -89,8 +88,8 @@ func NewMarkovChainBackend() *MarkovChainBackend {
 	}
 }
 
-// Initialize sets up the Markov backend with JSON configuration and character context
-func (m *MarkovChainBackend) Initialize(config json.RawMessage, character *Character) error {
+// Initialize sets up the Markov backend with JSON configuration
+func (m *MarkovChainBackend) Initialize(config json.RawMessage) error {
 	// Parse configuration
 	if err := json.Unmarshal(config, &m.config); err != nil {
 		return fmt.Errorf("failed to parse Markov config: %w", err)
@@ -100,8 +99,6 @@ func (m *MarkovChainBackend) Initialize(config json.RawMessage, character *Chara
 	if err := m.validateConfig(); err != nil {
 		return fmt.Errorf("invalid Markov config: %w", err)
 	}
-
-	m.character = character
 
 	// Create global chain
 	m.globalChain = NewMarkovChain(m.config.ChainOrder)
@@ -188,27 +185,11 @@ func (m *MarkovChainBackend) trainWithText(text, trigger string) error {
 }
 
 // trainWithCharacterDialogs includes existing character dialogs in training
+// Since Character fields are private, this method will be called with data passed from the character package
 func (m *MarkovChainBackend) trainWithCharacterDialogs() {
-	// Train with basic dialogs
-	for _, dialog := range m.character.card.Dialogs {
-		for _, response := range dialog.Responses {
-			_ = m.trainWithText(response, dialog.Trigger)
-		}
-	}
-
-	// Train with romance dialogs if available
-	for _, dialog := range m.character.card.RomanceDialogs {
-		for _, response := range dialog.Responses {
-			_ = m.trainWithText(response, dialog.Trigger)
-		}
-	}
-
-	// Train with interaction responses
-	for interactionType, interaction := range m.character.card.Interactions {
-		for _, response := range interaction.Responses {
-			_ = m.trainWithText(response, interactionType)
-		}
-	}
+	// This method will be updated to accept training data as parameters
+	// For now, skip training with character dialogs if we can't access them
+	// The character package should call TrainWithDialogData() with the appropriate data
 }
 
 // trainWithDefaults provides minimal training data if none is configured

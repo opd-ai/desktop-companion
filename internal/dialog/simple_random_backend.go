@@ -1,4 +1,4 @@
-package character
+package dialog
 
 import (
 	"encoding/json"
@@ -6,13 +6,15 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"desktop-companion/internal/character"
 )
 
 // SimpleRandomBackend implements DialogBackend using existing dialog selection logic
 // Provides 1:1 compatibility with the existing system while adding dialog interface compliance
 type SimpleRandomBackend struct {
 	config    SimpleRandomConfig
-	character *Character
+	character *character.Character
 }
 
 // SimpleRandomConfig defines JSON configuration for the simple random backend

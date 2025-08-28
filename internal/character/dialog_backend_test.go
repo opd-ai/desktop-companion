@@ -1,6 +1,7 @@
 package character
 
 import (
+	"desktop-companion/internal/dialog"
 	"encoding/json"
 	"testing"
 )
@@ -30,7 +31,7 @@ func TestDialogBackendValidation(t *testing.T) {
 				Animations:  map[string]string{"idle": "idle.gif", "talking": "talking.gif"},
 				Dialogs:     []Dialog{{Trigger: "click", Responses: []string{"Hi!"}, Animation: "idle"}},
 				Behavior:    Behavior{IdleTimeout: 10, DefaultSize: 128},
-				DialogBackend: &DialogBackendConfig{
+				DialogBackend: &dialog.DialogBackendConfig{
 					Enabled:             true,
 					DefaultBackend:      "simple_random",
 					ConfidenceThreshold: 0.5,
@@ -49,7 +50,7 @@ func TestDialogBackendValidation(t *testing.T) {
 				Animations:  map[string]string{"idle": "idle.gif", "talking": "talking.gif"},
 				Dialogs:     []Dialog{{Trigger: "click", Responses: []string{"Hi!"}, Animation: "idle"}},
 				Behavior:    Behavior{IdleTimeout: 10, DefaultSize: 128},
-				DialogBackend: &DialogBackendConfig{
+				DialogBackend: &dialog.DialogBackendConfig{
 					Enabled:             true,
 					ConfidenceThreshold: 0.5,
 					// Missing DefaultBackend
@@ -65,7 +66,7 @@ func TestDialogBackendValidation(t *testing.T) {
 				Animations:  map[string]string{"idle": "idle.gif", "talking": "talking.gif"},
 				Dialogs:     []Dialog{{Trigger: "click", Responses: []string{"Hi!"}, Animation: "idle"}},
 				Behavior:    Behavior{IdleTimeout: 10, DefaultSize: 128},
-				DialogBackend: &DialogBackendConfig{
+				DialogBackend: &dialog.DialogBackendConfig{
 					Enabled:             true,
 					DefaultBackend:      "simple_random",
 					ConfidenceThreshold: 1.5, // Invalid: > 1.0
@@ -99,7 +100,7 @@ func TestHasDialogBackend(t *testing.T) {
 		{
 			name: "dialog backend disabled",
 			card: CharacterCard{
-				DialogBackend: &DialogBackendConfig{
+				DialogBackend: &dialog.DialogBackendConfig{
 					Enabled: false,
 				},
 			},
@@ -108,7 +109,7 @@ func TestHasDialogBackend(t *testing.T) {
 		{
 			name: "dialog backend enabled",
 			card: CharacterCard{
-				DialogBackend: &DialogBackendConfig{
+				DialogBackend: &dialog.DialogBackendConfig{
 					Enabled: true,
 				},
 			},
@@ -127,7 +128,7 @@ func TestHasDialogBackend(t *testing.T) {
 }
 
 func TestSimpleRandomBackend(t *testing.T) {
-	backend := NewSimpleRandomBackend()
+	backend := dialog.NewSimpleRandomBackend()
 
 	// Test configuration parsing
 	config := json.RawMessage(`{
@@ -148,7 +149,7 @@ func TestSimpleRandomBackend(t *testing.T) {
 	}
 
 	// Test CanHandle (should always return true for simple random)
-	context := DialogContext{Trigger: "click"}
+	context := dialog.DialogContext{Trigger: "click"}
 	if !backend.CanHandle(context) {
 		t.Error("Simple random backend should handle any context")
 	}
@@ -170,7 +171,7 @@ func TestSimpleRandomBackend(t *testing.T) {
 }
 
 func TestSimpleRandomBackendValidation(t *testing.T) {
-	backend := NewSimpleRandomBackend()
+	backend := dialog.NewSimpleRandomBackend()
 
 	// Test invalid configuration
 	invalidConfig := json.RawMessage(`{
@@ -196,7 +197,7 @@ func TestSimpleRandomBackendValidation(t *testing.T) {
 }
 
 func TestMarkovBackendInitialization(t *testing.T) {
-	backend := NewMarkovChainBackend()
+	backend := dialog.NewMarkovChainBackend()
 
 	// Test basic configuration
 	config := json.RawMessage(`{
@@ -211,7 +212,7 @@ func TestMarkovBackendInitialization(t *testing.T) {
 		]
 	}`)
 
-	err := backend.Initialize(config, nil)
+	err := backend.Initialize(config)
 	if err != nil {
 		t.Fatalf("Failed to initialize Markov backend: %v", err)
 	}
@@ -223,17 +224,17 @@ func TestMarkovBackendInitialization(t *testing.T) {
 	}
 
 	// Test CanHandle (should return true if backend has data)
-	context := DialogContext{Trigger: "click"}
+	context := dialog.DialogContext{Trigger: "click"}
 	canHandle := backend.CanHandle(context)
 	t.Logf("Markov backend can handle context: %v", canHandle)
 }
 
 func TestDialogManagerBasicOperation(t *testing.T) {
-	manager := NewDialogManager(false)
+	manager := dialog.NewDialogManager(false)
 
 	// Register backends
-	manager.RegisterBackend("simple_random", NewSimpleRandomBackend())
-	manager.RegisterBackend("markov_chain", NewMarkovChainBackend())
+	manager.RegisterBackend("simple_random", dialog.NewSimpleRandomBackend())
+	manager.RegisterBackend("markov_chain", dialog.NewMarkovChainBackend())
 
 	// Test getting registered backends
 	backends := manager.GetRegisteredBackends()
@@ -269,19 +270,19 @@ func TestDialogManagerBasicOperation(t *testing.T) {
 func TestDialogBackendConfigValidation(t *testing.T) {
 	tests := []struct {
 		name    string
-		config  DialogBackendConfig
+		config  dialog.DialogBackendConfig
 		wantErr bool
 	}{
 		{
 			name: "disabled backend (should be valid)",
-			config: DialogBackendConfig{
+			config: dialog.DialogBackendConfig{
 				Enabled: false,
 			},
 			wantErr: false,
 		},
 		{
 			name: "valid enabled backend",
-			config: DialogBackendConfig{
+			config: dialog.DialogBackendConfig{
 				Enabled:             true,
 				DefaultBackend:      "simple_random",
 				ConfidenceThreshold: 0.5,
@@ -290,7 +291,7 @@ func TestDialogBackendConfigValidation(t *testing.T) {
 		},
 		{
 			name: "missing default backend",
-			config: DialogBackendConfig{
+			config: dialog.DialogBackendConfig{
 				Enabled: true,
 				// Missing DefaultBackend
 				ConfidenceThreshold: 0.5,
@@ -299,7 +300,7 @@ func TestDialogBackendConfigValidation(t *testing.T) {
 		},
 		{
 			name: "invalid confidence threshold (negative)",
-			config: DialogBackendConfig{
+			config: dialog.DialogBackendConfig{
 				Enabled:             true,
 				DefaultBackend:      "simple_random",
 				ConfidenceThreshold: -0.1,
@@ -308,7 +309,7 @@ func TestDialogBackendConfigValidation(t *testing.T) {
 		},
 		{
 			name: "invalid confidence threshold (too high)",
-			config: DialogBackendConfig{
+			config: dialog.DialogBackendConfig{
 				Enabled:             true,
 				DefaultBackend:      "simple_random",
 				ConfidenceThreshold: 1.1,
@@ -317,7 +318,7 @@ func TestDialogBackendConfigValidation(t *testing.T) {
 		},
 		{
 			name: "invalid response timeout (negative)",
-			config: DialogBackendConfig{
+			config: dialog.DialogBackendConfig{
 				Enabled:             true,
 				DefaultBackend:      "simple_random",
 				ConfidenceThreshold: 0.5,
@@ -329,7 +330,7 @@ func TestDialogBackendConfigValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := ValidateBackendConfig(tt.config)
+			err := dialog.ValidateBackendConfig(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBackendConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}

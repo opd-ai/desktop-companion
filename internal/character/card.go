@@ -1,6 +1,7 @@
 package character
 
 import (
+	"desktop-companion/internal/dialog"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -31,7 +32,7 @@ type CharacterCard struct {
 	RomanceDialogs []DialogExtended    `json:"romanceDialogs,omitempty"`
 	RomanceEvents  []RandomEventConfig `json:"romanceEvents,omitempty"`
 	// Advanced dialog system (Phase 1)
-	DialogBackend *DialogBackendConfig `json:"dialogBackend,omitempty"`
+	DialogBackend *dialog.DialogBackendConfig `json:"dialogBackend,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -939,7 +940,7 @@ func (c *CharacterCard) validateDialogBackend() error {
 		return nil // Optional feature, validation not required when absent
 	}
 
-	return ValidateBackendConfig(*c.DialogBackend)
+	return dialog.ValidateBackendConfig(*c.DialogBackend)
 }
 
 // HasRomanceFeatures returns true if this character card includes romance features
