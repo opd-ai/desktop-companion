@@ -9,6 +9,8 @@ import (
 // test_default_character_path_resolution_bug reproduces the bug where
 // the default character path is resolved relative to current working directory
 // instead of the executable location, causing failures when run from different directories
+// NOTE: This test verifies the bug exists at the LoadCard level, but the fix
+// is implemented at the application level (cmd/companion/main.go)
 func TestDefaultCharacterPathResolutionBug(t *testing.T) {
 	// Save original working directory
 	originalWd, err := os.Getwd()
@@ -33,10 +35,14 @@ func TestDefaultCharacterPathResolutionBug(t *testing.T) {
 		t.Error("Expected error when loading character from non-existent relative path, but got none")
 	}
 
-	// The error should be about file not found, confirming the bug
+	// The error should be about file not found, confirming the bug exists at LoadCard level
 	if !os.IsNotExist(err) {
 		t.Errorf("Expected file not found error, got: %v", err)
 	}
+
+	// NOTE: The fix for this bug is implemented in cmd/companion/main.go
+	// which resolves the path before calling LoadCard, so this test demonstrates
+	// the issue exists at the LoadCard level but is fixed at the application level
 }
 
 // TestProposedCharacterPathResolutionFix tests the proposed fix

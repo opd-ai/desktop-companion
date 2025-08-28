@@ -88,14 +88,34 @@ func loadCharacterConfiguration() (*character.CharacterCard, string) {
 	var absPath string
 	var err error
 
-	// For the default relative path, resolve relative to executable directory
+	// For the default relative path, resolve relative to project root (for development)
+	// or executable directory (for deployed binaries)
 	if *characterPath == "assets/characters/default/character.json" && !filepath.IsAbs(*characterPath) {
+		// First try to find project root by looking for go.mod
 		execPath, execErr := os.Executable()
 		if execErr != nil {
 			log.Fatalf("Failed to get executable path: %v", execErr)
 		}
-		execDir := filepath.Dir(execPath)
-		absPath = filepath.Join(execDir, *characterPath)
+
+		searchDir := filepath.Dir(execPath)
+		projectRoot := ""
+
+		// Search upward for go.mod file
+		for {
+			if _, statErr := os.Stat(filepath.Join(searchDir, "go.mod")); statErr == nil {
+				projectRoot = searchDir
+				break
+			}
+			parent := filepath.Dir(searchDir)
+			if parent == searchDir {
+				// Reached filesystem root, use executable directory
+				projectRoot = filepath.Dir(execPath)
+				break
+			}
+			searchDir = parent
+		}
+
+		absPath = filepath.Join(projectRoot, *characterPath)
 	} else {
 		absPath, err = filepath.Abs(*characterPath)
 		if err != nil {
