@@ -165,7 +165,7 @@ go run cmd/companion/main.go -character assets/characters/examples/markov_dialog
 - **Click**: Pet your character (increases happiness and health)
 - **Right-click**: Feed your character (increases hunger, shows interaction menu)
 - **Double-click**: Play with your character (increases happiness, decreases energy)
-- **Stats overlay**: Toggle with keyboard shortcut to monitor character's wellbeing
+- **Stats overlay**: Toggle with 'S' key to monitor character's wellbeing
 - **Auto-save**: Game state automatically saves every 5 minutes
 
 **Character Care**:
@@ -643,7 +643,7 @@ sudo apt-get install libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev lib
 
 **Stats overlay not visible**:
 - Ensure both `-game` and `-stats` flags are enabled
-- Try pressing the stats toggle keyboard shortcut
+- Try pressing the 'S' key to toggle stats overlay
 - Verify the character card has valid stats configuration
 
 **Save game not loading**:

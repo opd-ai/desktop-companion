@@ -107,7 +107,9 @@ func (dw *DesktopWindow) setupInteractions() {
 	// Add dragging support if character allows movement
 	if dw.character.IsMovementEnabled() {
 		dw.setupDragging()
-		return // Draggable character handles all interactions
+		// Setup keyboard shortcuts even for draggable characters
+		dw.setupKeyboardShortcuts()
+		return
 	}
 
 	// For non-draggable characters, create custom clickable widget that supports both left and right click
@@ -133,6 +135,9 @@ func (dw *DesktopWindow) setupInteractions() {
 	content := container.NewWithoutLayout(objects...)
 
 	dw.window.SetContent(content)
+
+	// Setup keyboard shortcuts
+	dw.setupKeyboardShortcuts()
 }
 
 // handleClick processes character click interactions
@@ -409,8 +414,25 @@ func configureTransparency(window fyne.Window, debug bool) {
 		log.Println("Note: True transparency requires transparent window backgrounds and content")
 		log.Println("Character should appear with minimal window decoration for overlay effect")
 	}
+}
 
-	// Future enhancement opportunity:
-	// Could explore platform-specific transparency using Fyne driver extensions,
-	// but this maintains cross-platform compatibility by using standard Fyne APIs
+// setupKeyboardShortcuts configures keyboard shortcuts for the desktop window
+func (dw *DesktopWindow) setupKeyboardShortcuts() {
+	// Set up keyboard event handler for stats overlay toggle
+	canvas := dw.window.Canvas()
+
+	canvas.SetOnTypedKey(func(key *fyne.KeyEvent) {
+		switch key.Name {
+		case fyne.KeyS:
+			// 'S' key toggles stats overlay
+			if dw.debug {
+				log.Println("Stats toggle shortcut pressed (S key)")
+			}
+			dw.ToggleStatsOverlay()
+		}
+	})
+
+	if dw.debug {
+		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay")
+	}
 }
