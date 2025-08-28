@@ -6,15 +6,14 @@ import (
 	"math/rand"
 	"strings"
 	"time"
-
-	"desktop-companion/internal/character"
 )
 
 // SimpleRandomBackend implements DialogBackend using existing dialog selection logic
 // Provides 1:1 compatibility with the existing system while adding dialog interface compliance
 type SimpleRandomBackend struct {
-	config    SimpleRandomConfig
-	character *character.Character
+	config SimpleRandomConfig
+	// Removed character reference to avoid import cycle
+	// Character data is now passed through DialogContext instead
 }
 
 // SimpleRandomConfig defines JSON configuration for the simple random backend
@@ -33,7 +32,7 @@ func NewSimpleRandomBackend() *SimpleRandomBackend {
 }
 
 // Initialize sets up the simple random backend with JSON configuration
-func (s *SimpleRandomBackend) Initialize(config json.RawMessage, character *Character) error {
+func (s *SimpleRandomBackend) Initialize(config json.RawMessage) error {
 	// Set defaults
 	s.config = SimpleRandomConfig{
 		Type:                 "basic",
@@ -55,7 +54,6 @@ func (s *SimpleRandomBackend) Initialize(config json.RawMessage, character *Char
 		return fmt.Errorf("invalid simple random config: %w", err)
 	}
 
-	s.character = character
 	return nil
 }
 
@@ -95,134 +93,176 @@ func (s *SimpleRandomBackend) GenerateResponse(context DialogContext) (DialogRes
 	}, nil
 }
 
-// selectDialogUsingExistingLogic uses the same logic as the existing HandleClick/HandleRightClick methods
+// selectDialogUsingExistingLogic uses dialog context data instead of character reference
 func (s *SimpleRandomBackend) selectDialogUsingExistingLogic(context DialogContext) string {
-	// If no character reference, fall back to context fallback responses
-	if s.character == nil || s.character.card == nil {
-		if len(context.FallbackResponses) > 0 {
-			return context.FallbackResponses[int(time.Now().UnixNano())%len(context.FallbackResponses)]
+	// Use fallback responses from context if no character data available
+	if len(context.FallbackResponses) > 0 {
+		// Try to select based on trigger type first
+		if response := s.selectResponseByTrigger(context); response != "" {
+			return response
 		}
-		return "Hello!"
+		// Fall back to context fallback responses
+		return context.FallbackResponses[s.selectRandomIndex(len(context.FallbackResponses))]
 	}
 
-	// First try romance dialogs if enabled and character has romance features
-	if s.config.PreferRomanceDialogs && s.character.card.HasRomanceFeatures() {
-		if romanceResponse := s.selectRomanceDialog(context); romanceResponse != "" {
-			return romanceResponse
-		}
-	}
-
-	// Then try basic dialogs
-	return s.selectBasicDialog(context)
+	// Generate simple responses based on trigger and context
+	return s.generateSimpleResponse(context)
 }
 
-// selectRomanceDialog attempts to select a romance dialog using existing logic
-func (s *SimpleRandomBackend) selectRomanceDialog(context DialogContext) string {
-	// Safety check
-	if s.character == nil || s.character.card == nil {
+// selectResponseByTrigger generates responses based on trigger type and context
+func (s *SimpleRandomBackend) selectResponseByTrigger(context DialogContext) string {
+	// Generate appropriate response based on trigger
+	switch context.Trigger {
+	case "click":
+		return s.generateClickResponse(context)
+	case "rightclick":
+		return s.generateRightClickResponse(context)
+	case "hover":
+		return s.generateHoverResponse(context)
+	case "compliment":
+		return s.generateComplimentResponse(context)
+	case "give_gift":
+		return s.generateGiftResponse(context)
+	case "deep_conversation":
+		return s.generateConversationResponse(context)
+	default:
 		return ""
 	}
-
-	// Replicate the romance dialog selection logic from the existing system
-	for _, dialog := range s.character.card.RomanceDialogs {
-		if !s.matchesTrigger(dialog.Trigger, context.Trigger) {
-			continue
-		}
-
-		// Check requirements using existing logic (simplified)
-		if s.character.gameState != nil && dialog.Requirements != nil {
-			// Use existing requirement checking if game state is available
-			if !s.canSatisfyRomanceRequirements(dialog.Requirements) {
-				continue
-			}
-		}
-
-		// Select response with personality influence
-		return s.selectResponseWithPersonality(dialog.Responses, context)
-	}
-
-	return ""
 }
 
-// selectBasicDialog selects from basic dialogs using existing logic
-func (s *SimpleRandomBackend) selectBasicDialog(context DialogContext) string {
-	// Safety check
-	if s.character == nil || s.character.card == nil {
-		return ""
+// generateClickResponse creates responses for click interactions
+func (s *SimpleRandomBackend) generateClickResponse(context DialogContext) string {
+	responses := []string{
+		"Hello! Nice to see you! 👋",
+		"Hi there! How are you doing today?",
+		"Thanks for visiting me! 😊",
+		"What would you like to talk about?",
+		"I'm so happy you're here!",
 	}
 
-	for _, dialog := range s.character.card.Dialogs {
-		if !s.matchesTrigger(dialog.Trigger, context.Trigger) {
-			continue
-		}
-
-		// Check cooldown (simplified)
-		if s.isOnCooldown(dialog.Trigger, dialog.Cooldown) {
-			continue
-		}
-
-		// Select response with personality influence
-		return s.selectResponseWithPersonality(dialog.Responses, context)
+	// Add personality-influenced responses
+	if context.PersonalityTraits["shyness"] > 0.7 {
+		responses = append(responses, "H-hello... *blushes*", "Oh, hi there... 😳")
+	}
+	if context.PersonalityTraits["romanticism"] > 0.7 && context.RelationshipLevel != "Stranger" {
+		responses = append(responses, "Hello, my dear! 💕", "I've been thinking about you...")
 	}
 
-	return ""
+	return s.selectResponseWithPersonality(responses, context)
 }
 
-// matchesTrigger checks if dialog trigger matches context trigger
-func (s *SimpleRandomBackend) matchesTrigger(dialogTrigger, contextTrigger string) bool {
-	return dialogTrigger == contextTrigger
+// generateRightClickResponse creates responses for right-click interactions
+func (s *SimpleRandomBackend) generateRightClickResponse(context DialogContext) string {
+	responses := []string{
+		"How can I help you today?",
+		"What's on your mind?",
+		"Is there something you'd like to know?",
+		"I'm here to listen! 😊",
+		"What would you like to do?",
+	}
+
+	if context.PersonalityTraits["helpfulness"] > 0.7 {
+		responses = append(responses, "I'm always here to help!", "Let me know what you need!")
+	}
+
+	return s.selectResponseWithPersonality(responses, context)
 }
 
-// isOnCooldown checks if a dialog trigger is currently on cooldown
-func (s *SimpleRandomBackend) isOnCooldown(trigger string, cooldownSeconds int) bool {
-	if s.character.dialogCooldowns == nil || cooldownSeconds <= 0 {
-		return false
+// generateHoverResponse creates responses for hover interactions
+func (s *SimpleRandomBackend) generateHoverResponse(context DialogContext) string {
+	responses := []string{
+		"Hi! 👋",
+		"Hello there!",
+		"*waves*",
+		"😊",
+		"Nice to see you!",
 	}
 
-	lastUsed, exists := s.character.dialogCooldowns[trigger]
-	if !exists {
-		return false
+	if context.PersonalityTraits["shyness"] > 0.7 {
+		responses = append(responses, "*shy wave*", "👀")
 	}
 
-	cooldownDuration := time.Duration(cooldownSeconds) * time.Second
-	return time.Since(lastUsed) < cooldownDuration
+	return s.selectResponseWithPersonality(responses, context)
 }
 
-// canSatisfyRomanceRequirements checks if romance dialog requirements are met (simplified)
-func (s *SimpleRandomBackend) canSatisfyRomanceRequirements(requirements *RomanceRequirement) bool {
-	if s.character.gameState == nil || requirements == nil {
-		return true // No requirements to check
+// generateComplimentResponse creates responses for compliment interactions
+func (s *SimpleRandomBackend) generateComplimentResponse(context DialogContext) string {
+	responses := []string{
+		"Thank you so much! That means a lot! 😊",
+		"You're so sweet! 💕",
+		"That really makes me happy!",
+		"Aww, you're too kind!",
+		"I appreciate that! 🤗",
 	}
 
-	// Check stats requirements
-	if requirements.Stats != nil {
-		for statName, conditions := range requirements.Stats {
-			currentValue := s.character.gameState.GetStat(statName)
-
-			// Check minimum value
-			if minValue, hasMin := conditions["min"]; hasMin && currentValue < minValue {
-				return false
-			}
-
-			// Check maximum value
-			if maxValue, hasMax := conditions["max"]; hasMax && currentValue > maxValue {
-				return false
-			}
-		}
+	if context.PersonalityTraits["shyness"] > 0.7 {
+		responses = append(responses, "*blushes* Th-thank you...", "You really think so? 😳")
+	}
+	if context.PersonalityTraits["confidence"] > 0.7 {
+		responses = append(responses, "I know, right? 😄", "Thank you for noticing!")
 	}
 
-	// Check relationship level requirement
-	if requirements.RelationshipLevel != "" {
-		currentLevel := s.character.gameState.GetRelationshipLevel()
-		if currentLevel != requirements.RelationshipLevel {
-			return false
-		}
+	return s.selectResponseWithPersonality(responses, context)
+}
+
+// generateGiftResponse creates responses for gift interactions
+func (s *SimpleRandomBackend) generateGiftResponse(context DialogContext) string {
+	responses := []string{
+		"A gift for me? Thank you so much! 🎁",
+		"You shouldn't have! But I love it! 💕",
+		"This is so thoughtful of you!",
+		"I'll treasure this! Thank you! 😊",
+		"You always know how to make me happy!",
 	}
 
-	// Simplified implementation - in practice this would check all requirements
-	// including interaction counts and achievements
+	if context.RelationshipLevel == "Romantic Interest" || context.RelationshipLevel == "Partner" {
+		responses = append(responses, "You spoil me! I love you! 💖", "This means the world to me, darling!")
+	}
 
-	return true
+	return s.selectResponseWithPersonality(responses, context)
+}
+
+// generateConversationResponse creates responses for deep conversation interactions
+func (s *SimpleRandomBackend) generateConversationResponse(context DialogContext) string {
+	responses := []string{
+		"I love having deep conversations with you.",
+		"What's been on your mind lately?",
+		"Tell me more about how you're feeling.",
+		"I'm always here to listen to you.",
+		"These moments mean so much to me.",
+	}
+
+	if context.RelationshipLevel == "Close Friend" || context.RelationshipLevel == "Romantic Interest" {
+		responses = append(responses, "I feel so connected to you when we talk like this.", "You can always share anything with me.")
+	}
+
+	return s.selectResponseWithPersonality(responses, context)
+}
+
+// generateSimpleResponse creates a basic response when no specific logic applies
+func (s *SimpleRandomBackend) generateSimpleResponse(context DialogContext) string {
+	// Mood-based responses
+	if context.CurrentMood > 80 {
+		return "I'm feeling great today! 😄"
+	} else if context.CurrentMood < 30 {
+		return "I'm not feeling my best right now... 😔"
+	}
+
+	// Relationship-based responses
+	switch context.RelationshipLevel {
+	case "Stranger":
+		return "Hello! Nice to meet you!"
+	case "Friend":
+		return "Hey there, friend! 😊"
+	case "Close Friend":
+		return "It's always great to see you!"
+	case "Romantic Interest":
+		return "Hello, my dear! 💕"
+	case "Partner":
+		return "Hi sweetheart! I love you! 💖"
+	default:
+		return "Hello! 👋"
+	}
 }
 
 // selectResponseWithPersonality chooses a response considering personality traits

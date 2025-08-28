@@ -291,12 +291,12 @@ func (c *Character) configureBackends() error {
 	}
 
 	for backendName, config := range c.card.DialogBackend.Backends {
-		backend, exists := c.dialogManager.backends[backendName]
+		backend, exists := c.dialogManager.GetBackend(backendName)
 		if !exists {
 			continue // Skip unknown backends
 		}
 
-		if err := backend.Initialize(config, c); err != nil {
+		if err := backend.Initialize(config); err != nil {
 			return fmt.Errorf("failed to initialize backend '%s': %w", backendName, err)
 		}
 	}

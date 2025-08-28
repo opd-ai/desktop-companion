@@ -265,6 +265,12 @@ func (dm *DialogManager) UpdateBackendMemory(context DialogContext, response Dia
 	}
 }
 
+// GetBackend returns a specific registered backend by name
+func (dm *DialogManager) GetBackend(name string) (DialogBackend, bool) {
+	backend, exists := dm.backends[name]
+	return backend, exists
+}
+
 // DialogBackendConfig represents JSON configuration for dialog backends
 type DialogBackendConfig struct {
 	// Backend selection
