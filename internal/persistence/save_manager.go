@@ -369,7 +369,7 @@ func (sm *SaveManager) validateSaveData(data *GameSaveData) error {
 	if data == nil {
 		return fmt.Errorf("save data cannot be nil")
 	}
-	
+
 	if data.CharacterName == "" {
 		return fmt.Errorf("character name cannot be empty")
 	}
@@ -408,15 +408,15 @@ func (sm *SaveManager) validateSaveDataThreadSafe(data *GameSaveData, dataMutex 
 	if data == nil {
 		return fmt.Errorf("save data cannot be nil")
 	}
-	
+
 	if dataMutex == nil {
 		// Fall back to regular validation if no mutex provided
 		return sm.validateSaveData(data)
 	}
-	
+
 	dataMutex.RLock()
 	defer dataMutex.RUnlock()
-	
+
 	// Now perform validation under mutex protection
 	return sm.validateSaveData(data)
 }
@@ -426,12 +426,12 @@ func (sm *SaveManager) createSafeDataCopy(data *GameSaveData) *GameSaveData {
 	if data == nil {
 		return nil
 	}
-	
+
 	safeCopy := &GameSaveData{
 		CharacterName: data.CharacterName,
 		SaveVersion:   data.SaveVersion,
 	}
-	
+
 	if data.GameState != nil {
 		safeCopy.GameState = &GameStateData{
 			CreationTime:       data.GameState.CreationTime,
@@ -439,12 +439,12 @@ func (sm *SaveManager) createSafeDataCopy(data *GameSaveData) *GameSaveData {
 			TotalPlayTimeNanos: data.GameState.TotalPlayTimeNanos,
 			Stats:              make(map[string]*StatData),
 		}
-		
+
 		// Deep copy stats map
 		for name, stat := range data.GameState.Stats {
 			if stat != nil {
 				safeCopy.GameState.Stats[name] = &StatData{
-					Current:            stat.Current,
+					Current:           stat.Current,
 					Max:               stat.Max,
 					DegradationRate:   stat.DegradationRate,
 					CriticalThreshold: stat.CriticalThreshold,
@@ -452,7 +452,7 @@ func (sm *SaveManager) createSafeDataCopy(data *GameSaveData) *GameSaveData {
 			}
 		}
 	}
-	
+
 	if data.Metadata != nil {
 		safeCopy.Metadata = &SaveMetadata{
 			LastSaved:     data.Metadata.LastSaved,
@@ -460,7 +460,7 @@ func (sm *SaveManager) createSafeDataCopy(data *GameSaveData) *GameSaveData {
 			Version:       data.Metadata.Version,
 		}
 	}
-	
+
 	return safeCopy
 }
 
