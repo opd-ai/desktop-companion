@@ -61,7 +61,7 @@ func NewSaveManager(savePath string) *SaveManager {
 	return &SaveManager{
 		savePath: savePath,
 		autoSave: false,
-		interval: 5 * time.Minute, // Default auto-save interval
+		interval: 5 * time.Minute,        // Default auto-save interval
 		stopChan: make(chan struct{}, 1), // Buffered channel to prevent blocking
 	}
 }
@@ -146,11 +146,13 @@ func (sm *SaveManager) disableAutoSaveUnsafe() {
 		sm.autoSaveTicker = nil
 	}
 
-	// Signal the goroutine to stop (non-blocking)
+	// Signal the goroutine to stop (non-blocking with buffered channel)
 	select {
 	case sm.stopChan <- struct{}{}:
+		// Successfully sent stop signal
 	default:
-		// Channel might be full or goroutine already stopped, that's okay
+		// Channel is full, meaning stop signal was already sent
+		// This is fine, the goroutine will stop
 	}
 }
 

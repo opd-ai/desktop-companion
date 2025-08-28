@@ -84,57 +84,7 @@ func TestAutoSaveRaceConditionBug(t *testing.T) {
 // stopChan blocks when multiple goroutines try to send stop signals
 func TestAutoSaveStopChanBlocking(t *testing.T) {
 	sm := NewSaveManager(t.TempDir())
-	
-	gameStateProvider := func() *GameSaveData {
-		return &GameSaveData{
-			CharacterName: "TestPet",
-			SaveVersion:   "1.0", 
-			GameState: &GameStateData{
-				Stats: map[string]*StatData{
-					"hunger": {Current: 50.0, Max: 100.0},
-				},
-			},
-		}
-	}
-	
-	// Enable auto-save to start the goroutine
-	sm.EnableAutoSave(1*time.Second, gameStateProvider)
-	
-	// Give the goroutine time to start
-	time.Sleep(100 * time.Millisecond)
-	
-	// Now try to disable multiple times rapidly to trigger the race condition
-	done := make(chan bool, 3)
-	
-	// Start multiple disable attempts
-	for i := 0; i < 3; i++ {
-		go func() {
-			sm.DisableAutoSave()
-			done <- true
-		}()
-	}
-	
-	// All disable calls should complete within a reasonable time
-	timeout := time.After(5 * time.Second)
-	completed := 0
-	
-	for completed < 3 {
-		select {
-		case <-done:
-			completed++
-		case <-timeout:
-			t.Fatalf("DisableAutoSave calls blocked - completed: %d/3", completed)
-		}
-	}
-	
-	t.Log("All DisableAutoSave calls completed successfully")
-}
 
-// test_autosave_goroutine_leak reproduces the more subtle issue where
-// goroutines may not be properly cleaned up due to channel coordination issues
-func TestAutoSaveGoroutineLeak(t *testing.T) {
-	sm := NewSaveManager(t.TempDir())
-	
 	gameStateProvider := func() *GameSaveData {
 		return &GameSaveData{
 			CharacterName: "TestPet",
@@ -146,10 +96,60 @@ func TestAutoSaveGoroutineLeak(t *testing.T) {
 			},
 		}
 	}
-	
+
+	// Enable auto-save to start the goroutine
+	sm.EnableAutoSave(1*time.Second, gameStateProvider)
+
+	// Give the goroutine time to start
+	time.Sleep(100 * time.Millisecond)
+
+	// Now try to disable multiple times rapidly to trigger the race condition
+	done := make(chan bool, 3)
+
+	// Start multiple disable attempts
+	for i := 0; i < 3; i++ {
+		go func() {
+			sm.DisableAutoSave()
+			done <- true
+		}()
+	}
+
+	// All disable calls should complete within a reasonable time
+	timeout := time.After(5 * time.Second)
+	completed := 0
+
+	for completed < 3 {
+		select {
+		case <-done:
+			completed++
+		case <-timeout:
+			t.Fatalf("DisableAutoSave calls blocked - completed: %d/3", completed)
+		}
+	}
+
+	t.Log("All DisableAutoSave calls completed successfully")
+}
+
+// test_autosave_goroutine_leak reproduces the more subtle issue where
+// goroutines may not be properly cleaned up due to channel coordination issues
+func TestAutoSaveGoroutineLeak(t *testing.T) {
+	sm := NewSaveManager(t.TempDir())
+
+	gameStateProvider := func() *GameSaveData {
+		return &GameSaveData{
+			CharacterName: "TestPet",
+			SaveVersion:   "1.0",
+			GameState: &GameStateData{
+				Stats: map[string]*StatData{
+					"hunger": {Current: 50.0, Max: 100.0},
+				},
+			},
+		}
+	}
+
 	// Record initial goroutine count
 	initialCount := countGoroutines()
-	
+
 	// Start and stop auto-save multiple times rapidly
 	for i := 0; i < 10; i++ {
 		sm.EnableAutoSave(50*time.Millisecond, gameStateProvider)
@@ -157,12 +157,12 @@ func TestAutoSaveGoroutineLeak(t *testing.T) {
 		sm.DisableAutoSave()
 		time.Sleep(10 * time.Millisecond) // Let it stop
 	}
-	
+
 	// Wait for goroutines to finish
 	time.Sleep(200 * time.Millisecond)
-	
+
 	finalCount := countGoroutines()
-	
+
 	// Check if we've leaked goroutines
 	// Allow some tolerance as other parts of the system may create goroutines
 	if finalCount > initialCount+2 {
