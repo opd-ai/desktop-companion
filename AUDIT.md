@@ -150,12 +150,12 @@ The application is architecturally sound with only integration gaps preventing f
 
 ```
 CRITICAL BUGS:           0 (1 resolved)
-FUNCTIONAL MISMATCHES:   1 (1 resolved)
+FUNCTIONAL MISMATCHES:   0 (2 resolved)
 MISSING FEATURES:        1
 EDGE CASE BUGS:          2
 PERFORMANCE ISSUES:      1
 
-TOTAL ISSUES FOUND:      8 (2 resolved)
+TOTAL ISSUES FOUND:      8 (3 resolved)
 ```
 
 **Risk Assessment:** Medium-High  
@@ -190,7 +190,8 @@ TOTAL ISSUES FOUND:      8 (2 resolved)
 characterPath = flag.String("character", "assets/characters/default/character.json", "Path to character configuration file")
 ```
 
-### FUNCTIONAL MISMATCH: Dialog Backend Default Configuration Mismatch
+### FUNCTIONAL MISMATCH: Dialog Backend Default Configuration Mismatch ✅ **RESOLVED**
+**Status:** Fixed in commit 97b6f82 (August 28, 2025)  
 **File:** README.md:262-275, assets/characters/default/character.json  
 **Severity:** Medium  
 **Description:** README documentation shows `dialogBackend` configuration as optional with Markov chain as default backend, but the default character cards don't include dialog backend configuration, causing features to be unused.  
@@ -198,6 +199,7 @@ characterPath = flag.String("character", "assets/characters/default/character.js
 **Actual Behavior:** Default characters only use static response lists, advanced dialog features remain unused  
 **Impact:** Major feature (AI dialog system) is effectively hidden from users, documentation promises features that aren't demonstrated  
 **Reproduction:** 1. Run default character 2. All responses are static from JSON arrays 3. No AI-generated responses occur  
+**Fix Applied:** Added dialogBackend configuration to key demonstration characters (normal, markov_example) and fixed empty markov_example character card with proper AI dialog configuration.  
 **Code Reference:**
 ```json
 // README example vs actual default character configuration missing dialogBackend section
@@ -274,7 +276,7 @@ for name := range card.Animations {
 5. **Fix memory target validation consistency** - Unify warning logic with target validation
 
 ### Medium Priority (Next Release)
-6. **Enable dialog backend in default characters** - Demonstrate AI features prominently
+6. **~~Enable dialog backend in default characters~~** ✅ **RESOLVED** (97b6f82) - Added AI dialog configuration to demonstration characters
 7. **Improve animation loading resilience** - Add rollback mechanism for partial load failures
 8. **Add thread safety to save validation** - Protect validation with appropriate synchronization
 
