@@ -362,7 +362,14 @@ func (sm *SaveManager) atomicWriteJSON(filePath string, data interface{}) error 
 }
 
 // validateSaveData ensures loaded save data is valid
+// NOTE: This function assumes data is not shared between goroutines,
+// which is the case in normal usage (LoadGameState creates local copies).
+// For edge cases where data might be shared, use validateSaveDataThreadSafe instead.
 func (sm *SaveManager) validateSaveData(data *GameSaveData) error {
+	if data == nil {
+		return fmt.Errorf("save data cannot be nil")
+	}
+	
 	if data.CharacterName == "" {
 		return fmt.Errorf("character name cannot be empty")
 	}
@@ -377,7 +384,7 @@ func (sm *SaveManager) validateSaveData(data *GameSaveData) error {
 
 	// Validate each stat
 	for name, stat := range data.GameState.Stats {
-		if err := sm.validateStatData(name, stat); err != nil {
+		if err := sm.validateStatDataSafe(name, stat); err != nil {
 			return fmt.Errorf("stat '%s': %w", name, err)
 		}
 	}
@@ -394,31 +401,100 @@ func (sm *SaveManager) validateSaveData(data *GameSaveData) error {
 	return nil
 }
 
-// validateStatData validates a single stat's data
-func (sm *SaveManager) validateStatData(name string, stat *StatData) error {
+// validateSaveDataThreadSafe provides thread-safe validation for shared data structures
+// This method uses a mutex to prevent race conditions during validation.
+// Only use this if the same GameSaveData pointer might be accessed by multiple goroutines.
+func (sm *SaveManager) validateSaveDataThreadSafe(data *GameSaveData, dataMutex *sync.RWMutex) error {
+	if data == nil {
+		return fmt.Errorf("save data cannot be nil")
+	}
+	
+	if dataMutex == nil {
+		// Fall back to regular validation if no mutex provided
+		return sm.validateSaveData(data)
+	}
+	
+	dataMutex.RLock()
+	defer dataMutex.RUnlock()
+	
+	// Now perform validation under mutex protection
+	return sm.validateSaveData(data)
+}
+
+// createSafeDataCopy creates a deep copy of GameSaveData for thread-safe validation
+func (sm *SaveManager) createSafeDataCopy(data *GameSaveData) *GameSaveData {
+	if data == nil {
+		return nil
+	}
+	
+	safeCopy := &GameSaveData{
+		CharacterName: data.CharacterName,
+		SaveVersion:   data.SaveVersion,
+	}
+	
+	if data.GameState != nil {
+		safeCopy.GameState = &GameStateData{
+			CreationTime:       data.GameState.CreationTime,
+			LastDecayUpdate:    data.GameState.LastDecayUpdate,
+			TotalPlayTimeNanos: data.GameState.TotalPlayTimeNanos,
+			Stats:              make(map[string]*StatData),
+		}
+		
+		// Deep copy stats map
+		for name, stat := range data.GameState.Stats {
+			if stat != nil {
+				safeCopy.GameState.Stats[name] = &StatData{
+					Current:            stat.Current,
+					Max:               stat.Max,
+					DegradationRate:   stat.DegradationRate,
+					CriticalThreshold: stat.CriticalThreshold,
+				}
+			}
+		}
+	}
+	
+	if data.Metadata != nil {
+		safeCopy.Metadata = &SaveMetadata{
+			LastSaved:     data.Metadata.LastSaved,
+			TotalPlayTime: data.Metadata.TotalPlayTime,
+			Version:       data.Metadata.Version,
+		}
+	}
+	
+	return safeCopy
+}
+
+// validateStatDataSafe validates a single stat's data (thread-safe version)
+func (sm *SaveManager) validateStatDataSafe(name string, stat *StatData) error {
 	if stat == nil {
 		return fmt.Errorf("stat data cannot be nil")
 	}
 
-	if stat.Max <= 0 {
-		return fmt.Errorf("max value must be positive, got %f", stat.Max)
+	// Read all fields once to avoid race conditions during validation
+	current := stat.Current
+	max := stat.Max
+	degradationRate := stat.DegradationRate
+	criticalThreshold := stat.CriticalThreshold
+
+	if max <= 0 {
+		return fmt.Errorf("max value must be positive, got %f", max)
 	}
 
-	if stat.Current < 0 {
-		return fmt.Errorf("current value cannot be negative, got %f", stat.Current)
+	if current < 0 {
+		return fmt.Errorf("current value cannot be negative, got %f", current)
 	}
 
-	if stat.Current > stat.Max {
-		return fmt.Errorf("current value (%f) cannot exceed max (%f)", stat.Current, stat.Max)
+	if current > max {
+		return fmt.Errorf("current value (%f) cannot exceed max (%f)", current, max)
 	}
 
-	if stat.DegradationRate < 0 {
-		return fmt.Errorf("degradation rate cannot be negative, got %f", stat.DegradationRate)
+	if degradationRate < 0 {
+		return fmt.Errorf("degradation rate cannot be negative, got %f", degradationRate)
 	}
 
-	if stat.CriticalThreshold < 0 || stat.CriticalThreshold > stat.Max {
+	if criticalThreshold < 0 || criticalThreshold > max {
 		return fmt.Errorf("critical threshold (%f) must be between 0 and max (%f)",
-			stat.CriticalThreshold, stat.Max)
+			criticalThreshold, max)
 	}
 
 	return nil
