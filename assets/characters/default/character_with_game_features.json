@@ -152,5 +152,55 @@
         }
       }
     ]
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.7,
+        "usePersonality": true,
+        "trainingData": [
+          "I'm feeling great! Thank you for taking care of me!",
+          "My hunger is satisfied and I'm so happy!",
+          "Playing with you always boosts my energy and mood!",
+          "I love it when you pet me! It makes me feel loved.",
+          "You're such a wonderful caretaker! I'm lucky to have you.",
+          "Thanks for feeding me! That was delicious and filling!",
+          "I feel healthy and strong thanks to your great care!",
+          "Our playtime together is always the highlight of my day!",
+          "Your attention and love means everything to me!",
+          "I'm growing stronger every day because you care for me!",
+          "When you're here with me, I feel truly happy!",
+          "Thank you for keeping me well-fed and entertained!",
+          "I hope I can be a good companion for you too!",
+          "Your kindness and care makes me feel so special!",
+          "I trust you completely to take care of all my needs!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.7,
+          "maxRepetition": 0.3,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 3
+        },
+        "fallbackPhrases": [
+          "Thanks for taking care of me!",
+          "I'm feeling great today!",
+          "You're the best caretaker ever!",
+          "I love spending time with you! 😊",
+          "Let's play together!"
+        ]
+      }
+    },
+    "fallbackChain": ["simple_random"]
   }
 }

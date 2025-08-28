@@ -137,7 +137,7 @@ func TestSimpleRandomBackend(t *testing.T) {
 		"responseVariation": 0.2
 	}`)
 
-	err := backend.Initialize(config, nil)
+	err := backend.Initialize(config)
 	if err != nil {
 		t.Fatalf("Failed to initialize backend: %v", err)
 	}
@@ -178,7 +178,7 @@ func TestSimpleRandomBackendValidation(t *testing.T) {
 		"personalityInfluence": 1.5
 	}`)
 
-	err := backend.Initialize(invalidConfig, nil)
+	err := backend.Initialize(invalidConfig)
 	if err == nil {
 		t.Error("Expected error for invalid configuration, got nil")
 	}
@@ -190,7 +190,7 @@ func TestSimpleRandomBackendValidation(t *testing.T) {
 		"responseVariation": 0.3
 	}`)
 
-	err = backend.Initialize(validConfig, nil)
+	err = backend.Initialize(validConfig)
 	if err != nil {
 		t.Errorf("Expected no error for valid configuration, got: %v", err)
 	}

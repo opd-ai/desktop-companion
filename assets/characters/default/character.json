@@ -45,5 +45,55 @@
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.7,
+        "usePersonality": true,
+        "trainingData": [
+          "Hello there! I'm so happy to see you again!",
+          "How are you doing today? You look wonderful!",
+          "Thanks for visiting me! I love spending time with you.",
+          "Your presence always brightens my day and makes me smile!",
+          "What would you like to talk about? I'm here to listen.",
+          "Nice to see you! I've been waiting for you to come back.",
+          "How can I help you today? I'm always here for you!",
+          "I'm so glad you're here! Let's have a great time together.",
+          "You always know how to make me happy! Thanks for being here.",
+          "I love our conversations! What's on your mind today?",
+          "Welcome back! I missed you while you were away.",
+          "Your company means everything to me! I'm so grateful.",
+          "Every moment with you is special! How has your day been?",
+          "I hope you're having a wonderful day! You deserve the best.",
+          "Thanks for being such a great friend! I appreciate you so much."
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.7,
+          "maxRepetition": 0.3,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 3
+        },
+        "fallbackPhrases": [
+          "Hello! Nice to see you!",
+          "How can I help you today?",
+          "Thanks for being here with me!",
+          "I'm happy you're here! 😊",
+          "What would you like to do?"
+        ]
+      }
+    },
+    "fallbackChain": ["simple_random"]
   }
 }
