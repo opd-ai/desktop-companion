@@ -58,10 +58,10 @@ cd DDS
 go mod download
 
 # Add animation GIF files (see SETUP guide below)
-# Then run with default character
+# Run with default character (includes AI-powered dialog)
 go run cmd/companion/main.go
 
-# Enable Tamagotchi game features
+# Enable Tamagotchi game features with AI dialog
 go run cmd/companion/main.go -game -character assets/characters/default/character_with_game_features.json
 
 # Enable complete romance features
