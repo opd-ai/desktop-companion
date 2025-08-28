@@ -150,12 +150,12 @@ The application is architecturally sound with only integration gaps preventing f
 
 ```
 CRITICAL BUGS:           0 (1 resolved)
-FUNCTIONAL MISMATCHES:   2
+FUNCTIONAL MISMATCHES:   1 (1 resolved)
 MISSING FEATURES:        1
 EDGE CASE BUGS:          2
 PERFORMANCE ISSUES:      1
 
-TOTAL ISSUES FOUND:      8 (1 resolved)
+TOTAL ISSUES FOUND:      8 (2 resolved)
 ```
 
 **Risk Assessment:** Medium-High  
@@ -174,7 +174,8 @@ TOTAL ISSUES FOUND:      8 (1 resolved)
 **Reproduction:** 1. Enable auto-save 2. Rapidly call EnableAutoSave/DisableAutoSave multiple times 3. Application may hang on shutdown  
 **Fix Applied:** Replaced channel-based stop signaling with context cancellation. This eliminates data races between goroutines accessing ticker and autoSave fields, and prevents deadlocks during concurrent operations.
 
-### FUNCTIONAL MISMATCH: Default Character Path Resolution Error
+### FUNCTIONAL MISMATCH: Default Character Path Resolution Error ✅ **RESOLVED**
+**Status:** Fixed in commit 042897a (August 28, 2025)  
 **File:** cmd/companion/main.go:18, internal/character/card.go:116  
 **Severity:** Medium  
 **Description:** The default character path "assets/characters/default/character.json" is resolved relative to the current working directory, not the application binary location. This breaks when the application is run from different directories.  
@@ -182,6 +183,7 @@ TOTAL ISSUES FOUND:      8 (1 resolved)
 **Actual Behavior:** Application fails with "failed to read character card" when run from different directories  
 **Impact:** Documentation examples fail, confusing user experience, breaks deployment scenarios where working directory differs from installation directory  
 **Reproduction:** 1. Change to different directory 2. Run `go run /path/to/DDS/cmd/companion/main.go` 3. Application fails to find default character  
+**Fix Applied:** Modified loadCharacterConfiguration() to search for project root (go.mod) when using default relative path, falling back to executable directory for deployed binaries.  
 **Code Reference:**
 ```go
 // cmd/companion/main.go:18
@@ -267,7 +269,7 @@ for name := range card.Animations {
 2. **~~Fix auto-save race condition~~** ✅ **RESOLVED** (df673f5) - Used context cancellation for proper goroutine coordination
 
 ### High Priority (Fix Soon)  
-3. **Resolve default character path issue** - Use executable directory or embed default character
+3. **~~Resolve default character path issue~~** ✅ **RESOLVED** (042897a) - Project root discovery for development and executable directory for deployment
 4. **Add keyboard shortcut for stats toggle** - Implement documented keyboard functionality
 5. **Fix memory target validation consistency** - Unify warning logic with target validation
 
