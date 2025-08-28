@@ -12,27 +12,66 @@ import (
 func main() {
 	fmt.Println("Dialog Backend Example")
 
-	// Create dialog manager
+	// Create and configure dialog manager
+	manager := setupDialogManager()
+
+	// Create test context
+	context := createTestContext()
+
+	// Run all dialog tests
+	runDialogGenerationTests(manager, context)
+	runTriggerTests(manager, context)
+	displayBackendInformation(manager)
+}
+
+// setupDialogManager creates and configures the dialog manager with backends.
+func setupDialogManager() *dialog.DialogManager {
 	manager := dialog.NewDialogManager(true)
 
-	// Create and register backends
-	simpleBackend := dialog.NewSimpleRandomBackend()
-	markovBackend := dialog.NewMarkovChainBackend()
+	// Create and initialize backends
+	simpleBackend := createSimpleBackend()
+	markovBackend := createMarkovBackend()
 
-	// Initialize simple backend with basic config
-	simpleConfig := map[string]interface{}{
+	// Register backends
+	manager.RegisterBackend("simple_random", simpleBackend)
+	manager.RegisterBackend("markov_chain", markovBackend)
+
+	// Configure manager settings
+	if err := manager.SetDefaultBackend("simple_random"); err != nil {
+		log.Fatal("Failed to set default backend:", err)
+	}
+
+	if err := manager.SetFallbackChain([]string{"markov_chain"}); err != nil {
+		log.Fatal("Failed to set fallback chain:", err)
+	}
+
+	return manager
+}
+
+// createSimpleBackend creates and initializes a simple random backend.
+func createSimpleBackend() dialog.DialogBackend {
+	backend := dialog.NewSimpleRandomBackend()
+
+	config := map[string]interface{}{
 		"type":                 "basic",
 		"personalityInfluence": 0.5,
 		"responseVariation":    0.3,
 		"preferRomanceDialogs": true,
 	}
-	simpleConfigJSON, _ := json.Marshal(simpleConfig)
-	if err := simpleBackend.Initialize(json.RawMessage(simpleConfigJSON)); err != nil {
+
+	configJSON, _ := json.Marshal(config)
+	if err := backend.Initialize(json.RawMessage(configJSON)); err != nil {
 		log.Fatal("Failed to initialize simple backend:", err)
 	}
 
-	// Initialize Markov backend with basic config
-	markovConfig := map[string]interface{}{
+	return backend
+}
+
+// createMarkovBackend creates and initializes a Markov chain backend.
+func createMarkovBackend() dialog.DialogBackend {
+	backend := dialog.NewMarkovChainBackend()
+
+	config := map[string]interface{}{
 		"chainOrder":     2,
 		"minWords":       3,
 		"maxWords":       15,
@@ -47,27 +86,18 @@ func main() {
 			"You always know how to make me smile.",
 		},
 	}
-	markovConfigJSON, _ := json.Marshal(markovConfig)
-	if err := markovBackend.Initialize(json.RawMessage(markovConfigJSON)); err != nil {
+
+	configJSON, _ := json.Marshal(config)
+	if err := backend.Initialize(json.RawMessage(configJSON)); err != nil {
 		log.Fatal("Failed to initialize Markov backend:", err)
 	}
 
-	// Register backends
-	manager.RegisterBackend("simple_random", simpleBackend)
-	manager.RegisterBackend("markov_chain", markovBackend)
+	return backend
+}
 
-	// Set default backend
-	if err := manager.SetDefaultBackend("simple_random"); err != nil {
-		log.Fatal("Failed to set default backend:", err)
-	}
-
-	// Set fallback chain
-	if err := manager.SetFallbackChain([]string{"markov_chain"}); err != nil {
-		log.Fatal("Failed to set fallback chain:", err)
-	}
-
-	// Create test context
-	context := dialog.DialogContext{
+// createTestContext creates a test dialog context with sample data.
+func createTestContext() dialog.DialogContext {
+	return dialog.DialogContext{
 		Trigger:       "click",
 		InteractionID: "test_001",
 		Timestamp:     time.Now(),
@@ -91,9 +121,12 @@ func main() {
 		},
 		FallbackAnimation: "talking",
 	}
+}
 
-	// Test dialog generation
+// runDialogGenerationTests tests dialog generation with multiple turns.
+func runDialogGenerationTests(manager *dialog.DialogManager, context dialog.DialogContext) {
 	fmt.Println("\n--- Testing Dialog Generation ---")
+
 	for i := 0; i < 5; i++ {
 		context.InteractionID = fmt.Sprintf("test_%03d", i+1)
 		context.ConversationTurn = i + 1
@@ -104,16 +137,23 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("Turn %d:\n", i+1)
-		fmt.Printf("  Text: %s\n", response.Text)
-		fmt.Printf("  Animation: %s\n", response.Animation)
-		fmt.Printf("  Confidence: %.2f\n", response.Confidence)
-		fmt.Printf("  Type: %s\n", response.ResponseType)
-		fmt.Printf("  Tone: %s\n", response.EmotionalTone)
-		fmt.Println()
+		displayDialogResponse(i+1, response)
 	}
+}
 
-	// Test different triggers
+// displayDialogResponse formats and displays a dialog response.
+func displayDialogResponse(turn int, response dialog.DialogResponse) {
+	fmt.Printf("Turn %d:\n", turn)
+	fmt.Printf("  Text: %s\n", response.Text)
+	fmt.Printf("  Animation: %s\n", response.Animation)
+	fmt.Printf("  Confidence: %.2f\n", response.Confidence)
+	fmt.Printf("  Type: %s\n", response.ResponseType)
+	fmt.Printf("  Tone: %s\n", response.EmotionalTone)
+	fmt.Println()
+}
+
+// runTriggerTests tests dialog generation with different triggers.
+func runTriggerTests(manager *dialog.DialogManager, context dialog.DialogContext) {
 	fmt.Println("--- Testing Different Triggers ---")
 	triggers := []string{"rightclick", "hover", "compliment", "give_gift", "deep_conversation"}
 
@@ -129,9 +169,12 @@ func main() {
 
 		fmt.Printf("%s: %s (Animation: %s)\n", trigger, response.Text, response.Animation)
 	}
+}
 
-	// Test backend info
+// displayBackendInformation shows information about all registered backends.
+func displayBackendInformation(manager *dialog.DialogManager) {
 	fmt.Println("\n--- Backend Information ---")
+
 	for _, backendName := range manager.GetRegisteredBackends() {
 		info, err := manager.GetBackendInfo(backendName)
 		if err != nil {

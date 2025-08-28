@@ -1,19 +1,27 @@
 package character
 
 import (
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 )
 
 // TestRomanceEventsIntegration tests the romance events system integration
 func TestRomanceEventsIntegration(t *testing.T) {
+	// Get the project root dynamically
+	_, filename, _, _ := runtime.Caller(0)
+	projectRoot := filepath.Join(filepath.Dir(filename), "..", "..")
+	romanceCardPath := filepath.Join(projectRoot, "assets", "characters", "romance", "character.json")
+
 	// Load the actual romance character with enhanced events
-	card, err := LoadCard("/workspaces/DDS/assets/characters/romance/character.json")
+	card, err := LoadCard(romanceCardPath)
 	if err != nil {
 		t.Fatalf("failed to load romance character: %v", err)
 	}
 
-	char, err := New(card, "/workspaces/DDS/assets/characters/romance")
+	romanceAssetsPath := filepath.Join(projectRoot, "assets", "characters", "romance")
+	char, err := New(card, romanceAssetsPath)
 	if err != nil {
 		t.Fatalf("failed to create character: %v", err)
 	}
@@ -33,7 +41,7 @@ func TestRomanceEventsIntegration(t *testing.T) {
 
 		expectedEvents := []string{
 			"Love Letter Memory",
-			"Romantic Daydream", 
+			"Romantic Daydream",
 			"Sweet Memory Flashback",
 			"Relationship Milestone Reflection",
 			"Frequent Compliment Appreciation",
@@ -55,11 +63,11 @@ func TestRomanceEventsIntegration(t *testing.T) {
 
 		// Build up some interaction history
 		char.gameState.ApplyInteractionEffects(map[string]float64{"affection": 25})
-		char.gameState.RecordRomanceInteraction("compliment", "Thank you!", 
-			map[string]float64{"affection": 10}, 
+		char.gameState.RecordRomanceInteraction("compliment", "Thank you!",
+			map[string]float64{"affection": 10},
 			map[string]float64{"affection": 35})
-		char.gameState.RecordRomanceInteraction("compliment", "So sweet!", 
-			map[string]float64{"affection": 35}, 
+		char.gameState.RecordRomanceInteraction("compliment", "So sweet!",
+			map[string]float64{"affection": 35},
 			map[string]float64{"affection": 40})
 
 		// Test memory-based conditions
@@ -76,7 +84,7 @@ func TestRomanceEventsIntegration(t *testing.T) {
 	t.Run("romance events system functioning", func(t *testing.T) {
 		// Set up favorable conditions
 		char.gameState.ApplyInteractionEffects(map[string]float64{"affection": 20})
-		
+
 		// Reset event timing to allow immediate checks
 		char.lastRomanceEventCheck = time.Now().Add(-60 * time.Second)
 		char.romanceEventCooldowns = make(map[string]time.Time)
@@ -86,9 +94,9 @@ func TestRomanceEventsIntegration(t *testing.T) {
 
 		// Just verify the system doesn't crash and can return events
 		if triggeredEvent != nil {
-			t.Logf("Successfully triggered romance event: %s - %s", 
+			t.Logf("Successfully triggered romance event: %s - %s",
 				triggeredEvent.Name, triggeredEvent.Description)
-			
+
 			if len(triggeredEvent.Responses) == 0 {
 				t.Error("triggered event should have responses")
 			}
