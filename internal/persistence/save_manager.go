@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -19,6 +20,8 @@ type SaveManager struct {
 	interval       time.Duration
 	stopChan       chan struct{}
 	autoSaveTicker *time.Ticker
+	ctx            context.Context
+	cancel         context.CancelFunc
 }
 
 // GameSaveData represents the complete save state for a character
@@ -58,11 +61,14 @@ type SaveMetadata struct {
 // NewSaveManager creates a new save manager instance
 // savePath should be the directory where save files will be stored
 func NewSaveManager(savePath string) *SaveManager {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &SaveManager{
 		savePath: savePath,
 		autoSave: false,
 		interval: 5 * time.Minute,        // Default auto-save interval
 		stopChan: make(chan struct{}, 1), // Buffered channel to prevent blocking
+		ctx:      ctx,
+		cancel:   cancel,
 	}
 }
 
@@ -85,6 +91,9 @@ func (sm *SaveManager) prepareAutoSaveState(interval time.Duration) {
 	sm.autoSave = true
 	sm.interval = interval
 	sm.autoSaveTicker = time.NewTicker(interval)
+
+	// Create new context for this auto-save session
+	sm.ctx, sm.cancel = context.WithCancel(context.Background())
 }
 
 // startAutoSaveGoroutine launches the background auto-save process
@@ -95,13 +104,31 @@ func (sm *SaveManager) startAutoSaveGoroutine(gameStateProvider func() *GameSave
 	}()
 }
 
-// runAutoSaveLoop executes the main auto-save loop with ticker and stop channel
+// runAutoSaveLoop executes the main auto-save loop with ticker and context cancellation
 func (sm *SaveManager) runAutoSaveLoop(gameStateProvider func() *GameSaveData) {
+	// Get the current context and ticker under lock
+	sm.mu.RLock()
+	ctx := sm.ctx
+	ticker := sm.autoSaveTicker
+	sm.mu.RUnlock()
+
+	// If ticker is nil or context is cancelled, exit immediately
+	if ticker == nil || ctx == nil {
+		return
+	}
+
 	for {
 		select {
-		case <-sm.autoSaveTicker.C:
-			sm.performAutoSave(gameStateProvider)
-		case <-sm.stopChan:
+		case <-ticker.C:
+			// Check if auto-save is still enabled before performing save
+			sm.mu.RLock()
+			enabled := sm.autoSave
+			sm.mu.RUnlock()
+
+			if enabled {
+				sm.performAutoSave(gameStateProvider)
+			}
+		case <-ctx.Done():
 			return
 		}
 	}
@@ -146,13 +173,9 @@ func (sm *SaveManager) disableAutoSaveUnsafe() {
 		sm.autoSaveTicker = nil
 	}
 
-	// Signal the goroutine to stop (non-blocking with buffered channel)
-	select {
-	case sm.stopChan <- struct{}{}:
-		// Successfully sent stop signal
-	default:
-		// Channel is full, meaning stop signal was already sent
-		// This is fine, the goroutine will stop
+	// Cancel the context to stop the goroutine
+	if sm.cancel != nil {
+		sm.cancel()
 	}
 }
 
