@@ -151,11 +151,11 @@ The application is architecturally sound with only integration gaps preventing f
 ```
 CRITICAL BUGS:           0 (1 resolved)
 FUNCTIONAL MISMATCHES:   0 (2 resolved)
-MISSING FEATURES:        1
+MISSING FEATURES:        0 (1 resolved)
 EDGE CASE BUGS:          2
 PERFORMANCE ISSUES:      1
 
-TOTAL ISSUES FOUND:      8 (3 resolved)
+TOTAL ISSUES FOUND:      8 (4 resolved)
 ```
 
 **Risk Assessment:** Medium-High  
@@ -205,7 +205,8 @@ characterPath = flag.String("character", "assets/characters/default/character.js
 // README example vs actual default character configuration missing dialogBackend section
 ```
 
-### MISSING FEATURE: Stats Overlay Keyboard Toggle
+### MISSING FEATURE: Stats Overlay Keyboard Toggle ✅ **RESOLVED**
+**Status:** Fixed in commit fa74306 (August 28, 2025)  
 **File:** README.md:157, internal/ui/stats_overlay.go  
 **Severity:** Medium  
 **Description:** README documents "Toggle with keyboard shortcut to monitor character's wellbeing" but no keyboard shortcut implementation exists in the stats overlay code.  
@@ -213,6 +214,7 @@ characterPath = flag.String("character", "assets/characters/default/character.js
 **Actual Behavior:** No keyboard shortcut functionality implemented, only command-line flag available  
 **Impact:** Documented feature is completely missing, users cannot toggle stats during runtime as promised  
 **Reproduction:** 1. Run with `-game -stats` flags 2. Try various keyboard shortcuts 3. No toggle functionality exists  
+**Fix Applied:** Added keyboard shortcut handling to window setup - 'S' key now toggles stats overlay. Updated README to document the specific key binding.  
 **Code Reference:**
 ```go
 // stats_overlay.go contains no keyboard event handling
@@ -272,7 +274,7 @@ for name := range card.Animations {
 
 ### High Priority (Fix Soon)  
 3. **~~Resolve default character path issue~~** ✅ **RESOLVED** (042897a) - Project root discovery for development and executable directory for deployment
-4. **Add keyboard shortcut for stats toggle** - Implement documented keyboard functionality
+4. **~~Add keyboard shortcut for stats toggle~~** ✅ **RESOLVED** (fa74306) - 'S' key now toggles stats overlay as documented
 5. **Fix memory target validation consistency** - Unify warning logic with target validation
 
 ### Medium Priority (Next Release)
