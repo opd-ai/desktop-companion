@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+// animationLoadResult represents the result of loading a single animation
+type animationLoadResult struct {
+	name    string
+	success bool
+	error   error
+}
+
 // Character represents a desktop companion with behavior, animations, and interactions
 // Follows the "lazy programmer" approach by combining existing components
 type Character struct {
@@ -82,25 +89,66 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 	}
 
 	// Load all animations from the character card
+	// Load animations concurrently for better startup performance
 	// Use resilient loading - log failures but continue with valid animations
 	var loadedAnimations []string
 	var failedAnimations []string
 
+	// Load animations concurrently to improve startup performance
+	animationResults := make(chan animationLoadResult, len(card.Animations))
+	var wg sync.WaitGroup
+
+	// Limit concurrent animations loading to prevent resource exhaustion
+	maxConcurrent := 4
+	semaphore := make(chan struct{}, maxConcurrent)
+
 	for name := range card.Animations {
-		fullPath, err := card.GetAnimationPath(basePath, name)
-		if err != nil {
-			failedAnimations = append(failedAnimations, name)
-			fmt.Printf("Warning: failed to resolve animation path for '%s': %v\n", name, err)
-			continue
-		}
+		wg.Add(1)
+		go func(animationName string) {
+			defer wg.Done()
 
-		if err := char.animationManager.LoadAnimation(name, fullPath); err != nil {
-			failedAnimations = append(failedAnimations, name)
-			fmt.Printf("Warning: failed to load animation '%s': %v\n", name, err)
-			continue
-		}
+			// Acquire semaphore
+			semaphore <- struct{}{}
+			defer func() { <-semaphore }()
 
-		loadedAnimations = append(loadedAnimations, name)
+			fullPath, err := card.GetAnimationPath(basePath, animationName)
+			if err != nil {
+				animationResults <- animationLoadResult{
+					name:    animationName,
+					success: false,
+					error:   fmt.Errorf("failed to resolve animation path: %w", err),
+				}
+				return
+			}
+
+			if err := char.animationManager.LoadAnimation(animationName, fullPath); err != nil {
+				animationResults <- animationLoadResult{
+					name:    animationName,
+					success: false,
+					error:   fmt.Errorf("failed to load animation: %w", err),
+				}
+				return
+			}
+
+			animationResults <- animationLoadResult{
+				name:    animationName,
+				success: true,
+			}
+		}(name)
+	}
+
+	// Wait for all animations to complete loading
+	wg.Wait()
+	close(animationResults)
+
+	// Process results
+	for result := range animationResults {
+		if result.success {
+			loadedAnimations = append(loadedAnimations, result.name)
+		} else {
+			failedAnimations = append(failedAnimations, result.name)
+			fmt.Printf("Warning: failed to load animation '%s': %v\n", result.name, result.error)
+		}
 	}
 
 	// Only fail if no animations could be loaded at all
