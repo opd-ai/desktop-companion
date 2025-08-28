@@ -85,9 +85,22 @@ func configureDebugLogging() {
 
 // loadCharacterConfiguration loads and validates the character configuration file.
 func loadCharacterConfiguration() (*character.CharacterCard, string) {
-	absPath, err := filepath.Abs(*characterPath)
-	if err != nil {
-		log.Fatalf("Failed to resolve character path: %v", err)
+	var absPath string
+	var err error
+
+	// For the default relative path, resolve relative to executable directory
+	if *characterPath == "assets/characters/default/character.json" && !filepath.IsAbs(*characterPath) {
+		execPath, execErr := os.Executable()
+		if execErr != nil {
+			log.Fatalf("Failed to get executable path: %v", execErr)
+		}
+		execDir := filepath.Dir(execPath)
+		absPath = filepath.Join(execDir, *characterPath)
+	} else {
+		absPath, err = filepath.Abs(*characterPath)
+		if err != nil {
+			log.Fatalf("Failed to resolve character path: %v", err)
+		}
 	}
 
 	if *debug {
