@@ -172,5 +172,55 @@
         }
       }
     ]
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.7,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 10,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.8,
+        "usePersonality": true,
+        "trainingData": [
+          "Hello there! I'm your balanced buddy, ready for a great time together!",
+          "How are you doing today? I'm feeling pretty good myself!",
+          "Thanks for taking care of me! I really appreciate your attention.",
+          "I'm glad to see you again! Our friendship means so much to me.",
+          "What would you like to do? I'm up for anything you have in mind!",
+          "Your company always brightens my day and makes me feel happy!",
+          "I love spending time with you! Let's have some fun together.",
+          "Thanks for being such a wonderful friend! You're the best companion.",
+          "How has your day been? I hope it's been as great as mine!",
+          "I'm here whenever you need me! That's what friends are for.",
+          "Your care and attention help me stay healthy and happy!",
+          "I enjoy our conversations! What's on your mind today?",
+          "Thanks for checking on me! I always look forward to seeing you.",
+          "I'm feeling balanced and content! How about you?",
+          "Let's make today amazing! I'm ready for whatever comes our way!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.8,
+          "maxRepetition": 0.2,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 3
+        },
+        "fallbackPhrases": [
+          "Hello! How can I help you today?",
+          "I'm here for you!",
+          "Thanks for being my friend! 😊",
+          "What would you like to do?",
+          "I'm feeling great today!"
+        ]
+      }
+    },
+    "fallbackChain": ["simple_random"]
   }
 }

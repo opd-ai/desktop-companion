@@ -1,0 +1,88 @@
+{
+  "name": "Markov Demo",
+  "description": "Demonstrates AI-powered dialog generation using Markov chain text generation",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello! I use AI to generate responses!",
+        "Try talking to me multiple times to see different generated responses!",
+        "I learn patterns from my training data to create new conversations!",
+        "Each response is dynamically generated using Markov chains!"
+      ],
+      "animation": "talking",
+      "cooldown": 3
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Right-click detected! My responses are generated in real-time!",
+        "This is a demonstration of AI-powered dialog generation!",
+        "I can create variations based on learned patterns!"
+      ],
+      "animation": "happy",
+      "cooldown": 5
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.5,
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "debugMode": true,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 3,
+        "minWords": 4,
+        "maxWords": 15,
+        "temperatureMin": 0.6,
+        "temperatureMax": 0.9,
+        "usePersonality": true,
+        "trainingData": [
+          "Hello there! I'm an AI-powered companion that generates dynamic responses!",
+          "Welcome to the world of machine learning and natural language processing!",
+          "I use Markov chains to create unique conversational patterns and responses!",
+          "Every time you interact with me, I generate fresh content based on learned patterns!",
+          "My responses are crafted using statistical analysis of conversational data!",
+          "Artificial intelligence allows me to create varied and interesting dialog options!",
+          "I can learn from our conversations to improve my response generation over time!",
+          "Markov chains help me understand language patterns and create coherent responses!",
+          "This demonstration shows how AI can enhance virtual companion interactions!",
+          "Machine learning enables me to provide more engaging and dynamic conversations!",
+          "Through pattern recognition, I can generate contextually appropriate responses!",
+          "Natural language processing allows me to understand and respond meaningfully!",
+          "I combine statistical models with personality traits to create unique responses!",
+          "Advanced dialog generation makes our conversations more natural and varied!",
+          "Computational linguistics helps me create responses that feel authentic and engaging!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.6,
+          "maxRepetition": 0.4,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 4
+        },
+        "fallbackPhrases": [
+          "I'm generating a response for you!",
+          "Let me create something unique to say!",
+          "Processing your interaction with AI magic!",
+          "Crafting a personalized response! ✨",
+          "AI-powered response incoming!"
+        ]
+      }
+    },
+    "fallbackChain": ["simple_random"]
+  }
+}
