@@ -40,7 +40,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 
 ### Prerequisites
 
-- Go 1.21 or higher (currently verified on Go 1.24.5)
+- Go 1.21 or higher
 - C compiler (gcc/clang) for CGO dependencies
 - Platform-specific requirements:
   - **Linux**: X11 or Wayland display environment
@@ -492,10 +492,13 @@ DDS/
 │   ├── character/
 │   │   ├── card.go                 # JSON configuration parser (stdlib)
 │   │   ├── animation.go            # GIF animation manager (stdlib)
-│   │   ├── behavior.go             # Character behavior logic
+│   │   ├── behavior.go             # Main character implementation and logic
 │   │   ├── game_state.go           # Tamagotchi-style game state management
 │   │   ├── progression.go          # Age-based progression and achievements
 │   │   ├── random_events.go        # Probability-based random events system
+│   │   ├── compatibility.go        # Advanced compatibility analysis
+│   │   ├── crisis_recovery.go      # Relationship crisis management
+│   │   ├── jealousy.go             # Jealousy mechanics
 │   │   └── *_test.go               # Comprehensive unit tests
 │   ├── ui/
 │   │   ├── window.go              # Transparent window (fyne)
@@ -505,6 +508,10 @@ DDS/
 │   │   └── *_test.go              # UI component tests
 │   ├── config/
 │   │   └── loader.go              # Configuration file loading
+│   ├── dialog/                    # AI-powered dialog system
+│   │   ├── interface.go           # Dialog backend interface
+│   │   ├── markov_backend.go      # Markov chain text generation
+│   │   └── simple_random_backend.go # Simple random response backend
 │   ├── persistence/               # Game state persistence
 │   │   ├── save_manager.go        # JSON-based save/load system
 │   │   └── save_manager_test.go   # Comprehensive persistence tests
@@ -517,7 +524,18 @@ DDS/
 │   ├── normal/                    # Normal difficulty game character
 │   ├── hard/                      # Hard difficulty game character
 │   ├── challenge/                 # Expert difficulty game character
-│   └── specialist/                # Unique gameplay mechanics
+│   ├── specialist/                # Unique gameplay mechanics
+│   ├── romance/                   # Balanced romance character
+│   ├── tsundere/                  # Tsundere romance archetype
+│   ├── flirty/                    # Flirty extrovert archetype
+│   ├── slow_burn/                 # Slow burn romance archetype
+│   ├── romance_flirty/            # Romance with flirty traits
+│   ├── romance_slowburn/          # Romance with slow burn traits
+│   ├── romance_supportive/        # Romance with supportive traits
+│   ├── romance_tsundere/          # Romance with tsundere traits
+│   ├── markov_example/            # AI dialog demonstration
+│   ├── examples/                  # Example configurations
+│   └── templates/                 # Character creation templates
 ├── Makefile                       # Build automation
 ├── CHARACTER_ARCHETYPES.md        # Romance archetype comparison guide
 ├── SCHEMA_DOCUMENTATION.md        # Complete JSON schema reference
