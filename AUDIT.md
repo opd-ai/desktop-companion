@@ -1,11 +1,152 @@
-# Desktop Companion (DDS) - Functional Audit Report
+# Implementation Gap Analysis
+Generated: August 28, 2025
+Codebase Version: 2faa1eb
+Repository: opd-ai/DDS
 
-**Audit Date:** August 27, 2025  
-**Auditor:** Expert Go Code Auditor  
-**Scope:** Complete codebase functional audit against README.md specifications  
-**Method:** Dependency-based systematic analysis with execution path tracing  
+## Executive Summary
+Total Gaps Found: 3
+- Critical: 1
+- Moderate: 2  
+- Minor: 0
 
-## AUDIT SUMMARY
+This mature Go application has undergone multiple previous audits and shows high implementation quality. The gaps found are subtle discrepancies that could impact production usage, particularly around auto-save functionality and documentation accuracy.
+
+## Detailed Findings
+
+### Gap #1: Auto-Save Interval Ignored from Character Configuration
+**Documentation Reference:** 
+> "Game state automatically saves every 5 minutes" (README.md:169)
+> "autoSaveInterval: 300" (README.md:309 in example JSON)
+> "Configure game mechanics including decay intervals, auto-save frequency, and feature toggles" (README.md:401)
+
+**Implementation Location:** `internal/ui/window.go:55-67` and entire UI layer
+
+**Expected Behavior:** Auto-save should use character card's `gameRules.autoSaveInterval` setting (300 seconds from example character cards)
+
+**Actual Implementation:** No SaveManager is created or auto-save enabled in game mode. The UI completely ignores the character card's auto-save configuration.
+
+**Gap Details:** The application validates character cards with `autoSaveInterval` settings (60-7200 seconds), documents auto-save as a key feature, but never actually implements auto-save functionality in the UI layer. The SaveManager exists and has proper auto-save implementation, but it's never instantiated or connected to the character's game state.
+
+**Reproduction:**
+```go
+// 1. Load character with game features and autoSaveInterval: 300
+card := character.LoadCard("assets/characters/default/character_with_game_features.json")
+// 2. Run in game mode: go run cmd/companion/main.go -game
+// 3. Check for save files after 5+ minutes - none exist
+// 4. No SaveManager is ever created in the UI layer
+```
+
+**Production Impact:** Critical - Users expect their game progress to be saved automatically as documented. Data loss occurs if application crashes or is closed.
+
+**Evidence:**
+```go
+// UI creates stats overlay but no save manager
+if gameMode && char.GetGameState() != nil {
+    dw.statsOverlay = NewStatsOverlay(char)  // ✓ Created
+    // Missing: saveManager := persistence.NewSaveManager(savePath)
+    // Missing: saveManager.EnableAutoSave(character auto-save interval)
+}
+```
+
+### Gap #2: Hard-coded Default vs Configurable Auto-Save Interval
+**Documentation Reference:**
+> "autoSaveInterval: 300" (README.md:309, assets/characters/default/character_with_game_features.json:66)
+> "Seconds between auto-saves" (internal/character/card.go:56)
+
+**Implementation Location:** `internal/persistence/save_manager.go:64`
+
+**Expected Behavior:** SaveManager should respect character card's `autoSaveInterval` when EnableAutoSave is called
+
+**Actual Implementation:** SaveManager uses hard-coded 5-minute default (300 seconds) regardless of character configuration
+
+**Gap Details:** When EnableAutoSave() is called, it correctly accepts an interval parameter, but the NewSaveManager() constructor sets a hard-coded default that conflicts with character card settings. Character cards specify autoSaveInterval (e.g., 300 seconds) but this value is validated but never used.
+
+**Reproduction:**
+```go
+// Character card specifies autoSaveInterval: 180 (3 minutes)
+card := &CharacterCard{GameRules: &GameRulesConfig{AutoSaveInterval: 180}}
+// SaveManager still defaults to 5 minutes
+sm := NewSaveManager("/tmp")
+fmt.Println(sm.interval) // Shows 5*time.Minute, not 3*time.Minute
+```
+
+**Production Impact:** Moderate - Auto-save frequency doesn't match user expectations from character configuration
+
+**Evidence:**
+```go
+// NewSaveManager ignores character settings
+func NewSaveManager(savePath string) *SaveManager {
+    return &SaveManager{
+        interval: 5 * time.Minute,  // Hard-coded default
+        // Should use: time.Duration(characterCard.GameRules.AutoSaveInterval) * time.Second
+    }
+}
+```
+
+### Gap #3: Missing Auto-Save Documentation Qualifier  
+**Documentation Reference:**
+> "Game state automatically saves every 5 minutes" (README.md:169)
+
+**Implementation Location:** No auto-save implementation in UI layer
+
+**Expected Behavior:** Documentation should accurately reflect current implementation status
+
+**Actual Implementation:** Documentation promises auto-save functionality that isn't implemented
+
+**Gap Details:** The README.md confidently states auto-save occurs "every 5 minutes" but the feature is not implemented. This creates false user expectations. The persistence layer has full auto-save capability, but it's never activated.
+
+**Reproduction:**
+```bash
+# Follow documentation steps
+go run cmd/companion/main.go -game -character assets/characters/default/character_with_game_features.json
+# Wait 5+ minutes as documented
+# Check ~/.local/share/desktop-companion/ for save files - none exist
+```
+
+**Production Impact:** Moderate - Documentation inaccuracy leads to user confusion and potential data loss expectations
+
+**Evidence:**
+```markdown
+# Documentation promises feature that doesn't exist
+- **Auto-save**: Game state automatically saves every 5 minutes
+
+# But UI layer has no SaveManager integration:
+// internal/ui/window.go - game mode setup
+if gameMode && char.GetGameState() != nil {
+    dw.statsOverlay = NewStatsOverlay(char)  // Only stats, no save manager
+}
+```
+
+## Implementation Quality Assessment
+
+**Positive Findings:**
+- SaveManager has robust implementation with proper concurrency, validation, and atomic writes
+- Character card validation correctly enforces autoSaveInterval range (60-7200 seconds)  
+- All documented validation ranges match implementation (name 1-50 chars, description 1-200 chars, etc.)
+- Performance targets are properly monitored (≤50MB memory, <2s startup, 30+ FPS)
+- Markov chain validation correctly enforces documented ranges (chainOrder 1-5, temperature 0-2)
+
+**Architecture Notes:**
+The codebase demonstrates excellent separation of concerns. The persistence layer is production-ready but simply not connected to the UI layer. This is a integration gap rather than a fundamental design flaw.
+
+## Recommendations
+
+1. **Critical Fix**: Integrate SaveManager in UI layer for game mode
+   ```go
+   // In NewDesktopWindow when gameMode is true:
+   if gameMode && char.GetGameState() != nil {
+       saveManager := persistence.NewSaveManager(getSaveDirectory())
+       interval := time.Duration(char.GetGameCard().GameRules.AutoSaveInterval) * time.Second
+       saveManager.EnableAutoSave(interval, func() *persistence.GameSaveData {
+           return char.GetSaveData()
+       })
+   }
+   ```
+
+2. **Moderate Fix**: Use character card autoSaveInterval in SaveManager
+3. **Documentation Fix**: Either implement auto-save or qualify the documentation with current status
+
+The application is architecturally sound with only integration gaps preventing full feature functionality.
 
 ```
 CRITICAL BUGS:           1
