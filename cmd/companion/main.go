@@ -26,8 +26,23 @@ var (
 
 const appVersion = "1.0.0"
 
+// validateFlagDependencies checks that flag combinations are valid
+func validateFlagDependencies(gameMode, showStats bool) error {
+	if showStats && !gameMode {
+		return fmt.Errorf("-stats flag requires -game flag to be enabled")
+	}
+	return nil
+}
+
 func main() {
 	flag.Parse()
+
+	// Validate flag dependencies
+	if err := validateFlagDependencies(*gameMode, *showStats); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Use -help for usage information\n")
+		os.Exit(1)
+	}
 
 	if *version {
 		showVersionInfo()
