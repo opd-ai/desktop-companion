@@ -10,7 +10,7 @@ import (
 func TestHandleChatMessage(t *testing.T) {
 	// Test character without dialog backend
 	normalCard := createTestCharacterCard()
-	normalChar, err := New(normalCard, "/workspaces/DDS/testdata")
+	normalChar, err := New(normalCard, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create test character: %v", err)
 	}
@@ -22,7 +22,7 @@ func TestHandleChatMessage(t *testing.T) {
 
 	// Test character with dialog backend
 	backendCard := createTestCharacterCardWithDialogBackend()
-	backendChar, err := New(backendCard, "/workspaces/DDS/testdata")
+	backendChar, err := New(backendCard, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create test character with dialog backend: %v", err)
 	}
@@ -30,7 +30,7 @@ func TestHandleChatMessage(t *testing.T) {
 	// Test chat message processing
 	testMessage := "How are you feeling today?"
 	response = backendChar.HandleChatMessage(testMessage)
-	
+
 	// Should get some response (either from dialog backend or fallback)
 	if response == "" {
 		t.Error("Character with dialog backend should return some response")
@@ -78,7 +78,7 @@ func TestHandleChatMessage_FallbackResponses(t *testing.T) {
 		},
 	}
 
-	char, err := New(card, "/workspaces/DDS/testdata")
+	char, err := New(card, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create test character: %v", err)
 	}
@@ -93,7 +93,7 @@ func TestHandleChatMessage_FallbackResponses(t *testing.T) {
 func TestBuildChatDialogContext(t *testing.T) {
 	// Create character with dialog backend
 	card := createTestCharacterCardWithDialogBackend()
-	char, err := New(card, "/workspaces/DDS/testdata")
+	char, err := New(card, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create test character: %v", err)
 	}
@@ -102,7 +102,7 @@ func TestBuildChatDialogContext(t *testing.T) {
 	// so we'll test the public method that uses it
 	testMessage := "Tell me about yourself"
 	response := char.HandleChatMessage(testMessage)
-	
+
 	// Verify that we get a response (indicating context building worked)
 	if response == "" {
 		t.Error("Should get response indicating context building worked")
@@ -112,17 +112,17 @@ func TestBuildChatDialogContext(t *testing.T) {
 func TestExtractTopicsFromMessage(t *testing.T) {
 	// This tests the topic extraction logic indirectly through HandleChatMessage
 	card := createTestCharacterCardWithDialogBackend()
-	char, err := New(card, "/workspaces/DDS/testdata")
+	char, err := New(card, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create test character: %v", err)
 	}
 
 	// Test messages with different topics
 	testCases := []string{
-		"I love you so much!", // Should detect romance topic
+		"I love you so much!",          // Should detect romance topic
 		"I'm feeling very happy today", // Should detect emotion topic
-		"Want to play a game?", // Should detect entertainment topic
-		"How's the weather?", // Should detect daily_life topic
+		"Want to play a game?",         // Should detect entertainment topic
+		"How's the weather?",           // Should detect daily_life topic
 	}
 
 	for _, message := range testCases {
