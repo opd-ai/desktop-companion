@@ -60,7 +60,27 @@ type Character struct {
 // New creates a new character instance from a character card
 // Loads all animations and initializes behavior state
 func New(card *CharacterCard, basePath string) (*Character, error) {
-	char := &Character{
+	char := createCharacterInstance(card, basePath)
+
+	if err := initializeCharacterSystems(char); err != nil {
+		return nil, err
+	}
+
+	loadedAnimations, err := loadCharacterAnimations(char)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := setupInitialAnimation(char, loadedAnimations); err != nil {
+		return nil, err
+	}
+
+	return char, nil
+}
+
+// createCharacterInstance initializes the basic character structure with default values.
+func createCharacterInstance(card *CharacterCard, basePath string) *Character {
+	return &Character{
 		card:                     card,
 		animationManager:         NewAnimationManager(),
 		basePath:                 basePath,
@@ -75,34 +95,40 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 		movementEnabled:          card.Behavior.MovementEnabled,
 		size:                     card.Behavior.DefaultSize,
 	}
+}
 
+// initializeCharacterSystems sets up optional game features and dialog systems based on character configuration.
+func initializeCharacterSystems(char *Character) error {
 	// Initialize game features if the character card has them
-	if card.HasGameFeatures() {
+	if char.card.HasGameFeatures() {
 		char.initializeGameFeatures()
 	}
 
 	// Initialize dialog system if the character card has backend configuration
-	if card.HasDialogBackend() {
+	if char.card.HasDialogBackend() {
 		if err := char.initializeDialogSystem(); err != nil {
-			return nil, fmt.Errorf("failed to initialize dialog system: %w", err)
+			return fmt.Errorf("failed to initialize dialog system: %w", err)
 		}
 	}
 
-	// Load all animations from the character card
-	// Load animations concurrently for better startup performance
+	return nil
+}
+
+// loadCharacterAnimations loads all animations from the character card concurrently for better startup performance.
+func loadCharacterAnimations(char *Character) ([]string, error) {
 	// Use resilient loading - log failures but continue with valid animations
 	var loadedAnimations []string
 	var failedAnimations []string
 
 	// Load animations concurrently to improve startup performance
-	animationResults := make(chan animationLoadResult, len(card.Animations))
+	animationResults := make(chan animationLoadResult, len(char.card.Animations))
 	var wg sync.WaitGroup
 
 	// Limit concurrent animations loading to prevent resource exhaustion
 	maxConcurrent := 4
 	semaphore := make(chan struct{}, maxConcurrent)
 
-	for name := range card.Animations {
+	for name := range char.card.Animations {
 		wg.Add(1)
 		go func(animationName string) {
 			defer wg.Done()
@@ -111,29 +137,8 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
 
-			fullPath, err := card.GetAnimationPath(basePath, animationName)
-			if err != nil {
-				animationResults <- animationLoadResult{
-					name:    animationName,
-					success: false,
-					error:   fmt.Errorf("failed to resolve animation path: %w", err),
-				}
-				return
-			}
-
-			if err := char.animationManager.LoadAnimation(animationName, fullPath); err != nil {
-				animationResults <- animationLoadResult{
-					name:    animationName,
-					success: false,
-					error:   fmt.Errorf("failed to load animation: %w", err),
-				}
-				return
-			}
-
-			animationResults <- animationLoadResult{
-				name:    animationName,
-				success: true,
-			}
+			result := loadSingleAnimation(char, animationName)
+			animationResults <- result
 		}(name)
 	}
 
@@ -151,24 +156,58 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 		}
 	}
 
+	return validateAnimationResults(loadedAnimations, failedAnimations, len(char.card.Animations))
+}
+
+// loadSingleAnimation loads a single animation file and returns the result.
+func loadSingleAnimation(char *Character, animationName string) animationLoadResult {
+	fullPath, err := char.card.GetAnimationPath(char.basePath, animationName)
+	if err != nil {
+		return animationLoadResult{
+			name:    animationName,
+			success: false,
+			error:   fmt.Errorf("failed to resolve animation path: %w", err),
+		}
+	}
+
+	if err := char.animationManager.LoadAnimation(animationName, fullPath); err != nil {
+		return animationLoadResult{
+			name:    animationName,
+			success: false,
+			error:   fmt.Errorf("failed to load animation: %w", err),
+		}
+	}
+
+	return animationLoadResult{
+		name:    animationName,
+		success: true,
+	}
+}
+
+// validateAnimationResults checks animation loading results and returns loaded animations or error.
+func validateAnimationResults(loadedAnimations, failedAnimations []string, totalAnimations int) ([]string, error) {
 	// Only fail if no animations could be loaded at all
-	if len(loadedAnimations) == 0 && len(card.Animations) > 0 {
-		return nil, fmt.Errorf("failed to load any animations (attempted %d, all failed)", len(card.Animations))
+	if len(loadedAnimations) == 0 && totalAnimations > 0 {
+		return nil, fmt.Errorf("failed to load any animations (attempted %d, all failed)", totalAnimations)
 	}
 
 	// Report success with any partial failures
 	if len(failedAnimations) > 0 {
 		fmt.Printf("Character loaded with %d/%d animations (failed: %v)\n",
-			len(loadedAnimations), len(card.Animations), failedAnimations)
+			len(loadedAnimations), totalAnimations, failedAnimations)
 	}
 
-	// Set initial animation - prefer "idle" but fall back to any loaded animation
+	return loadedAnimations, nil
+}
+
+// setupInitialAnimation sets the initial animation, preferring "idle" but falling back to any available animation.
+func setupInitialAnimation(char *Character, loadedAnimations []string) error {
 	if len(loadedAnimations) > 0 {
 		// Try to set "idle" first
 		if err := char.animationManager.SetCurrentAnimation("idle"); err != nil {
 			// If idle failed, try the first available animation
 			if err := char.animationManager.SetCurrentAnimation(loadedAnimations[0]); err != nil {
-				return nil, fmt.Errorf("failed to set any initial animation: %w", err)
+				return fmt.Errorf("failed to set any initial animation: %w", err)
 			}
 			fmt.Printf("Warning: 'idle' animation not available, using '%s' instead\n", loadedAnimations[0])
 		}
@@ -177,7 +216,7 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 		fmt.Println("Warning: No animations loaded - character will be static")
 	}
 
-	return char, nil
+	return nil
 }
 
 // initializeGameFeatures sets up game state from character card configuration

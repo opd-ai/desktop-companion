@@ -98,46 +98,47 @@ func configureDebugLogging() {
 	}
 }
 
-// loadCharacterConfiguration loads and validates the character configuration file.
-func loadCharacterConfiguration() (*character.CharacterCard, string) {
-	var absPath string
-	var err error
+// resolveProjectRoot finds the project root by searching upward for go.mod file.
+func resolveProjectRoot() string {
+	execPath, execErr := os.Executable()
+	if execErr != nil {
+		log.Fatalf("Failed to get executable path: %v", execErr)
+	}
 
+	searchDir := filepath.Dir(execPath)
+
+	// Search upward for go.mod file
+	for {
+		if _, statErr := os.Stat(filepath.Join(searchDir, "go.mod")); statErr == nil {
+			return searchDir
+		}
+		parent := filepath.Dir(searchDir)
+		if parent == searchDir {
+			// Reached filesystem root, use executable directory
+			return filepath.Dir(execPath)
+		}
+		searchDir = parent
+	}
+}
+
+// resolveCharacterPath converts the character path to an absolute path.
+func resolveCharacterPath() string {
 	// For the default relative path, resolve relative to project root (for development)
 	// or executable directory (for deployed binaries)
 	if *characterPath == "assets/characters/default/character.json" && !filepath.IsAbs(*characterPath) {
-		// First try to find project root by looking for go.mod
-		execPath, execErr := os.Executable()
-		if execErr != nil {
-			log.Fatalf("Failed to get executable path: %v", execErr)
-		}
-
-		searchDir := filepath.Dir(execPath)
-		projectRoot := ""
-
-		// Search upward for go.mod file
-		for {
-			if _, statErr := os.Stat(filepath.Join(searchDir, "go.mod")); statErr == nil {
-				projectRoot = searchDir
-				break
-			}
-			parent := filepath.Dir(searchDir)
-			if parent == searchDir {
-				// Reached filesystem root, use executable directory
-				projectRoot = filepath.Dir(execPath)
-				break
-			}
-			searchDir = parent
-		}
-
-		absPath = filepath.Join(projectRoot, *characterPath)
-	} else {
-		absPath, err = filepath.Abs(*characterPath)
-		if err != nil {
-			log.Fatalf("Failed to resolve character path: %v", err)
-		}
+		projectRoot := resolveProjectRoot()
+		return filepath.Join(projectRoot, *characterPath)
 	}
 
+	absPath, err := filepath.Abs(*characterPath)
+	if err != nil {
+		log.Fatalf("Failed to resolve character path: %v", err)
+	}
+	return absPath
+}
+
+// loadAndValidateCharacter loads the character card from the given path with debug logging.
+func loadAndValidateCharacter(absPath string) *character.CharacterCard {
 	if *debug {
 		log.Printf("Loading character from: %s", absPath)
 	}
@@ -151,6 +152,13 @@ func loadCharacterConfiguration() (*character.CharacterCard, string) {
 		log.Printf("Loaded character: %s - %s", card.Name, card.Description)
 	}
 
+	return card
+}
+
+// loadCharacterConfiguration loads and validates the character configuration file.
+func loadCharacterConfiguration() (*character.CharacterCard, string) {
+	absPath := resolveCharacterPath()
+	card := loadAndValidateCharacter(absPath)
 	return card, filepath.Dir(absPath)
 }
 

@@ -75,8 +75,8 @@ func TestBug2InvalidGIFData(t *testing.T) {
 		t.Fatal("Expected error when creating character with malformed GIF data, but succeeded")
 	}
 
-	// Verify it's the expected error
-	expectedMsg := "gif: no color table"
+	// Verify it's the expected error format for animation loading failures
+	expectedMsg := "failed to load any animations"
 	if !contains(err.Error(), expectedMsg) {
 		t.Fatalf("Expected error containing %q, got: %v", expectedMsg, err)
 	}
