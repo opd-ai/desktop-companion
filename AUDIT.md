@@ -3,14 +3,20 @@ Generated: August 29, 2025 16:42:17 UTC
 Codebase Version: e90f45d3a8d8c612c7811de726328b46cdec6962
 
 ## Executive Summary
-Total Gaps Found: 5
-- Critical: 2
+Total Gaps Found: 5 (2 Resolved, 3 Remaining)
+- Critical: 0 (2 Fixed)
 - Moderate: 2
 - Minor: 1
 
+**Recent Updates:**
+- August 29, 2025 16:58:00 UTC: Fixed critical gaps #1 and #2 (commit 5d04bcf)
+- General Dialog Events System now fully implemented
+- Command-line flags (-events, -trigger-event) now functional
+
 ## Detailed Findings
 
-### Gap #1: General Dialog Events System Missing Implementation
+### Gap #1: General Dialog Events System Missing Implementation ✅ **RESOLVED**
+**Status:** Fixed in commit 5d04bcf (August 29, 2025 16:58:00 UTC)
 **Documentation Reference:** 
 > "**General Event Interactions**:
 > - **Ctrl+E**: Open events menu to see available scenarios
@@ -22,38 +28,33 @@ Total Gaps Found: 5
 
 **Expected Behavior:** Keyboard shortcuts Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H should trigger general dialog events
 
-**Actual Implementation:** Only 'S', 'C', and 'ESC' keys are implemented in keyboard shortcuts
+**~~Actual Implementation~~** **Fixed Implementation:** All documented keyboard shortcuts are now implemented using Fyne's CustomShortcut system
 
-**Gap Details:** The setupKeyboardShortcuts() function only handles stats toggle (S), chatbot toggle (C), and escape (ESC) keys. None of the documented Ctrl+E/R/G/H shortcuts for general events are implemented.
+**~~Gap Details~~** **Resolution Details:** 
+- Added missing command-line flags: `-events` and `-trigger-event` in `cmd/companion/main.go`
+- Implemented keyboard shortcuts using `desktop.CustomShortcut` with proper Ctrl+key combinations
+- Added `openEventsMenu()`, `startRandomRoleplayScenario()`, `startMiniGameSession()`, `startHumorSession()` methods
+- Added `GetGeneralEventManager()` method to Character struct for proper access
+- Integrated with existing general events system in `internal/character/general_events.go`
 
-**Reproduction:**
+**~~Reproduction~~** **Verification:**
 ```go
-// In window.go:592-616, only these keys are handled:
-switch key.Name {
-case fyne.KeyS:    // Stats toggle
-case fyne.KeyC:    // Chat toggle  
-case fyne.KeyEscape: // Close chatbot
-// Missing: Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H
-}
+// Now implemented in window.go with proper shortcuts:
+ctrlE := &desktop.CustomShortcut{KeyName: fyne.KeyE, Modifier: fyne.KeyModifierControl}
+ctrlR := &desktop.CustomShortcut{KeyName: fyne.KeyR, Modifier: fyne.KeyModifierControl}
+ctrlG := &desktop.CustomShortcut{KeyName: fyne.KeyG, Modifier: fyne.KeyModifierControl}
+ctrlH := &desktop.CustomShortcut{KeyName: fyne.KeyH, Modifier: fyne.KeyModifierControl}
 ```
 
-**Production Impact:** Critical - Core documented feature completely non-functional
+**~~Production Impact~~** **Resolution Impact:** Critical feature now fully functional - matches documentation
 
-**Evidence:**
-```go
-// From internal/ui/window.go:592-616
-switch key.Name {
-case fyne.KeyS:
-    // Stats toggle code exists
-case fyne.KeyC:
-    // Chat toggle code exists  
-case fyne.KeyEscape:
-    // ESC key code exists
-    // NO IMPLEMENTATION for Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H
-}
-```
+**Tests Added:**
+- `TestBug1FixValidation` - Comprehensive fix validation
+- `TestBug1EventsFlagsFixed` - Command-line flags functionality  
+- `TestBug1MissingKeyboardShortcuts` - Regression prevention for keyboard shortcuts
 
-### Gap #2: Command-Line Event Flags Missing Implementation
+### Gap #2: Command-Line Event Flags Missing Implementation ✅ **RESOLVED**
+**Status:** Fixed in commit 5d04bcf (August 29, 2025 16:58:00 UTC)
 **Documentation Reference:**
 > "-events               Enable general dialog events system
 > -trigger-event <name> Manually trigger a specific event by name" (README.md:595-596)
@@ -62,33 +63,24 @@ case fyne.KeyEscape:
 
 **Expected Behavior:** Command-line flags `-events` and `-trigger-event` should be available
 
-**Actual Implementation:** Only `-character`, `-debug`, `-version`, `-memprofile`, `-cpuprofile`, `-game`, and `-stats` flags are implemented
+**~~Actual Implementation~~** **Fixed Implementation:** Both command-line flags are now fully implemented and functional
 
-**Gap Details:** The documented `-events` and `-trigger-event` command-line flags are completely missing from the flag definition section.
+**~~Gap Details~~** **Resolution Details:** 
+- Added `events = flag.Bool("events", false, "Enable general dialog events system")`
+- Added `triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")`
+- Implemented `handleTriggerEventFlag()` function to process trigger-event commands
+- Added proper error handling and event verification
+- Command-line help now displays both flags correctly
 
-**Reproduction:**
+**~~Reproduction~~** **Verification:**
 ```bash
-# Running with documented flags fails:
+# Now works correctly:
 go run cmd/companion/main.go -events
-# Error: flag provided but not defined: -events
+go run cmd/companion/main.go -trigger-event "test_event"
+go run cmd/companion/main.go -help  # Shows both flags
 ```
 
-**Production Impact:** Critical - Documented CLI interface non-functional
-
-**Evidence:**
-```go
-// From cmd/companion/main.go:17-26 - missing flags:
-var (
-    characterPath = flag.String("character", ...)
-    debug         = flag.Bool("debug", ...)
-    version       = flag.Bool("version", ...)
-    memProfile    = flag.String("memprofile", ...)
-    cpuProfile    = flag.String("cpuprofile", ...)
-    gameMode      = flag.Bool("game", ...)
-    showStats     = flag.Bool("stats", ...)
-    // MISSING: events and trigger-event flags
-)
-```
+**~~Production Impact~~** **Resolution Impact:** Critical CLI interface now fully matches documentation
 
 ### Gap #3: Chatbot Context Menu Access Inconsistency
 **Documentation Reference:**
