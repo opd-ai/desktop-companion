@@ -14,16 +14,17 @@ import (
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
-	window       fyne.Window
-	character    *character.Character
-	renderer     *CharacterRenderer
-	dialog       *DialogBubble
-	contextMenu  *ContextMenu
-	statsOverlay *StatsOverlay
-	profiler     *monitoring.Profiler
-	debug        bool
-	gameMode     bool
-	showStats    bool
+	window          fyne.Window
+	character       *character.Character
+	renderer        *CharacterRenderer
+	dialog          *DialogBubble
+	contextMenu     *ContextMenu
+	statsOverlay    *StatsOverlay
+	chatbotInterface *ChatbotInterface
+	profiler        *monitoring.Profiler
+	debug           bool
+	gameMode        bool
+	showStats       bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
@@ -69,6 +70,11 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		}
 	}
 
+	// Create chatbot interface (initially hidden) if character supports AI chat
+	if char.GetCard() != nil && char.GetCard().HasDialogBackend() {
+		dw.chatbotInterface = NewChatbotInterface(char)
+	}
+
 	// Set up window content and interactions
 	dw.setupContent()
 	dw.setupInteractions()
@@ -95,6 +101,11 @@ func (dw *DesktopWindow) setupContent() {
 	// Add stats overlay if available
 	if dw.statsOverlay != nil {
 		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Add chatbot interface if available
+	if dw.chatbotInterface != nil {
+		objects = append(objects, dw.chatbotInterface)
 	}
 
 	// Create container with transparent background for overlay effect
@@ -135,6 +146,11 @@ func (dw *DesktopWindow) setupInteractions() {
 	// Add stats overlay if available
 	if dw.statsOverlay != nil {
 		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Add chatbot interface if available
+	if dw.chatbotInterface != nil {
+		objects = append(objects, dw.chatbotInterface)
 	}
 
 	// Update window content with interactive overlay
@@ -234,6 +250,21 @@ func (dw *DesktopWindow) showContextMenu() {
 				},
 			})
 		}
+	}
+
+	// Add chatbot interface toggle if available
+	if dw.chatbotInterface != nil {
+		chatText := "Open Chat"
+		if dw.chatbotInterface.IsVisible() {
+			chatText = "Close Chat"
+		}
+		
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: chatText,
+			Callback: func() {
+				dw.ToggleChatbotInterface()
+			},
+		})
 	}
 
 	// Always include right-click dialog as fallback option
@@ -448,6 +479,20 @@ func (dw *DesktopWindow) ToggleStatsOverlay() {
 	}
 }
 
+// ToggleChatbotInterface shows/hides the chatbot interface if available
+func (dw *DesktopWindow) ToggleChatbotInterface() {
+	if dw.chatbotInterface != nil {
+		dw.chatbotInterface.Toggle()
+		if dw.debug {
+			if dw.chatbotInterface.IsVisible() {
+				log.Println("Chatbot interface shown")
+			} else {
+				log.Println("Chatbot interface hidden")
+			}
+		}
+	}
+}
+
 // configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities
 // Following the "lazy programmer" principle: use what's available rather than implementing platform-specific code
 func configureAlwaysOnTop(window fyne.Window, debug bool) {
@@ -500,10 +545,16 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 				log.Println("Stats toggle shortcut pressed (S key)")
 			}
 			dw.ToggleStatsOverlay()
+		case fyne.KeyC:
+			// 'C' key toggles chatbot interface
+			if dw.debug {
+				log.Println("Chat toggle shortcut pressed (C key)")
+			}
+			dw.ToggleChatbotInterface()
 		}
 	})
 
 	if dw.debug {
-		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay")
+		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay, 'C' to toggle chatbot")
 	}
 }
