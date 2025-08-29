@@ -20,13 +20,21 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 		}
 		defer profiler.Stop("", false)
 
-		// Record multiple frames to simulate animation
-		for i := 0; i < 150; i++ { // 150 frames over ~5 seconds = 30 FPS
-			profiler.RecordFrame()
-			time.Sleep(33 * time.Millisecond) // ~30 FPS pace
-		}
+		// Record frames continuously over multiple monitoring intervals
+		// Frame rate calculation happens every 5 seconds, so we need to span that
+		done := make(chan bool)
+		go func() {
+			for i := 0; i < 150; i++ {
+				profiler.RecordFrame()
+				time.Sleep(50 * time.Millisecond) // ~20 FPS pace, spread over 7.5 seconds
+			}
+			done <- true
+		}()
 
-		// Wait for frame rate calculation cycle
+		// Wait for frames to be recorded across monitoring intervals
+		<-done
+
+		// Wait for at least one complete frame rate calculation cycle (5+ seconds)
 		time.Sleep(6 * time.Second)
 
 		stats := profiler.GetStats()
@@ -34,7 +42,7 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 			t.Errorf("Expected 150 frames recorded, got %d", stats.TotalFrames)
 		}
 
-		// Frame rate should be calculated (may not be exactly 30 due to timing)
+		// Frame rate should be calculated after monitoring cycle completes
 		if stats.FrameRate <= 0 {
 			t.Error("Frame rate should be calculated and greater than 0")
 		}
