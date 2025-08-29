@@ -6,16 +6,23 @@ This demo showcases the complete chatbot integration in the DesktopWindow system
 
 ### Chatbot Interface Integration
 - **Keyboard Shortcut**: Press `C` to toggle the chatbot interface
+- **Enhanced Focus**: Input field automatically focuses when chatbot opens
+- **Quick Close**: Press `ESC` to quickly close chatbot interface
 - **Context Menu Access**: Right-click the character and select "Open Chat"/"Close Chat"
 - **AI-Powered Responses**: Chatbot uses the dialog backend system for AI responses
 - **Conversation History**: Multi-turn conversations with persistent history
 - **Conditional Availability**: Chatbot only appears for characters with dialog backend enabled
+- **Helpful Shortcuts**: Right-click → "Shortcuts" for quick keyboard reference
 
 ### User Interactions
 1. **Basic Interaction**: Left-click the character for traditional dialog responses
-2. **Context Menu**: Right-click for a context menu including chatbot access
+2. **Context Menu**: Right-click for a context menu including chatbot access and helpful shortcuts
 3. **Chatbot Chat**: Use keyboard shortcut `C` or context menu to open chat interface
-4. **Dragging**: Character can be moved around the desktop (if movement enabled)
+4. **Enhanced Navigation**: 
+   - Press `ESC` to quickly close chatbot interface
+   - Input field automatically focuses when chatbot opens
+   - Right-click → "Shortcuts" for quick reference
+5. **Dragging**: Character can be moved around the desktop (if movement enabled)
 
 ## Running the Demo
 

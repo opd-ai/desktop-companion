@@ -14,17 +14,17 @@ import (
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
-	window          fyne.Window
-	character       *character.Character
-	renderer        *CharacterRenderer
-	dialog          *DialogBubble
-	contextMenu     *ContextMenu
-	statsOverlay    *StatsOverlay
+	window           fyne.Window
+	character        *character.Character
+	renderer         *CharacterRenderer
+	dialog           *DialogBubble
+	contextMenu      *ContextMenu
+	statsOverlay     *StatsOverlay
 	chatbotInterface *ChatbotInterface
-	profiler        *monitoring.Profiler
-	debug           bool
-	gameMode        bool
-	showStats       bool
+	profiler         *monitoring.Profiler
+	debug            bool
+	gameMode         bool
+	showStats        bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
@@ -242,7 +242,7 @@ func (dw *DesktopWindow) showContextMenu() {
 			if dw.statsOverlay.IsVisible() {
 				statsText = "Hide Stats"
 			}
-			
+
 			menuItems = append(menuItems, ContextMenuItem{
 				Text: statsText,
 				Callback: func() {
@@ -258,7 +258,7 @@ func (dw *DesktopWindow) showContextMenu() {
 		if dw.chatbotInterface.IsVisible() {
 			chatText = "Close Chat"
 		}
-		
+
 		menuItems = append(menuItems, ContextMenuItem{
 			Text: chatText,
 			Callback: func() {
@@ -275,6 +275,23 @@ func (dw *DesktopWindow) showContextMenu() {
 			if response != "" {
 				dw.showDialog(response)
 			}
+		},
+	})
+
+	// Add helpful shortcuts information
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "Shortcuts",
+		Callback: func() {
+			shortcutsText := "Keyboard Shortcuts:\n"
+			if dw.statsOverlay != nil {
+				shortcutsText += "• 'S' - Toggle stats overlay\n"
+			}
+			if dw.chatbotInterface != nil {
+				shortcutsText += "• 'C' - Toggle chatbot interface\n"
+				shortcutsText += "• 'ESC' - Close chatbot interface\n"
+			}
+			shortcutsText += "• Right-click - Show this menu"
+			dw.showDialog(shortcutsText)
 		},
 	})
 
@@ -493,6 +510,26 @@ func (dw *DesktopWindow) ToggleChatbotInterface() {
 	}
 }
 
+// ToggleChatbotInterfaceWithFocus shows/hides the chatbot interface with enhanced focus management
+func (dw *DesktopWindow) ToggleChatbotInterfaceWithFocus() {
+	if dw.chatbotInterface != nil {
+		if !dw.chatbotInterface.IsVisible() {
+			// Show chatbot and focus the input field
+			dw.chatbotInterface.Show()
+			dw.chatbotInterface.FocusInput()
+			if dw.debug {
+				log.Println("Chatbot interface shown with input focus")
+			}
+		} else {
+			// Hide chatbot
+			dw.chatbotInterface.Hide()
+			if dw.debug {
+				log.Println("Chatbot interface hidden")
+			}
+		}
+	}
+}
+
 // configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities
 // Following the "lazy programmer" principle: use what's available rather than implementing platform-specific code
 func configureAlwaysOnTop(window fyne.Window, debug bool) {
@@ -550,11 +587,19 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 			if dw.debug {
 				log.Println("Chat toggle shortcut pressed (C key)")
 			}
-			dw.ToggleChatbotInterface()
+			dw.ToggleChatbotInterfaceWithFocus()
+		case fyne.KeyEscape:
+			// 'ESC' key closes chatbot interface if open
+			if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
+				if dw.debug {
+					log.Println("Escape key pressed - closing chatbot interface")
+				}
+				dw.chatbotInterface.Hide()
+			}
 		}
 	})
 
 	if dw.debug {
-		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay, 'C' to toggle chatbot")
+		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay, 'C' to toggle chatbot, 'ESC' to close chatbot")
 	}
 }

@@ -27,19 +27,20 @@ import (
 // - Provides conversation history for better user experience
 //
 // Usage:
-//   chatbot := NewChatbotInterface(character)
-//   if chatbot.IsAvailable() {
-//       chatbot.Show()
-//   }
-//   // User types message and clicks send or presses Enter
-//   // Character responds using existing dialog backend system
+//
+//	chatbot := NewChatbotInterface(character)
+//	if chatbot.IsAvailable() {
+//	    chatbot.Show()
+//	}
+//	// User types message and clicks send or presses Enter
+//	// Character responds using existing dialog backend system
 type ChatbotInterface struct {
 	widget.BaseWidget
-	character          *character.Character
-	background         *canvas.Rectangle
-	content            *fyne.Container
-	visible            bool
-	available          bool
+	character  *character.Character
+	background *canvas.Rectangle
+	content    *fyne.Container
+	visible    bool
+	available  bool
 
 	// UI components
 	conversationHistory *widget.RichText
@@ -49,10 +50,10 @@ type ChatbotInterface struct {
 	historyScroll       *container.Scroll
 
 	// State management
-	conversationLog     []ChatMessage
-	maxHistoryLength    int
-	lastMessageTime     time.Time
-	inputPlaceholder    string
+	conversationLog  []ChatMessage
+	maxHistoryLength int
+	lastMessageTime  time.Time
+	inputPlaceholder string
 }
 
 // ChatMessage represents a single message in the conversation
@@ -65,17 +66,17 @@ type ChatMessage struct {
 
 // NewChatbotInterface creates a new chatbot interface widget.
 // The interface is only available for characters with dialog backend enabled.
-// 
+//
 // Returns a fully initialized ChatbotInterface widget that follows Fyne's
 // widget pattern and can be added to any container layout.
 func NewChatbotInterface(char *character.Character) *ChatbotInterface {
 	chatbot := &ChatbotInterface{
-		character:           char,
-		visible:             false,
-		available:           char.GetCard().HasDialogBackend(),
-		conversationLog:     make([]ChatMessage, 0),
-		maxHistoryLength:    50, // Limit to prevent memory issues
-		inputPlaceholder:    "Type a message...",
+		character:        char,
+		visible:          false,
+		available:        char.GetCard().HasDialogBackend(),
+		conversationLog:  make([]ChatMessage, 0),
+		maxHistoryLength: 50, // Limit to prevent memory issues
+		inputPlaceholder: "Type a message...",
 	}
 
 	// Only initialize UI components if chatbot is available
@@ -134,7 +135,7 @@ func (c *ChatbotInterface) setupLayout() {
 
 	// Create main container with background
 	c.content = container.NewBorder(nil, nil, nil, nil, c.background, chatContent)
-	
+
 	// Set initial size
 	c.content.Resize(fyne.NewSize(320, 220))
 	c.content.Move(fyne.NewPos(10, 60)) // Position below character
@@ -212,11 +213,11 @@ func (c *ChatbotInterface) updateConversationDisplay() {
 
 	// Build conversation text with styling
 	var content strings.Builder
-	
+
 	for i, message := range c.conversationLog {
 		// Add timestamp for readability
 		timeStr := message.Timestamp.Format("15:04")
-		
+
 		if message.IsUser {
 			// User messages in blue
 			content.WriteString(fmt.Sprintf("**You** (%s): %s\n\n", timeStr, message.Text))
@@ -257,12 +258,12 @@ func (c *ChatbotInterface) Show() {
 
 	c.visible = true
 	c.content.Show()
-	
+
 	// Focus the input field when showing
 	if c.messageInput != nil {
 		c.messageInput.FocusGained()
 	}
-	
+
 	c.Refresh()
 }
 
@@ -322,6 +323,13 @@ func (c *ChatbotInterface) SetPosition(x, y float32) {
 // GetContainer returns the main container for adding to window layouts
 func (c *ChatbotInterface) GetContainer() *fyne.Container {
 	return c.content
+}
+
+// FocusInput sets focus to the message input field for better user experience
+func (c *ChatbotInterface) FocusInput() {
+	if c.messageInput != nil && c.visible {
+		c.messageInput.FocusGained()
+	}
 }
 
 // CreateRenderer creates the Fyne renderer for the chatbot interface
