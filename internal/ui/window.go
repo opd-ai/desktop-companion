@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -14,15 +15,17 @@ import (
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
-	window       fyne.Window
-	character    *character.Character
-	renderer     *CharacterRenderer
-	dialog       *DialogBubble
-	statsOverlay *StatsOverlay
-	profiler     *monitoring.Profiler
-	debug        bool
-	gameMode     bool
-	showStats    bool
+	window           fyne.Window
+	character        *character.Character
+	renderer         *CharacterRenderer
+	dialog           *DialogBubble
+	contextMenu      *ContextMenu
+	statsOverlay     *StatsOverlay
+	chatbotInterface *ChatbotInterface
+	profiler         *monitoring.Profiler
+	debug            bool
+	gameMode         bool
+	showStats        bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
@@ -57,12 +60,20 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	// Create dialog bubble (initially hidden)
 	dw.dialog = NewDialogBubble()
 
+	// Create context menu (initially hidden)
+	dw.contextMenu = NewContextMenu()
+
 	// Create stats overlay if game features are enabled
 	if gameMode && char.GetGameState() != nil {
 		dw.statsOverlay = NewStatsOverlay(char)
 		if showStats {
 			dw.statsOverlay.Show()
 		}
+	}
+
+	// Create chatbot interface (initially hidden) if character supports AI chat
+	if char.GetCard() != nil && char.GetCard().HasDialogBackend() {
+		dw.chatbotInterface = NewChatbotInterface(char)
 	}
 
 	// Set up window content and interactions
@@ -85,11 +96,17 @@ func (dw *DesktopWindow) setupContent() {
 	objects := []fyne.CanvasObject{
 		dw.renderer,
 		dw.dialog,
+		dw.contextMenu,
 	}
 
 	// Add stats overlay if available
 	if dw.statsOverlay != nil {
 		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Add chatbot interface if available
+	if dw.chatbotInterface != nil {
+		objects = append(objects, dw.chatbotInterface)
 	}
 
 	// Create container with transparent background for overlay effect
@@ -124,11 +141,17 @@ func (dw *DesktopWindow) setupInteractions() {
 		dw.renderer,
 		clickable,
 		dw.dialog,
+		dw.contextMenu,
 	}
 
 	// Add stats overlay if available
 	if dw.statsOverlay != nil {
 		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Add chatbot interface if available
+	if dw.chatbotInterface != nil {
+		objects = append(objects, dw.chatbotInterface)
 	}
 
 	// Update window content with interactive overlay
@@ -154,27 +177,14 @@ func (dw *DesktopWindow) handleClick() {
 }
 
 // handleRightClick processes character right-click interactions
+// Now shows context menu instead of direct dialog
 func (dw *DesktopWindow) handleRightClick() {
-	var response string
-
-	// Check if game mode is enabled and handle game interactions
-	if dw.gameMode && dw.character.GetGameState() != nil {
-		// Try game interaction first (e.g., "feed" for right-click)
-		response = dw.character.HandleGameInteraction("feed")
-	}
-
-	// If no game response, fall back to regular right-click dialog
-	if response == "" {
-		response = dw.character.HandleRightClick()
-	}
-
 	if dw.debug {
-		log.Printf("Character right-clicked, response: %q", response)
+		log.Println("Character right-clicked, showing context menu")
 	}
 
-	if response != "" {
-		dw.showDialog(response)
-	}
+	// Show context menu with available actions
+	dw.showContextMenu()
 }
 
 // showDialog displays a dialog bubble with the given text
@@ -185,6 +195,128 @@ func (dw *DesktopWindow) showDialog(text string) {
 	go func() {
 		time.Sleep(3 * time.Second)
 		dw.dialog.Hide()
+	}()
+}
+
+// showContextMenu displays the right-click context menu
+// Creates dynamic menu items based on character capabilities and game mode
+func (dw *DesktopWindow) showContextMenu() {
+	// Build menu items based on character and game state
+	var menuItems []ContextMenuItem
+
+	// Always include basic interaction
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "Talk",
+		Callback: func() {
+			response := dw.character.HandleClick()
+			if response != "" {
+				dw.showDialog(response)
+			}
+		},
+	})
+
+	// Add game-specific options if game mode is enabled
+	if dw.gameMode && dw.character.GetGameState() != nil {
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Feed",
+			Callback: func() {
+				response := dw.character.HandleGameInteraction("feed")
+				if response != "" {
+					dw.showDialog(response)
+				}
+			},
+		})
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Play",
+			Callback: func() {
+				response := dw.character.HandleGameInteraction("play")
+				if response != "" {
+					dw.showDialog(response)
+				}
+			},
+		})
+
+		// Add stats toggle if available
+		if dw.statsOverlay != nil {
+			statsText := "Show Stats"
+			if dw.statsOverlay.IsVisible() {
+				statsText = "Hide Stats"
+			}
+
+			menuItems = append(menuItems, ContextMenuItem{
+				Text: statsText,
+				Callback: func() {
+					dw.ToggleStatsOverlay()
+				},
+			})
+		}
+	}
+
+	// Add chatbot interface toggle if available
+	if dw.chatbotInterface != nil {
+		chatText := "Open Chat"
+		if dw.chatbotInterface.IsVisible() {
+			chatText = "Close Chat"
+		}
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: chatText,
+			Callback: func() {
+				dw.ToggleChatbotInterface()
+			},
+		})
+
+		// Add export chat option if chatbot is available
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Export Chat",
+			Callback: func() {
+				err := dw.chatbotInterface.ExportConversation()
+				if err != nil {
+					dw.showDialog(fmt.Sprintf("Export failed: %v", err))
+				} else {
+					dw.showDialog("Chat conversation exported successfully!")
+				}
+			},
+		})
+	}
+
+	// Always include right-click dialog as fallback option
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "About",
+		Callback: func() {
+			response := dw.character.HandleRightClick()
+			if response != "" {
+				dw.showDialog(response)
+			}
+		},
+	})
+
+	// Add helpful shortcuts information
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "Shortcuts",
+		Callback: func() {
+			shortcutsText := "Keyboard Shortcuts:\n"
+			if dw.statsOverlay != nil {
+				shortcutsText += "• 'S' - Toggle stats overlay\n"
+			}
+			if dw.chatbotInterface != nil {
+				shortcutsText += "• 'C' - Toggle chatbot interface\n"
+				shortcutsText += "• 'ESC' - Close chatbot interface\n"
+			}
+			shortcutsText += "• Right-click - Show this menu"
+			dw.showDialog(shortcutsText)
+		},
+	})
+
+	// Configure and show the menu
+	dw.contextMenu.SetMenuItems(menuItems)
+	dw.contextMenu.Show()
+
+	// Auto-hide menu after 5 seconds of inactivity
+	go func() {
+		time.Sleep(5 * time.Second)
+		dw.contextMenu.Hide()
 	}()
 }
 
@@ -274,6 +406,7 @@ func (dw *DesktopWindow) setupDragging() {
 	objects := []fyne.CanvasObject{
 		draggable,
 		dw.dialog,
+		dw.contextMenu,
 	}
 
 	// Add stats overlay if available
@@ -377,6 +510,40 @@ func (dw *DesktopWindow) ToggleStatsOverlay() {
 	}
 }
 
+// ToggleChatbotInterface shows/hides the chatbot interface if available
+func (dw *DesktopWindow) ToggleChatbotInterface() {
+	if dw.chatbotInterface != nil {
+		dw.chatbotInterface.Toggle()
+		if dw.debug {
+			if dw.chatbotInterface.IsVisible() {
+				log.Println("Chatbot interface shown")
+			} else {
+				log.Println("Chatbot interface hidden")
+			}
+		}
+	}
+}
+
+// ToggleChatbotInterfaceWithFocus shows/hides the chatbot interface with enhanced focus management
+func (dw *DesktopWindow) ToggleChatbotInterfaceWithFocus() {
+	if dw.chatbotInterface != nil {
+		if !dw.chatbotInterface.IsVisible() {
+			// Show chatbot and focus the input field
+			dw.chatbotInterface.Show()
+			dw.chatbotInterface.FocusInput()
+			if dw.debug {
+				log.Println("Chatbot interface shown with input focus")
+			}
+		} else {
+			// Hide chatbot
+			dw.chatbotInterface.Hide()
+			if dw.debug {
+				log.Println("Chatbot interface hidden")
+			}
+		}
+	}
+}
+
 // configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities
 // Following the "lazy programmer" principle: use what's available rather than implementing platform-specific code
 func configureAlwaysOnTop(window fyne.Window, debug bool) {
@@ -429,10 +596,24 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 				log.Println("Stats toggle shortcut pressed (S key)")
 			}
 			dw.ToggleStatsOverlay()
+		case fyne.KeyC:
+			// 'C' key toggles chatbot interface
+			if dw.debug {
+				log.Println("Chat toggle shortcut pressed (C key)")
+			}
+			dw.ToggleChatbotInterfaceWithFocus()
+		case fyne.KeyEscape:
+			// 'ESC' key closes chatbot interface if open
+			if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
+				if dw.debug {
+					log.Println("Escape key pressed - closing chatbot interface")
+				}
+				dw.chatbotInterface.Hide()
+			}
 		}
 	})
 
 	if dw.debug {
-		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay")
+		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay, 'C' to toggle chatbot, 'ESC' to close chatbot")
 	}
 }

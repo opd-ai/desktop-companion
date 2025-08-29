@@ -35,6 +35,8 @@ type CharacterCard struct {
 	DialogBackend *dialog.DialogBackendConfig `json:"dialogBackend,omitempty"`
 	// General dialog events system (Phase 4)
 	GeneralEvents []GeneralDialogEvent `json:"generalEvents,omitempty"`
+	// Gift system (optional feature - maintains backward compatibility)
+	GiftSystem *GiftSystemConfig `json:"giftSystem,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -262,6 +264,10 @@ func (c *CharacterCard) validateFeatureSections() error {
 
 	if err := c.validateDialogBackend(); err != nil {
 		return fmt.Errorf("dialog backend: %w", err)
+	}
+
+	if err := c.validateGiftSystem(); err != nil {
+		return fmt.Errorf("gift system: %w", err)
 	}
 
 	return nil
@@ -994,4 +1000,50 @@ func (c *CharacterCard) validateGeneralEvents() error {
 	}
 
 	return nil
+}
+
+// validateGiftSystem validates gift system configuration
+// Maintains backward compatibility by treating nil GiftSystem as valid
+func (c *CharacterCard) validateGiftSystem() error {
+	if c.GiftSystem == nil {
+		return nil // Optional feature, validation not required when absent
+	}
+
+	// Validate inventory settings
+	if c.GiftSystem.InventorySettings.MaxSlots < 1 {
+		return fmt.Errorf("inventory maxSlots must be at least 1, got %d", c.GiftSystem.InventorySettings.MaxSlots)
+	}
+	if c.GiftSystem.InventorySettings.MaxSlots > 100 {
+		return fmt.Errorf("inventory maxSlots cannot exceed 100, got %d", c.GiftSystem.InventorySettings.MaxSlots)
+	}
+
+	// Validate category preferences
+	validCategories := []string{"food", "flowers", "books", "jewelry", "toys", "electronics", "clothing", "art", "practical", "expensive"}
+	for _, category := range c.GiftSystem.Preferences.FavoriteCategories {
+		if !sliceContains(validCategories, category) {
+			return fmt.Errorf("invalid favorite category '%s', must be one of: %v", category, validCategories)
+		}
+	}
+	for _, category := range c.GiftSystem.Preferences.DislikedCategories {
+		if !sliceContains(validCategories, category) {
+			return fmt.Errorf("invalid disliked category '%s', must be one of: %v", category, validCategories)
+		}
+	}
+
+	// Validate personality responses
+	for personality, response := range c.GiftSystem.Preferences.PersonalityResponses {
+		if len(response.GiftReceived) == 0 {
+			return fmt.Errorf("personality '%s' must have at least one gift received response", personality)
+		}
+		if len(response.GiftReceived) > 10 {
+			return fmt.Errorf("personality '%s' cannot have more than 10 gift received responses, got %d", personality, len(response.GiftReceived))
+		}
+	}
+
+	return nil
+}
+
+// HasGiftSystem returns true if this character card includes gift system configuration
+func (c *CharacterCard) HasGiftSystem() bool {
+	return c.GiftSystem != nil && c.GiftSystem.Enabled
 }

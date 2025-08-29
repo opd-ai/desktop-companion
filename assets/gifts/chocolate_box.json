@@ -1,0 +1,49 @@
+{
+  "id": "chocolate_box",
+  "name": "Box of Chocolates",
+  "description": "Premium chocolates in an elegant gift box",
+  "category": "food",
+  "rarity": "uncommon",
+  "image": "animations/chocolate_box.gif",
+  "properties": {
+    "consumable": true,
+    "stackable": false,
+    "maxStack": 1,
+    "unlockRequirements": {
+      "relationshipLevel": "Friend",
+      "stats": {
+        "affection": {"min": 25}
+      }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 25,
+        "affection": 20,
+        "health": 5
+      },
+      "animations": ["happy", "eating"],
+      "responses": [
+        "Chocolates! My favorite! 🍫",
+        "These look absolutely delicious!",
+        "You spoil me... I love it!"
+      ]
+    },
+    "memory": {
+      "importance": 0.6,
+      "tags": ["sweet", "food", "thoughtful"],
+      "emotionalTone": "happy"
+    }
+  },
+  "personalityModifiers": {
+    "shy": {"affection": 1.2, "happiness": 1.1},
+    "romantic": {"affection": 1.3, "intimacy": 1.1},
+    "tsundere": {"affection": 0.9, "happiness": 1.2}
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 180,
+    "placeholder": "Add a note about the chocolates..."
+  }
+}

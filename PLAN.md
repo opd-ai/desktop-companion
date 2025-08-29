@@ -1,562 +1,609 @@
-# Markov Chain Dialog System Integration Plan
+# DESKTOP DATING SIMULATOR - GIFT/INVENTORY SYSTEM DESIGN
 
-## Phase 1: Interface Introduction
+## OBJECTIVE
+Design a minimally invasive gift/inventory system for the Desktop Dating Simulator (DDS) that extends existing interfaces without modifying core code, maintaining 100% backward compatibility while adding personalized gift-giving capabilities with notes and inventory management.
 
-### Goals
-- Introduce generic chatbot interface without breaking existing functionality
-- Create minimal integration layer in existing dialog system
-- Provide foundation for pluggable backends
+## ARCHITECTURE ANALYSIS
 
-### Implementation Steps
+### Go Codebase Mapping
 
-#### 1.1 Update Character Card Schema
-Add new optional `dialogBackend` configuration to character cards:
+**Core Interfaces & Event Systems:**
+- `CharacterCard` struct in `internal/character/card.go` - JSON configuration parser with extensive validation
+- `GameState` struct in `internal/character/game_state.go` - Manages stats, interactions, and memories
+- `GeneralEventManager` in `internal/character/general_events.go` - Handles interactive scenarios with choices
+- `DialogBubble` in `internal/ui/interaction.go` - UI component for displaying messages
+- `SaveManager` in `internal/persistence/save_manager.go` - JSON-based persistence system
+
+**Key Integration Points:**
+- Character loading pipeline: `LoadCard()` → validation → `NewGameState()`
+- Interaction system: triggers → effects → animations → save state
+- Event management: `GeneralDialogEvent` with choices and stat effects
+- UI rendering: Fyne-based widgets with dialog bubbles
+- Persistence: JSON serialization with atomic writes
+
+**Data Structures:**
+- Character configurations are JSON-driven with extensive validation
+- Game state uses mutex-protected concurrent access patterns
+- Save system supports versioned data with backward compatibility
+- Event system supports chained interactions with stat requirements
+
+## SCHEMA DESIGN - JSON EXTENSIONS
+
+### 1. Gift Definition Schema (New JSON Files)
 
 ```json
+// assets/gifts/birthday_cake.json
 {
-  "name": "Enhanced Character",
-  "description": "Character with advanced dialog system",
-  
-  // ... existing fields ...
-  
-  "dialogBackend": {
-    "enabled": true,
-    "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
-    "confidenceThreshold": 0.6,
-    "memoryEnabled": true,
-    "backends": {
-      "markov_chain": {
-        "chainOrder": 2,
-        "minWords": 3,
-        "maxWords": 15,
-        "temperatureMin": 0.3,
-        "temperatureMax": 0.8,
-        "trainingData": [
-          "Hello! I'm so happy to see you today!",
-          "Thank you for spending time with me, it means everything.",
-          "I hope you're having a wonderful day, you deserve happiness.",
-          "Your presence always brightens my mood, I'm grateful for you."
-        ],
-        "useDialogHistory": true,
-        "usePersonality": true,
-        "triggerSpecific": true,
-        "forbiddenWords": ["hate", "stupid", "boring"],
-        "fallbackPhrases": [
-          "I'm happy to see you!",
-          "Thank you for being here with me.",
-          "You always make me smile."
-        ]
-      },
-      "simple_random": {
-        "type": "basic"
+  "id": "birthday_cake",
+  "name": "Birthday Cake",
+  "description": "A delicious birthday cake to celebrate special moments",
+  "category": "food",
+  "rarity": "rare",
+  "image": "animations/birthday_cake.gif",
+  "properties": {
+    "consumable": true,
+    "stackable": false,
+    "maxStack": 1,
+    "unlockRequirements": {
+      "relationshipLevel": "Friend",
+      "stats": {
+        "affection": {"min": 50}
       }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 30,
+        "affection": 15,
+        "health": 10
+      },
+      "animations": ["happy", "heart_eyes"],
+      "responses": [
+        "A birthday cake! You remembered! 🎂",
+        "This is so thoughtful of you! Thank you! 😊",
+        "I can't believe you got this for me! ❤️"
+      ]
+    },
+    "memory": {
+      "importance": 0.9,
+      "tags": ["birthday", "celebration", "special_gift"],
+      "emotionalTone": "joyful"
+    }
+  },
+  "personalityModifiers": {
+    "shy": {"affection": 1.2, "trust": 1.1},
+    "romantic": {"affection": 1.5, "intimacy": 1.3},
+    "tsundere": {"affection": 0.8, "trust": 1.4}
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 200,
+    "placeholder": "Add a personal message with your gift..."
+  }
+}
+```
+
+### 2. Character Card Extensions (Backward Compatible)
+
+```json
+// Extension to existing character.json schema
+{
+  "name": "Existing Character",
+  // ... existing fields unchanged ...
+  
+  "giftSystem": {
+    "enabled": true,
+    "preferences": {
+      "favoriteCategories": ["food", "flowers", "books"],
+      "dislikedCategories": ["expensive", "practical"],
+      "personalityResponses": {
+        "shy": {
+          "giftReceived": ["Oh... thank you...", "You didn't have to..."],
+          "animations": ["blushing", "shy"]
+        },
+        "flirty": {
+          "giftReceived": ["For me? You're so sweet! 😘", "I love gifts from you!"],
+          "animations": ["flirty", "heart_eyes"]
+        }
+      }
+    },
+    "inventorySettings": {
+      "maxSlots": 20,
+      "autoSort": true,
+      "showRarity": true
     }
   }
 }
 ```
 
-#### 1.2 Extend Character Card Validation
-Update `card.go` to validate new `dialogBackend` configuration:
+### 3. Save Data Extensions (Backward Compatible)
+
+```json
+// Extension to existing save format
+{
+  "characterName": "Existing Character",
+  "saveVersion": "1.1", // Incremented for gift system
+  "gameState": {
+    // ... existing gameState fields unchanged ...
+  },
+  "inventory": {
+    "gifts": [
+      {
+        "id": "birthday_cake",
+        "quantity": 1,
+        "acquiredDate": "2025-08-29T10:30:00Z",
+        "notes": "Happy birthday! Hope you love this cake!",
+        "giftedBy": "user",
+        "used": false
+      }
+    ],
+    "giftHistory": [
+      {
+        "giftId": "birthday_cake",
+        "givenDate": "2025-08-29T10:35:00Z",
+        "characterResponse": "A birthday cake! You remembered! 🎂",
+        "statEffects": {"happiness": 30, "affection": 15},
+        "notes": "Happy birthday! Hope you love this cake!"
+      }
+    ]
+  }
+}
+```
+
+## INTERFACE LAYER - NEW GO INTERFACES
+
+### 1. Gift System Interface
 
 ```go
-// Add to CharacterCard struct
-type CharacterCard struct {
-    // ... existing fields ...
-    DialogBackend *DialogBackendConfig `json:"dialogBackend,omitempty"`
+// internal/character/gift_system.go
+package character
+
+// GiftDefinition represents a loadable gift with properties and effects
+type GiftDefinition struct {
+    ID           string                 `json:"id"`
+    Name         string                 `json:"name"`
+    Description  string                 `json:"description"`
+    Category     string                 `json:"category"`
+    Rarity       string                 `json:"rarity"`
+    Image        string                 `json:"image"`
+    Properties   GiftProperties         `json:"properties"`
+    GiftEffects  GiftEffects           `json:"giftEffects"`
+    PersonalityModifiers map[string]map[string]float64 `json:"personalityModifiers"`
+    Notes        GiftNotesConfig        `json:"notes"`
 }
 
-// Add validation method
-func (c *CharacterCard) validateDialogBackend() error {
-    if c.DialogBackend == nil {
+type GiftProperties struct {
+    Consumable       bool                              `json:"consumable"`
+    Stackable        bool                              `json:"stackable"`
+    MaxStack         int                               `json:"maxStack"`
+    UnlockRequirements map[string]map[string]float64   `json:"unlockRequirements"`
+}
+
+type GiftEffects struct {
+    Immediate ImmediateEffects `json:"immediate"`
+    Memory    MemoryEffects    `json:"memory"`
+}
+
+type ImmediateEffects struct {
+    Stats      map[string]float64 `json:"stats"`
+    Animations []string           `json:"animations"`
+    Responses  []string           `json:"responses"`
+}
+
+type MemoryEffects struct {
+    Importance    float64  `json:"importance"`
+    Tags          []string `json:"tags"`
+    EmotionalTone string   `json:"emotionalTone"`
+}
+
+type GiftNotesConfig struct {
+    Enabled     bool   `json:"enabled"`
+    MaxLength   int    `json:"maxLength"`
+    Placeholder string `json:"placeholder"`
+}
+
+// GiftManager extends existing character system
+type GiftManager struct {
+    character     *CharacterCard
+    gameState     *GameState
+    giftCatalog   map[string]*GiftDefinition
+    mu           sync.RWMutex
+}
+
+// NewGiftManager creates manager that integrates with existing systems
+func NewGiftManager(character *CharacterCard, gameState *GameState) *GiftManager {
+    return &GiftManager{
+        character:   character,
+        gameState:   gameState,
+        giftCatalog: make(map[string]*GiftDefinition),
+    }
+}
+
+// LoadGiftCatalog loads gift definitions from assets/gifts/
+func (gm *GiftManager) LoadGiftCatalog(giftsPath string) error {
+    // Implementation reuses existing LoadCard pattern
+}
+
+// GetAvailableGifts returns gifts user can currently give
+func (gm *GiftManager) GetAvailableGifts() []*GiftDefinition {
+    // Filter gifts based on relationship level and stats
+}
+
+// GiveGift processes gift giving with personality-aware responses
+func (gm *GiftManager) GiveGift(giftID, notes string) (*GiftResponse, error) {
+    // Integrates with existing interaction and memory systems
+}
+```
+
+### 2. Inventory System Interface
+
+```go
+// internal/character/inventory.go
+package character
+
+// InventoryItem represents an item in user's collection
+type InventoryItem struct {
+    ID           string    `json:"id"`
+    Quantity     int       `json:"quantity"`
+    AcquiredDate time.Time `json:"acquiredDate"`
+    Notes        string    `json:"notes"`
+    GiftedBy     string    `json:"giftedBy"`
+    Used         bool      `json:"used"`
+}
+
+// InventoryManager extends existing save system
+type InventoryManager struct {
+    items        []InventoryItem
+    giftHistory  []GiftHistoryEntry
+    saveManager  *persistence.SaveManager
+    mu          sync.RWMutex
+}
+
+// GiftHistoryEntry tracks past gift interactions
+type GiftHistoryEntry struct {
+    GiftID           string                 `json:"giftId"`
+    GivenDate        time.Time              `json:"givenDate"`
+    CharacterResponse string                `json:"characterResponse"`
+    StatEffects      map[string]float64     `json:"statEffects"`
+    Notes            string                 `json:"notes"`
+}
+
+// AddToInventory adds gift with notes support
+func (im *InventoryManager) AddToInventory(giftID, notes string) error {
+    // Extends existing save patterns
+}
+
+// GetInventory returns filtered/sorted inventory
+func (im *InventoryManager) GetInventory(filters InventoryFilters) []InventoryItem {
+    // Reuses existing data access patterns
+}
+```
+
+### 3. UI Extension Interface
+
+```go
+// internal/ui/gift_interface.go
+package ui
+
+// GiftSelectionDialog extends existing DialogBubble patterns
+type GiftSelectionDialog struct {
+    widget.BaseWidget
+    giftManager    *character.GiftManager
+    onGiftSelected func(giftID, notes string)
+    content        *fyne.Container
+    visible        bool
+}
+
+// GiftNotesDialog for message attachment
+type GiftNotesDialog struct {
+    widget.BaseWidget
+    notesEntry *widget.Entry
+    onConfirm  func(notes string)
+    onCancel   func()
+}
+
+// NewGiftSelectionDialog creates gift picker using existing UI patterns
+func NewGiftSelectionDialog(giftManager *character.GiftManager) *GiftSelectionDialog {
+    // Reuses DialogBubble rendering patterns
+}
+
+// ShowGiftDialog integrates with existing interaction system
+func (gsd *GiftSelectionDialog) ShowGiftDialog() {
+    // Follows existing Show/Hide patterns
+}
+```
+
+## INTEGRATION MAP - SPECIFIC TOUCHPOINTS
+
+### 1. Character Loading Integration
+
+**File:** `internal/character/card.go`
+**Method:** `LoadCard()` and `ValidateWithBasePath()`
+
+```go
+// Extension point - add gift system validation
+func (c *CharacterCard) validateGiftSystem() error {
+    if c.GiftSystem == nil {
         return nil // Optional feature
     }
-    return ValidateBackendConfig(*c.DialogBackend)
+    
+    // Validate gift system configuration
+    return nil
 }
 ```
 
-#### 1.3 Create Simple Random Backend
-Implement fallback backend that uses existing logic:
+### 2. Game State Integration
+
+**File:** `internal/character/game_state.go`
+**Methods:** `RecordRomanceInteraction()`, `ApplyInteractionEffects()`
 
 ```go
-type SimpleRandomBackend struct {
-    character *Character
+// Extension point - add gift memory recording
+func (gs *GameState) RecordGiftMemory(giftID, notes, response string, effects map[string]float64) {
+    // Reuses existing romance memory patterns
 }
+```
 
-func (s *SimpleRandomBackend) GenerateResponse(context DialogContext) (DialogResponse, error) {
-    // Use existing dialog selection logic as fallback
-    responses := context.FallbackResponses
-    if len(responses) == 0 {
-        responses = []string{"Hello!", "Nice to see you!", "How are you?"}
+### 3. Interaction System Integration
+
+**File:** `internal/character/behavior.go` (assumed main behavior file)
+**Integration:** Add gift trigger handling
+
+```go
+// Extension point - add gift interaction triggers
+func (c *Character) HandleGiftInteraction(giftID, notes string) (*DialogResponse, error) {
+    // Integrates with existing trigger→effect→animation pipeline
+}
+```
+
+### 4. UI Integration
+
+**File:** `internal/ui/window.go`
+**Integration:** Add gift menu to context menu
+
+```go
+// Extension point - add gift option to right-click menu
+func (w *CompanionWindow) createContextMenu() *fyne.Menu {
+    menu := w.existingCreateContextMenu()
+    
+    // Add gift option if gift system enabled
+    if w.character.HasGiftSystem() {
+        giftItem := fyne.NewMenuItem("Give Gift", w.showGiftDialog)
+        menu.Items = append(menu.Items, giftItem)
     }
     
-    index := int(time.Now().UnixNano()) % len(responses)
-    return DialogResponse{
-        Text:       responses[index],
-        Animation:  context.FallbackAnimation,
-        Confidence: 0.8,
-        ResponseType: "simple",
-    }, nil
+    return menu
 }
 ```
 
-#### 1.4 Integrate Dialog Manager
-Modify `behavior.go` to optionally use dialog manager:
+### 5. Save System Integration
+
+**File:** `internal/persistence/save_manager.go`
+**Methods:** `SaveGameState()`, `LoadGameState()`
 
 ```go
-type Character struct {
-    // ... existing fields ...
-    dialogManager *DialogManager
-    useAdvancedDialogs bool
+// Extension to GameSaveData struct
+type GameSaveData struct {
+    // ... existing fields unchanged ...
+    Inventory *InventoryData `json:"inventory,omitempty"` // New optional field
 }
 
-func (c *Character) HandleClick() string {
-    c.mu.Lock()
-    defer c.mu.Unlock()
-    
-    c.lastInteraction = time.Now()
-    
-    // Try advanced dialog system first
-    if c.useAdvancedDialogs && c.dialogManager != nil {
-        context := c.buildDialogContext("click")
-        response, err := c.dialogManager.GenerateDialog(context)
-        if err == nil && response.Confidence > 0.5 {
-            c.setState(response.Animation)
-            return response.Text
-        }
-    }
-    
-    // Fallback to existing logic
-    return c.handleClickFallback()
+type InventoryData struct {
+    Gifts       []InventoryItem     `json:"gifts"`
+    GiftHistory []GiftHistoryEntry  `json:"giftHistory"`
 }
 ```
 
-### Success Criteria
-- ✅ Existing character cards continue to work unchanged
-- ✅ New dialog backend configuration is optional
-- ✅ Simple random backend provides 1:1 compatibility with existing system
-- ✅ Dialog manager gracefully falls back to existing logic
-- ✅ All existing tests continue to pass
-
-**✅ PHASE 1 COMPLETE** - Dialog backend interface successfully integrated into character system with backward compatibility maintained.
-
----
-
-## Phase 2: Markov Backend Implementation
-
-### Goals
-- Implement full Markov chain backend with JSON configuration
-- Enable Markov chains for characters that opt in
-- Demonstrate personality-aware text generation
-
-### Implementation Steps
-
-#### 2.1 Register Markov Backend
-Update character initialization to register backends:
-
-```go
-func (c *Character) initializeDialogSystem() error {
-    if c.card.DialogBackend == nil || !c.card.DialogBackend.Enabled {
-        return nil
-    }
-    
-    c.dialogManager = NewDialogManager(c.debug)
-    
-    // Register available backends
-    c.dialogManager.RegisterBackend("simple_random", NewSimpleRandomBackend())
-    c.dialogManager.RegisterBackend("markov_chain", NewMarkovChainBackend())
-    
-    // Initialize configured backend
-    return c.configureBackends()
-}
-```
-
-#### 2.2 Create Markov Configuration Templates
-Provide JSON templates for different character types:
-
-```json
-// templates/markov_basic.json
-{
-  "chainOrder": 2,
-  "minWords": 3,
-  "maxWords": 12,
-  "temperatureMin": 0.4,
-  "temperatureMax": 0.7,
-  "useDialogHistory": true,
-  "triggerSpecific": false,
-  "trainingData": [
-    "Hello! How are you doing today?",
-    "It's wonderful to see you again!",
-    "Thank you for spending time with me."
-  ]
-}
-
-// templates/markov_romance.json
-{
-  "chainOrder": 2,
-  "minWords": 4,
-  "maxWords": 18,
-  "temperatureMin": 0.3,
-  "temperatureMax": 0.8,
-  "useDialogHistory": true,
-  "usePersonality": true,
-  "triggerSpecific": true,
-  "personalityBoost": 0.5,
-  "moodInfluence": 0.3,
-  "trainingData": [
-    "Your presence fills my heart with joy and warmth.",
-    "I feel so lucky to have you in my life, truly blessed.",
-    "Every moment with you feels like a precious gift to treasure."
-  ],
-  "forbiddenWords": ["hate", "ugly", "stupid"],
-  "fallbackPhrases": [
-    "You mean so much to me.",
-    "I'm so happy you're here.",
-    "Thank you for caring about me."
-  ]
-}
-```
-
-#### 2.3 Update Sample Characters
-Modify existing characters to demonstrate Markov integration:
-
-```json
-// assets/characters/romance/character.json (add dialogBackend section)
-{
-  // ... existing configuration ...
-  
-  "dialogBackend": {
-    "enabled": true,
-    "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
-    "confidenceThreshold": 0.6,
-    "backends": {
-      "markov_chain": {
-        // Include romance template configuration
-        "$include": "templates/markov_romance.json",
-        // Character-specific overrides
-        "trainingData": [
-          "Every interaction with you makes my heart flutter with excitement.",
-          "I cherish these precious moments we share together, my darling.",
-          "Your love gives me strength and fills my days with happiness."
-        ]
-      }
-    }
-  }
-}
-```
-
-### Success Criteria
-- ✅ Markov chains generate coherent responses based on training data
-- ✅ Personality traits influence response style and selection  
-- ✅ Character mood affects generation parameters (temperature, length)
-- ✅ Trigger-specific chains provide contextually appropriate responses
-- ✅ Fallback system ensures responses even when generation fails
-
-**✅ PHASE 2 COMPLETE** - Markov backend implementation with configuration templates and sample characters successfully integrated.
-
----
-
-## Phase 3: Advanced Features & Polish
-
-### Goals
-- Add memory system integration with existing romance features
-- Implement response quality improvements
-- Create comprehensive configuration documentation
-- Enable creator-friendly customization
-
-### Implementation Steps
-
-#### 3.1 Memory System Integration
-Connect Markov backend with existing memory tracking:
-
-```go
-func (c *Character) updateDialogMemory(response DialogResponse, context DialogContext) {
-    if c.gameState != nil && response.MemoryImportance > 0.7 {
-        // Record high-importance responses in character memory
-        c.gameState.RecordDialogMemory(DialogMemory{
-            Text: response.Text,
-            Context: context.Trigger,
-            Timestamp: time.Now(),
-            EmotionalTone: response.EmotionalTone,
-            Topics: response.Topics,
-        })
-    }
-}
-```
-
-#### 3.2 Quality Improvements
-Implement response filtering and enhancement:
-
-```go
-// Add to MarkovConfig
-type MarkovConfig struct {
-    // ... existing fields ...
-    QualityFilters struct {
-        MinCoherence     float64 `json:"minCoherence"`
-        MaxRepetition    float64 `json:"maxRepetition"`
-        RequireComplete  bool    `json:"requireComplete"`
-        GrammarCheck     bool    `json:"grammarCheck"`
-    } `json:"qualityFilters"`
-}
-```
-
-#### 3.3 Creator Documentation
-Create comprehensive configuration guides:
-
-```markdown
-# Markov Chain Dialog Configuration Guide
-
-## Quick Start Templates
-
-### Basic Character
-Use this for simple desktop pets with friendly dialog:
-- Chain Order: 2 (good balance of coherence and variety)
-- Temperature: 0.4-0.7 (moderate randomness)
-- Training: Include friendly, supportive phrases
-
-### Romance Character  
-Use this for dating simulator mechanics:
-- Chain Order: 2-3 (more sophisticated responses)
-- Temperature: 0.3-0.8 (wider range for emotional variety)
-- Personality Integration: Enabled
-- Trigger-Specific: Enabled for context-aware responses
-
-### Shy Character
-Use this for introverted personality types:
-- Lower temperature (0.2-0.5) for more predictable responses
-- Shorter responses (3-8 words)
-- Training: Include hesitant, gentle phrases
-
-## Configuration Parameters
-
-### Chain Order (1-5)
-- **1**: Simple word-by-word generation (very random)
-- **2**: Bigram chains (good balance) ⭐ **Recommended**
-- **3**: Trigram chains (more coherent, needs more training data)
-- **4+**: Very coherent but needs extensive training
-
-### Temperature (0.0-2.0)
-- **0.0-0.3**: Very predictable, similar responses
-- **0.4-0.7**: Good variety with coherence ⭐ **Recommended**
-- **0.8-1.2**: High variety, may be less coherent
-- **1.3+**: Very random, experimental
-
-### Training Data Guidelines
-- **Minimum**: 10-20 example phrases
-- **Recommended**: 50-100 varied examples
-- **Quality over quantity**: Better to have fewer high-quality examples
-- **Match character voice**: Use personality-appropriate language
-```
-
-#### 3.4 Backend Performance Monitoring
-Add performance tracking for dialog generation:
-
-```go
-type DialogMetrics struct {
-    GenerationTime    time.Duration
-    ConfidenceScores  []float64
-    FallbackRate      float64
-    MemoryUtilization float64
-}
-
-func (m *MarkovChainBackend) GetMetrics() DialogMetrics {
-    // Return performance statistics for monitoring
-}
-```
-
-### Success Criteria
-- ✅ Memory system enhances response relevance over time
-- ✅ Quality filters eliminate low-coherence responses  
-- ✅ Documentation enables non-programmers to configure dialog systems
-- ✅ Performance monitoring provides insights for optimization
-
-**✅ PHASE 3 COMPLETE** - Advanced features and polish successfully implemented with memory integration, quality improvements, and comprehensive documentation.
-
----
-
-## Phase 4: Future Backend Template
-
-### Goals
-- Demonstrate extensibility with additional backend types
-- Provide template for community backend development
-- Show integration with external services (LLM APIs)
-
-### Implementation Steps
-
-#### 4.1 Rule-Based Backend Template
-Create simple rule-based backend for demonstration:
-
-```go
-type RuleBasedBackend struct {
-    rules []DialogRule
-}
-
-type DialogRule struct {
-    Conditions map[string]interface{} `json:"conditions"`
-    Responses  []string              `json:"responses"`
-    Weight     float64               `json:"weight"`
-}
-
-// Example configuration:
-{
-  "defaultBackend": "rule_based",
-  "backends": {
-    "rule_based": {
-      "rules": [
-        {
-          "conditions": {
-            "trigger": "compliment",
-            "affection": {"min": 30}
-          },
-          "responses": [
-            "Thank you so much! You always know what to say! 💕",
-            "Your compliments make my heart flutter! 😊"
-          ],
-          "weight": 1.0
-        }
-      ]
-    }
-  }
-}
-```
-
-#### 4.2 LLM API Backend Template
-Provide template for external AI service integration:
-
-```go
-type LLMBackend struct {
-    apiEndpoint string
-    apiKey      string
-    model       string
-}
-
-// Example configuration:
-{
-  "backends": {
-    "openai_gpt": {
-      "apiEndpoint": "https://api.openai.com/v1/chat/completions",
-      "model": "gpt-3.5-turbo",
-      "systemPrompt": "You are a shy, romantic virtual companion...",
-      "maxTokens": 50
-    }
-  }
-}
-```
-
-#### 4.3 Backend Development Guide
-Create documentation for custom backend development:
-
-```markdown
-# Creating Custom Dialog Backends
-
-## Interface Implementation
-
-All backends must implement the `DialogBackend` interface:
-
-1. **Initialize()**: Set up backend with JSON config
-2. **GenerateResponse()**: Create response for given context
-3. **CanHandle()**: Check if backend can process context
-4. **UpdateMemory()**: Learn from user feedback
-5. **GetBackendInfo()**: Provide backend metadata
-
-## Best Practices
-
-- **Graceful Degradation**: Always provide fallback responses
-- **Performance**: Keep response time under 100ms for real-time feel
-- **Memory Management**: Avoid memory leaks in long-running backends
-- **Error Handling**: Never panic, always return meaningful errors
-- **Configuration**: Use JSON schema for user-friendly configuration
-
-## Testing Your Backend
-
-```go
-func TestMyBackend(t *testing.T) {
-    backend := NewMyBackend()
-    config := json.RawMessage(`{"setting": "value"}`)
-    
-    err := backend.Initialize(config, mockCharacter)
-    assert.NoError(t, err)
-    
-    context := DialogContext{Trigger: "click"}
-    response, err := backend.GenerateResponse(context)
-    
-    assert.NoError(t, err)
-    assert.NotEmpty(t, response.Text)
-    assert.True(t, response.Confidence > 0)
-}
-```
-```
-
-### Success Criteria
-- ✅ Rule-based backend demonstrates alternative approach
-- ✅ LLM template shows external service integration pattern
-- ✅ Documentation enables community backend development
-- ✅ All backends work interchangeably through common interface
-
----
-
-## Implementation Timeline
-
-| Phase | Duration | Key Deliverables |
-|-------|----------|------------------|
-| **Phase 1** | 2-3 days | Generic interface, simple fallback backend |
-| **Phase 2** | 3-4 days | Markov chain implementation, JSON templates |
-| **Phase 3** | 2-3 days | Memory integration, quality improvements, docs |
-| **Phase 4** | 1-2 days | Additional backend templates, dev guide |
-
-**Total**: 8-12 days for complete implementation
-
-## Risk Mitigation
-
-### Technical Risks
-- **Memory Usage**: Markov chains can consume significant memory
-  - *Mitigation*: Implement chain size limits and memory monitoring
-- **Generation Quality**: AI-generated text may be incoherent
-  - *Mitigation*: Comprehensive filtering and fallback systems
-- **Performance**: Text generation may be slow
-  - *Mitigation*: Async generation with timeout fallbacks
-
-### User Experience Risks
-- **Configuration Complexity**: JSON configuration may intimidate users
-  - *Mitigation*: Provide templates and step-by-step guides
-- **Inconsistent Character Voice**: Generated text may not match character
-  - *Mitigation*: Personality integration and training data validation
-- **Regression**: New system breaks existing functionality
-  - *Mitigation*: Comprehensive testing and gradual rollout
-
-## Testing Strategy
-
-### Unit Tests
-- Dialog interface compliance for all backends
-- Markov chain generation quality and performance
-- Configuration validation and error handling
-- Memory system integration
-
-### Integration Tests
-- End-to-end dialog generation flow
-- Character card loading with backend configuration
-- Fallback behavior when generation fails
-- Performance under sustained load
-
-### User Acceptance Tests
-- Non-programmer can configure Markov dialog using templates
-- Generated responses feel appropriate for character personality
-- System gracefully handles invalid configuration
-- Existing characters continue working unchanged
-
-## Success Metrics
-
-### Technical Metrics
-- **Response Time**: < 100ms for 95% of generations
-- **Memory Usage**: < 50MB additional memory per character
-- **Fallback Rate**: < 5% of responses use fallback system
-- **Configuration Success**: 90% of users can configure basic Markov backend
-
-### Quality Metrics
-- **Response Coherence**: > 80% of responses rated as coherent by users
-- **Personality Consistency**: > 85% of responses feel appropriate for character
-- **Variety**: < 10% response repetition in 100-interaction sessions
-- **User Satisfaction**: > 4/5 rating for enhanced dialog experience
-
-This phased approach ensures robust implementation while maintaining backward compatibility and providing clear extension patterns for future enhancements.
+## IMPLEMENTATION STATUS - UPDATED
+
+### ✅ Phase 1: Core Data Structures (COMPLETE)
+
+1. **✅ Create gift definition schema**
+   - ✅ New directory: `assets/gifts/` with sample gift files
+   - ✅ Sample gift files: `birthday_cake.json`, `chocolate_box.json`, `red_rose.json`, `red_roses.json`, `coffee_book.json`
+   - ✅ Validation functions using existing patterns in `gift_definition.go`
+
+2. **✅ Extend character card schema**
+   - ✅ Added optional `giftSystem` field to `CharacterCard` in `card.go`
+   - ✅ Updated validation to include gift system validation
+   - ✅ 100% backward compatibility maintained
+
+3. **✅ Create gift data structures**
+   - ✅ New file: `internal/character/gift_definition.go` with comprehensive structs
+   - ✅ Used existing JSON marshaling patterns from `card.go`
+   - ✅ Implemented validation using existing `Validate()` patterns
+   - ✅ Comprehensive test coverage in `gift_definition_test.go`
+
+### ✅ Phase 2: Core Gift Logic (COMPLETE)
+
+1. **✅ Implement GiftManager**
+   - ✅ New file: `internal/character/gift_manager.go`
+   - ✅ Integrated with existing `GameState` for stat effects
+   - ✅ Reused interaction recording patterns from romance system
+   - ✅ Thread-safe with mutex protection
+   - ✅ Personality-aware responses and stat modifiers
+   - ✅ Comprehensive test coverage in `gift_manager_clean_test.go` and `gift_integration_test.go`
+
+2. **✅ Extend save system**
+   - ✅ Extended `GameState` struct with `GiftMemories` field
+   - ✅ Maintains save version compatibility (uses existing JSON serialization)
+   - ✅ Added `GiftMemory` struct for tracking gift interactions
+
+3. **✅ Add gift memory system**
+   - ✅ Extended existing memory pattern with gift-specific memory type
+   - ✅ Integrated with existing memory management logic (50-100 memory limit)
+   - ✅ Reused existing importance and emotional tone systems
+   - ✅ Memory includes notes, stat effects, and gift metadata
+
+### 🚧 Phase 3: UI Integration (NEXT PHASE)
+
+1. **❌ Create gift selection dialog**
+   - New file: `internal/ui/gift_dialog.go`
+   - Extend existing `DialogBubble` patterns
+   - Reuse existing widget rendering code
+
+2. **❌ Add context menu integration**
+   - Minimal changes to existing context menu code
+   - Add gift option only when gift system enabled
+   - Use existing menu patterns
+
+3. **❌ Implement notes dialog**
+   - Create text input dialog using existing UI patterns
+   - Integrate with gift selection workflow
+   - Follow existing dialog lifecycle patterns
+
+### ❌ Phase 4: Integration Testing (PENDING)
+
+1. **❌ Create migration tests**
+2. **❌ Add gift interaction tests**
+3. **❌ End-to-end workflow tests**
+
+## CURRENT IMPLEMENTATION DETAILS
+
+### ✅ What Works Now:
+- **Gift Catalog Loading**: `LoadGiftCatalog()` loads and validates all gifts from `assets/gifts/`
+- **Gift Availability**: `GetAvailableGifts()` filters gifts based on relationship level and stats
+- **Gift Giving**: `GiveGift()` processes complete gift interaction with:
+  - Personality-based response selection
+  - Stat effects with personality modifiers
+  - Memory creation with importance and emotional tone
+  - Animation selection
+- **Memory Management**: Gift memories are tracked and limited to prevent unbounded growth
+- **Thread Safety**: All operations are thread-safe with proper mutex protection
+- **Backward Compatibility**: All existing character cards work unchanged
+
+### ✅ Tested Integration Points:
+- **Character Card Loading**: Gift system fields are optional and validated
+- **GameState Integration**: Gift effects apply to existing stat system
+- **Memory System**: Gift memories integrate with existing romance/dialog memory patterns
+- **Personality System**: Gift effects modified by character personality traits
+- **Requirement System**: Gift unlock requirements follow existing interaction patterns
+
+### 🎯 Next Priority: UI Integration
+The core gift system is fully functional but needs UI integration to be user-accessible. The next logical step is implementing Phase 3 (UI Integration) to make the gift system available through the companion interface.
+
+## VALIDATION PLAN - ZERO REGRESSION
+
+### Backward Compatibility Validation
+
+1. **Character Card Compatibility**
+   ```bash
+   # Test all existing character cards still load
+   go test ./internal/character -run TestLoadExistingCharacters
+   
+   # Verify validation doesn't break existing cards
+   go test ./internal/character -run TestCardValidationBackwardCompatibility
+   ```
+
+2. **Save File Compatibility**
+   ```bash
+   # Test existing save files can be loaded
+   go test ./internal/persistence -run TestSaveFileBackwardCompatibility
+   
+   # Verify save format migration works
+   go test ./internal/persistence -run TestSaveVersionMigration
+   ```
+
+3. **Interaction System Compatibility**
+   ```bash
+   # Test existing interactions still work unchanged
+   go test ./internal/character -run TestExistingInteractionPreservation
+   
+   # Verify game mechanics unchanged when gift system disabled
+   go test ./internal/character -run TestGameMechanicsPreservation
+   ```
+
+### Feature Validation
+
+1. **Gift System Integration**
+   ```bash
+   # Test gift loading and validation
+   go test ./internal/character -run TestGiftSystemValidation
+   
+   # Test gift effects integration with existing stat system
+   go test ./internal/character -run TestGiftEffectsIntegration
+   
+   # Test gift memory integration with existing memory system
+   go test ./internal/character -run TestGiftMemoryIntegration
+   ```
+
+2. **UI Integration**
+   ```bash
+   # Test gift dialog creation and interaction
+   go test ./internal/ui -run TestGiftDialogIntegration
+   
+   # Test context menu preservation with gift additions
+   go test ./internal/ui -run TestContextMenuIntegration
+   ```
+
+3. **End-to-End Validation**
+   ```bash
+   # Test complete gift workflow
+   go test ./cmd/companion -run TestGiftWorkflowIntegration
+   
+   # Test character behavior with and without gift system
+   go test ./cmd/companion -run TestCharacterBehaviorPreservation
+   ```
+
+### Performance Validation
+
+1. **Memory Usage**
+   - Verify gift system adds <10MB to memory footprint
+   - Test save file size impact with large inventories
+   - Validate GIF loading performance with gift images
+
+2. **Startup Time**
+   - Ensure gift catalog loading doesn't exceed 200ms
+   - Test character loading time impact
+   - Validate first-time vs. cached gift loading
+
+### Regression Prevention
+
+1. **Automated Testing**
+   - Add gift system tests to existing test suite
+   - Create character archetype tests with gift system enabled/disabled
+   - Add save/load round-trip tests with inventory data
+
+2. **Manual Testing Protocol**
+   - Load each existing character type with gift system disabled
+   - Test interaction triggers and animations unchanged
+   - Verify stats overlay and game mechanics preserved
+   - Test dialog backend functionality unchanged
+
+## DESIGN CONSTRAINTS COMPLIANCE
+
+### ✅ Extend existing interfaces rather than modifying core code
+- All new functionality in separate files (`gift_manager.go`, `inventory.go`, `gift_dialog.go`)
+- Character card extensions are optional fields with full backward compatibility
+- Save system extensions use optional fields that don't affect existing saves
+
+### ✅ Maintain 100% backward compatibility with current character cards
+- All gift system fields are optional in character cards
+- Existing character cards work unchanged when gift system is disabled
+- No changes to required fields or existing validation logic
+
+### ✅ Reuse discovered patterns and event systems
+- Gift validation reuses existing character card validation patterns
+- Gift effects integrate with existing stat and interaction systems
+- UI components extend existing DialogBubble and widget patterns
+- Save system follows existing JSON serialization and versioning patterns
+
+### ✅ Preserve all existing game mechanics unchanged
+- Gift system operates alongside existing interactions without interference
+- Game stats, progression, and romance systems remain unmodified
+- Animation and dialog systems work identically with gift system enabled/disabled
+- Performance targets and memory usage remain within existing bounds
+
+## SUMMARY
+
+This design provides a complete gift/inventory system that seamlessly integrates with the existing DDS architecture while maintaining perfect backward compatibility. The system leverages the project's "lazy programmer" philosophy by reusing existing patterns for JSON configuration, validation, interaction handling, and UI components.
+
+Key benefits:
+- **Zero breaking changes** to existing functionality
+- **Incremental implementation** with each phase providing value
+- **Comprehensive validation** ensuring no regressions
+- **Follows existing patterns** for consistency and maintainability
+- **Optional feature** that can be enabled/disabled per character
+
+The implementation can begin immediately with Phase 1, providing a solid foundation for gift system development while maintaining full system stability.

@@ -32,6 +32,13 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Memory System**: Characters learn and reference past interactions
   - **Context Awareness**: Dialog varies based on triggers, relationship level, and character stats
   - **Quality Control**: Multi-layered filtering ensures coherent, character-appropriate responses
+- 💬 **Interactive Chatbot Interface**: Real-time conversation system with AI characters *(Complete)*
+  - **Keyboard Integration**: Press 'C' to toggle chatbot interface instantly
+  - **Context Menu Access**: Right-click → "Open Chat" for menu-driven access
+  - **Multi-line Input**: Advanced text input with send button for natural conversations
+  - **Conversation History**: Scrollable chat history with message persistence
+  - **Smart Activation**: Only available for characters with AI dialog backend enabled
+  - **Seamless Integration**: Embedded in main desktop window with overlay positioning
 - 🎯 **General Dialog Events**: Interactive scenarios and conversations *(Phase 4 Complete)*
   - **Interactive Scenarios**: Multi-choice conversations, roleplay, and story events
   - **Event Categories**: Conversation, roleplay, mini-games, and humor scenarios
@@ -167,6 +174,11 @@ go run cmd/companion/main.go -game -stats -character assets/characters/slow_burn
 go run cmd/companion/main.go -character assets/characters/markov_example/character.json         # Basic Markov dialog
 go run cmd/companion/main.go -character assets/characters/examples/markov_dialog_example.json  # Advanced dialog system
 
+# Interactive Chatbot Interface Examples  
+go run cmd/companion/main.go -character assets/characters/markov_example/character.json         # AI chat with basic character
+# Press 'C' key or right-click → "Open Chat" to start AI conversations
+# Type messages and receive AI-generated responses based on character personality
+
 # General Dialog Events Examples
 go run cmd/companion/main.go -character assets/characters/examples/interactive_events.json     # Interactive conversations
 go run cmd/companion/main.go -character assets/characters/examples/roleplay_character.json    # Roleplay scenarios
@@ -188,6 +200,8 @@ go run cmd/companion/main.go -character assets/characters/examples/roleplay_char
 - **Right-click**: Feed your character (increases hunger with dialog response)
 - **Double-click**: Play with your character (increases happiness, decreases energy)
 - **Stats overlay**: Toggle with 'S' key to monitor character's wellbeing
+- **Chatbot interface**: Toggle with 'C' key for AI-powered conversations (AI characters only)
+- **Context menu**: Right-click for advanced options including "Open Chat" for AI characters
 - **Auto-save**: Game state automatically saves at intervals that vary by difficulty:
   - Easy: 10 minutes (600 seconds)
   - Normal/Romance: 5 minutes (300 seconds)  

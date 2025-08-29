@@ -1,0 +1,51 @@
+{
+  "id": "red_roses",
+  "name": "Bouquet of Red Roses",
+  "description": "A classic bouquet of a dozen red roses, symbol of deep love",
+  "category": "flowers",
+  "rarity": "uncommon",
+  "image": "animations/red_roses.gif",
+  "properties": {
+    "consumable": true,
+    "stackable": false,
+    "maxStack": 1,
+    "unlockRequirements": {
+      "relationshipLevel": "Romantic Interest",
+      "stats": {
+        "affection": {"min": 60},
+        "intimacy": {"min": 30}
+      }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 25,
+        "affection": 20,
+        "intimacy": 15,
+        "trust": 5
+      },
+      "animations": ["blushing", "heart_eyes", "romantic"],
+      "responses": [
+        "Red roses! They're absolutely beautiful! 🌹❤️",
+        "You're so romantic... I love them! 😍",
+        "These are gorgeous! Thank you so much! 💕"
+      ]
+    },
+    "memory": {
+      "importance": 0.8,
+      "tags": ["romantic", "flowers", "love", "special"],
+      "emotionalTone": "romantic"
+    }
+  },
+  "personalityModifiers": {
+    "romantic": {"affection": 1.5, "intimacy": 1.4},
+    "tsundere": {"affection": 0.9, "trust": 1.2},
+    "shy": {"affection": 1.3, "intimacy": 0.8}
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 200,
+    "placeholder": "Express your romantic feelings..."
+  }
+}
