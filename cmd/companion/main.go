@@ -22,6 +22,8 @@ var (
 	cpuProfile    = flag.String("cpuprofile", "", "Write CPU profile to file")
 	gameMode      = flag.Bool("game", false, "Enable Tamagotchi game features")
 	showStats     = flag.Bool("stats", false, "Show stats overlay")
+	events        = flag.Bool("events", false, "Enable general dialog events system")
+	triggerEvent  = flag.String("trigger-event", "", "Manually trigger a specific event by name")
 )
 
 const appVersion = "1.0.0"
@@ -178,16 +180,61 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 		log.Fatalf("Failed to create character: %v", err)
 	}
 
+	// Handle trigger-event flag if specified
+	if *triggerEvent != "" {
+		if err := handleTriggerEventFlag(char); err != nil {
+			log.Fatalf("Failed to trigger event: %v", err)
+		}
+		return
+	}
+
 	// Create and show desktop window with profiler integration
 	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats)
 
 	if *debug {
 		log.Println("Created desktop window")
+		if *events {
+			log.Println("General events system enabled")
+		}
 	}
 
 	// Show window and start event loop
 	window.Show()
 	myApp.Run()
+}
+
+// handleTriggerEventFlag handles the -trigger-event command line flag
+func handleTriggerEventFlag(char *character.Character) error {
+	if *triggerEvent == "" {
+		return nil
+	}
+
+	if *debug {
+		log.Printf("Attempting to trigger event: %s", *triggerEvent)
+	}
+
+	// Get the general event manager from the character
+	eventManager := char.GetGeneralEventManager()
+	if eventManager == nil {
+		return fmt.Errorf("general events system not available for this character")
+	}
+
+	// Try to trigger the specified event
+	gameState := char.GetGameState()
+	event, err := eventManager.TriggerEvent(*triggerEvent, gameState)
+	if err != nil {
+		return fmt.Errorf("failed to trigger event '%s': %w", *triggerEvent, err)
+	}
+
+	fmt.Printf("Successfully triggered event: %s\n", event.Name)
+	fmt.Printf("Description: %s\n", event.Description)
+	fmt.Printf("Category: %s\n", event.Category)
+
+	if len(event.Responses) > 0 {
+		fmt.Printf("Response: %s\n", event.Responses[0])
+	}
+
+	return nil
 }
 
 // checkDisplayAvailable verifies that a display is available for GUI applications

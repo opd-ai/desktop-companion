@@ -2129,6 +2129,13 @@ func (c *Character) IsGeneralEventAvailable(eventName string) bool {
 	return c.generalEventManager.IsEventAvailable(eventName, c.gameState)
 }
 
+// GetGeneralEventManager returns the general event manager for direct access
+func (c *Character) GetGeneralEventManager() *GeneralEventManager {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.generalEventManager
+}
+
 // HandleChatMessage processes a chatbot message interaction for AI-enabled characters
 // Returns response text to display, or empty string if chatbot is not available
 // This method reuses the existing dialog backend infrastructure for consistency

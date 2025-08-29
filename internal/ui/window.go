@@ -7,6 +7,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/driver/desktop"
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
@@ -613,7 +614,161 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 		}
 	})
 
+	// Add general events keyboard shortcuts with Ctrl modifier
+	dw.setupGeneralEventsShortcuts(canvas)
+
 	if dw.debug {
-		log.Println("Keyboard shortcuts configured - Press 'S' to toggle stats overlay, 'C' to toggle chatbot, 'ESC' to close chatbot")
+		log.Println("Keyboard shortcuts configured:")
+		log.Println("  'S' - Toggle stats overlay")
+		log.Println("  'C' - Toggle chatbot")
+		log.Println("  'ESC' - Close chatbot")
+		log.Println("  'Ctrl+E' - Open events menu")
+		log.Println("  'Ctrl+R' - Random roleplay scenario")
+		log.Println("  'Ctrl+G' - Mini-game session")
+		log.Println("  'Ctrl+H' - Humor/joke session")
+	}
+}
+
+// setupGeneralEventsShortcuts configures general dialog events keyboard shortcuts
+func (dw *DesktopWindow) setupGeneralEventsShortcuts(canvas fyne.Canvas) {
+	// Ctrl+E: Open events menu to see available scenarios
+	ctrlE := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyE,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrlE, func(shortcut fyne.Shortcut) {
+		if dw.debug {
+			log.Println("Ctrl+E pressed - opening events menu")
+		}
+		dw.openEventsMenu()
+	})
+
+	// Ctrl+R: Quick-start a random roleplay scenario
+	ctrlR := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyR,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrlR, func(shortcut fyne.Shortcut) {
+		if dw.debug {
+			log.Println("Ctrl+R pressed - starting random roleplay scenario")
+		}
+		dw.startRandomRoleplayScenario()
+	})
+
+	// Ctrl+G: Start a mini-game or trivia session
+	ctrlG := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyG,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrlG, func(shortcut fyne.Shortcut) {
+		if dw.debug {
+			log.Println("Ctrl+G pressed - starting mini-game session")
+		}
+		dw.startMiniGameSession()
+	})
+
+	// Ctrl+H: Trigger a humor/joke session
+	ctrlH := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyH,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrlH, func(shortcut fyne.Shortcut) {
+		if dw.debug {
+			log.Println("Ctrl+H pressed - starting humor/joke session")
+		}
+		dw.startHumorSession()
+	})
+}
+
+// General Events System Implementation - implements keyboard shortcuts functionality
+
+// openEventsMenu displays available general events for the user to choose from
+func (dw *DesktopWindow) openEventsMenu() {
+	availableEvents := dw.character.GetAvailableGeneralEvents()
+
+	if len(availableEvents) == 0 {
+		dw.showDialog("No events available for this character.")
+		return
+	}
+
+	// Create menu text with available events
+	menuText := "Available Events:\n\n"
+	for i, event := range availableEvents {
+		menuText += fmt.Sprintf("%d. %s (%s)\n   %s\n\n",
+			i+1, event.Name, event.Category, event.Description)
+	}
+
+	dw.showDialog(menuText)
+}
+
+// startRandomRoleplayScenario triggers a random roleplay event
+func (dw *DesktopWindow) startRandomRoleplayScenario() {
+	roleplays := dw.character.GetGeneralEventsByCategory("roleplay")
+
+	if len(roleplays) == 0 {
+		dw.showDialog("No roleplay scenarios available for this character.")
+		return
+	}
+
+	// Pick a random roleplay event
+	event := roleplays[int(time.Now().UnixNano())%len(roleplays)]
+
+	if dw.debug {
+		log.Printf("Triggering random roleplay scenario: %s", event.Name)
+	}
+
+	response := dw.character.HandleGeneralEvent(event.Name)
+	if response != "" {
+		dw.showDialog(fmt.Sprintf("Roleplay: %s\n\n%s", event.Name, response))
+	} else {
+		dw.showDialog(fmt.Sprintf("Could not start roleplay scenario: %s", event.Name))
+	}
+}
+
+// startMiniGameSession triggers a game category event
+func (dw *DesktopWindow) startMiniGameSession() {
+	games := dw.character.GetGeneralEventsByCategory("game")
+
+	if len(games) == 0 {
+		dw.showDialog("No mini-games available for this character.")
+		return
+	}
+
+	// Pick a random game event
+	event := games[int(time.Now().UnixNano())%len(games)]
+
+	if dw.debug {
+		log.Printf("Triggering mini-game session: %s", event.Name)
+	}
+
+	response := dw.character.HandleGeneralEvent(event.Name)
+	if response != "" {
+		dw.showDialog(fmt.Sprintf("Mini-Game: %s\n\n%s", event.Name, response))
+	} else {
+		dw.showDialog(fmt.Sprintf("Could not start mini-game: %s", event.Name))
+	}
+}
+
+// startHumorSession triggers a humor category event
+func (dw *DesktopWindow) startHumorSession() {
+	humor := dw.character.GetGeneralEventsByCategory("humor")
+
+	if len(humor) == 0 {
+		dw.showDialog("No humor/joke content available for this character.")
+		return
+	}
+
+	// Pick a random humor event
+	event := humor[int(time.Now().UnixNano())%len(humor)]
+
+	if dw.debug {
+		log.Printf("Triggering humor session: %s", event.Name)
+	}
+
+	response := dw.character.HandleGeneralEvent(event.Name)
+	if response != "" {
+		dw.showDialog(fmt.Sprintf("Humor: %s\n\n%s", event.Name, response))
+	} else {
+		dw.showDialog(fmt.Sprintf("Could not start humor session: %s", event.Name))
 	}
 }
