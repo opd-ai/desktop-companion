@@ -2229,11 +2229,19 @@ func (c *Character) buildPersonalityPrompt() string {
 	}
 
 	var promptParts []string
-
-	// Build personality description based on traits
 	traits := c.card.Personality.Traits
 
-	// Handle shyness
+	// Process each trait type using dedicated handlers
+	promptParts = c.appendShynessPrompt(promptParts, traits)
+	promptParts = c.appendRomanticismPrompt(promptParts, traits)
+	promptParts = c.appendJealousyPrompt(promptParts, traits)
+	promptParts = c.appendTrustPrompt(promptParts, traits)
+
+	return c.combinePromptParts(promptParts)
+}
+
+// appendShynessPrompt processes shyness trait and adds appropriate prompt text
+func (c *Character) appendShynessPrompt(promptParts []string, traits map[string]float64) []string {
 	if shyness, exists := traits["shyness"]; exists {
 		if shyness > 0.7 {
 			promptParts = append(promptParts, "You are quite shy and speak softly.")
@@ -2241,22 +2249,31 @@ func (c *Character) buildPersonalityPrompt() string {
 			promptParts = append(promptParts, "You are outgoing and confident in conversation.")
 		}
 	}
+	return promptParts
+}
 
-	// Handle romanticism
+// appendRomanticismPrompt processes romanticism trait and adds appropriate prompt text
+func (c *Character) appendRomanticismPrompt(promptParts []string, traits map[string]float64) []string {
 	if romanticism, exists := traits["romanticism"]; exists {
 		if romanticism > 0.7 {
 			promptParts = append(promptParts, "You have a romantic and affectionate nature.")
 		}
 	}
+	return promptParts
+}
 
-	// Handle jealousy sensitivity
+// appendJealousyPrompt processes jealousy sensitivity trait and adds appropriate prompt text
+func (c *Character) appendJealousyPrompt(promptParts []string, traits map[string]float64) []string {
 	if jealousy, exists := traits["jealousy_sensitivity"]; exists {
 		if jealousy > 0.6 {
 			promptParts = append(promptParts, "You can be a bit possessive and caring about attention.")
 		}
 	}
+	return promptParts
+}
 
-	// Handle trust difficulty
+// appendTrustPrompt processes trust difficulty trait and adds appropriate prompt text
+func (c *Character) appendTrustPrompt(promptParts []string, traits map[string]float64) []string {
 	if trust, exists := traits["trust_difficulty"]; exists {
 		if trust > 0.6 {
 			promptParts = append(promptParts, "You are cautious about opening up too quickly.")
@@ -2264,12 +2281,14 @@ func (c *Character) buildPersonalityPrompt() string {
 			promptParts = append(promptParts, "You are open and trusting in conversations.")
 		}
 	}
+	return promptParts
+}
 
-	// Combine into a personality prompt
+// combinePromptParts assembles the final personality prompt string
+func (c *Character) combinePromptParts(promptParts []string) string {
 	if len(promptParts) > 0 {
 		return "Character personality: " + strings.Join(promptParts, " ")
 	}
-
 	return ""
 }
 
