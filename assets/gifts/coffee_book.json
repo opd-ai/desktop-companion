@@ -1,0 +1,48 @@
+{
+  "id": "coffee_book",
+  "name": "Coffee & Book Set",
+  "description": "A cozy gift set with premium coffee and a bestselling novel",
+  "category": "books",
+  "rarity": "common",
+  "image": "animations/coffee_book.gif",
+  "properties": {
+    "consumable": false,
+    "stackable": false,
+    "maxStack": 1,
+    "unlockRequirements": {
+      "relationshipLevel": "Acquaintance",
+      "stats": {
+        "affection": {"min": 20}
+      }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 15,
+        "affection": 10,
+        "trust": 5
+      },
+      "animations": ["reading", "thoughtful"],
+      "responses": [
+        "Coffee and a book? You know me so well! ☕📚",
+        "This is perfect for a quiet evening. Thank you! 😊",
+        "I can't wait to dive into this book with a warm cup!"
+      ]
+    },
+    "memory": {
+      "importance": 0.6,
+      "tags": ["thoughtful", "relaxing", "books"],
+      "emotionalTone": "content"
+    }
+  },
+  "personalityModifiers": {
+    "shy": {"trust": 1.3, "affection": 1.1},
+    "intellectual": {"affection": 1.4, "happiness": 1.2}
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 200,
+    "placeholder": "Share your thoughts about this cozy gift..."
+  }
+}
