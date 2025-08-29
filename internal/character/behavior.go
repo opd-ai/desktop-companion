@@ -906,6 +906,13 @@ func (c *Character) GetCurrentState() string {
 	return c.currentState
 }
 
+// GetCard returns the character card for accessing configuration
+func (c *Character) GetCard() *CharacterCard {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.card
+}
+
 // setState changes the character's animation state (internal method)
 func (c *Character) setState(state string) {
 	if c.currentState == state {
@@ -2082,4 +2089,130 @@ func (c *Character) IsGeneralEventAvailable(eventName string) bool {
 	}
 
 	return c.generalEventManager.IsEventAvailable(eventName, c.gameState)
+}
+
+// HandleChatMessage processes a chatbot message interaction for AI-enabled characters
+// Returns response text to display, or empty string if chatbot is not available
+// This method reuses the existing dialog backend infrastructure for consistency
+func (c *Character) HandleChatMessage(message string) string {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.lastInteraction = time.Now()
+
+	// Only process chat messages if advanced dialog system is enabled
+	if !c.useAdvancedDialogs || c.dialogManager == nil {
+		return ""
+	}
+
+	// Build dialog context for chat message
+	context := c.buildChatDialogContext(message)
+
+	// Generate response using dialog backend
+	response, err := c.dialogManager.GenerateDialog(context)
+	if err != nil {
+		// Fallback to simple chat response
+		return c.handleChatFallback(message)
+	}
+
+	// Check confidence threshold
+	if response.Confidence < c.card.DialogBackend.ConfidenceThreshold {
+		return c.handleChatFallback(message)
+	}
+
+	// Set animation if specified
+	if response.Animation != "" {
+		c.setState(response.Animation)
+	}
+
+	// Update dialog memory for learning if enabled
+	if c.card.DialogBackend.MemoryEnabled {
+		c.updateDialogMemory(response, context)
+	}
+
+	return response.Text
+}
+
+// buildChatDialogContext creates dialog context specifically for chat messages
+// Extends the standard dialog context with chat-specific information
+func (c *Character) buildChatDialogContext(message string) dialog.DialogContext {
+	context := c.buildDialogContext("chat")
+	
+	// Add chat-specific context
+	context.ConversationTurn += 1
+	context.LastResponse = message
+
+	// Add topic context based on message content
+	context.TopicContext = c.extractTopicsFromMessage(message)
+
+	return context
+}
+
+// extractTopicsFromMessage performs simple topic extraction from user message
+// This is a basic implementation - could be enhanced with NLP libraries
+func (c *Character) extractTopicsFromMessage(message string) map[string]interface{} {
+	topics := make(map[string]interface{})
+	
+	// Simple keyword-based topic detection
+	messageWords := strings.Fields(strings.ToLower(message))
+	
+	// Check for common topic keywords
+	for _, word := range messageWords {
+		switch word {
+		case "love", "romance", "dating":
+			topics["romance"] = true
+		case "happy", "sad", "mood", "feeling":
+			topics["emotion"] = true
+		case "game", "play", "fun":
+			topics["entertainment"] = true
+		case "work", "job", "career":
+			topics["professional"] = true
+		case "weather", "today", "tomorrow":
+			topics["daily_life"] = true
+		}
+	}
+
+	// Add message length as context
+	topics["message_length"] = len(message)
+	
+	return topics
+}
+
+// handleChatFallback provides fallback responses when advanced dialog system fails
+// Uses personality traits to generate appropriate simple responses
+func (c *Character) handleChatFallback(message string) string {
+	// Simple personality-based responses
+	shyness := c.card.GetPersonalityTrait("shyness")
+	romanticism := c.card.GetPersonalityTrait("romanticism")
+	
+	fallbackResponses := []string{
+		"That's interesting to hear!",
+		"I understand what you mean.",
+		"Thanks for sharing that with me.",
+		"I'm glad we can talk about this.",
+		"Tell me more about that.",
+	}
+
+	// Adjust responses based on personality
+	if shyness > 0.7 {
+		fallbackResponses = append(fallbackResponses, 
+			"I... I'm not sure what to say... 😳",
+			"That makes me feel a bit shy...",
+		)
+	}
+
+	if romanticism > 0.6 {
+		fallbackResponses = append(fallbackResponses,
+			"I love how we can share our thoughts! 💕",
+			"You always know what to say to me~",
+		)
+	}
+
+	// Select random response
+	if len(fallbackResponses) > 0 {
+		index := int(time.Now().UnixNano()) % len(fallbackResponses)
+		return fallbackResponses[index]
+	}
+
+	return "I'm listening..."
 }
