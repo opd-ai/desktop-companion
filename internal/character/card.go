@@ -965,6 +965,35 @@ func (c *CharacterCard) HasDialogBackend() bool {
 	return c.DialogBackend != nil && c.DialogBackend.Enabled
 }
 
+// Bug #4 Fix: Additional methods for more granular dialog backend state checking
+
+// HasDialogBackendConfig returns true if this character has dialog backend configuration
+// regardless of whether it's enabled or disabled. Useful for determining if a character
+// was intended to have AI capabilities.
+func (c *CharacterCard) HasDialogBackendConfig() bool {
+	return c.DialogBackend != nil
+}
+
+// IsDialogBackendEnabled returns true if dialog backend is both configured and enabled
+// This is equivalent to HasDialogBackend() but with a more descriptive name.
+func (c *CharacterCard) IsDialogBackendEnabled() bool {
+	return c.DialogBackend != nil && c.DialogBackend.Enabled
+}
+
+// GetDialogBackendStatus returns detailed information about dialog backend availability
+// Returns: (hasConfig, isEnabled, reason) where reason explains the current state
+func (c *CharacterCard) GetDialogBackendStatus() (bool, bool, string) {
+	if c.DialogBackend == nil {
+		return false, false, "No dialog backend configured"
+	}
+
+	if !c.DialogBackend.Enabled {
+		return true, false, "Dialog backend configured but disabled"
+	}
+
+	return true, true, "Dialog backend configured and enabled"
+}
+
 // GetPersonalityTrait returns the value of a personality trait, defaulting to 0.5 if not found
 func (c *CharacterCard) GetPersonalityTrait(trait string) float64 {
 	if c.Personality == nil || c.Personality.Traits == nil {

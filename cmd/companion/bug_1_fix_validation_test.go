@@ -16,7 +16,7 @@ func TestBug1FixValidation(t *testing.T) {
 		// Reset flags for clean test
 		originalCommandLine := flag.CommandLine
 		defer func() { flag.CommandLine = originalCommandLine }()
-		
+
 		flag.CommandLine = flag.NewFlagSet("test", flag.ContinueOnError)
 
 		// Re-define flags as they are in main.go
@@ -28,12 +28,12 @@ func TestBug1FixValidation(t *testing.T) {
 			t.Error("FAIL: -events flag is still missing")
 		}
 		if flag.Lookup("trigger-event") == nil {
-			t.Error("FAIL: -trigger-event flag is still missing") 
+			t.Error("FAIL: -trigger-event flag is still missing")
 		}
 
 		// Test flag parsing
 		flag.CommandLine.Parse([]string{"-events", "-trigger-event", "test_event"})
-		
+
 		if !*events {
 			t.Error("FAIL: -events flag not parsed correctly")
 		}

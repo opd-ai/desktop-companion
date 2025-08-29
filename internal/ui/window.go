@@ -788,7 +788,7 @@ func (dw *DesktopWindow) shouldShowChatOption() bool {
 	// Show chat option if character has any AI capabilities:
 	// 1. Has dialog backend configured (even if disabled)
 	// 2. Has romance features (personality, romance dialogs, romance events)
-	return card.DialogBackend != nil || card.HasRomanceFeatures()
+	return card.HasDialogBackendConfig() || card.HasRomanceFeatures()
 }
 
 // handleChatOptionClick handles when user clicks "Open Chat" in context menu
@@ -807,17 +807,18 @@ func (dw *DesktopWindow) handleChatOptionClick() {
 		return
 	}
 
-	// Check specific reasons why chat is unavailable
-	if card.DialogBackend == nil {
+	// Use new granular methods for better user feedback
+	if !card.HasDialogBackendConfig() {
 		if card.HasRomanceFeatures() {
 			dw.showDialog("Chat feature available but no dialog backend configured.\n\nThis character has romance features but needs a dialog backend to enable AI chat.\n\nYou can still interact using the basic dialog system.")
 		} else {
 			dw.showDialog("Chat not available for this character.\n\nThis character doesn't have AI dialog capabilities.\n\nYou can still interact using basic responses.")
 		}
-	} else if !card.DialogBackend.Enabled {
+	} else if !card.IsDialogBackendEnabled() {
 		dw.showDialog("Chat feature disabled.\n\nThis character has a dialog backend configured but it's currently disabled.\n\nEnable it in the character configuration to use AI chat.")
 	} else {
-		// This shouldn't happen - HasDialogBackend() returned false but both conditions are true
-		dw.showDialog("Chat temporarily unavailable.\n\nThere may be an issue with the dialog backend configuration.")
+		// This shouldn't happen - HasDialogBackend() returned false but conditions suggest it should work
+		hasConfig, enabled, summary := card.GetDialogBackendStatus()
+		dw.showDialog(fmt.Sprintf("Chat temporarily unavailable.\n\nDialog backend status: Config=%t, Enabled=%t\nSummary: %s\n\nThere may be an issue with the dialog backend configuration.", hasConfig, enabled, summary))
 	}
 }

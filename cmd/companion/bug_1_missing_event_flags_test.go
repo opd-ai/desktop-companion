@@ -21,7 +21,7 @@ func TestBug1EventsFlagsFixed(t *testing.T) {
 
 	// Test that we can parse command line with the documented flags
 	os.Args = []string{"companion", "-events", "-trigger-event", "test"}
-	
+
 	err := flag.CommandLine.Parse(os.Args[1:])
 	if err != nil {
 		t.Fatalf("Failed to parse flags: %v", err)
