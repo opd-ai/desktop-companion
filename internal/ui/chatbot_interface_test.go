@@ -14,7 +14,7 @@ import (
 func TestNewChatbotInterface(t *testing.T) {
 	// Test with character card without dialog backend
 	normalCard := createTestCharacterCard()
-	
+
 	// Create a mock character for testing (bypass animation loading)
 	normalChar := createMockCharacter(normalCard)
 
@@ -169,7 +169,7 @@ func TestChatbotInterface_HistoryManagement(t *testing.T) {
 	}
 
 	if chatbot.GetConversationLength() != 3 {
-		t.Errorf("Conversation length should be limited to %d, got %d", 
+		t.Errorf("Conversation length should be limited to %d, got %d",
 			chatbot.maxHistoryLength, chatbot.GetConversationLength())
 	}
 }
@@ -382,11 +382,11 @@ func BenchmarkChatbotInterface_UpdateDisplay(b *testing.B) {
 // createMockCharacter creates a character for testing with actual animation files
 func createMockCharacter(card *character.CharacterCard) *character.Character {
 	// Use real animation files from testdata directory
-	char, err := character.New(card, "/workspaces/DDS/testdata")
+	char, err := character.New(card, "../../testdata")
 	if err != nil {
 		// Return nil if creation fails - tests will handle this
 		return nil
 	}
-	
+
 	return char
 }
