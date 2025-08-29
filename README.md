@@ -32,6 +32,13 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Memory System**: Characters learn and reference past interactions
   - **Context Awareness**: Dialog varies based on triggers, relationship level, and character stats
   - **Quality Control**: Multi-layered filtering ensures coherent, character-appropriate responses
+- 🎯 **General Dialog Events**: Interactive scenarios and conversations *(Phase 4 Complete)*
+  - **Interactive Scenarios**: Multi-choice conversations, roleplay, and story events
+  - **Event Categories**: Conversation, roleplay, mini-games, and humor scenarios
+  - **User-Initiated Events**: Trigger custom scenarios through keyboard shortcuts or menu
+  - **Choice Consequences**: User decisions affect character stats and relationship progression
+  - **Event Chaining**: Complex scenarios with multiple phases and branching narratives
+  - **Backward Compatible**: Seamlessly integrates with existing dialog and game systems
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Platform-Native**: Runs on Windows, macOS, and Linux (requires building on target platform)
 - 🪶 **Lightweight**: ≤50MB memory usage
@@ -159,7 +166,22 @@ go run cmd/companion/main.go -game -stats -character assets/characters/slow_burn
 # AI-Powered Dialog Examples
 go run cmd/companion/main.go -character assets/characters/markov_example/character.json         # Basic Markov dialog
 go run cmd/companion/main.go -character assets/characters/examples/markov_dialog_example.json  # Advanced dialog system
+
+# General Dialog Events Examples
+go run cmd/companion/main.go -character assets/characters/examples/interactive_events.json     # Interactive conversations
+go run cmd/companion/main.go -character assets/characters/examples/roleplay_character.json    # Roleplay scenarios
 ```
+
+**General Dialog Events**:
+- **Trigger Events**: Use keyboard shortcuts (Ctrl+E, Ctrl+R, Ctrl+G) to initiate scenarios
+- **Interactive Choices**: Click on choice buttons during events to make decisions
+- **Event Categories**: 
+  - **Conversation**: Daily check-ins, deep discussions, life advice
+  - **Roleplay**: Fantasy adventures, detective mysteries, sci-fi scenarios
+  - **Games**: Trivia questions, word games, creative challenges
+  - **Humor**: Jokes, puns, funny stories, and silly interactions
+- **Progress Tracking**: Events affect relationship stats and unlock new scenarios
+- **Event Memory**: Characters remember your choices and reference them later
 
 **Game Interactions**:
 - **Click**: Pet your character (increases happiness and health)
@@ -276,7 +298,64 @@ Characters are defined using JSON configuration files with this structure:
 - `movementEnabled` (boolean): Allow dragging the character (default: false)
 - `defaultSize` (number, 64-512): Character size in pixels (default: 128)
 
+### General Dialog Events
+
+Characters support rich interactive scenarios through the general events system:
+
+```json
+{
+  "generalEvents": [
+    {
+      "name": "daily_check_in",
+      "category": "conversation",
+      "description": "A daily conversation about how things are going",
+      "trigger": "daily_check_in",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "How has your day been going? I'd love to hear about it! 😊"
+      ],
+      "animations": ["talking"],
+      "choices": [
+        {
+          "text": "It's been great!",
+          "effects": {"happiness": 5, "affection": 2},
+          "nextEvent": "celebrate_good_day"
+        },
+        {
+          "text": "Pretty challenging...",
+          "effects": {"trust": 3},
+          "nextEvent": "supportive_conversation"
+        },
+        {
+          "text": "Just the usual.",
+          "effects": {"affection": 1}
+        }
+      ],
+      "cooldown": 86400,
+      "conditions": {"affection": {"min": 10}}
+    }
+  ]
+}
+```
+
+#### General Event Properties
+
+- **`name`** (string): Unique identifier for the event
+- **`category`** (string): Event type - "conversation", "roleplay", "game", "humor"
+- **`trigger`** (string): How to initiate the event (keyboard shortcut or auto-trigger)
+- **`interactive`** (boolean): Whether the event supports user choices
+- **`choices`** (array): User interaction options with stat effects and follow-ups
+- **`followUpEvents`** (array): Events that can chain after this one
+- **`cooldown`** (number): Seconds before event can trigger again
+- **`conditions`** (object): Stat requirements to access the event
+
 #### Dialog Backend Configuration (Optional)
+
+**Conversation Events**: Daily check-ins, advice sessions, life discussions
+**Roleplay Events**: Fantasy adventures, mystery scenarios, sci-fi explorations  
+**Game Events**: Trivia questions, word games, creative challenges
+**Humor Events**: Joke sessions, pun competitions, funny stories
 
 - `dialogBackend.enabled` (boolean): Enable AI-powered dialog generation
 - `dialogBackend.defaultBackend` (string): Primary backend to use ("markov_chain", "simple_random")
@@ -423,6 +502,7 @@ Character cards can include comprehensive Tamagotchi-style game features:
 - **`CHARACTER_ARCHETYPES.md`**: Detailed comparison of the three romance archetypes
 - **`DIALOG_BACKEND_GUIDE.md`**: Complete guide to AI-powered dialog configuration
 - **`MARKOV_DIALOG_CONFIGURATION_GUIDE.md`**: Detailed Markov chain setup and customization
+- **`GENERAL_EVENTS_GUIDE.md`**: Comprehensive guide to interactive dialog events and scenarios
 
 ### Creating Custom Characters
 
@@ -482,9 +562,20 @@ go run cmd/companion/main.go -game -stats -character assets/characters/challenge
 # Debug mode with performance profiling
 go run cmd/companion/main.go -debug -memprofile=mem.prof -cpuprofile=cpu.prof
 
-# Custom character with game features
-go run cmd/companion/main.go -game -stats -character /path/to/my/character.json
+# Command-line options for general events
+-events               Enable general dialog events system
+-trigger-event <name> Manually trigger a specific event by name
+
+# Example usage with events
+go run cmd/companion/main.go -game -stats -events -character assets/characters/examples/interactive_events.json
 ```
+
+**General Event Interactions**:
+- **Ctrl+E**: Open events menu to see available scenarios
+- **Ctrl+R**: Quick-start a random roleplay scenario
+- **Ctrl+G**: Start a mini-game or trivia session
+- **Ctrl+H**: Trigger a humor/joke session
+- **During Events**: Click choice buttons to make decisions and progress the story
 
 ## 🛠️ Development
 

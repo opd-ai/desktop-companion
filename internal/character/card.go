@@ -33,6 +33,8 @@ type CharacterCard struct {
 	RomanceEvents  []RandomEventConfig `json:"romanceEvents,omitempty"`
 	// Advanced dialog system (Phase 1)
 	DialogBackend *dialog.DialogBackendConfig `json:"dialogBackend,omitempty"`
+	// General dialog events system (Phase 4)
+	GeneralEvents []GeneralDialogEvent `json:"generalEvents,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -201,6 +203,10 @@ func (c *CharacterCard) validateRomanceSystems() error {
 
 	if err := c.validateDialogBackend(); err != nil {
 		return fmt.Errorf("dialog backend: %w", err)
+	}
+
+	if err := c.validateGeneralEvents(); err != nil {
+		return fmt.Errorf("general events: %w", err)
 	}
 
 	return nil
@@ -973,4 +979,19 @@ func (c *CharacterCard) GetCompatibilityModifier(behavior string) float64 {
 		return modifier
 	}
 	return 1.0
+}
+
+// validateGeneralEvents validates general dialog events configuration
+func (c *CharacterCard) validateGeneralEvents() error {
+	if len(c.GeneralEvents) == 0 {
+		return nil // No general events to validate
+	}
+
+	for i, event := range c.GeneralEvents {
+		if err := ValidateGeneralEvent(event); err != nil {
+			return fmt.Errorf("event %d (%s): %w", i, event.Name, err)
+		}
+	}
+
+	return nil
 }

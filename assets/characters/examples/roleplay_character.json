@@ -1,0 +1,326 @@
+{
+  "name": "Roleplay Master",
+  "description": "A companion specialized in immersive roleplay scenarios and adventures",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "excited": "../default/animations/happy.gif",
+    "thinking": "../default/animations/idle.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Greetings, adventurer! Ready for a grand tale? 🏰",
+        "The worlds of imagination await! What shall we explore today?",
+        "Every click begins a new adventure! ⚔️"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "imagination": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 10
+    },
+    "adventure_spirit": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 15
+    },
+    "creativity": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 20
+    },
+    "storytelling": {
+      "initial": 95,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 25
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 180,
+    "autoSaveInterval": 600,
+    "criticalStateAnimationPriority": false,
+    "deathEnabled": false,
+    "evolutionEnabled": false,
+    "moodBasedAnimations": true
+  },
+
+  "generalEvents": [
+    {
+      "name": "fantasy_adventure",
+      "category": "roleplay",
+      "description": "Epic fantasy adventure with dragons and magic",
+      "trigger": "start_fantasy",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🐉 You stand at the edge of the Enchanted Forest. Ancient magic flows through the air, and legends speak of a dragon's treasure hidden deep within. What is your class, brave adventurer?"
+      ],
+      "animations": ["excited"],
+      "choices": [
+        {
+          "text": "I am a mighty warrior!",
+          "effects": {"adventure_spirit": 5, "storytelling": 2},
+          "responses": ["⚔️ Your sword gleams in the dappled sunlight. You hear a distant roar..."],
+          "nextEvent": "warrior_path"
+        },
+        {
+          "text": "I am a cunning rogue!",
+          "effects": {"creativity": 4, "adventure_spirit": 4},
+          "responses": ["🗡️ You blend into the shadows, daggers ready. The forest holds many secrets..."],
+          "nextEvent": "rogue_path"
+        },
+        {
+          "text": "I am a wise mage!",
+          "effects": {"imagination": 6, "storytelling": 3},
+          "responses": ["🔮 Arcane energy crackles around your staff. You sense powerful magic ahead..."],
+          "nextEvent": "mage_path"
+        }
+      ],
+      "cooldown": 10800,
+      "conditions": {"imagination": {"min": 30}}
+    },
+    {
+      "name": "warrior_path",
+      "category": "roleplay",
+      "description": "The warrior's journey through the forest",
+      "trigger": "warrior_path",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "⚔️ As you march through the forest, you encounter a pack of shadow wolves blocking your path. Their eyes glow with malevolent energy. What do you do?"
+      ],
+      "animations": ["thinking"],
+      "choices": [
+        {
+          "text": "Charge in with battle cry!",
+          "effects": {"adventure_spirit": 8, "creativity": -2},
+          "responses": ["🛡️ Your brave charge scatters the wolves! You continue deeper into the forest..."],
+          "nextEvent": "dragon_encounter"
+        },
+        {
+          "text": "Try to sneak around them.",
+          "effects": {"creativity": 3, "adventure_spirit": 2},
+          "responses": ["🌿 You carefully circle around, avoiding unnecessary conflict..."],
+          "nextEvent": "dragon_encounter"
+        },
+        {
+          "text": "Attempt to communicate.",
+          "effects": {"storytelling": 4, "imagination": 3},
+          "responses": ["🐺 Surprisingly, the alpha wolf nods and steps aside, respecting your courage..."],
+          "nextEvent": "dragon_encounter"
+        }
+      ],
+      "cooldown": 3600
+    },
+    {
+      "name": "sci_fi_mission",
+      "category": "roleplay",
+      "description": "Space exploration and alien encounters",
+      "trigger": "start_scifi",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🚀 Captain, we've just received a distress signal from an uncharted system. Our ship, the Stellar Phoenix, is the only vessel in range. What are your orders?"
+      ],
+      "animations": ["excited"],
+      "choices": [
+        {
+          "text": "Set course immediately!",
+          "effects": {"adventure_spirit": 6, "creativity": 2},
+          "responses": ["🌟 Engaging hyperdrive! ETA to the system: 2 hours..."],
+          "nextEvent": "alien_contact"
+        },
+        {
+          "text": "Scan for dangers first.",
+          "effects": {"storytelling": 4, "imagination": 3},
+          "responses": ["📡 Sensors detect unusual energy readings. Proceed with caution..."],
+          "nextEvent": "space_anomaly"
+        },
+        {
+          "text": "Request backup ships.",
+          "effects": {"creativity": 3, "adventure_spirit": 1},
+          "responses": ["📞 Command acknowledges. Backup will arrive in 6 hours..."],
+          "nextEvent": "diplomatic_mission"
+        }
+      ],
+      "cooldown": 14400,
+      "conditions": {"creativity": {"min": 25}}
+    },
+    {
+      "name": "detective_noir",
+      "category": "roleplay", 
+      "description": "1940s noir detective story",
+      "trigger": "start_noir",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🕵️ The rain pounds the city streets like bullets on a tin roof. You're a private eye in 1947, and a dame just walked into your office with trouble written in her eyes. 'Detective,' she says, 'I need your help.'"
+      ],
+      "animations": ["thinking"],
+      "choices": [
+        {
+          "text": "What's the case, sweetheart?",
+          "effects": {"storytelling": 5, "imagination": 3},
+          "responses": ["💋 'My husband's missing, and the police won't listen. He was investigating something big...'"],
+          "nextEvent": "missing_husband"
+        },
+        {
+          "text": "My rates are fifty a day plus expenses.",
+          "effects": {"creativity": 3, "storytelling": 2},
+          "responses": ["💰 She slides a roll of bills across your desk. 'Money's no object if you can find him.'"],
+          "nextEvent": "noir_investigation"
+        },
+        {
+          "text": "Lady, I don't work missing persons.",
+          "effects": {"adventure_spirit": -1, "creativity": 1},
+          "responses": ["😢 Her face falls. 'Please, you're my last hope. The cops think I killed him.'"],
+          "nextEvent": "reluctant_case"
+        }
+      ],
+      "cooldown": 18000,
+      "conditions": {"storytelling": {"min": 40}}
+    },
+    {
+      "name": "time_travel_paradox",
+      "category": "roleplay",
+      "description": "Complex time travel adventure with consequences",
+      "trigger": "start_timetravel",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "⏰ You've just activated the experimental time machine in your grandfather's basement. The chronometer is sparking, and you have mere seconds to set a destination before the unstable portal closes!"
+      ],
+      "animations": ["excited"],
+      "choices": [
+        {
+          "text": "Ancient Egypt - see the pyramids built!",
+          "effects": {"imagination": 8, "adventure_spirit": 5},
+          "responses": ["🏺 The desert sand burns your feet as you appear near Giza. Workers are hauling massive stones..."],
+          "nextEvent": "ancient_egypt"
+        },
+        {
+          "text": "Medieval England - meet real knights!",
+          "effects": {"storytelling": 6, "adventure_spirit": 6},
+          "responses": ["🏰 You land in a muddy village. A knight on horseback approaches, hand on sword..."],
+          "nextEvent": "medieval_times"
+        },
+        {
+          "text": "The far future - see humanity's destiny!",
+          "effects": {"creativity": 7, "imagination": 6},
+          "responses": ["🌌 You emerge in a gleaming city floating among the stars. But something feels wrong..."],
+          "nextEvent": "future_dystopia"
+        }
+      ],
+      "cooldown": 21600,
+      "conditions": {"imagination": {"min": 50}, "creativity": {"min": 40}}
+    },
+    {
+      "name": "superhero_origin",
+      "category": "roleplay",
+      "description": "Discover superpowers and choose your heroic path",
+      "trigger": "start_superhero",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "⚡ The laboratory explosion has left you unconscious for days. As you wake up, you realize something has changed. You feel... different. More powerful. What's the first sign of your new abilities?"
+      ],
+      "animations": ["excited"],
+      "choices": [
+        {
+          "text": "I can move objects with my mind!",
+          "effects": {"imagination": 6, "creativity": 4},
+          "responses": ["🧠 Telekinesis! Coffee cups orbit around you as you concentrate..."],
+          "nextEvent": "psychic_powers"
+        },
+        {
+          "text": "I'm incredibly strong and fast!",
+          "effects": {"adventure_spirit": 7, "storytelling": 3},
+          "responses": ["💪 You accidentally put your hand through the hospital wall! Super strength and speed!"],
+          "nextEvent": "physical_powers"
+        },
+        {
+          "text": "I can phase through solid matter!",
+          "effects": {"creativity": 8, "imagination": 4},
+          "responses": ["👻 Your hand passes right through the bed rail! Intangibility - a rare power indeed!"],
+          "nextEvent": "phase_powers"
+        }
+      ],
+      "cooldown": 25200,
+      "conditions": {"adventure_spirit": {"min": 35}}
+    },
+    {
+      "name": "choose_adventure_type",
+      "category": "roleplay",
+      "description": "Meta event to choose what kind of adventure to have",
+      "trigger": "adventure_menu",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🎭 Welcome to the Adventure Portal! I can weave tales of any genre. What calls to your imagination today?"
+      ],
+      "animations": ["thinking"],
+      "choices": [
+        {
+          "text": "High Fantasy Epic",
+          "effects": {"imagination": 3},
+          "nextEvent": "fantasy_adventure"
+        },
+        {
+          "text": "Space Opera Adventure",
+          "effects": {"creativity": 3},
+          "nextEvent": "sci_fi_mission"
+        },
+        {
+          "text": "Noir Detective Story",
+          "effects": {"storytelling": 3},
+          "nextEvent": "detective_noir"
+        },
+        {
+          "text": "Time Travel Mystery",
+          "effects": {"imagination": 2, "creativity": 2},
+          "nextEvent": "time_travel_paradox"
+        },
+        {
+          "text": "Superhero Origin",
+          "effects": {"adventure_spirit": 3},
+          "nextEvent": "superhero_origin"
+        }
+      ],
+      "cooldown": 7200
+    }
+  ],
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "simple_random",
+    "confidenceThreshold": 0.5,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "simple_random": {}
+    }
+  }
+}

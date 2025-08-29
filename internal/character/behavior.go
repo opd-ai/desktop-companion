@@ -55,6 +55,9 @@ type Character struct {
 	dialogManager      *dialog.DialogManager // Advanced dialog system manager
 	useAdvancedDialogs bool                  // Whether to use advanced dialog system
 	debug              bool                  // Debug logging for dialog system
+
+	// General dialog events (Phase 4)
+	generalEventManager *GeneralEventManager // User-initiated interactive scenarios
 }
 
 // New creates a new character instance from a character card
@@ -110,6 +113,9 @@ func initializeCharacterSystems(char *Character) error {
 			return fmt.Errorf("failed to initialize dialog system: %w", err)
 		}
 	}
+
+	// Initialize general events if the character card has them
+	char.initializeGeneralEvents()
 
 	return nil
 }
@@ -420,6 +426,18 @@ func (c *Character) configureBackends() error {
 	}
 
 	return nil
+}
+
+// initializeGeneralEvents sets up the general dialog events system
+// Called during character creation to enable user-initiated interactive scenarios
+func (c *Character) initializeGeneralEvents() {
+	// Check if character card has general events
+	if len(c.card.GeneralEvents) == 0 {
+		return // No general events to initialize
+	}
+
+	// Create general event manager
+	c.generalEventManager = NewGeneralEventManager(c.card.GeneralEvents, true)
 }
 
 // Update updates character behavior and animations
@@ -1933,4 +1951,135 @@ func (c *Character) updateDialogMemory(response dialog.DialogResponse, context d
 			c.dialogManager.UpdateBackendMemory(context, response, nil)
 		}
 	}
+}
+
+// General Events System Methods
+
+// HandleGeneralEvent processes a general dialog event by name
+// Returns response text to display, or empty string if event cannot be triggered
+func (c *Character) HandleGeneralEvent(eventName string) string {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.generalEventManager == nil {
+		return "" // General events not enabled
+	}
+
+	c.lastInteraction = time.Now()
+
+	// Attempt to trigger the event
+	event, err := c.generalEventManager.TriggerEvent(eventName, c.gameState)
+	if err != nil {
+		return "" // Event cannot be triggered
+	}
+
+	// Set animation if specified
+	if len(event.Animations) > 0 {
+		c.setState(event.Animations[0])
+	}
+
+	// Return random response
+	if len(event.Responses) > 0 {
+		index := int(time.Now().UnixNano()) % len(event.Responses)
+		return event.Responses[index]
+	}
+
+	return "Event triggered: " + event.Name
+}
+
+// GetAvailableGeneralEvents returns events the user can currently trigger
+func (c *Character) GetAvailableGeneralEvents() []GeneralDialogEvent {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.generalEventManager == nil {
+		return nil
+	}
+
+	return c.generalEventManager.GetAvailableEvents(c.gameState)
+}
+
+// GetGeneralEventsByCategory returns available events filtered by category
+func (c *Character) GetGeneralEventsByCategory(category string) []GeneralDialogEvent {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.generalEventManager == nil {
+		return nil
+	}
+
+	return c.generalEventManager.GetEventsByCategory(category, c.gameState)
+}
+
+// SubmitEventChoice handles user choice selection in interactive events
+// Returns response text and whether the choice was successful
+func (c *Character) SubmitEventChoice(choiceIndex int) (string, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.generalEventManager == nil {
+		return "", false
+	}
+
+	choice, nextAction, err := c.generalEventManager.SubmitChoice(choiceIndex, c.gameState)
+	if err != nil {
+		return "", false
+	}
+
+	c.lastInteraction = time.Now()
+
+	// Set animation if choice specifies one
+	if choice.Animation != "" {
+		c.setState(choice.Animation)
+	}
+
+	// Handle follow-up event if specified
+	if nextAction != "" {
+		followUpResponse := c.HandleGeneralEvent(nextAction)
+		if followUpResponse != "" {
+			return followUpResponse, true
+		}
+	}
+
+	// Return choice response or default feedback
+	if len(choice.Responses) > 0 {
+		index := int(time.Now().UnixNano()) % len(choice.Responses)
+		return choice.Responses[index], true
+	}
+
+	return "Choice selected: " + choice.Text, true
+}
+
+// GetActiveGeneralEvent returns the currently active interactive event
+func (c *Character) GetActiveGeneralEvent() *GeneralDialogEvent {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.generalEventManager == nil {
+		return nil
+	}
+
+	return c.generalEventManager.GetActiveEvent()
+}
+
+// CancelActiveGeneralEvent cancels the currently active interactive event
+func (c *Character) CancelActiveGeneralEvent() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.generalEventManager != nil {
+		c.generalEventManager.ClearActiveEvent()
+	}
+}
+
+// IsGeneralEventAvailable checks if a specific event can be triggered
+func (c *Character) IsGeneralEventAvailable(eventName string) bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.generalEventManager == nil {
+		return false
+	}
+
+	return c.generalEventManager.IsEventAvailable(eventName, c.gameState)
 }

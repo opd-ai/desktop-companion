@@ -1,0 +1,330 @@
+{
+  "name": "Interactive Companion",
+  "description": "A companion with rich interactive dialog events and scenarios",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "excited": "../default/animations/happy.gif",
+    "thinking": "../default/animations/idle.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello! Would you like to try something interactive? 😊",
+        "I have some fun scenarios we could explore!",
+        "Click around or use keyboard shortcuts for special events!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "happiness": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.5,
+      "criticalThreshold": 20
+    },
+    "energy": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 15
+    },
+    "curiosity": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    },
+    "friendship": {
+      "initial": 50,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 5
+    }
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 120,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": false,
+    "deathEnabled": false,
+    "evolutionEnabled": false,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "chat": {
+      "triggers": ["click"],
+      "effects": {"happiness": 5, "friendship": 2},
+      "animations": ["talking"],
+      "responses": ["Great to talk with you!", "I enjoy our conversations!"],
+      "cooldown": 30
+    }
+  },
+
+  "generalEvents": [
+    {
+      "name": "daily_check_in",
+      "category": "conversation",
+      "description": "A daily conversation about how things are going",
+      "trigger": "daily_check_in",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "How has your day been going? I'd love to hear about it! 😊"
+      ],
+      "animations": ["talking"],
+      "choices": [
+        {
+          "text": "It's been amazing!",
+          "effects": {"happiness": 8, "friendship": 3},
+          "responses": ["That's wonderful to hear! I'm so happy for you! 🎉"],
+          "nextEvent": "celebrate_good_day"
+        },
+        {
+          "text": "Pretty challenging...",
+          "effects": {"friendship": 5},
+          "responses": ["I'm sorry to hear that. Want to talk about it?"],
+          "nextEvent": "supportive_conversation"
+        },
+        {
+          "text": "Just the usual routine.",
+          "effects": {"friendship": 1},
+          "responses": ["Routine can be comforting sometimes."]
+        }
+      ],
+      "cooldown": 86400,
+      "conditions": {"friendship": {"min": 10}}
+    },
+    {
+      "name": "celebrate_good_day",
+      "category": "conversation",
+      "description": "Celebrate a user's good day",
+      "trigger": "celebrate_good_day",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "I love seeing you happy! What made today so special? ✨"
+      ],
+      "animations": ["excited"],
+      "choices": [
+        {
+          "text": "Work went really well!",
+          "effects": {"happiness": 5, "friendship": 2},
+          "responses": ["Career success is amazing! You should be proud! 💪"]
+        },
+        {
+          "text": "Spent time with loved ones.",
+          "effects": {"happiness": 4, "friendship": 4},
+          "responses": ["Family and friends are so important! 💕"]
+        },
+        {
+          "text": "Just felt good about life!",
+          "effects": {"happiness": 6, "friendship": 2},
+          "responses": ["Those days are precious! Hold onto that feeling! ☀️"]
+        }
+      ],
+      "cooldown": 3600
+    },
+    {
+      "name": "supportive_conversation",
+      "category": "conversation", 
+      "description": "Offer support during difficult times",
+      "trigger": "supportive_conversation",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "I'm here to listen. Sometimes sharing helps lighten the load. 🤗"
+      ],
+      "animations": ["thinking"],
+      "choices": [
+        {
+          "text": "Work is really stressful.",
+          "effects": {"friendship": 3, "happiness": 2},
+          "responses": ["Work stress is tough. Remember to take breaks and be kind to yourself."]
+        },
+        {
+          "text": "Personal relationships are hard.",
+          "effects": {"friendship": 4, "happiness": 1},
+          "responses": ["Relationships take work, but the good ones are worth it. You've got this!"]
+        },
+        {
+          "text": "I appreciate you listening.",
+          "effects": {"friendship": 5, "happiness": 3},
+          "responses": ["Always happy to be here for you. That's what friends are for! 💚"]
+        }
+      ],
+      "cooldown": 7200
+    },
+    {
+      "name": "mystery_adventure",
+      "category": "roleplay",
+      "description": "A detective mystery roleplay scenario",
+      "trigger": "start_mystery",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🕵️ Welcome, detective! A mysterious case has just come in. Are you ready to investigate?"
+      ],
+      "animations": ["thinking"],
+      "choices": [
+        {
+          "text": "Tell me about the case!",
+          "effects": {"curiosity": 5, "energy": -2},
+          "responses": ["A valuable painting has vanished from the local museum overnight..."],
+          "nextEvent": "investigate_painting"
+        },
+        {
+          "text": "I need to prepare first.",
+          "effects": {"energy": 2},
+          "responses": ["Good thinking! A prepared detective is a successful one."]
+        },
+        {
+          "text": "Maybe later...",
+          "effects": {"curiosity": -1},
+          "responses": ["No problem! The mystery will be here when you're ready."]
+        }
+      ],
+      "cooldown": 7200,
+      "conditions": {"curiosity": {"min": 20}}
+    },
+    {
+      "name": "investigate_painting",
+      "category": "roleplay",
+      "description": "Investigation phase of the mystery",
+      "trigger": "investigate_painting", 
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🎨 The museum security footage shows nothing unusual. What's your next move, detective?"
+      ],
+      "animations": ["thinking"],
+      "choices": [
+        {
+          "text": "Interview the night guard.",
+          "effects": {"curiosity": 3, "friendship": 2},
+          "responses": ["Smart! The guard mentions hearing strange noises around 2 AM..."],
+          "nextEvent": "solve_mystery"
+        },
+        {
+          "text": "Examine the painting's location.",
+          "effects": {"curiosity": 4, "energy": -1},
+          "responses": ["You find a small piece of fabric caught on the frame..."],
+          "nextEvent": "solve_mystery"
+        },
+        {
+          "text": "Check for inside information.",
+          "effects": {"curiosity": 2, "friendship": 1},
+          "responses": ["The curator has been acting strangely lately..."],
+          "nextEvent": "solve_mystery"
+        }
+      ],
+      "cooldown": 3600
+    },
+    {
+      "name": "solve_mystery",
+      "category": "roleplay",
+      "description": "Final resolution of the mystery",
+      "trigger": "solve_mystery",
+      "probability": 1.0,
+      "interactive": false,
+      "responses": [
+        "🎉 Excellent detective work! You've solved the case. The painting was stolen by the curator to cover gambling debts. Well done!",
+        "Case closed! Your brilliant deduction skills have saved the day once again, detective!"
+      ],
+      "animations": ["excited"],
+      "effects": {"happiness": 10, "curiosity": 5, "friendship": 3},
+      "cooldown": 86400
+    },
+    {
+      "name": "trivia_challenge",
+      "category": "game",
+      "description": "A fun trivia question game",
+      "trigger": "start_trivia",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🧠 Time for a trivia challenge! Are you ready to test your knowledge?"
+      ],
+      "animations": ["excited"],
+      "choices": [
+        {
+          "text": "Science questions!",
+          "effects": {"curiosity": 3},
+          "responses": ["Great choice! What planet is known as the Red Planet?"],
+          "nextEvent": "science_trivia"
+        },
+        {
+          "text": "History questions!",
+          "effects": {"curiosity": 3},
+          "responses": ["Excellent! In what year did World War II end?"],
+          "nextEvent": "history_trivia"
+        },
+        {
+          "text": "Fun facts!",
+          "effects": {"happiness": 2, "curiosity": 2},
+          "responses": ["Fun facts are the best! How many hearts does an octopus have?"],
+          "nextEvent": "fun_trivia"
+        }
+      ],
+      "cooldown": 3600,
+      "conditions": {"energy": {"min": 20}}
+    },
+    {
+      "name": "joke_session",
+      "category": "humor",
+      "description": "Share jokes and funny stories",
+      "trigger": "tell_jokes",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "😄 Ready for some laughs? I've got jokes that'll make you groan... in a good way!"
+      ],
+      "animations": ["happy"],
+      "choices": [
+        {
+          "text": "Tell me a pun!",
+          "effects": {"happiness": 5},
+          "responses": ["Why don't scientists trust atoms? Because they make up everything! 😂"]
+        },
+        {
+          "text": "Something silly!",
+          "effects": {"happiness": 6, "friendship": 1},
+          "responses": ["What do you call a bear with no teeth? A gummy bear! 🐻"]
+        },
+        {
+          "text": "Dad joke please!",
+          "effects": {"happiness": 4},
+          "responses": ["I'm afraid for the calendar... its days are numbered! 📅"]
+        }
+      ],
+      "cooldown": 1800
+    }
+  ],
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "simple_random",
+    "confidenceThreshold": 0.5,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "simple_random": {}
+    }
+  }
+}
