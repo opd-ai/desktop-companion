@@ -1020,12 +1020,12 @@ func (c *CharacterCard) validateGiftSystem() error {
 	// Validate category preferences
 	validCategories := []string{"food", "flowers", "books", "jewelry", "toys", "electronics", "clothing", "art", "practical", "expensive"}
 	for _, category := range c.GiftSystem.Preferences.FavoriteCategories {
-		if !contains(validCategories, category) {
+		if !sliceContains(validCategories, category) {
 			return fmt.Errorf("invalid favorite category '%s', must be one of: %v", category, validCategories)
 		}
 	}
 	for _, category := range c.GiftSystem.Preferences.DislikedCategories {
-		if !contains(validCategories, category) {
+		if !sliceContains(validCategories, category) {
 			return fmt.Errorf("invalid disliked category '%s', must be one of: %v", category, validCategories)
 		}
 	}
