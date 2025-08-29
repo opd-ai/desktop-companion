@@ -166,7 +166,12 @@ go run cmd/companion/main.go -character assets/characters/examples/markov_dialog
 - **Right-click**: Feed your character (increases hunger, shows interaction menu)
 - **Double-click**: Play with your character (increases happiness, decreases energy)
 - **Stats overlay**: Toggle with 'S' key to monitor character's wellbeing
-- **Auto-save**: Game state automatically saves every 5 minutes
+- **Auto-save**: Game state automatically saves at intervals that vary by difficulty:
+  - Easy: 10 minutes (600 seconds)
+  - Normal/Romance: 5 minutes (300 seconds)  
+  - Specialist: ~6.7 minutes (400 seconds)
+  - Hard: 2 minutes (120 seconds)
+  - Challenge: 1 minute (60 seconds)
 
 **Character Care**:
 - **Monitor Stats**: Hunger, happiness, health, and energy decrease over time

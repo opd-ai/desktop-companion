@@ -4,13 +4,19 @@ Codebase Version: main branch
 
 ## Executive Summary
 Total Gaps Found: 5
-- Critical: 1
-- Moderate: 3
-- Minor: 1
+- Critical: 1 (0 unresolved) - 1 False Positive
+- Moderate: 3 (3 unresolved) 
+- Minor: 1 (1 unresolved)
+
+**Resolved:** 1
+**False Positives:** 1  
+**Remaining:** 3
 
 ## Detailed Findings
 
-### Gap #1: Stats Flag Bypasses Dependency Requirement
+### Gap #1: Stats Flag Bypasses Dependency Requirement ✅ **RESOLVED**
+**Status:** Fixed in commit da97143 (2025-08-28)
+
 **Documentation Reference:** 
 > "-stats               Show real-time stats overlay (requires -game)" (README.md:459)
 
@@ -22,9 +28,15 @@ Total Gaps Found: 5
 
 **Gap Details:** Users can specify `-stats` without `-game`, creating a non-functional stats overlay that displays nothing useful. The UI window creation silently ignores the stats overlay when game mode is disabled, but provides no user feedback about this requirement violation.
 
+**Resolution:** Added `validateFlagDependencies()` function that validates flag combinations at startup. The application now exits with a clear error message when `-stats` is used without `-game`:
+```
+Error: -stats flag requires -game flag to be enabled
+Use -help for usage information
+```
+
 **Reproduction:**
 ```bash
-# This should show an error but doesn't
+# This now shows an error correctly
 go run cmd/companion/main.go -stats -character assets/characters/default/character.json
 ```
 
@@ -44,7 +56,7 @@ if gameMode && char.GetGameState() != nil {
 }
 ```
 
-### Gap #2: Invalid Achievement JSON Structure
+### Gap #2: Invalid Achievement JSON Structure - ❌ FALSE POSITIVE
 **Documentation Reference:**
 > ```json
 > "requirement": {
@@ -59,15 +71,24 @@ if gameMode && char.GetGameState() != nil {
 
 **Actual Implementation:** Achievement JSON contains duplicate "maintainAbove" keys at different nesting levels, creating invalid JSON structure
 
-**Gap Details:** The achievement requirement structure shows `"maintainAbove": {"duration": 86400}` as a top-level requirement field, but this conflicts with stat-specific `"hunger": {"maintainAbove": 80}` fields. This structure is logically inconsistent and makes parsing ambiguous.
+**RESOLUTION:** This is **NOT A BUG**. The JSON structure is valid:
+- `"hunger"` and `"maintainAbove"` are distinct keys at the same level
+- Both `jq` and Go's `encoding/json` parse this successfully  
+- The structure is logically sound for representing both stat-specific and duration requirements
 
-**Reproduction:**
+**Verification:**
 ```bash
-# JSON validation fails on character files
-python3 -m json.tool assets/characters/normal/character.json | grep -A5 -B5 maintainAbove
+# JSON parses successfully
+jq '.progression.achievements[0].requirement' assets/characters/normal/character.json
+# Output: {"hunger": {"maintainAbove": 80}, "maintainAbove": {"duration": 86400}}
+
+# Go's JSON parser handles it without error
+# Keys are: ["hunger", "maintainAbove"] - no duplicates
 ```
 
-**Production Impact:** Critical - JSON parsing may fail or produce undefined behavior depending on parser implementation
+**Gap Details:** ~~The achievement requirement structure shows `"maintainAbove": {"duration": 86400}` as a top-level requirement field, but this conflicts with stat-specific `"hunger": {"maintainAbove": 80}` fields. This structure is logically inconsistent and makes parsing ambiguous.~~
+
+**Production Impact:** ~~Critical - JSON parsing may fail or produce undefined behavior depending on parser implementation~~ **NONE - No actual bug exists**
 
 **Evidence:**
 ```json
