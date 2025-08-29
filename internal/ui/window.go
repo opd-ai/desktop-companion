@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -263,6 +264,19 @@ func (dw *DesktopWindow) showContextMenu() {
 			Text: chatText,
 			Callback: func() {
 				dw.ToggleChatbotInterface()
+			},
+		})
+
+		// Add export chat option if chatbot is available
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Export Chat",
+			Callback: func() {
+				err := dw.chatbotInterface.ExportConversation()
+				if err != nil {
+					dw.showDialog(fmt.Sprintf("Export failed: %v", err))
+				} else {
+					dw.showDialog("Chat conversation exported successfully!")
+				}
 			},
 		})
 	}

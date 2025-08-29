@@ -5,6 +5,8 @@ package ui
 import (
 	"fmt"
 	"image/color"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -77,6 +79,11 @@ func NewChatbotInterface(char *character.Character) *ChatbotInterface {
 		conversationLog:  make([]ChatMessage, 0),
 		maxHistoryLength: 50, // Limit to prevent memory issues
 		inputPlaceholder: "Type a message...",
+	}
+
+	// ENHANCEMENT: Load recent conversation history from character memory
+	if chatbot.available {
+		chatbot.loadRecentConversations()
 	}
 
 	// Only initialize UI components if chatbot is available
@@ -185,6 +192,9 @@ func (c *ChatbotInterface) sendMessage() {
 			Animation: c.character.GetCurrentState(), // Capture animation used
 		}
 		c.addMessage(characterMessage)
+
+		// ENHANCEMENT: Record this chat interaction in character memory
+		c.character.RecordChatMemory(message, response)
 	}
 
 	// Update display and scroll to bottom
@@ -380,4 +390,66 @@ func (r *chatbotRenderer) Refresh() {
 // Destroy cleans up chatbot interface resources
 func (r *chatbotRenderer) Destroy() {
 	// No special cleanup needed for standard Fyne components
+}
+
+// ENHANCEMENT: Load recent conversations from character memory
+func (ci *ChatbotInterface) loadRecentConversations() {
+	// Get recent dialog interactions from character memory
+	if ci.character == nil {
+		return
+	}
+
+	// Load recent dialog memories from character
+	memories := ci.character.GetRecentDialogMemories(10)
+
+	// Convert dialog memories to chat messages
+	for _, memory := range memories {
+		if memory.Trigger == "chat" { // Only load chat interactions
+			// Add character response to conversation log
+			ci.conversationLog = append(ci.conversationLog, ChatMessage{
+				Text:      memory.Response,
+				IsUser:    false,
+				Timestamp: memory.Timestamp,
+			})
+		}
+	}
+}
+
+// ENHANCEMENT: Export conversation history to file
+func (ci *ChatbotInterface) ExportConversation() error {
+	if len(ci.conversationLog) == 0 {
+		return fmt.Errorf("no conversation to export")
+	}
+
+	// Create filename with character name and timestamp
+	timestamp := time.Now().Format("2006-01-02_15-04-05")
+	filename := fmt.Sprintf("%s_chat_%s.txt", ci.character.GetName(), timestamp)
+
+	// Build conversation text
+	var conversation strings.Builder
+	conversation.WriteString(fmt.Sprintf("Chat Conversation with %s\n", ci.character.GetName()))
+	conversation.WriteString(fmt.Sprintf("Exported on: %s\n\n", time.Now().Format("2006-01-02 15:04:05")))
+
+	for _, msg := range ci.conversationLog {
+		speaker := "Character"
+		if msg.IsUser {
+			speaker = "You"
+		}
+		conversation.WriteString(fmt.Sprintf("[%s] %s: %s\n",
+			msg.Timestamp.Format("15:04:05"), speaker, msg.Text))
+	}
+
+	// Write to file in user's home directory
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get home directory: %v", err)
+	}
+
+	filepath := filepath.Join(homeDir, filename)
+	err = os.WriteFile(filepath, []byte(conversation.String()), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write conversation file: %v", err)
+	}
+
+	return nil
 }

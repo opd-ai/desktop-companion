@@ -1404,6 +1404,41 @@ func (c *Character) GetGameState() *GameState {
 	return c.gameState
 }
 
+// GetRecentDialogMemories returns recent dialog memories for AI chat integration
+func (c *Character) GetRecentDialogMemories(count int) []DialogMemory {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.gameState == nil {
+		return make([]DialogMemory, 0)
+	}
+
+	return c.gameState.GetRecentDialogMemories(count)
+}
+
+// RecordChatMemory records a chat interaction in the character's memory
+func (c *Character) RecordChatMemory(userMessage, characterResponse string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.gameState == nil {
+		return
+	}
+
+	memory := DialogMemory{
+		Timestamp:        time.Now(),
+		Trigger:          "chat",
+		Response:         characterResponse,
+		EmotionalTone:    "conversational", // Default tone for chat
+		Topics:           []string{"ai_chat", "conversation"},
+		MemoryImportance: 0.7, // Medium importance for chat interactions
+		BackendUsed:      "ai_chatbot",
+		Confidence:       0.8, // High confidence for direct chat
+	}
+
+	c.gameState.RecordDialogMemory(memory)
+}
+
 // selectRomanceDialog selects an appropriate romance dialog based on relationship context
 // This implements the enhanced dialogue system from Phase 2 of the dating simulator plan
 func (c *Character) selectRomanceDialog(trigger string) string {
@@ -2134,10 +2169,10 @@ func (c *Character) HandleChatMessage(message string) string {
 }
 
 // buildChatDialogContext creates dialog context specifically for chat messages
-// Extends the standard dialog context with chat-specific information
+// Extends the standard dialog context with chat-specific information and personality traits
 func (c *Character) buildChatDialogContext(message string) dialog.DialogContext {
 	context := c.buildDialogContext("chat")
-	
+
 	// Add chat-specific context
 	context.ConversationTurn += 1
 	context.LastResponse = message
@@ -2145,17 +2180,97 @@ func (c *Character) buildChatDialogContext(message string) dialog.DialogContext 
 	// Add topic context based on message content
 	context.TopicContext = c.extractTopicsFromMessage(message)
 
+	// ENHANCEMENT: Add character personality traits to context for AI generation
+	if c.card.Personality != nil && c.card.Personality.Traits != nil {
+		// PersonalityTraits field already exists in DialogContext, enhance it
+		for trait, value := range c.card.Personality.Traits {
+			context.PersonalityTraits[trait] = value
+		}
+
+		// Add compatibility modifiers to topic context for conversation style
+		if c.card.Personality.Compatibility != nil {
+			if context.TopicContext == nil {
+				context.TopicContext = make(map[string]interface{})
+			}
+
+			// Add conversation style hints
+			if conversationMod, exists := c.card.Personality.Compatibility["conversation"]; exists {
+				context.TopicContext["conversation_style"] = conversationMod
+			}
+			if complimentMod, exists := c.card.Personality.Compatibility["compliment"]; exists {
+				context.TopicContext["compliment_response"] = complimentMod
+			}
+		}
+
+		// Create personality-based prompt additions
+		personalityPrompt := c.buildPersonalityPrompt()
+		if personalityPrompt != "" && context.TopicContext != nil {
+			context.TopicContext["personality_prompt"] = personalityPrompt
+		}
+	}
+
 	return context
+}
+
+// buildPersonalityPrompt creates a personality-based prompt for AI dialog generation
+func (c *Character) buildPersonalityPrompt() string {
+	if c.card.Personality == nil || c.card.Personality.Traits == nil {
+		return ""
+	}
+
+	var promptParts []string
+
+	// Build personality description based on traits
+	traits := c.card.Personality.Traits
+
+	// Handle shyness
+	if shyness, exists := traits["shyness"]; exists {
+		if shyness > 0.7 {
+			promptParts = append(promptParts, "You are quite shy and speak softly.")
+		} else if shyness < 0.3 {
+			promptParts = append(promptParts, "You are outgoing and confident in conversation.")
+		}
+	}
+
+	// Handle romanticism
+	if romanticism, exists := traits["romanticism"]; exists {
+		if romanticism > 0.7 {
+			promptParts = append(promptParts, "You have a romantic and affectionate nature.")
+		}
+	}
+
+	// Handle jealousy sensitivity
+	if jealousy, exists := traits["jealousy_sensitivity"]; exists {
+		if jealousy > 0.6 {
+			promptParts = append(promptParts, "You can be a bit possessive and caring about attention.")
+		}
+	}
+
+	// Handle trust difficulty
+	if trust, exists := traits["trust_difficulty"]; exists {
+		if trust > 0.6 {
+			promptParts = append(promptParts, "You are cautious about opening up too quickly.")
+		} else if trust < 0.4 {
+			promptParts = append(promptParts, "You are open and trusting in conversations.")
+		}
+	}
+
+	// Combine into a personality prompt
+	if len(promptParts) > 0 {
+		return "Character personality: " + strings.Join(promptParts, " ")
+	}
+
+	return ""
 }
 
 // extractTopicsFromMessage performs simple topic extraction from user message
 // This is a basic implementation - could be enhanced with NLP libraries
 func (c *Character) extractTopicsFromMessage(message string) map[string]interface{} {
 	topics := make(map[string]interface{})
-	
+
 	// Simple keyword-based topic detection
 	messageWords := strings.Fields(strings.ToLower(message))
-	
+
 	// Check for common topic keywords
 	for _, word := range messageWords {
 		switch word {
@@ -2174,7 +2289,7 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 
 	// Add message length as context
 	topics["message_length"] = len(message)
-	
+
 	return topics
 }
 
@@ -2184,7 +2299,7 @@ func (c *Character) handleChatFallback(message string) string {
 	// Simple personality-based responses
 	shyness := c.card.GetPersonalityTrait("shyness")
 	romanticism := c.card.GetPersonalityTrait("romanticism")
-	
+
 	fallbackResponses := []string{
 		"That's interesting to hear!",
 		"I understand what you mean.",
@@ -2195,7 +2310,7 @@ func (c *Character) handleChatFallback(message string) string {
 
 	// Adjust responses based on personality
 	if shyness > 0.7 {
-		fallbackResponses = append(fallbackResponses, 
+		fallbackResponses = append(fallbackResponses,
 			"I... I'm not sure what to say... 😳",
 			"That makes me feel a bit shy...",
 		)
