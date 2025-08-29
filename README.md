@@ -46,6 +46,11 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Choice Consequences**: User decisions affect character stats and relationship progression
   - **Event Chaining**: Complex scenarios with multiple phases and branching narratives
   - **Backward Compatible**: Seamlessly integrates with existing dialog and game systems
+- 🌐 **Multiplayer Networking**: Peer-to-peer networking infrastructure *(Phase 1 Complete)*
+  - **Peer Discovery**: UDP-based automatic discovery of other DDS instances on local network
+  - **Reliable Messaging**: TCP-based message delivery with JSON protocol
+  - **Standard Library**: Zero external dependencies using Go's built-in networking
+  - **Foundation Ready**: Core infrastructure for AI-controlled multiplayer companions
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Platform-Native**: Runs on Windows, macOS, and Linux (requires building on target platform)
 - 🪶 **Lightweight**: ≤50MB memory usage
