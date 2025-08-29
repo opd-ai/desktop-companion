@@ -123,7 +123,7 @@ func (dw *DesktopWindow) handleChatOptionClick() {
 - `TestBug3FixValidation` - Comprehensive fix validation for different character types
 - `TestBug3MissingChatContextMenu` - Regression prevention test
 
-### Gap #4: HasDialogBackend Logic Dependency
+### Gap #4: HasDialogBackend Logic Dependency ✅ RESOLVED
 **Documentation Reference:**
 > "**Smart Activation**: Only available for characters with AI dialog backend enabled" (README.md:31)
 
@@ -135,16 +135,18 @@ func (dw *DesktopWindow) handleChatOptionClick() {
 
 **Gap Details:** The implementation correctly checks both conditions, but the dependency is very strict. If either the DialogBackend field is missing or Enabled is false, the entire chatbot system becomes unavailable, potentially confusing users.
 
-**Reproduction:**
-```go
-// In card.go:964-966
-func (c *CharacterCard) HasDialogBackend() bool {
-    return c.DialogBackend != nil && c.DialogBackend.Enabled
-    // Both conditions must be true - very strict requirement
-}
-```
+**RESOLUTION (2025-08-29):**
+- Added granular dialog backend status methods:
+  - `HasDialogBackendConfig()`: Check if backend is configured
+  - `IsDialogBackendEnabled()`: Check if backend is enabled  
+  - `GetDialogBackendStatus()`: Get detailed state information
+- Updated UI logic to use granular methods for better user feedback
+- Context menu now shows "Open Chat" for configured backends with appropriate messages
+- Improved user experience with specific guidance for disabled vs unconfigured backends
 
-**Production Impact:** Moderate - May cause user confusion when chatbot unavailable
+**Commit Hash:** 9fc4c68
+
+**Production Impact:** Moderate - May cause user confusion when chatbot unavailable → **FIXED**
 
 **Evidence:**
 ```go
