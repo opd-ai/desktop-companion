@@ -1,12 +1,14 @@
 package character
 
 import (
+	"sync"
 	"testing"
 	"time"
 )
 
 // MockNetworkManager implements the NetworkManager interface for testing
 type MockNetworkManager struct {
+	mu           sync.RWMutex
 	started      bool
 	stopped      bool
 	messages     []NetworkMessage
@@ -35,7 +37,9 @@ func (m *MockNetworkManager) Broadcast(msg NetworkMessage) error {
 	if m.broadcastErr != nil {
 		return m.broadcastErr
 	}
+	m.mu.Lock()
 	m.messages = append(m.messages, msg)
+	m.mu.Unlock()
 	return nil
 }
 
@@ -44,11 +48,18 @@ func (m *MockNetworkManager) RegisterHandler(msgType string, handler func(Networ
 }
 
 func (m *MockNetworkManager) GetMessages() []NetworkMessage {
-	return m.messages
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	// Return a copy to prevent external modification
+	result := make([]NetworkMessage, len(m.messages))
+	copy(result, m.messages)
+	return result
 }
 
 func (m *MockNetworkManager) ClearMessages() {
+	m.mu.Lock()
 	m.messages = make([]NetworkMessage, 0)
+	m.mu.Unlock()
 }
 
 // MockProtocolManager implements the ProtocolManager interface for testing
