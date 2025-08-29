@@ -254,32 +254,34 @@ func (dw *DesktopWindow) showContextMenu() {
 		}
 	}
 
-	// Add chatbot interface toggle if available
-	if dw.chatbotInterface != nil {
+	// Add chatbot interface toggle for AI-capable characters
+	if dw.shouldShowChatOption() {
 		chatText := "Open Chat"
-		if dw.chatbotInterface.IsVisible() {
+		if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
 			chatText = "Close Chat"
 		}
 
 		menuItems = append(menuItems, ContextMenuItem{
 			Text: chatText,
 			Callback: func() {
-				dw.ToggleChatbotInterface()
+				dw.handleChatOptionClick()
 			},
 		})
 
-		// Add export chat option if chatbot is available
-		menuItems = append(menuItems, ContextMenuItem{
-			Text: "Export Chat",
-			Callback: func() {
-				err := dw.chatbotInterface.ExportConversation()
-				if err != nil {
-					dw.showDialog(fmt.Sprintf("Export failed: %v", err))
-				} else {
-					dw.showDialog("Chat conversation exported successfully!")
-				}
-			},
-		})
+		// Add export chat option if chatbot interface is available and active
+		if dw.chatbotInterface != nil {
+			menuItems = append(menuItems, ContextMenuItem{
+				Text: "Export Chat",
+				Callback: func() {
+					err := dw.chatbotInterface.ExportConversation()
+					if err != nil {
+						dw.showDialog(fmt.Sprintf("Export failed: %v", err))
+					} else {
+						dw.showDialog("Chat conversation exported successfully!")
+					}
+				},
+			})
+		}
 	}
 
 	// Always include right-click dialog as fallback option
@@ -770,5 +772,52 @@ func (dw *DesktopWindow) startHumorSession() {
 		dw.showDialog(fmt.Sprintf("Humor: %s\n\n%s", event.Name, response))
 	} else {
 		dw.showDialog(fmt.Sprintf("Could not start humor session: %s", event.Name))
+	}
+}
+
+// Bug #3 Fix: Improved context menu chat access
+
+// shouldShowChatOption determines if "Open Chat" should appear in the context menu
+// Shows for any AI-capable character (has dialog backend OR romance features)
+func (dw *DesktopWindow) shouldShowChatOption() bool {
+	card := dw.character.GetCard()
+	if card == nil {
+		return false
+	}
+
+	// Show chat option if character has any AI capabilities:
+	// 1. Has dialog backend configured (even if disabled)
+	// 2. Has romance features (personality, romance dialogs, romance events)
+	return card.DialogBackend != nil || card.HasRomanceFeatures()
+}
+
+// handleChatOptionClick handles when user clicks "Open Chat" in context menu
+// Provides appropriate feedback based on character's chat capabilities
+func (dw *DesktopWindow) handleChatOptionClick() {
+	// If chatbot interface is available, use normal toggle
+	if dw.chatbotInterface != nil {
+		dw.ToggleChatbotInterface()
+		return
+	}
+
+	// No chatbot interface - provide feedback about why
+	card := dw.character.GetCard()
+	if card == nil {
+		dw.showDialog("Chat not available for this character.")
+		return
+	}
+
+	// Check specific reasons why chat is unavailable
+	if card.DialogBackend == nil {
+		if card.HasRomanceFeatures() {
+			dw.showDialog("Chat feature available but no dialog backend configured.\n\nThis character has romance features but needs a dialog backend to enable AI chat.\n\nYou can still interact using the basic dialog system.")
+		} else {
+			dw.showDialog("Chat not available for this character.\n\nThis character doesn't have AI dialog capabilities.\n\nYou can still interact using basic responses.")
+		}
+	} else if !card.DialogBackend.Enabled {
+		dw.showDialog("Chat feature disabled.\n\nThis character has a dialog backend configured but it's currently disabled.\n\nEnable it in the character configuration to use AI chat.")
+	} else {
+		// This shouldn't happen - HasDialogBackend() returned false but both conditions are true
+		dw.showDialog("Chat temporarily unavailable.\n\nThere may be an issue with the dialog backend configuration.")
 	}
 }
