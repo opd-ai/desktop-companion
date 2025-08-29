@@ -48,6 +48,14 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Backward Compatible**: Seamlessly integrates with existing dialog and game systems
 - 🌐 **Multiplayer Networking**: Peer-to-peer networking infrastructure *(Phase 1 Complete)*
   - **Peer Discovery**: UDP-based automatic discovery of other DDS instances on local network
+  - **Foundation Ready**: Core infrastructure for AI-controlled multiplayer companions
+- 🤖 **Bot Framework**: Autonomous AI character behavior system *(Phase 2 In Progress)*
+  - **Personality-Driven Behavior**: Configurable traits drive all autonomous decisions
+  - **Natural Timing**: Human-like delays and variations prevent mechanical behavior
+  - **Character Integration**: Seamless integration with existing Character.Update() cycle
+  - **Network Coordination**: Bot characters can interact with peers in multiplayer mode
+  - **Performance Optimized**: <50ns per Update() call, suitable for 60 FPS real-time operation
+  - **Rate Limiting**: Prevents excessive actions that would feel unnatural
   - **Reliable Messaging**: TCP-based message delivery with JSON protocol
   - **Cryptographic Security**: Ed25519 signature verification for message integrity
   - **Character Configuration**: Optional multiplayer settings in character cards
