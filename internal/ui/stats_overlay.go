@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"image/color"
+	"sync"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -23,6 +24,7 @@ type StatsOverlay struct {
 	visible      bool
 	updateTicker *time.Ticker
 	stopUpdate   chan bool
+	mu           sync.RWMutex // Protects updateTicker and background goroutine state
 }
 
 // NewStatsOverlay creates a new stats overlay widget
@@ -129,14 +131,17 @@ func (so *StatsOverlay) IsVisible() bool {
 // startUpdateLoop begins periodic updates of stat display
 // Updates every 2 seconds to balance responsiveness with performance
 func (so *StatsOverlay) startUpdateLoop() {
+	so.mu.Lock()
 	if so.updateTicker != nil {
+		so.mu.Unlock()
 		return // Already running
 	}
 
 	so.updateTicker = time.NewTicker(2 * time.Second)
+	ticker := so.updateTicker // Capture ticker under lock
+	so.mu.Unlock()
 
 	go func() {
-		ticker := so.updateTicker
 		if ticker == nil {
 			return
 		}
@@ -156,6 +161,9 @@ func (so *StatsOverlay) startUpdateLoop() {
 
 // stopUpdateLoop stops the periodic update of stat display
 func (so *StatsOverlay) stopUpdateLoop() {
+	so.mu.Lock()
+	defer so.mu.Unlock()
+
 	if so.updateTicker != nil {
 		so.updateTicker.Stop()
 		so.updateTicker = nil

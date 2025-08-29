@@ -141,6 +141,7 @@ func TestValidationWithSharedData(t *testing.T) {
 
 	// Run concurrent validation while modifying the data
 	var wg sync.WaitGroup
+	var dataMutex sync.RWMutex
 	errors := make(chan error, 20)
 
 	// Goroutine that continuously modifies the shared data
@@ -148,21 +149,23 @@ func TestValidationWithSharedData(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		for i := 0; i < 100; i++ {
-			// Modify the data structure while validation might be reading it
+			// Properly synchronize modifications to shared data
+			dataMutex.Lock()
 			sharedData.GameState.Stats["hunger"].Current = float64(i)
 			sharedData.CharacterName = "Modified" + string(rune(i))
+			dataMutex.Unlock()
 			time.Sleep(1 * time.Millisecond)
 		}
 	}()
 
-	// Multiple goroutines that validate the same data structure
+	// Multiple goroutines that validate the same data structure using thread-safe method
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 10; j++ {
-				// This should demonstrate the race condition if it exists
-				if err := sm.validateSaveData(sharedData); err != nil {
+				// Use thread-safe validation method with proper mutex
+				if err := sm.validateSaveDataThreadSafe(sharedData, &dataMutex); err != nil {
 					// Validation errors are expected due to the modifications
 					// We're looking for panics or data races, not validation failures
 				}
