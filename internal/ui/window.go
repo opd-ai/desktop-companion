@@ -202,121 +202,154 @@ func (dw *DesktopWindow) showDialog(text string) {
 // showContextMenu displays the right-click context menu
 // Creates dynamic menu items based on character capabilities and game mode
 func (dw *DesktopWindow) showContextMenu() {
-	// Build menu items based on character and game state
 	var menuItems []ContextMenuItem
 
-	// Always include basic interaction
+	menuItems = append(menuItems, dw.buildBasicMenuItems()...)
+	menuItems = append(menuItems, dw.buildGameModeMenuItems()...)
+	menuItems = append(menuItems, dw.buildChatMenuItems()...)
+	menuItems = append(menuItems, dw.buildUtilityMenuItems()...)
+
+	dw.displayContextMenu(menuItems)
+}
+
+// buildBasicMenuItems creates the basic interaction menu items
+func (dw *DesktopWindow) buildBasicMenuItems() []ContextMenuItem {
+	return []ContextMenuItem{
+		{
+			Text: "Talk",
+			Callback: func() {
+				response := dw.character.HandleClick()
+				if response != "" {
+					dw.showDialog(response)
+				}
+			},
+		},
+	}
+}
+
+// buildGameModeMenuItems creates game-specific menu items when game mode is enabled
+func (dw *DesktopWindow) buildGameModeMenuItems() []ContextMenuItem {
+	if !dw.gameMode || dw.character.GetGameState() == nil {
+		return nil
+	}
+
+	var menuItems []ContextMenuItem
+
 	menuItems = append(menuItems, ContextMenuItem{
-		Text: "Talk",
+		Text: "Feed",
 		Callback: func() {
-			response := dw.character.HandleClick()
+			response := dw.character.HandleGameInteraction("feed")
 			if response != "" {
 				dw.showDialog(response)
 			}
 		},
 	})
 
-	// Add game-specific options if game mode is enabled
-	if dw.gameMode && dw.character.GetGameState() != nil {
-		menuItems = append(menuItems, ContextMenuItem{
-			Text: "Feed",
-			Callback: func() {
-				response := dw.character.HandleGameInteraction("feed")
-				if response != "" {
-					dw.showDialog(response)
-				}
-			},
-		})
-
-		menuItems = append(menuItems, ContextMenuItem{
-			Text: "Play",
-			Callback: func() {
-				response := dw.character.HandleGameInteraction("play")
-				if response != "" {
-					dw.showDialog(response)
-				}
-			},
-		})
-
-		// Add stats toggle if available
-		if dw.statsOverlay != nil {
-			statsText := "Show Stats"
-			if dw.statsOverlay.IsVisible() {
-				statsText = "Hide Stats"
-			}
-
-			menuItems = append(menuItems, ContextMenuItem{
-				Text: statsText,
-				Callback: func() {
-					dw.ToggleStatsOverlay()
-				},
-			})
-		}
-	}
-
-	// Add chatbot interface toggle for AI-capable characters
-	if dw.shouldShowChatOption() {
-		chatText := "Open Chat"
-		if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
-			chatText = "Close Chat"
-		}
-
-		menuItems = append(menuItems, ContextMenuItem{
-			Text: chatText,
-			Callback: func() {
-				dw.handleChatOptionClick()
-			},
-		})
-
-		// Add export chat option if chatbot interface is available and active
-		if dw.chatbotInterface != nil {
-			menuItems = append(menuItems, ContextMenuItem{
-				Text: "Export Chat",
-				Callback: func() {
-					err := dw.chatbotInterface.ExportConversation()
-					if err != nil {
-						dw.showDialog(fmt.Sprintf("Export failed: %v", err))
-					} else {
-						dw.showDialog("Chat conversation exported successfully!")
-					}
-				},
-			})
-		}
-	}
-
-	// Always include right-click dialog as fallback option
 	menuItems = append(menuItems, ContextMenuItem{
-		Text: "About",
+		Text: "Play",
 		Callback: func() {
-			response := dw.character.HandleRightClick()
+			response := dw.character.HandleGameInteraction("play")
 			if response != "" {
 				dw.showDialog(response)
 			}
 		},
 	})
 
-	// Add helpful shortcuts information
+	if dw.statsOverlay != nil {
+		statsText := "Show Stats"
+		if dw.statsOverlay.IsVisible() {
+			statsText = "Hide Stats"
+		}
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: statsText,
+			Callback: func() {
+				dw.ToggleStatsOverlay()
+			},
+		})
+	}
+
+	return menuItems
+}
+
+// buildChatMenuItems creates chat-related menu items for AI-capable characters
+func (dw *DesktopWindow) buildChatMenuItems() []ContextMenuItem {
+	if !dw.shouldShowChatOption() {
+		return nil
+	}
+
+	var menuItems []ContextMenuItem
+
+	chatText := "Open Chat"
+	if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
+		chatText = "Close Chat"
+	}
+
 	menuItems = append(menuItems, ContextMenuItem{
-		Text: "Shortcuts",
+		Text: chatText,
 		Callback: func() {
-			shortcutsText := "Keyboard Shortcuts:\n"
-			if dw.statsOverlay != nil {
-				shortcutsText += "• 'S' - Toggle stats overlay\n"
-			}
-			if dw.chatbotInterface != nil {
-				shortcutsText += "• 'C' - Toggle chatbot interface\n"
-				shortcutsText += "• 'ESC' - Close chatbot interface\n"
-			}
-			shortcutsText += "• Right-click - Show this menu"
-			dw.showDialog(shortcutsText)
+			dw.handleChatOptionClick()
 		},
 	})
 
-	// Configure and show the menu
+	if dw.chatbotInterface != nil {
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Export Chat",
+			Callback: func() {
+				err := dw.chatbotInterface.ExportConversation()
+				if err != nil {
+					dw.showDialog(fmt.Sprintf("Export failed: %v", err))
+				} else {
+					dw.showDialog("Chat conversation exported successfully!")
+				}
+			},
+		})
+	}
+
+	return menuItems
+}
+
+// buildUtilityMenuItems creates utility menu items like About and Shortcuts
+func (dw *DesktopWindow) buildUtilityMenuItems() []ContextMenuItem {
+	return []ContextMenuItem{
+		{
+			Text: "About",
+			Callback: func() {
+				response := dw.character.HandleRightClick()
+				if response != "" {
+					dw.showDialog(response)
+				}
+			},
+		},
+		{
+			Text: "Shortcuts",
+			Callback: func() {
+				shortcutsText := dw.buildShortcutsText()
+				dw.showDialog(shortcutsText)
+			},
+		},
+	}
+}
+
+// buildShortcutsText constructs the keyboard shortcuts help text
+func (dw *DesktopWindow) buildShortcutsText() string {
+	shortcutsText := "Keyboard Shortcuts:\n"
+	if dw.statsOverlay != nil {
+		shortcutsText += "• 'S' - Toggle stats overlay\n"
+	}
+	if dw.chatbotInterface != nil {
+		shortcutsText += "• 'C' - Toggle chatbot interface\n"
+		shortcutsText += "• 'ESC' - Close chatbot interface\n"
+	}
+	shortcutsText += "• Right-click - Show this menu"
+	return shortcutsText
+}
+
+// displayContextMenu configures and displays the context menu with auto-hide
+func (dw *DesktopWindow) displayContextMenu(menuItems []ContextMenuItem) {
 	dw.contextMenu.SetMenuItems(menuItems)
 	dw.contextMenu.Show()
 
-	// Auto-hide menu after 5 seconds of inactivity
 	go func() {
 		time.Sleep(5 * time.Second)
 		dw.contextMenu.Hide()
