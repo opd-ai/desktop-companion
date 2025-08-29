@@ -18,6 +18,7 @@ type DesktopWindow struct {
 	character    *character.Character
 	renderer     *CharacterRenderer
 	dialog       *DialogBubble
+	contextMenu  *ContextMenu
 	statsOverlay *StatsOverlay
 	profiler     *monitoring.Profiler
 	debug        bool
@@ -57,6 +58,9 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	// Create dialog bubble (initially hidden)
 	dw.dialog = NewDialogBubble()
 
+	// Create context menu (initially hidden)
+	dw.contextMenu = NewContextMenu()
+
 	// Create stats overlay if game features are enabled
 	if gameMode && char.GetGameState() != nil {
 		dw.statsOverlay = NewStatsOverlay(char)
@@ -85,6 +89,7 @@ func (dw *DesktopWindow) setupContent() {
 	objects := []fyne.CanvasObject{
 		dw.renderer,
 		dw.dialog,
+		dw.contextMenu,
 	}
 
 	// Add stats overlay if available
@@ -124,6 +129,7 @@ func (dw *DesktopWindow) setupInteractions() {
 		dw.renderer,
 		clickable,
 		dw.dialog,
+		dw.contextMenu,
 	}
 
 	// Add stats overlay if available
@@ -154,27 +160,14 @@ func (dw *DesktopWindow) handleClick() {
 }
 
 // handleRightClick processes character right-click interactions
+// Now shows context menu instead of direct dialog
 func (dw *DesktopWindow) handleRightClick() {
-	var response string
-
-	// Check if game mode is enabled and handle game interactions
-	if dw.gameMode && dw.character.GetGameState() != nil {
-		// Try game interaction first (e.g., "feed" for right-click)
-		response = dw.character.HandleGameInteraction("feed")
-	}
-
-	// If no game response, fall back to regular right-click dialog
-	if response == "" {
-		response = dw.character.HandleRightClick()
-	}
-
 	if dw.debug {
-		log.Printf("Character right-clicked, response: %q", response)
+		log.Println("Character right-clicked, showing context menu")
 	}
 
-	if response != "" {
-		dw.showDialog(response)
-	}
+	// Show context menu with available actions
+	dw.showContextMenu()
 }
 
 // showDialog displays a dialog bubble with the given text
@@ -185,6 +178,83 @@ func (dw *DesktopWindow) showDialog(text string) {
 	go func() {
 		time.Sleep(3 * time.Second)
 		dw.dialog.Hide()
+	}()
+}
+
+// showContextMenu displays the right-click context menu
+// Creates dynamic menu items based on character capabilities and game mode
+func (dw *DesktopWindow) showContextMenu() {
+	// Build menu items based on character and game state
+	var menuItems []ContextMenuItem
+
+	// Always include basic interaction
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "Talk",
+		Callback: func() {
+			response := dw.character.HandleClick()
+			if response != "" {
+				dw.showDialog(response)
+			}
+		},
+	})
+
+	// Add game-specific options if game mode is enabled
+	if dw.gameMode && dw.character.GetGameState() != nil {
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Feed",
+			Callback: func() {
+				response := dw.character.HandleGameInteraction("feed")
+				if response != "" {
+					dw.showDialog(response)
+				}
+			},
+		})
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Play",
+			Callback: func() {
+				response := dw.character.HandleGameInteraction("play")
+				if response != "" {
+					dw.showDialog(response)
+				}
+			},
+		})
+
+		// Add stats toggle if available
+		if dw.statsOverlay != nil {
+			statsText := "Show Stats"
+			if dw.statsOverlay.IsVisible() {
+				statsText = "Hide Stats"
+			}
+			
+			menuItems = append(menuItems, ContextMenuItem{
+				Text: statsText,
+				Callback: func() {
+					dw.ToggleStatsOverlay()
+				},
+			})
+		}
+	}
+
+	// Always include right-click dialog as fallback option
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "About",
+		Callback: func() {
+			response := dw.character.HandleRightClick()
+			if response != "" {
+				dw.showDialog(response)
+			}
+		},
+	})
+
+	// Configure and show the menu
+	dw.contextMenu.SetMenuItems(menuItems)
+	dw.contextMenu.Show()
+
+	// Auto-hide menu after 5 seconds of inactivity
+	go func() {
+		time.Sleep(5 * time.Second)
+		dw.contextMenu.Hide()
 	}()
 }
 
@@ -274,6 +344,7 @@ func (dw *DesktopWindow) setupDragging() {
 	objects := []fyne.CanvasObject{
 		draggable,
 		dw.dialog,
+		dw.contextMenu,
 	}
 
 	// Add stats overlay if available

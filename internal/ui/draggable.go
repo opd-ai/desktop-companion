@@ -157,15 +157,11 @@ func (dc *DraggableCharacter) Tapped(event *fyne.PointEvent) {
 
 // TappedSecondary handles right-click/secondary tap events
 func (dc *DraggableCharacter) TappedSecondary(event *fyne.PointEvent) {
-	// Handle right-click interactions if the character supports them
-	response := dc.character.HandleRightClick()
+	// Delegate to the window's right-click handler for context menu
+	dc.window.handleRightClick()
 
 	if dc.debug {
-		log.Printf("Character right-clicked, response: %q", response)
-	}
-
-	if response != "" {
-		dc.window.showDialog(response)
+		log.Printf("Character right-clicked at (%.1f, %.1f)", event.Position.X, event.Position.Y)
 	}
 }
 
