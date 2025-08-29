@@ -262,9 +262,8 @@ func (gem *GeneralEventManager) recordUserChoice(eventName string, choiceIndex i
 	}
 }
 
-// ValidateGeneralEvent validates a general event configuration
-func ValidateGeneralEvent(event GeneralDialogEvent) error {
-	// Validate basic fields
+// validateBasicEventFields validates name and description fields of a general event.
+func validateBasicEventFields(event GeneralDialogEvent) error {
 	if event.Name == "" {
 		return fmt.Errorf("event name cannot be empty")
 	}
@@ -273,35 +272,70 @@ func ValidateGeneralEvent(event GeneralDialogEvent) error {
 		return fmt.Errorf("event description cannot be empty")
 	}
 
-	// Validate category
+	return nil
+}
+
+// validateEventCategory validates the category field against allowed values.
+func validateEventCategory(category string) error {
 	validCategories := []string{"conversation", "roleplay", "game", "humor"}
 	categoryValid := false
 	for _, cat := range validCategories {
-		if event.Category == cat {
+		if category == cat {
 			categoryValid = true
 			break
 		}
 	}
 	if !categoryValid {
-		return fmt.Errorf("invalid category '%s', must be one of: %v", event.Category, validCategories)
+		return fmt.Errorf("invalid category '%s', must be one of: %v", category, validCategories)
 	}
 
-	// Validate trigger
-	if event.Trigger == "" {
+	return nil
+}
+
+// validateEventTrigger validates the trigger field is not empty.
+func validateEventTrigger(trigger string) error {
+	if trigger == "" {
 		return fmt.Errorf("trigger cannot be empty")
 	}
 
-	// Validate interactive event choices
-	if event.Interactive {
-		if len(event.Choices) == 0 {
-			return fmt.Errorf("interactive events must have at least one choice")
-		}
+	return nil
+}
 
-		for i, choice := range event.Choices {
-			if err := validateEventChoice(choice, i); err != nil {
-				return fmt.Errorf("choice %d: %w", i, err)
-			}
+// validateInteractiveChoices validates choices for interactive events.
+func validateInteractiveChoices(event GeneralDialogEvent) error {
+	if !event.Interactive {
+		return nil
+	}
+
+	if len(event.Choices) == 0 {
+		return fmt.Errorf("interactive events must have at least one choice")
+	}
+
+	for i, choice := range event.Choices {
+		if err := validateEventChoice(choice, i); err != nil {
+			return fmt.Errorf("choice %d: %w", i, err)
 		}
+	}
+
+	return nil
+}
+
+// ValidateGeneralEvent validates a general event configuration
+func ValidateGeneralEvent(event GeneralDialogEvent) error {
+	if err := validateBasicEventFields(event); err != nil {
+		return err
+	}
+
+	if err := validateEventCategory(event.Category); err != nil {
+		return err
+	}
+
+	if err := validateEventTrigger(event.Trigger); err != nil {
+		return err
+	}
+
+	if err := validateInteractiveChoices(event); err != nil {
+		return err
 	}
 
 	return nil
