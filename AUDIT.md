@@ -1,132 +1,197 @@
-## AUDIT SUMMARY
+# Implementation Gap Analysis
+Generated: August 29, 2025 16:42:17 UTC
+Codebase Version: e90f45d3a8d8c612c7811de726328b46cdec6962
 
-~~~~
-**COMPREHENSIVE FUNCTIONAL AUDIT RESULTS**
-- **Total Findings**: 5 issues identified
-- **CRITICAL BUG**: 0 instances  
-- **FUNCTIONAL MISMATCH**: 3 instances
-- **MISSING FEATURE**: 1 instance
-- **EDGE CASE BUG**: 1 instance
-- **PERFORMANCE ISSUE**: 0 instances
+## Executive Summary
+Total Gaps Found: 5
+- Critical: 2
+- Moderate: 2
+- Minor: 1
 
-**Overall Assessment**: The DDS codebase is well-implemented with excellent test coverage (385 passing tests) and robust error handling. Most documented features are correctly implemented. The few issues identified are minor misalignments between documentation and implementation, primarily related to user interface behavior descriptions.
-~~~~
+## Detailed Findings
 
-## DETAILED FINDINGS
+### Gap #1: General Dialog Events System Missing Implementation
+**Documentation Reference:** 
+> "**General Event Interactions**:
+> - **Ctrl+E**: Open events menu to see available scenarios
+> - **Ctrl+R**: Quick-start a random roleplay scenario  
+> - **Ctrl+G**: Start a mini-game or trivia session
+> - **Ctrl+H**: Trigger a humor/joke session" (README.md:644-648)
 
-~~~~
-### FUNCTIONAL MISMATCH: Right-Click Interaction Menu Description
-**File:** README.md:176, internal/ui/window.go:157-168
-**Severity:** Low
-**Description:** The README states "Right-click: Feed your character (increases hunger, shows interaction menu)" but the implementation only shows a dialog response, not an interactive menu with multiple options.
-**Expected Behavior:** Right-click should display an interaction menu with multiple choices (feed, play, pet, etc.)
-**Actual Behavior:** Right-click directly triggers the "feed" interaction and shows a text dialog response
-**Impact:** Minor user experience confusion - users expect a menu but get direct action
-**Reproduction:** Right-click on character in game mode; no menu appears, only direct feed interaction
-**Code Reference:**
+**Implementation Location:** `internal/ui/window.go:587-617`
+
+**Expected Behavior:** Keyboard shortcuts Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H should trigger general dialog events
+
+**Actual Implementation:** Only 'S', 'C', and 'ESC' keys are implemented in keyboard shortcuts
+
+**Gap Details:** The setupKeyboardShortcuts() function only handles stats toggle (S), chatbot toggle (C), and escape (ESC) keys. None of the documented Ctrl+E/R/G/H shortcuts for general events are implemented.
+
+**Reproduction:**
 ```go
-func (dw *DesktopWindow) handleRightClick() {
-	// Check if game mode is enabled and handle game interactions
-	if dw.gameMode && dw.character.GetGameState() != nil {
-		// Try game interaction first (e.g., "feed" for right-click)
-		response = dw.character.HandleGameInteraction("feed")
-	}
-	// Shows dialog, not menu
-	if response != "" {
-		dw.showDialog(response)
-	}
+// In window.go:592-616, only these keys are handled:
+switch key.Name {
+case fyne.KeyS:    // Stats toggle
+case fyne.KeyC:    // Chat toggle  
+case fyne.KeyEscape: // Close chatbot
+// Missing: Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H
 }
 ```
-~~~~
 
-~~~~
-### FUNCTIONAL MISMATCH: Auto-Save Interval Documentation Inconsistency
-**File:** README.md:176-181, internal/character/card.go:56
-**Severity:** Low
-**Description:** The README lists specific auto-save intervals for different difficulty levels, but these are character card configuration values, not hardcoded in the application logic.
-**Expected Behavior:** Auto-save intervals should be fixed per difficulty level as documented
-**Actual Behavior:** Auto-save intervals are configurable per character card through gameRules.autoSaveInterval
-**Impact:** Potential confusion about how auto-save timing works; difficulty levels can have custom intervals
-**Reproduction:** Check different difficulty character cards; intervals may vary from documentation
-**Code Reference:**
+**Production Impact:** Critical - Core documented feature completely non-functional
+
+**Evidence:**
 ```go
-type GameRulesConfig struct {
-    AutoSaveInterval int `json:"autoSaveInterval"` // Configurable per character
-    // Documentation claims fixed intervals per difficulty
+// From internal/ui/window.go:592-616
+switch key.Name {
+case fyne.KeyS:
+    // Stats toggle code exists
+case fyne.KeyC:
+    // Chat toggle code exists  
+case fyne.KeyEscape:
+    // ESC key code exists
+    // NO IMPLEMENTATION for Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H
 }
 ```
-~~~~
 
-~~~~
-### FUNCTIONAL MISMATCH: Memory Usage Target Enforcement
-**File:** README.md:675, internal/monitoring/profiler.go:24
-**Severity:** Low  
-**Description:** README claims "≤50MB memory usage" as a hard limit, but the monitoring system only warns when exceeded rather than enforcing the limit.
-**Expected Behavior:** Application should enforce 50MB memory limit or clearly document it as a target rather than guarantee
-**Actual Behavior:** Application monitors memory usage and logs warnings but continues operation above 50MB
-**Impact:** Misleading documentation about memory constraints; application may use more memory than advertised
-**Reproduction:** Run application with complex character cards; memory usage can exceed 50MB without enforcement
-**Code Reference:**
+### Gap #2: Command-Line Event Flags Missing Implementation
+**Documentation Reference:**
+> "-events               Enable general dialog events system
+> -trigger-event <name> Manually trigger a specific event by name" (README.md:595-596)
+
+**Implementation Location:** `cmd/companion/main.go:17-26`
+
+**Expected Behavior:** Command-line flags `-events` and `-trigger-event` should be available
+
+**Actual Implementation:** Only `-character`, `-debug`, `-version`, `-memprofile`, `-cpuprofile`, `-game`, and `-stats` flags are implemented
+
+**Gap Details:** The documented `-events` and `-trigger-event` command-line flags are completely missing from the flag definition section.
+
+**Reproduction:**
+```bash
+# Running with documented flags fails:
+go run cmd/companion/main.go -events
+# Error: flag provided but not defined: -events
+```
+
+**Production Impact:** Critical - Documented CLI interface non-functional
+
+**Evidence:**
 ```go
-// Monitors but doesn't enforce
-if !profiler.IsMemoryTargetMet() {
-    log.Printf("WARNING: Memory usage exceeds 50MB target")
+// From cmd/companion/main.go:17-26 - missing flags:
+var (
+    characterPath = flag.String("character", ...)
+    debug         = flag.Bool("debug", ...)
+    version       = flag.Bool("version", ...)
+    memProfile    = flag.String("memprofile", ...)
+    cpuProfile    = flag.String("cpuprofile", ...)
+    gameMode      = flag.Bool("game", ...)
+    showStats     = flag.Bool("stats", ...)
+    // MISSING: events and trigger-event flags
+)
+```
+
+### Gap #3: Chatbot Context Menu Access Inconsistency
+**Documentation Reference:**
+> "**Context menu**: Right-click for advanced options including "Open Chat" for AI characters" (README.md:205)
+> "**Context Menu Access**: Right-click → "Open Chat" for menu-driven access" (README.md:30)
+
+**Implementation Location:** `internal/ui/window.go` and `internal/ui/chatbot_interface.go`
+
+**Expected Behavior:** Right-click context menu should include "Open Chat" option for AI-enabled characters
+
+**Actual Implementation:** Chatbot interface exists and has keyboard shortcut ('C' key) but context menu "Open Chat" integration is not verified in the codebase
+
+**Gap Details:** While the chatbot interface is implemented and keyboard shortcuts work, the documented right-click context menu access to "Open Chat" cannot be confirmed in the reviewed code sections.
+
+**Reproduction:**
+```go
+// Context menu implementation exists but "Open Chat" option needs verification
+// in NewContextMenu() and context menu event handlers
+```
+
+**Production Impact:** Moderate - Alternative access method may be missing
+
+**Evidence:**
+```go
+// From window.go and chatbot_interface.go:
+// Keyboard shortcut 'C' is implemented
+// Context menu exists but "Open Chat" option not confirmed
+```
+
+### Gap #4: HasDialogBackend Logic Dependency
+**Documentation Reference:**
+> "**Smart Activation**: Only available for characters with AI dialog backend enabled" (README.md:31)
+
+**Implementation Location:** `internal/character/card.go:964-966`
+
+**Expected Behavior:** Chatbot interface should be available when DialogBackend is configured correctly
+
+**Actual Implementation:** HasDialogBackend() requires both DialogBackend != nil AND Enabled == true
+
+**Gap Details:** The implementation correctly checks both conditions, but the dependency is very strict. If either the DialogBackend field is missing or Enabled is false, the entire chatbot system becomes unavailable, potentially confusing users.
+
+**Reproduction:**
+```go
+// In card.go:964-966
+func (c *CharacterCard) HasDialogBackend() bool {
+    return c.DialogBackend != nil && c.DialogBackend.Enabled
+    // Both conditions must be true - very strict requirement
 }
 ```
-~~~~
 
-~~~~
-### MISSING FEATURE: Cross-Platform Build Documentation Accuracy
-**File:** README.md:96, Makefile:31-33
-**Severity:** Low
-**Description:** The README mentions building for "Windows, macOS, and Linux" but the Makefile and documentation correctly note that cross-compilation is not supported due to Fyne's CGO dependencies.
-**Expected Behavior:** Documentation should consistently state that native builds are required for each platform
-**Actual Behavior:** Some sections suggest cross-platform building is possible while others correctly note limitations
-**Impact:** Developer confusion about build capabilities and deployment requirements
-**Reproduction:** Attempt cross-compilation; fails due to CGO dependencies as documented in Makefile
-**Code Reference:**
-```makefile
-# Note: Cross-platform builds not supported due to Fyne GUI framework limitations
-# Fyne requires platform-specific CGO libraries for OpenGL/graphics drivers
-```
-~~~~
+**Production Impact:** Moderate - May cause user confusion when chatbot unavailable
 
-~~~~
-### EDGE CASE BUG: Character Card Validation Order
-**File:** internal/character/card.go:123-156
-**Severity:** Low
-**Description:** The ValidateWithBasePath method validates core fields before checking if feature sections are internally consistent, potentially causing file system access for invalid configurations.
-**Expected Behavior:** All JSON structure validation should occur before file system validation for efficiency
-**Actual Behavior:** File system validation (animation file existence) occurs even if JSON structure is invalid
-**Impact:** Minor performance impact; unnecessary file system access for malformed character cards
-**Reproduction:** Provide character card with invalid JSON structure but valid file paths; file validation still occurs
-**Code Reference:**
+**Evidence:**
 ```go
-func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
-    if err := c.validateCoreFields(basePath); err != nil { // File system access
-        return err
-    }
-    return c.validateFeatureSections() // JSON structure validation after file access
+// From internal/character/card.go:964-966
+func (c *CharacterCard) HasDialogBackend() bool {
+    return c.DialogBackend != nil && c.DialogBackend.Enabled
+    // Requires both field presence AND explicit enabling
 }
 ```
-~~~~
 
-## AUDIT VERIFICATION
+### Gap #5: Frame Rate Monitoring Implementation Incomplete
+**Documentation Reference:**
+> "**Performance Targets**:
+> - Animation framerate: 30+ FPS consistently ✅ **MONITORED**" (README.md:715-716)
 
-**Dependency Analysis**: ✅ Completed - Files analyzed in dependency order (Level 0 → Level N)
-**Code Coverage**: ✅ Verified - 385 tests passing, comprehensive test suite
-**Feature Implementation**: ✅ Confirmed - All major documented features are implemented
-**Error Handling**: ✅ Validated - Robust error handling throughout codebase
-**Performance Targets**: ⚠️ Monitored but not enforced - Memory usage tracking in place
+**Implementation Location:** `internal/monitoring/profiler.go:342-346`
 
-## RECOMMENDATIONS
+**Expected Behavior:** Frame rate monitoring should actively track and report animation performance
 
-1. **Update README.md** to accurately describe right-click behavior as direct interaction rather than menu
-2. **Clarify auto-save documentation** to explain configurable nature of intervals
-3. **Revise memory usage claims** to describe 50MB as a target rather than hard limit
-4. **Standardize build documentation** to consistently communicate platform-specific build requirements  
-5. **Optimize validation order** in character card loading for better performance with invalid cards
+**Actual Implementation:** IsFrameRateTargetMet() method exists but frame rate tracking and updating mechanism not evident in reviewed code
 
-## CONCLUSION
+**Gap Details:** While the profiler has a frame rate target check method, the actual frame rate measurement and updating mechanism during animation rendering is not clear from the codebase sections reviewed.
 
-The DDS codebase demonstrates excellent engineering practices with comprehensive test coverage, robust error handling, and well-structured modular design. The identified issues are primarily documentation inconsistencies rather than functional bugs, indicating a mature and well-maintained codebase. All core features documented in the README are properly implemented and working as intended.
+**Reproduction:**
+```go
+// In profiler.go:342-346
+func (p *Profiler) IsFrameRateTargetMet() bool {
+    return p.stats.FrameRate >= 30.0
+    // Method exists but FrameRate updating mechanism unclear
+}
+```
+
+**Production Impact:** Minor - Monitoring accuracy may be affected
+
+**Evidence:**
+```go
+// From internal/monitoring/profiler.go:342-346
+func (p *Profiler) IsFrameRateTargetMet() bool {
+    p.stats.mu.RLock()
+    defer p.stats.mu.RUnlock()
+    return p.stats.FrameRate >= 30.0
+    // Frame rate checking exists but updating mechanism needs verification
+}
+```
+
+## Summary
+
+The audit reveals that while the core application functionality is largely implemented as documented, there are critical gaps in the General Dialog Events system (completely missing) and moderate gaps in user interface consistency. The most significant issues are the missing Ctrl+E/R/G/H keyboard shortcuts and command-line event flags, which represent major documented features that are entirely non-functional.
+
+## Recommendations
+
+1. **Immediate Priority**: Implement the General Dialog Events system keyboard shortcuts and command-line flags
+2. **High Priority**: Verify and implement context menu "Open Chat" integration  
+3. **Medium Priority**: Review HasDialogBackend logic for user experience
+4. **Low Priority**: Verify frame rate monitoring implementation
