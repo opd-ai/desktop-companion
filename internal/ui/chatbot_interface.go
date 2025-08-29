@@ -423,11 +423,17 @@ func (ci *ChatbotInterface) ExportConversation() error {
 
 	// Create filename with character name and timestamp
 	timestamp := time.Now().Format("2006-01-02_15-04-05")
-	filename := fmt.Sprintf("%s_chat_%s.txt", ci.character.GetName(), timestamp)
+	var name string
+	if ci.character != nil {
+		name = ci.character.GetName()
+	} else {
+		name = "Unknown"
+	}
+	filename := fmt.Sprintf("%s_chat_%s.txt", name, timestamp)
 
 	// Build conversation text
 	var conversation strings.Builder
-	conversation.WriteString(fmt.Sprintf("Chat Conversation with %s\n", ci.character.GetName()))
+	conversation.WriteString(fmt.Sprintf("Chat Conversation with %s\n", name))
 	conversation.WriteString(fmt.Sprintf("Exported on: %s\n\n", time.Now().Format("2006-01-02 15:04:05")))
 
 	for _, msg := range ci.conversationLog {

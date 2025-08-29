@@ -882,6 +882,9 @@ func (c *Character) GetSize() int {
 func (c *Character) GetName() string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
+	if c.card == nil {
+		return "Unknown"
+	}
 	return c.card.Name
 }
 
