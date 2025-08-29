@@ -197,7 +197,7 @@ go run cmd/companion/main.go -character assets/characters/examples/roleplay_char
 
 **Game Interactions**:
 - **Click**: Pet your character (increases happiness and health)
-- **Right-click**: Feed your character (increases hunger, shows interaction menu)
+- **Right-click**: Feed your character (increases hunger with dialog response)
 - **Double-click**: Play with your character (increases happiness, decreases energy)
 - **Stats overlay**: Toggle with 'S' key to monitor character's wellbeing
 - **Chatbot interface**: Toggle with 'C' key for AI-powered conversations (AI characters only)
