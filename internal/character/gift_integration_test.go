@@ -36,7 +36,7 @@ func TestRealGiftCatalogLoading(t *testing.T) {
 	gm := NewGiftManager(character, gameState)
 
 	// Test loading real gifts from assets/gifts/ directory
-	err := gm.LoadGiftCatalog("/workspaces/DDS/assets/gifts")
+	err := gm.LoadGiftCatalog("../../assets/gifts")
 	if err != nil {
 		t.Fatalf("Failed to load real gift catalog: %v", err)
 	}
