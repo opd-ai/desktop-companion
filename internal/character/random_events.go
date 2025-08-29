@@ -57,6 +57,8 @@ func (rem *RandomEventManager) Update(elapsed time.Duration, gameState *GameStat
 
 // shouldProcessEvents checks if event processing should proceed
 func (rem *RandomEventManager) shouldProcessEvents(gameState *GameState) bool {
+	rem.mu.RLock()
+	defer rem.mu.RUnlock()
 	return rem.enabled && len(rem.events) > 0 && gameState != nil
 }
 
