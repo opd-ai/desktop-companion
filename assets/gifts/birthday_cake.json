@@ -1,0 +1,49 @@
+{
+  "id": "birthday_cake",
+  "name": "Birthday Cake",
+  "description": "A delicious birthday cake to celebrate special moments",
+  "category": "food",
+  "rarity": "rare",
+  "image": "animations/birthday_cake.gif",
+  "properties": {
+    "consumable": true,
+    "stackable": false,
+    "maxStack": 1,
+    "unlockRequirements": {
+      "relationshipLevel": "Friend",
+      "stats": {
+        "affection": {"min": 50}
+      }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 30,
+        "affection": 15,
+        "health": 10
+      },
+      "animations": ["happy", "heart_eyes"],
+      "responses": [
+        "A birthday cake! You remembered! 🎂",
+        "This is so thoughtful of you! Thank you! 😊",
+        "I can't believe you got this for me! ❤️"
+      ]
+    },
+    "memory": {
+      "importance": 0.9,
+      "tags": ["birthday", "celebration", "special_gift"],
+      "emotionalTone": "joyful"
+    }
+  },
+  "personalityModifiers": {
+    "shy": {"affection": 1.2, "trust": 1.1},
+    "romantic": {"affection": 1.5, "intimacy": 1.3},
+    "tsundere": {"affection": 0.8, "trust": 1.4}
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 200,
+    "placeholder": "Add a personal message with your gift..."
+  }
+}
