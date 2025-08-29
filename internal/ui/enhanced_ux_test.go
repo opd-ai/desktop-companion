@@ -34,7 +34,7 @@ func TestEnhancedUserExperience_EscapeKey(t *testing.T) {
 
 	// Test ESC key functionality
 	canvas := window.window.Canvas()
-	
+
 	// First open the chatbot
 	window.ToggleChatbotInterfaceWithFocus()
 	if !window.chatbotInterface.IsVisible() {
@@ -44,7 +44,7 @@ func TestEnhancedUserExperience_EscapeKey(t *testing.T) {
 	// Now press ESC to close
 	escEvent := &fyne.KeyEvent{Name: fyne.KeyEscape}
 	canvas.OnTypedKey()(escEvent)
-	
+
 	// Give UI time to update
 	time.Sleep(10 * time.Millisecond)
 
@@ -80,7 +80,7 @@ func TestEnhancedUserExperience_FocusManagement(t *testing.T) {
 
 	// Test enhanced focus functionality
 	window.ToggleChatbotInterfaceWithFocus()
-	
+
 	if !window.chatbotInterface.IsVisible() {
 		t.Error("Expected chatbot interface to be visible")
 		return
@@ -88,7 +88,7 @@ func TestEnhancedUserExperience_FocusManagement(t *testing.T) {
 
 	// Test FocusInput method directly
 	window.chatbotInterface.FocusInput()
-	
+
 	// Interface should still be visible and properly focused
 	if !window.chatbotInterface.IsVisible() {
 		t.Error("Expected chatbot interface to remain visible after focus")
