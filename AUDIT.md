@@ -3,15 +3,17 @@ Generated: August 29, 2025 16:42:17 UTC
 Codebase Version: e90f45d3a8d8c612c7811de726328b46cdec6962
 
 ## Executive Summary
-Total Gaps Found: 5 (2 Resolved, 3 Remaining)
+Total Gaps Found: 5 (3 Resolved, 2 Remaining)
 - Critical: 0 (2 Fixed)
-- Moderate: 2
+- Moderate: 1 (1 Fixed)
 - Minor: 1
 
 **Recent Updates:**
+- August 29, 2025 17:05:00 UTC: Fixed moderate gap #3 (commit 7d58a8d)
 - August 29, 2025 16:58:00 UTC: Fixed critical gaps #1 and #2 (commit 5d04bcf)
 - General Dialog Events System now fully implemented
 - Command-line flags (-events, -trigger-event) now functional
+- Context menu "Open Chat" now consistent for AI characters
 
 ## Detailed Findings
 
@@ -82,7 +84,8 @@ go run cmd/companion/main.go -help  # Shows both flags
 
 **~~Production Impact~~** **Resolution Impact:** Critical CLI interface now fully matches documentation
 
-### Gap #3: Chatbot Context Menu Access Inconsistency
+### Gap #3: Chatbot Context Menu Access Inconsistency ✅ **RESOLVED**
+**Status:** Fixed in commit 7d58a8d (August 29, 2025 17:05:00 UTC)
 **Documentation Reference:**
 > "**Context menu**: Right-click for advanced options including "Open Chat" for AI characters" (README.md:205)
 > "**Context Menu Access**: Right-click → "Open Chat" for menu-driven access" (README.md:30)
@@ -91,24 +94,34 @@ go run cmd/companion/main.go -help  # Shows both flags
 
 **Expected Behavior:** Right-click context menu should include "Open Chat" option for AI-enabled characters
 
-**Actual Implementation:** Chatbot interface exists and has keyboard shortcut ('C' key) but context menu "Open Chat" integration is not verified in the codebase
+**~~Actual Implementation~~** **Fixed Implementation:** Context menu now shows "Open Chat" for all AI-capable characters with appropriate feedback
 
-**Gap Details:** While the chatbot interface is implemented and keyboard shortcuts work, the documented right-click context menu access to "Open Chat" cannot be confirmed in the reviewed code sections.
+**~~Gap Details~~** **Resolution Details:**
+- Added `shouldShowChatOption()` method to determine when to show "Open Chat" in context menu
+- Shows option for characters with dialog backend configured OR romance features (AI capabilities)
+- Added `handleChatOptionClick()` method with informative feedback when chat unavailable
+- Provides clear explanations for why chat might be disabled or unavailable
+- Maintains backward compatibility for fully functional chatbot interfaces
 
-**Reproduction:**
+**~~Reproduction~~** **Verification:**
 ```go
-// Context menu implementation exists but "Open Chat" option needs verification
-// in NewContextMenu() and context menu event handlers
+// Now shows "Open Chat" for AI-capable characters:
+func (dw *DesktopWindow) shouldShowChatOption() bool {
+    card := dw.character.GetCard()
+    return card.DialogBackend != nil || card.HasRomanceFeatures()
+}
+
+// Provides helpful feedback when chat unavailable:
+func (dw *DesktopWindow) handleChatOptionClick() {
+    // Shows appropriate message based on character capabilities
+}
 ```
 
-**Production Impact:** Moderate - Alternative access method may be missing
+**~~Production Impact~~** **Resolution Impact:** Moderate improvement - better user experience and feedback for AI characters
 
-**Evidence:**
-```go
-// From window.go and chatbot_interface.go:
-// Keyboard shortcut 'C' is implemented
-// Context menu exists but "Open Chat" option not confirmed
-```
+**Tests Added:**
+- `TestBug3FixValidation` - Comprehensive fix validation for different character types
+- `TestBug3MissingChatContextMenu` - Regression prevention test
 
 ### Gap #4: HasDialogBackend Logic Dependency
 **Documentation Reference:**
