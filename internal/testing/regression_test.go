@@ -255,25 +255,26 @@ func (s *RegressionTestSuite) testPerformanceTargets(t *testing.T) {
 	cards[0] = &character.CharacterCard{
 		Name:        "Test Basic",
 		Description: "Basic test character",
-		Animations:  map[string]string{"idle": "test.gif"},
-		Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}}},
-		Behavior:    character.Behavior{DefaultSize: 128},
+		Animations:  map[string]string{"idle": "test.gif", "talking": "test.gif"},
+		Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}, Animation: "talking"}},
+		Behavior:    character.Behavior{DefaultSize: 128, IdleTimeout: 30},
 	}
 
 	// Test game character
 	cards[1] = &character.CharacterCard{
 		Name:        "Test Game",
 		Description: "Game test character",
-		Animations:  map[string]string{"idle": "test.gif"},
-		Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}}},
-		Behavior:    character.Behavior{DefaultSize: 128},
+		Animations:  map[string]string{"idle": "test.gif", "talking": "test.gif"},
+		Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}, Animation: "talking"}},
+		Behavior:    character.Behavior{DefaultSize: 128, IdleTimeout: 30},
 		Stats: map[string]character.StatConfig{
 			"hunger": {Initial: 100, Max: 100, DegradationRate: 1.0},
 		},
 		Interactions: map[string]character.InteractionConfig{
 			"feed": {
-				Triggers: []string{"rightclick"},
-				Effects:  map[string]float64{"hunger": 25},
+				Triggers:  []string{"rightclick"},
+				Effects:   map[string]float64{"hunger": 25},
+				Responses: []string{"Yum! I feel much better now!", "Thanks for feeding me!"},
 			},
 		},
 	}
@@ -282,9 +283,9 @@ func (s *RegressionTestSuite) testPerformanceTargets(t *testing.T) {
 	cards[2] = &character.CharacterCard{
 		Name:        "Test Romance",
 		Description: "Romance test character",
-		Animations:  map[string]string{"idle": "test.gif"},
-		Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}}},
-		Behavior:    character.Behavior{DefaultSize: 128},
+		Animations:  map[string]string{"idle": "test.gif", "talking": "test.gif"},
+		Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}, Animation: "talking"}},
+		Behavior:    character.Behavior{DefaultSize: 128, IdleTimeout: 30},
 		Stats: map[string]character.StatConfig{
 			"affection": {Initial: 0, Max: 100, DegradationRate: 0.1},
 		},
@@ -377,9 +378,9 @@ func (s *RegressionTestSuite) testSaveLoadCompatibility(t *testing.T) {
 			card := &character.CharacterCard{
 				Name:        fmt.Sprintf("Test_%s", tc.name),
 				Description: fmt.Sprintf("Test character for %s save/load", tc.name),
-				Animations:  map[string]string{"idle": "test.gif"},
-				Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}}},
-				Behavior:    character.Behavior{DefaultSize: 128},
+				Animations:  map[string]string{"idle": "test.gif", "talking": "test.gif"},
+				Dialogs:     []character.Dialog{{Trigger: "click", Responses: []string{"Hi"}, Animation: "talking"}},
+				Behavior:    character.Behavior{DefaultSize: 128, IdleTimeout: 30},
 			}
 
 			if tc.hasStats {
@@ -505,7 +506,7 @@ func (s *RegressionTestSuite) testAnimationSystemIntegrity(t *testing.T) {
 
 // createStubAnimationFiles creates minimal GIF files for testing
 func (s *RegressionTestSuite) createStubAnimationFiles(t *testing.T, card *character.CharacterCard) {
-	// Create a minimal valid GIF file (1x1 pixel)
+	// Create a minimal valid GIF file (1x1 pixel) with required color table
 	// This is a proper minimal GIF format that should work with Go's gif decoder
 	gifData := []byte{
 		// GIF Header
@@ -514,9 +515,13 @@ func (s *RegressionTestSuite) createStubAnimationFiles(t *testing.T, card *chara
 		// Logical Screen Descriptor
 		0x01, 0x00, // width = 1
 		0x01, 0x00, // height = 1
-		0x00, // packed fields (no global color table)
+		0x80, // packed fields (global color table flag = 1, color resolution = 0, sort = 0, size = 0 = 2 colors)
 		0x00, // background color index
 		0x00, // pixel aspect ratio
+
+		// Global Color Table (2 colors: black and white)
+		0x00, 0x00, 0x00, // Color 0: black (R, G, B)
+		0xFF, 0xFF, 0xFF, // Color 1: white (R, G, B)
 
 		// Image Descriptor
 		0x2C,       // image separator

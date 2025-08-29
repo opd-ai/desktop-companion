@@ -14,6 +14,7 @@ func TestSaveDataValidationRaceCondition(t *testing.T) {
 	defer sm.Close()
 
 	// Create initial save data
+	now := time.Now()
 	testData := &GameSaveData{
 		CharacterName: "RaceTestCharacter",
 		SaveVersion:   "1.0",
@@ -26,6 +27,8 @@ func TestSaveDataValidationRaceCondition(t *testing.T) {
 					CriticalThreshold: 20.0,
 				},
 			},
+			CreationTime:    now,
+			LastDecayUpdate: now,
 		},
 	}
 
@@ -37,6 +40,7 @@ func TestSaveDataValidationRaceCondition(t *testing.T) {
 	// Enable auto-save with a very short interval to increase chance of race conditions
 	gameStateProvider := func() *GameSaveData {
 		// Modify data each time it's accessed (simulating ongoing game state changes)
+		now := time.Now()
 		return &GameSaveData{
 			CharacterName: "RaceTestCharacter",
 			SaveVersion:   "1.0",
@@ -49,6 +53,8 @@ func TestSaveDataValidationRaceCondition(t *testing.T) {
 						CriticalThreshold: 20.0,
 					},
 				},
+				CreationTime:    now,
+				LastDecayUpdate: now,
 			},
 		}
 	}
@@ -115,6 +121,7 @@ func TestValidationWithSharedData(t *testing.T) {
 	sm := NewSaveManager(t.TempDir())
 
 	// Create shared data that will be validated concurrently
+	now := time.Now()
 	sharedData := &GameSaveData{
 		CharacterName: "SharedTestCharacter",
 		SaveVersion:   "1.0",
@@ -127,6 +134,8 @@ func TestValidationWithSharedData(t *testing.T) {
 					CriticalThreshold: 20.0,
 				},
 			},
+			CreationTime:    now,
+			LastDecayUpdate: now,
 		},
 	}
 
