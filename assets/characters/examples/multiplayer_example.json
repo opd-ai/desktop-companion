@@ -1,0 +1,33 @@
+{
+  "name": "Multiplayer Bot Companion",
+  "description": "A friendly AI companion with multiplayer networking capabilities",
+  "animations": {
+    "idle": "idle.gif",
+    "talking": "talking.gif",
+    "happy": "happy.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello! I can chat with other companions on the network!",
+        "Want to meet my friends? They're online too!",
+        "This multiplayer thing is exciting!"
+      ],
+      "animation": "talking",
+      "cooldown": 3
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "defaultSize": 128,
+    "movementEnabled": true
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "friendly_bot_v1",
+    "maxPeers": 6,
+    "discoveryPort": 8080
+  }
+}

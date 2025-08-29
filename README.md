@@ -49,6 +49,8 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 - 🌐 **Multiplayer Networking**: Peer-to-peer networking infrastructure *(Phase 1 Complete)*
   - **Peer Discovery**: UDP-based automatic discovery of other DDS instances on local network
   - **Reliable Messaging**: TCP-based message delivery with JSON protocol
+  - **Cryptographic Security**: Ed25519 signature verification for message integrity
+  - **Character Configuration**: Optional multiplayer settings in character cards
   - **Standard Library**: Zero external dependencies using Go's built-in networking
   - **Foundation Ready**: Core infrastructure for AI-controlled multiplayer companions
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
@@ -316,6 +318,34 @@ Characters are defined using JSON configuration files with this structure:
 - `idleTimeout` (number, 10-300): Seconds before returning to idle animation
 - `movementEnabled` (boolean): Allow dragging the character (default: false)
 - `defaultSize` (number, 64-512): Character size in pixels (default: 128)
+
+#### Multiplayer Configuration (Optional)
+
+Characters can be configured for peer-to-peer networking and multiplayer features:
+
+```json
+{
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "my_character_v1",
+    "maxPeers": 8,
+    "discoveryPort": 8080
+  }
+}
+```
+
+**Multiplayer Fields:**
+- `enabled` (boolean): Enable multiplayer networking features
+- `botCapable` (boolean): Allow this character to run autonomously as a bot
+- `networkID` (string, required if enabled): Unique identifier for this character type (alphanumeric, underscore, dash only)
+- `maxPeers` (number, 0-16): Maximum number of peers to connect to (default: 8)
+- `discoveryPort` (number, 1024-65535): UDP port for peer discovery (default: 8080)
+
+**Security Notes:**
+- All network messages are cryptographically signed with Ed25519
+- Only characters with matching `networkID` can communicate
+- Discovery ports below 1024 are restricted to avoid system conflicts
 
 ### General Dialog Events
 

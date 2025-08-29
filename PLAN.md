@@ -61,18 +61,12 @@ func (mc *MultiplayerCharacter) HandleClick() string {
   - Message types: discovery, character_action, state_sync
   - Ed25519 signature verification for security
   
-- [ ] **Character Card Extensions** (`internal/character/card.go`)
-  ```json
-  {
-    "multiplayer": {
-      "enabled": true,
-      "botCapable": true,
-      "networkID": "unique_id",
-      "maxPeers": 8,
-      "discoveryPort": 8080
-    }
-  }
-  ```
+- [x] **Character Card Extensions** (`internal/character/card.go`) ✅ **COMPLETED**
+  - Added MultiplayerConfig struct with validation
+  - Integrated multiplayer field into CharacterCard schema
+  - Comprehensive validation for networkID, maxPeers, discoveryPort
+  - Helper methods: HasMultiplayer() for clean API access
+  - Full test coverage with 13 test scenarios covering edge cases
 
 - [ ] **MultiplayerCharacter Wrapper** (`internal/character/multiplayer.go`)
   - Embed existing Character struct
@@ -102,7 +96,7 @@ func (mc *MultiplayerCharacter) HandleClick() string {
 - ✅ **Protocol Design Complete**: Ed25519 cryptographic signatures with structured payloads and security features
 - ✅ **Performance Validated**: 21μs message signing, 47μs verification, 70.1% test coverage
 - ✅ **Security Features**: Replay attack prevention, data integrity verification, public key distribution
-- 🏗️ **Next Step**: Character Card Extensions for multiplayer configuration
+- 🏗️ **Next Step**: MultiplayerCharacter Wrapper for network-aware character implementation
 
 ---
 

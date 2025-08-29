@@ -37,6 +37,8 @@ type CharacterCard struct {
 	GeneralEvents []GeneralDialogEvent `json:"generalEvents,omitempty"`
 	// Gift system (optional feature - maintains backward compatibility)
 	GiftSystem *GiftSystemConfig `json:"giftSystem,omitempty"`
+	// Multiplayer networking (Phase 1 - Networking Infrastructure)
+	Multiplayer *MultiplayerConfig `json:"multiplayer,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -118,6 +120,16 @@ type InteractionConfigExtended struct {
 	RomanceCategory    string              `json:"romanceCategory,omitempty"`    // Romance interaction category
 }
 
+// MultiplayerConfig defines multiplayer networking configuration for character cards
+// Enables peer-to-peer networking features while maintaining backward compatibility
+type MultiplayerConfig struct {
+	Enabled       bool   `json:"enabled"`                 // Enable multiplayer networking features
+	BotCapable    bool   `json:"botCapable"`              // Can this character run autonomously as a bot
+	NetworkID     string `json:"networkID"`               // Unique identifier for this character type
+	MaxPeers      int    `json:"maxPeers,omitempty"`      // Maximum number of peers to connect to (default: 8)
+	DiscoveryPort int    `json:"discoveryPort,omitempty"` // UDP port for peer discovery (default: 8080)
+}
+
 // LoadCard loads and validates a character card from a JSON file
 // Uses standard library encoding/json - no external dependencies needed
 func LoadCard(path string) (*CharacterCard, error) {
@@ -153,6 +165,10 @@ func (c *CharacterCard) Validate() error {
 	}
 
 	if err := c.validateRomanceSystems(); err != nil {
+		return err
+	}
+
+	if err := c.validateMultiplayerSystems(); err != nil {
 		return err
 	}
 
@@ -209,6 +225,15 @@ func (c *CharacterCard) validateRomanceSystems() error {
 
 	if err := c.validateGeneralEvents(); err != nil {
 		return fmt.Errorf("general events: %w", err)
+	}
+
+	return nil
+}
+
+// validateMultiplayerSystems validates multiplayer networking configuration
+func (c *CharacterCard) validateMultiplayerSystems() error {
+	if err := c.validateMultiplayerConfig(); err != nil {
+		return fmt.Errorf("multiplayer config: %w", err)
 	}
 
 	return nil
@@ -1075,4 +1100,54 @@ func (c *CharacterCard) validateGiftSystem() error {
 // HasGiftSystem returns true if this character card includes gift system configuration
 func (c *CharacterCard) HasGiftSystem() bool {
 	return c.GiftSystem != nil && c.GiftSystem.Enabled
+}
+
+// validateMultiplayerConfig validates multiplayer networking configuration
+// Ensures multiplayer settings are valid when enabled
+func (c *CharacterCard) validateMultiplayerConfig() error {
+	// Skip validation if multiplayer is not configured
+	if c.Multiplayer == nil {
+		return nil
+	}
+
+	mp := c.Multiplayer
+
+	// Validate NetworkID when enabled
+	if mp.Enabled {
+		if mp.NetworkID == "" {
+			return fmt.Errorf("networkID is required when multiplayer is enabled")
+		}
+		if len(mp.NetworkID) > 50 {
+			return fmt.Errorf("networkID too long: %d characters, maximum 50 allowed", len(mp.NetworkID))
+		}
+		// NetworkID should contain only alphanumeric, underscore, and dash characters
+		for _, char := range mp.NetworkID {
+			if !((char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') ||
+				(char >= '0' && char <= '9') || char == '_' || char == '-') {
+				return fmt.Errorf("networkID contains invalid character '%c', only alphanumeric, underscore, and dash allowed", char)
+			}
+		}
+	}
+
+	// Validate MaxPeers range
+	if mp.MaxPeers > 0 && mp.MaxPeers > 16 {
+		return fmt.Errorf("maxPeers cannot exceed 16, got %d", mp.MaxPeers)
+	}
+
+	// Validate DiscoveryPort range
+	if mp.DiscoveryPort > 0 {
+		if mp.DiscoveryPort < 1024 {
+			return fmt.Errorf("discoveryPort must be >= 1024 to avoid system ports, got %d", mp.DiscoveryPort)
+		}
+		if mp.DiscoveryPort > 65535 {
+			return fmt.Errorf("discoveryPort cannot exceed 65535, got %d", mp.DiscoveryPort)
+		}
+	}
+
+	return nil
+}
+
+// HasMultiplayer returns true if this character card has multiplayer networking enabled
+func (c *CharacterCard) HasMultiplayer() bool {
+	return c.Multiplayer != nil && c.Multiplayer.Enabled
 }
