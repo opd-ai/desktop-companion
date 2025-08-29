@@ -5,12 +5,12 @@ Codebase Version: main branch
 ## Executive Summary
 Total Gaps Found: 5
 - Critical: 1 (0 unresolved) - 1 False Positive
-- Moderate: 3 (2 unresolved) - 1 False Positive
+- Moderate: 3 (1 unresolved) - 1 False Positive, 1 Resolved by Gap #1
 - Minor: 1 (1 unresolved)
 
-**Resolved:** 1
+**Resolved:** 2
 **False Positives:** 2  
-**Remaining:** 2
+**Remaining:** 1
 
 ## Detailed Findings
 
@@ -140,7 +140,9 @@ grep -r "autoSaveInterval" assets/characters/*/character.json
 "autoSaveInterval": 120,  // 2 minutes, not 5
 ```
 
-### Gap #4: Game Mode Dependency Missing from UI Logic
+### Gap #4: Game Mode Dependency Missing from UI Logic ✅ **RESOLVED**
+**Status:** Fixed by Gap #1 resolution (commit da97143, 2025-08-28)
+
 **Documentation Reference:**
 > "# Game mode with stats overlay
 > go run cmd/companion/main.go -game -stats -character assets/characters/default/character_with_game_features.json" (README.md:143-144)
@@ -149,17 +151,23 @@ grep -r "autoSaveInterval" assets/characters/*/character.json
 
 **Expected Behavior:** When `-stats` is used without `-game`, the application should warn the user or reject the configuration
 
-**Actual Implementation:** The stats overlay creation is conditionally checked but no user feedback is provided when the condition fails
+**Actual Implementation:** Application now properly validates flag dependencies and exits with clear error message before reaching UI code
 
-**Gap Details:** The UI silently creates an empty stats overlay when game mode is disabled, but users receive no indication that their `-stats` flag is ineffective. This creates a confusing experience where the stats panel exists but shows no data.
-
-**Reproduction:**
-```go
-// Run with -stats but no -game flag
-// Stats overlay object is created but remains empty
+**Resolution:** The `validateFlagDependencies()` function added for Gap #1 prevents users from reaching the UI layer with invalid flag combinations. The application exits early with:
+```
+Error: -stats flag requires -game flag to be enabled
+Use -help for usage information
 ```
 
-**Production Impact:** Moderate - poor user experience with silent failures and no informative error messages
+**Gap Details:** ~~The UI silently creates an empty stats overlay when game mode is disabled~~ Users can no longer reach this code path due to flag validation at startup.
+
+**Verification:**
+```bash
+# Now correctly shows error and exits
+go run cmd/companion/main.go -stats -character assets/characters/default/character.json
+```
+
+**Production Impact:** ~~Moderate - poor user experience~~ **RESOLVED - Clear error messaging prevents user confusion**
 
 **Evidence:**
 ```go
