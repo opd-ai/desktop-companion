@@ -47,6 +47,7 @@ type GameState struct {
 	InteractionHistory map[string][]time.Time `json:"interactionHistory,omitempty"`
 	RomanceMemories    []RomanceMemory        `json:"romanceMemories,omitempty"`
 	DialogMemories     []DialogMemory         `json:"dialogMemories,omitempty"`
+	GiftMemories       []GiftMemory           `json:"giftMemories,omitempty"`
 }
 
 // Stat represents a game statistic with boundaries and degradation rules

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // GiftDefinition represents a loadable gift with properties and effects
@@ -93,6 +94,20 @@ type GiftResponse struct {
 	StatEffects   map[string]float64 `json:"statEffects"`
 	MemoryCreated bool               `json:"memoryCreated"`
 	ErrorMessage  string             `json:"errorMessage,omitempty"`
+}
+
+// GiftMemory represents a memory of a gift interaction for tracking and learning
+// Extends existing memory system with gift-specific fields
+type GiftMemory struct {
+	Timestamp        time.Time          `json:"timestamp"`
+	GiftID           string             `json:"giftId"`
+	GiftName         string             `json:"giftName"`
+	Notes            string             `json:"notes"`
+	Response         string             `json:"response"`
+	StatEffects      map[string]float64 `json:"statEffects"`
+	MemoryImportance float64            `json:"memoryImportance"`
+	Tags             []string           `json:"tags"`
+	EmotionalTone    string             `json:"emotionalTone"`
 }
 
 // LoadGiftDefinition loads a gift definition from a JSON file
