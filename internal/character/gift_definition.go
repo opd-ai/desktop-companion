@@ -141,7 +141,23 @@ func LoadGiftDefinition(filePath string) (*GiftDefinition, error) {
 // Validate validates a gift definition using existing validation patterns
 // Follows the same approach as CharacterCard.Validate()
 func (g *GiftDefinition) Validate() error {
-	// Required field validation
+	if err := g.validateRequiredFields(); err != nil {
+		return err
+	}
+
+	if err := g.validateCategoryAndRarity(); err != nil {
+		return err
+	}
+
+	if err := g.validateGiftComponents(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateRequiredFields checks that all required string fields meet length constraints
+func (g *GiftDefinition) validateRequiredFields() error {
 	if g.ID == "" {
 		return fmt.Errorf("gift ID is required")
 	}
@@ -160,30 +176,33 @@ func (g *GiftDefinition) Validate() error {
 	if len(g.Description) > 500 {
 		return fmt.Errorf("gift description must be 500 characters or less, got %d", len(g.Description))
 	}
+	return nil
+}
 
-	// Category validation
+// validateCategoryAndRarity checks that category and rarity values are from valid sets
+func (g *GiftDefinition) validateCategoryAndRarity() error {
 	validCategories := []string{"food", "flowers", "books", "jewelry", "toys", "electronics", "clothing", "art", "practical", "expensive"}
 	if !sliceContains(validCategories, g.Category) {
 		return fmt.Errorf("invalid gift category '%s', must be one of: %s", g.Category, strings.Join(validCategories, ", "))
 	}
 
-	// Rarity validation
 	validRarities := []string{"common", "uncommon", "rare", "epic", "legendary"}
 	if !sliceContains(validRarities, g.Rarity) {
 		return fmt.Errorf("invalid gift rarity '%s', must be one of: %s", g.Rarity, strings.Join(validRarities, ", "))
 	}
+	return nil
+}
 
-	// Properties validation
+// validateGiftComponents validates properties, effects, and notes configurations
+func (g *GiftDefinition) validateGiftComponents() error {
 	if err := g.validateProperties(); err != nil {
 		return fmt.Errorf("gift properties validation failed: %w", err)
 	}
 
-	// Effects validation
 	if err := g.validateEffects(); err != nil {
 		return fmt.Errorf("gift effects validation failed: %w", err)
 	}
 
-	// Notes validation
 	if err := g.validateNotes(); err != nil {
 		return fmt.Errorf("gift notes validation failed: %w", err)
 	}
