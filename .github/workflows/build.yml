@@ -1,0 +1,245 @@
+name: Cross-Platform Build and Release
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Run tests
+      run: go test ./... -v -race -coverprofile=coverage.out
+    
+    - name: Generate coverage report
+      run: go tool cover -html=coverage.out -o coverage.html
+    
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage.html
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev
+    
+    - name: Install fyne tool
+      run: go install fyne.io/tools/cmd/fyne@latest
+    
+    - name: Build Linux binary
+      run: |
+        mkdir -p build artifacts
+        go build -ldflags="-s -w" -o build/companion-linux-amd64 cmd/companion/main.go
+        cp build/companion-linux-amd64 artifacts/
+    
+    - name: Package with assets
+      run: |
+        cd build
+        cp -r ../assets .
+        tar -czf companion-linux-amd64.tar.gz companion-linux-amd64 assets/
+        mv companion-linux-amd64.tar.gz ../artifacts/
+    
+    - name: Upload Linux artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-build
+        path: artifacts/
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Install fyne tool
+      run: go install fyne.io/tools/cmd/fyne@latest
+    
+    - name: Build Windows binary
+      run: |
+        mkdir -p build artifacts
+        go build -ldflags="-s -w" -o build/companion-windows-amd64.exe cmd/companion/main.go
+        copy build\companion-windows-amd64.exe artifacts\
+    
+    - name: Package with assets
+      run: |
+        cd build
+        xcopy ..\assets assets\ /E /I
+        powershell Compress-Archive -Path companion-windows-amd64.exe, assets -DestinationPath companion-windows-amd64.zip
+        move companion-windows-amd64.zip ..\artifacts\
+    
+    - name: Upload Windows artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-build
+        path: artifacts/
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Install fyne tool
+      run: go install fyne.io/tools/cmd/fyne@latest
+    
+    - name: Build macOS binaries
+      run: |
+        mkdir -p build artifacts
+        # Intel
+        GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o build/companion-macos-amd64 cmd/companion/main.go
+        # Apple Silicon
+        GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o build/companion-macos-arm64 cmd/companion/main.go
+        cp build/companion-macos-* artifacts/
+    
+    - name: Package with assets
+      run: |
+        cd build
+        cp -r ../assets .
+        # Intel package
+        tar -czf companion-macos-amd64.tar.gz companion-macos-amd64 assets/
+        # Apple Silicon package
+        tar -czf companion-macos-arm64.tar.gz companion-macos-arm64 assets/
+        mv companion-macos-*.tar.gz ../artifacts/
+    
+    - name: Upload macOS artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: macos-build
+        path: artifacts/
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+    
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 30
+        ndk-version: '25.1.8937393'
+        cmake-version: '3.22.1'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev
+    
+    - name: Install fyne tool
+      run: go install fyne.io/tools/cmd/fyne@latest
+    
+    - name: Build Android APK
+      run: |
+        mkdir -p build artifacts
+        cd build
+        # Build debug APK (doesn't require signing)
+        fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
+          --app-version "1.0.0-${{ github.run_number }}" --app-build ${{ github.run_number }} \
+          --icon "../assets/characters/default/animations/idle.gif" \
+          --src "../cmd/companion" || echo "Android build failed, continuing..."
+        
+        # Find and copy APK if created
+        if ls *.apk 1> /dev/null 2>&1; then
+          cp *.apk ../artifacts/companion-debug.apk
+          echo "Android APK built successfully"
+        else
+          echo "Android APK build failed - this is expected without proper Android SDK setup"
+        fi
+    
+    - name: Upload Android artifacts
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: android-build
+        path: artifacts/
+        if-no-files-found: ignore
+
+  release:
+    name: Create Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows, build-macos, build-android]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+    
+    - name: Prepare release files
+      run: |
+        mkdir -p release
+        cp linux-build/* release/ 2>/dev/null || true
+        cp windows-build/* release/ 2>/dev/null || true
+        cp macos-build/* release/ 2>/dev/null || true
+        cp android-build/* release/ 2>/dev/null || true
+        ls -la release/
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: release/*
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

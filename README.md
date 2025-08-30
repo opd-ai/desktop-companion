@@ -155,6 +155,43 @@ go build -ldflags="-s -w" -o companion cmd/companion/main.go
 make build  # Builds for current platform only
 ```
 
+### Building for Android
+
+DDS supports Android devices through Fyne's cross-platform capabilities:
+
+```bash
+# Install fyne CLI tool (if not already installed)
+go install fyne.io/tools/cmd/fyne@latest
+
+# Build Android APK (debug version)
+make android-debug
+
+# Build Android APK (release version, requires Android SDK)
+make android-apk
+
+# Install to connected Android device
+make android-install-debug
+```
+
+**Android Requirements:**
+- Java 8+ installed
+- Android SDK (optional for basic builds)
+- Android NDK (for full functionality)
+
+For detailed Android setup instructions, see [`docs/ANDROID_BUILD_GUIDE.md`](docs/ANDROID_BUILD_GUIDE.md).
+
+### Cross-Platform Release Build
+
+```bash
+# Automated cross-platform build (includes Android)
+./scripts/cross_platform_build.sh
+
+# Build for specific platforms
+make release-linux    # Linux binary
+make release-windows  # Windows binary (requires Windows or cross-compilation)
+make release-macos    # macOS binary (requires macOS)
+```
+
 ## 🏗️ Architecture & Dependencies
 
 This project follows the "lazy programmer" philosophy, using mature libraries instead of custom implementations:

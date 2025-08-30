@@ -1,0 +1,12 @@
+[Details]
+Icon = "assets/characters/default/animations/idle.gif"
+Name = "Desktop Companion"
+ID = "ai.opd.dds"
+Version = "1.0.0"
+Build = 1
+
+[Metadata]
+Description = "A lightweight, cross-platform virtual desktop companion with AI-powered interactions, Tamagotchi game features, and dating simulator mechanics."
+DeveloperName = "OPD AI"
+DeveloperID = "ai.opd"
+Website = "https://github.com/opd-ai/DDS"
