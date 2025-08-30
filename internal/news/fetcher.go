@@ -11,8 +11,8 @@ import (
 
 // FeedFetcher handles RSS/Atom feed fetching and parsing
 type FeedFetcher struct {
-	parser   *gofeed.Parser
-	timeout  time.Duration
+	parser    *gofeed.Parser
+	timeout   time.Duration
 	userAgent string
 }
 
@@ -20,7 +20,7 @@ type FeedFetcher struct {
 func NewFeedFetcher(timeout time.Duration) *FeedFetcher {
 	parser := gofeed.NewParser()
 	parser.UserAgent = "Desktop-Companion-DDS/1.0 (RSS News Reader)"
-	
+
 	return &FeedFetcher{
 		parser:    parser,
 		timeout:   timeout,
@@ -33,48 +33,48 @@ func (ff *FeedFetcher) FetchFeed(feedConfig RSSFeed) ([]*NewsItem, error) {
 	// Create context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), ff.timeout)
 	defer cancel()
-	
+
 	// Parse the feed with context
 	feed, err := ff.parser.ParseURLWithContext(feedConfig.URL, ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse feed %s: %w", feedConfig.Name, err)
 	}
-	
+
 	var newsItems []*NewsItem
 	maxItems := feedConfig.MaxItems
 	if maxItems <= 0 {
 		maxItems = 10 // Default limit
 	}
-	
+
 	// Convert feed items to news items
 	for i, item := range feed.Items {
 		if i >= maxItems {
 			break
 		}
-		
+
 		newsItem := ff.convertFeedItem(item, feedConfig)
-		
+
 		// Apply keyword filtering if configured
 		if len(feedConfig.Keywords) > 0 && !ff.matchesKeywords(newsItem, feedConfig.Keywords) {
 			continue
 		}
-		
+
 		newsItems = append(newsItems, newsItem)
 	}
-	
+
 	return newsItems, nil
 }
 
 // convertFeedItem converts a gofeed.Item to our NewsItem structure
 func (ff *FeedFetcher) convertFeedItem(item *gofeed.Item, feedConfig RSSFeed) *NewsItem {
 	newsItem := &NewsItem{
-		Title:    item.Title,
-		URL:      item.Link,
-		Category: feedConfig.Category,
-		Source:   feedConfig.Name,
+		Title:      item.Title,
+		URL:        item.Link,
+		Category:   feedConfig.Category,
+		Source:     feedConfig.Name,
 		ReadStatus: false,
 	}
-	
+
 	// Set publication date
 	if item.PublishedParsed != nil {
 		newsItem.Published = *item.PublishedParsed
@@ -83,21 +83,21 @@ func (ff *FeedFetcher) convertFeedItem(item *gofeed.Item, feedConfig RSSFeed) *N
 	} else {
 		newsItem.Published = time.Now()
 	}
-	
+
 	// Set summary/description
 	if item.Description != "" {
 		newsItem.Summary = ff.cleanDescription(item.Description)
 	} else if item.Content != "" {
 		newsItem.Summary = ff.cleanDescription(item.Content)
 	}
-	
+
 	// Set unique ID (prefer GUID, fallback to URL)
 	if item.GUID != "" {
 		newsItem.ID = item.GUID
 	} else {
 		newsItem.ID = item.Link
 	}
-	
+
 	return newsItem
 }
 
@@ -105,18 +105,18 @@ func (ff *FeedFetcher) convertFeedItem(item *gofeed.Item, feedConfig RSSFeed) *N
 func (ff *FeedFetcher) cleanDescription(description string) string {
 	// Simple HTML tag removal - replace with more sophisticated library if needed
 	cleaned := description
-	
+
 	// Remove common HTML tags
 	htmlTags := []string{
 		"<p>", "</p>", "<br>", "<br/>", "<div>", "</div>",
 		"<span>", "</span>", "<strong>", "</strong>", "<b>", "</b>",
 		"<em>", "</em>", "<i>", "</i>", "<a href=\"", "</a>",
 	}
-	
+
 	for _, tag := range htmlTags {
 		cleaned = strings.ReplaceAll(cleaned, tag, " ")
 	}
-	
+
 	// Remove remaining HTML tags with a simple approach
 	for strings.Contains(cleaned, "<") && strings.Contains(cleaned, ">") {
 		start := strings.Index(cleaned, "<")
@@ -127,24 +127,24 @@ func (ff *FeedFetcher) cleanDescription(description string) string {
 			break
 		}
 	}
-	
+
 	// Clean up whitespace
 	cleaned = strings.ReplaceAll(cleaned, "\n", " ")
 	cleaned = strings.ReplaceAll(cleaned, "\r", " ")
 	cleaned = strings.ReplaceAll(cleaned, "\t", " ")
-	
+
 	// Collapse multiple spaces
 	for strings.Contains(cleaned, "  ") {
 		cleaned = strings.ReplaceAll(cleaned, "  ", " ")
 	}
-	
+
 	cleaned = strings.TrimSpace(cleaned)
-	
+
 	// Limit length to 300 characters for display
 	if len(cleaned) > 300 {
 		cleaned = cleaned[:297] + "..."
 	}
-	
+
 	return cleaned
 }
 
@@ -153,16 +153,16 @@ func (ff *FeedFetcher) matchesKeywords(item *NewsItem, keywords []string) bool {
 	if len(keywords) == 0 {
 		return true // No filtering
 	}
-	
+
 	// Combine title and summary for keyword matching
 	content := strings.ToLower(item.Title + " " + item.Summary)
-	
+
 	for _, keyword := range keywords {
 		if strings.Contains(content, strings.ToLower(keyword)) {
 			return true
 		}
 	}
-	
+
 	return false
 }
 
@@ -170,12 +170,12 @@ func (ff *FeedFetcher) matchesKeywords(item *NewsItem, keywords []string) bool {
 func (ff *FeedFetcher) ValidateFeedURL(url string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	_, err := ff.parser.ParseURLWithContext(url, ctx)
 	if err != nil {
 		return fmt.Errorf("feed validation failed for %s: %w", url, err)
 	}
-	
+
 	return nil
 }
 
@@ -183,12 +183,12 @@ func (ff *FeedFetcher) ValidateFeedURL(url string) error {
 func (ff *FeedFetcher) GetFeedInfo(url string) (*FeedInfo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	feed, err := ff.parser.ParseURLWithContext(url, ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get feed info for %s: %w", url, err)
 	}
-	
+
 	info := &FeedInfo{
 		Title:       feed.Title,
 		Description: feed.Description,
@@ -196,11 +196,11 @@ func (ff *FeedFetcher) GetFeedInfo(url string) (*FeedInfo, error) {
 		Language:    feed.Language,
 		ItemCount:   len(feed.Items),
 	}
-	
+
 	if feed.UpdatedParsed != nil {
 		info.LastUpdated = *feed.UpdatedParsed
 	}
-	
+
 	return info, nil
 }
 

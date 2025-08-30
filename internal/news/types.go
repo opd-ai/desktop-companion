@@ -17,27 +17,27 @@ type RSSFeed struct {
 
 // NewsItem represents a single news article
 type NewsItem struct {
-	Title     string    `json:"title"`     // Article title
-	Summary   string    `json:"summary"`   // Article summary/description
-	URL       string    `json:"url"`       // Article URL
-	Published time.Time `json:"published"` // Publication timestamp
-	Category  string    `json:"category"`  // Feed category
-	Source    string    `json:"source"`    // Feed name
-	ReadStatus bool     `json:"read"`      // Whether user has seen this item
-	
+	Title      string    `json:"title"`     // Article title
+	Summary    string    `json:"summary"`   // Article summary/description
+	URL        string    `json:"url"`       // Article URL
+	Published  time.Time `json:"published"` // Publication timestamp
+	Category   string    `json:"category"`  // Feed category
+	Source     string    `json:"source"`    // Feed name
+	ReadStatus bool      `json:"read"`      // Whether user has seen this item
+
 	// For deduplication and caching
 	ID string `json:"id"` // Unique identifier (typically URL or GUID)
 }
 
 // NewsConfig defines RSS/Atom newsfeed configuration for character cards
 type NewsConfig struct {
-	Enabled             bool      `json:"enabled"`             // Enable news features
-	UpdateInterval      int       `json:"updateInterval"`      // Minutes between feed updates
-	MaxStoredItems      int       `json:"maxStoredItems"`      // Maximum news items to keep in memory
-	ReadingPersonality  string    `json:"readingPersonality"`  // "casual", "formal", "enthusiastic"
-	PreferredCategories []string  `json:"preferredCategories"` // Preferred news categories
-	Feeds              []RSSFeed `json:"feeds"`               // List of RSS feeds
-	ReadingEvents      []NewsEvent `json:"readingEvents"`     // News-specific events
+	Enabled             bool        `json:"enabled"`             // Enable news features
+	UpdateInterval      int         `json:"updateInterval"`      // Minutes between feed updates
+	MaxStoredItems      int         `json:"maxStoredItems"`      // Maximum news items to keep in memory
+	ReadingPersonality  string      `json:"readingPersonality"`  // "casual", "formal", "enthusiastic"
+	PreferredCategories []string    `json:"preferredCategories"` // Preferred news categories
+	Feeds               []RSSFeed   `json:"feeds"`               // List of RSS feeds
+	ReadingEvents       []NewsEvent `json:"readingEvents"`       // News-specific events
 }
 
 // NewsEvent extends general dialog events for news-specific scenarios
@@ -57,10 +57,10 @@ type NewsEvent struct {
 
 // NewsCache manages news item storage and retrieval
 type NewsCache struct {
-	items      map[string]*NewsItem // Key: item ID, Value: news item
+	items       map[string]*NewsItem   // Key: item ID, Value: news item
 	itemsByFeed map[string][]*NewsItem // Key: feed name, Value: items from that feed
-	lastUpdate map[string]time.Time   // Key: feed name, Value: last update time
-	maxItems   int                    // Maximum items to store
+	lastUpdate  map[string]time.Time   // Key: feed name, Value: last update time
+	maxItems    int                    // Maximum items to store
 }
 
 // NewNewsCache creates a new news cache with the specified maximum items
@@ -79,15 +79,15 @@ func (nc *NewsCache) AddItem(item *NewsItem) {
 		// Use URL as fallback ID
 		item.ID = item.URL
 	}
-	
+
 	// Skip if already exists
 	if _, exists := nc.items[item.ID]; exists {
 		return
 	}
-	
+
 	nc.items[item.ID] = item
 	nc.itemsByFeed[item.Source] = append(nc.itemsByFeed[item.Source], item)
-	
+
 	// Enforce cache size limits
 	nc.enforceMaxItems()
 }
@@ -112,7 +112,7 @@ func (nc *NewsCache) GetRecentItems(limit int) []*NewsItem {
 	for _, item := range nc.items {
 		result = append(result, item)
 	}
-	
+
 	// Sort by publication date (most recent first)
 	// Using simple insertion sort for small datasets
 	for i := 1; i < len(result); i++ {
@@ -124,7 +124,7 @@ func (nc *NewsCache) GetRecentItems(limit int) []*NewsItem {
 		}
 		result[j+1] = key
 	}
-	
+
 	if len(result) > limit {
 		result = result[:limit]
 	}
@@ -146,13 +146,13 @@ func (nc *NewsCache) enforceMaxItems() {
 	if len(nc.items) <= nc.maxItems {
 		return
 	}
-	
+
 	// Get all items sorted by publication date (oldest first)
 	var allItems []*NewsItem
 	for _, item := range nc.items {
 		allItems = append(allItems, item)
 	}
-	
+
 	// Sort by publication date (oldest first for removal)
 	for i := 1; i < len(allItems); i++ {
 		key := allItems[i]
@@ -163,13 +163,13 @@ func (nc *NewsCache) enforceMaxItems() {
 		}
 		allItems[j+1] = key
 	}
-	
+
 	// Remove oldest items until we're under the limit
 	itemsToRemove := len(allItems) - nc.maxItems
 	for i := 0; i < itemsToRemove; i++ {
 		item := allItems[i]
 		delete(nc.items, item.ID)
-		
+
 		// Remove from feed-specific list
 		feedItems := nc.itemsByFeed[item.Source]
 		for j, feedItem := range feedItems {
@@ -187,13 +187,13 @@ func (nc *NewsCache) GetStats() map[string]interface{} {
 	stats["totalItems"] = len(nc.items)
 	stats["feedCount"] = len(nc.itemsByFeed)
 	stats["maxItems"] = nc.maxItems
-	
+
 	feedStats := make(map[string]int)
 	for feedName, items := range nc.itemsByFeed {
 		feedStats[feedName] = len(items)
 	}
 	stats["itemsByFeed"] = feedStats
-	
+
 	return stats
 }
 
