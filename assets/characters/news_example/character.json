@@ -47,7 +47,12 @@
         "updateInterval": 30,
         "maxNewsPerResponse": 3,
         "debugMode": false,
-        "preferredCategories": ["tech", "gaming"]
+        "preferredCategories": ["tech", "gaming"],
+        "backgroundUpdates": true,
+        "smartScheduling": true,
+        "errorRecovery": true,
+        "maxCacheItems": 200,
+        "bandwidthConscious": true
       }
     }
   },
