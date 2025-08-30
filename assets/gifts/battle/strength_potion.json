@@ -1,0 +1,49 @@
+{
+  "id": "strength_potion",
+  "name": "Strength Potion",
+  "description": "A magical potion that enhances physical strength during battle",
+  "category": "consumable",
+  "rarity": "common",
+  "image": "strength_potion.png",
+  "properties": {
+    "consumable": true,
+    "stackable": true,
+    "maxStack": 5,
+    "unlockRequirements": {
+      "relationshipLevel": "friendly"
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 5
+      },
+      "animations": ["happy"],
+      "responses": ["Thanks for the potion! This will help in battle."]
+    },
+    "memory": {
+      "importance": 0.6,
+      "tags": ["battle", "helpful", "potion"],
+      "emotionalTone": "grateful"
+    },
+    "battle": {
+      "actionType": "attack",
+      "damageModifier": 1.15,
+      "consumable": true
+    }
+  },
+  "personalityModifiers": {
+    "warrior": {
+      "happiness": 10,
+      "trust": 5
+    },
+    "scholar": {
+      "happiness": 2
+    }
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 100,
+    "placeholder": "Add a note about when to use this potion..."
+  }
+}

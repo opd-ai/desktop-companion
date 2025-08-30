@@ -44,19 +44,22 @@ func (bm *BattleManager) processActionPipeline(action BattleAction) (*BattleResu
 		return nil, err
 	}
 
-	// 2. Apply item modifiers with caps (placeholder for future item integration)
+	// 2. Apply item modifiers with caps (pre-processing)
 	modifiedAction := bm.applyItemModifiers(action)
 
 	// 3. Calculate base effect
 	baseResult := bm.calculateBaseEffect(modifiedAction)
 
-	// 4. Apply fairness constraints
-	cappedResult := bm.applyFairnessCaps(baseResult)
+	// 4. Apply item effects to the result
+	itemEnhancedResult := bm.applyItemEffects(modifiedAction, baseResult)
 
-	// 5. Execute effect on target
+	// 5. Apply fairness constraints
+	cappedResult := bm.applyFairnessCaps(itemEnhancedResult)
+
+	// 6. Execute effect on target
 	finalResult := bm.executeEffect(modifiedAction, cappedResult)
 
-	// 6. Advance turn order (will be implemented in future PR)
+	// 7. Advance turn order (will be implemented in future PR)
 	bm.advanceTurn()
 
 	return finalResult, nil
@@ -92,11 +95,32 @@ func (bm *BattleManager) validateAction(action BattleAction) error {
 	return nil
 }
 
-// applyItemModifiers applies item effects to actions (placeholder for item system integration)
+// applyItemModifiers applies item effects to actions with fairness constraints
 func (bm *BattleManager) applyItemModifiers(action BattleAction) BattleAction {
-	// This will be extended when integrating with the gift/item system
-	// For now, return the action unchanged
-	return action
+	// If no item is being used, return action unchanged
+	if action.ItemUsed == "" || bm.giftProvider == nil {
+		return action
+	}
+
+	// Get the gift definition for the item
+	gift, err := bm.giftProvider.GetGiftDefinition(action.ItemUsed)
+	if err != nil {
+		// Log error but don't fail the action - just proceed without item effects
+		return action
+	}
+
+	// Validate item is applicable to this action type
+	if gift.BattleEffect.ActionType != "" && gift.BattleEffect.ActionType != string(action.Type) {
+		// Item doesn't apply to this action type
+		return action
+	}
+
+	// Apply fairness caps to modifiers before storing them on the action
+	// The actual effect calculation happens in calculateBaseEffect
+	modifiedAction := action
+	modifiedAction.ItemUsed = action.ItemUsed // Preserve item ID for effect calculation
+
+	return modifiedAction
 }
 
 // calculateBaseEffect computes the base effect of an action before modifiers
@@ -188,6 +212,65 @@ func (bm *BattleManager) calculateBaseEffect(action BattleAction) *BattleResult 
 	return result
 }
 
+// applyItemEffects applies item modifiers to calculated battle results
+func (bm *BattleManager) applyItemEffects(action BattleAction, result *BattleResult) *BattleResult {
+	// Skip if no item is used or no gift provider available
+	if action.ItemUsed == "" || bm.giftProvider == nil {
+		return result
+	}
+
+	// Get the gift definition
+	gift, err := bm.giftProvider.GetGiftDefinition(action.ItemUsed)
+	if err != nil {
+		return result // Failed to get gift, return unchanged
+	}
+
+	effect := gift.BattleEffect
+
+	// Skip if item doesn't apply to this action type
+	if effect.ActionType != "" && effect.ActionType != string(action.Type) {
+		return result
+	}
+
+	// Apply damage modifier
+	if effect.DamageModifier > 0 && result.Damage > 0 {
+		result.Damage *= effect.DamageModifier
+	}
+
+	// Apply healing modifier
+	if effect.HealModifier > 0 && result.Healing > 0 {
+		result.Healing *= effect.HealModifier
+	}
+
+	// Add item-specific modifiers if they have duration > 0
+	if effect.Duration > 0 {
+		var itemModifiers []BattleModifier
+
+		if effect.DefenseModifier > 0 {
+			itemModifiers = append(itemModifiers, BattleModifier{
+				Type:     MODIFIER_DEFENSE,
+				Value:    effect.DefenseModifier,
+				Duration: effect.Duration,
+				Source:   "item_" + gift.ID,
+			})
+		}
+
+		if effect.SpeedModifier > 0 {
+			itemModifiers = append(itemModifiers, BattleModifier{
+				Type:     MODIFIER_SPEED,
+				Value:    effect.SpeedModifier,
+				Duration: effect.Duration,
+				Source:   "item_" + gift.ID,
+			})
+		}
+
+		// Add item modifiers to existing ones
+		result.ModifiersApplied = append(result.ModifiersApplied, itemModifiers...)
+	}
+
+	return result
+}
+
 // applyFairnessCaps enforces maximum effect limits to maintain balance
 func (bm *BattleManager) applyFairnessCaps(result *BattleResult) *BattleResult {
 	// Cap damage modifications
@@ -198,6 +281,30 @@ func (bm *BattleManager) applyFairnessCaps(result *BattleResult) *BattleResult {
 	// Cap healing modifications
 	if result.Healing > BASE_HEAL_AMOUNT*MAX_HEAL_MODIFIER {
 		result.Healing = BASE_HEAL_AMOUNT * MAX_HEAL_MODIFIER
+	}
+
+	// Cap modifier values to ensure fairness
+	for i := range result.ModifiersApplied {
+		modifier := &result.ModifiersApplied[i]
+
+		switch modifier.Type {
+		case MODIFIER_DAMAGE:
+			if modifier.Value > MAX_DAMAGE_MODIFIER {
+				modifier.Value = MAX_DAMAGE_MODIFIER
+			}
+		case MODIFIER_DEFENSE:
+			if modifier.Value > MAX_DEFENSE_MODIFIER {
+				modifier.Value = MAX_DEFENSE_MODIFIER
+			}
+		case MODIFIER_SPEED:
+			if modifier.Value > MAX_SPEED_MODIFIER {
+				modifier.Value = MAX_SPEED_MODIFIER
+			}
+		case MODIFIER_HEALING:
+			if modifier.Value > MAX_HEAL_MODIFIER {
+				modifier.Value = MAX_HEAL_MODIFIER
+			}
+		}
 	}
 
 	// Validate modifier stacking

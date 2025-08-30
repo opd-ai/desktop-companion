@@ -36,6 +36,7 @@ type GiftProperties struct {
 type GiftEffects struct {
 	Immediate ImmediateEffects `json:"immediate"`
 	Memory    MemoryEffects    `json:"memory"`
+	Battle    BattleItemEffect `json:"battle,omitempty"` // Battle-specific effects
 }
 
 // ImmediateEffects represents stat changes, animations, and responses
@@ -50,6 +51,18 @@ type MemoryEffects struct {
 	Importance    float64  `json:"importance"`
 	Tags          []string `json:"tags"`
 	EmotionalTone string   `json:"emotionalTone"`
+}
+
+// BattleItemEffect defines battle-specific effects when items are used in combat
+// All modifiers are capped by the battle system's fairness constraints
+type BattleItemEffect struct {
+	ActionType      string  `json:"actionType,omitempty"`      // Specific action this enhances ("attack", "heal", etc.)
+	DamageModifier  float64 `json:"damageModifier,omitempty"`  // Multiplier for damage (capped at MAX_DAMAGE_MODIFIER)
+	DefenseModifier float64 `json:"defenseModifier,omitempty"` // Multiplier for defense (capped at MAX_DEFENSE_MODIFIER)
+	SpeedModifier   float64 `json:"speedModifier,omitempty"`   // Multiplier for speed (capped at MAX_SPEED_MODIFIER)
+	HealModifier    float64 `json:"healModifier,omitempty"`    // Multiplier for healing (capped at MAX_HEAL_MODIFIER)
+	Duration        int     `json:"duration,omitempty"`        // Turns the effect lasts (0 = single use)
+	Consumable      bool    `json:"consumable"`                // Whether item is consumed on use
 }
 
 // GiftNotesConfig defines note attachment settings

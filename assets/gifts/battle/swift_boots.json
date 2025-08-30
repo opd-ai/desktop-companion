@@ -1,0 +1,50 @@
+{
+  "id": "swift_boots",
+  "name": "Swift Boots",
+  "description": "Enchanted boots that increase movement speed and agility",
+  "category": "equipment",
+  "rarity": "uncommon",
+  "image": "swift_boots.png",
+  "properties": {
+    "consumable": false,
+    "stackable": false,
+    "unlockRequirements": {
+      "relationshipLevel": "friendly"
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "happiness": 10,
+        "energy": 15
+      },
+      "animations": ["excited", "running"],
+      "responses": ["These boots feel amazing! I feel so much faster already!"]
+    },
+    "memory": {
+      "importance": 0.7,
+      "tags": ["speed", "equipment", "practical"],
+      "emotionalTone": "excited"
+    },
+    "battle": {
+      "speedModifier": 1.08,
+      "duration": 3,
+      "consumable": false
+    }
+  },
+  "personalityModifiers": {
+    "athletic": {
+      "happiness": 15,
+      "energy": 10
+    },
+    "adventurer": {
+      "happiness": 12,
+      "energy": 8
+    }
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 100,
+    "placeholder": "Mention how these will help in adventures..."
+  }
+}

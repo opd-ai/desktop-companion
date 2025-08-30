@@ -1,0 +1,57 @@
+{
+  "id": "guardian_amulet",
+  "name": "Guardian Amulet",
+  "description": "A mystical amulet that provides protection during combat",
+  "category": "accessory",
+  "rarity": "rare",
+  "image": "guardian_amulet.png",
+  "properties": {
+    "consumable": false,
+    "stackable": false,
+    "unlockRequirements": {
+      "relationshipLevel": "close",
+      "stats": {
+        "trust": 75
+      }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "trust": 15,
+        "happiness": 12
+      },
+      "animations": ["surprised", "grateful"],
+      "responses": ["This amulet is beautiful! I can feel its protective magic."]
+    },
+    "memory": {
+      "importance": 0.9,
+      "tags": ["protection", "precious", "magical"],
+      "emotionalTone": "deeply_grateful"
+    },
+    "battle": {
+      "defenseModifier": 1.12,
+      "duration": 5,
+      "consumable": false
+    }
+  },
+  "personalityModifiers": {
+    "guardian": {
+      "happiness": 20,
+      "trust": 10
+    },
+    "magical": {
+      "happiness": 18,
+      "trust": 8
+    },
+    "practical": {
+      "happiness": 8,
+      "trust": 15
+    }
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 150,
+    "placeholder": "Share why you chose this special amulet..."
+  }
+}

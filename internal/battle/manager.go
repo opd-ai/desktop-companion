@@ -19,11 +19,37 @@ import (
 	"time"
 )
 
+// GiftProvider interface allows the battle system to access gift definitions
+// This enables item integration while maintaining loose coupling
+type GiftProvider interface {
+	GetGiftDefinition(giftID string) (GiftDefinition, error)
+	GetAvailableGifts() []GiftDefinition
+}
+
+// GiftDefinition represents the minimal gift info needed for battle integration
+// This avoids importing the entire character package
+type GiftDefinition struct {
+	ID           string
+	Name         string
+	BattleEffect BattleItemEffect
+}
+
+// BattleItemEffect mirrors the struct from character package for battle integration
+type BattleItemEffect struct {
+	ActionType      string
+	DamageModifier  float64
+	DefenseModifier float64
+	SpeedModifier   float64
+	HealModifier    float64
+	Duration        int
+	Consumable      bool
+}
+
 // Battle system configuration constants
 // All pets have identical base action values to ensure fairness
 const (
 	BASE_ATTACK_DAMAGE     = 20.0
-	BASE_DEFEND_REDUCTION  = 0.5  // 50% damage reduction
+	BASE_DEFEND_REDUCTION  = 0.5 // 50% damage reduction
 	BASE_HEAL_AMOUNT       = 25.0
 	BASE_STUN_DURATION     = 1    // 1 turn
 	BASE_BOOST_AMOUNT      = 15.0 // +15 to attack for 3 turns
@@ -76,7 +102,7 @@ type BattlePhase string
 const (
 	PHASE_WAITING   BattlePhase = "waiting"   // Waiting for participants
 	PHASE_ACTIVE    BattlePhase = "active"    // Battle in progress
-	PHASE_FINISHED  BattlePhase = "finished" // Battle completed
+	PHASE_FINISHED  BattlePhase = "finished"  // Battle completed
 	PHASE_CANCELLED BattlePhase = "cancelled" // Battle cancelled
 )
 
@@ -137,35 +163,42 @@ type BattleParticipant struct {
 	PeerID         string         `json:"peerID,omitempty"` // For multiplayer battles
 	IsLocal        bool           `json:"isLocal"`
 	Stats          BattleStats    `json:"stats"`
-	ActiveItems    []string       `json:"activeItems"`    // Currently equipped items
-	ActionHistory  []BattleAction `json:"actionHistory"`  // Previous actions
+	ActiveItems    []string       `json:"activeItems"`   // Currently equipped items
+	ActionHistory  []BattleAction `json:"actionHistory"` // Previous actions
 	LastActionTime time.Time      `json:"lastActionTime"`
 	IsReady        bool           `json:"isReady"`
 }
 
 // BattleState maintains the complete state of an active battle
 type BattleState struct {
-	BattleID     string                       `json:"battleID"`
+	BattleID     string                        `json:"battleID"`
 	Participants map[string]*BattleParticipant `json:"participants"`
-	TurnOrder    []string                     `json:"turnOrder"`
-	CurrentTurn  int                          `json:"currentTurn"`
-	Phase        BattlePhase                  `json:"phase"`
-	TurnTimeout  time.Duration                `json:"turnTimeout"`
-	Started      time.Time                    `json:"started"`
-	LastAction   *BattleAction                `json:"lastAction,omitempty"`
-	mu           sync.RWMutex                 // Protects concurrent access
+	TurnOrder    []string                      `json:"turnOrder"`
+	CurrentTurn  int                           `json:"currentTurn"`
+	Phase        BattlePhase                   `json:"phase"`
+	TurnTimeout  time.Duration                 `json:"turnTimeout"`
+	Started      time.Time                     `json:"started"`
+	LastAction   *BattleAction                 `json:"lastAction,omitempty"`
+	mu           sync.RWMutex                  // Protects concurrent access
 }
 
 // BattleManager handles battle state management and coordination
 type BattleManager struct {
 	currentBattle *BattleState
+	giftProvider  GiftProvider // For item integration
 	mu            sync.RWMutex
-	// Will be extended with dependencies in future PRs
 }
 
 // NewBattleManager creates a new battle manager instance
 func NewBattleManager() *BattleManager {
 	return &BattleManager{}
+}
+
+// NewBattleManagerWithGifts creates a new battle manager with gift system integration
+func NewBattleManagerWithGifts(giftProvider GiftProvider) *BattleManager {
+	return &BattleManager{
+		giftProvider: giftProvider,
+	}
 }
 
 // InitiateBattle starts a new battle between participants

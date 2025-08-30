@@ -1,0 +1,53 @@
+{
+  "id": "healing_herb",
+  "name": "Healing Herb",
+  "description": "A rare herb that amplifies natural healing abilities",
+  "category": "consumable",
+  "rarity": "uncommon",
+  "image": "healing_herb.png",
+  "properties": {
+    "consumable": true,
+    "stackable": true,
+    "maxStack": 3,
+    "unlockRequirements": {
+      "stats": {
+        "health": 50
+      }
+    }
+  },
+  "giftEffects": {
+    "immediate": {
+      "stats": {
+        "health": 10,
+        "happiness": 8
+      },
+      "animations": ["heal", "happy"],
+      "responses": ["This herb smells wonderful! It will help me recover quickly."]
+    },
+    "memory": {
+      "importance": 0.7,
+      "tags": ["healing", "caring", "herb"],
+      "emotionalTone": "appreciative"
+    },
+    "battle": {
+      "actionType": "heal",
+      "healModifier": 1.20,
+      "consumable": true
+    }
+  },
+  "personalityModifiers": {
+    "healer": {
+      "happiness": 15,
+      "trust": 8
+    },
+    "nature": {
+      "happiness": 12,
+      "trust": 5
+    }
+  },
+  "notes": {
+    "enabled": true,
+    "maxLength": 100,
+    "placeholder": "Note when this herb might be most useful..."
+  }
+}

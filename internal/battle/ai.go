@@ -27,11 +27,12 @@ const (
 
 // BattleAI handles automated battle decisions for characters
 type BattleAI struct {
-	characterID string
-	difficulty  AIDifficulty
-	strategy    AIStrategy
-	lastActions []BattleActionType // Track recent actions to avoid repetition
-	rng         *rand.Rand         // For deterministic but varied behavior
+	characterID  string
+	difficulty   AIDifficulty
+	strategy     AIStrategy
+	giftProvider GiftProvider       // For item integration
+	lastActions  []BattleActionType // Track recent actions to avoid repetition
+	rng          *rand.Rand         // For deterministic but varied behavior
 }
 
 // NewBattleAI creates a new AI instance for a character
@@ -42,6 +43,18 @@ func NewBattleAI(characterID string, difficulty AIDifficulty, strategy AIStrateg
 		strategy:    strategy,
 		lastActions: make([]BattleActionType, 0, 3),
 		rng:         rand.New(rand.NewSource(time.Now().UnixNano())),
+	}
+}
+
+// NewBattleAIWithGifts creates a new AI instance with gift system integration
+func NewBattleAIWithGifts(characterID string, difficulty AIDifficulty, strategy AIStrategy, giftProvider GiftProvider) *BattleAI {
+	return &BattleAI{
+		characterID:  characterID,
+		difficulty:   difficulty,
+		strategy:     strategy,
+		giftProvider: giftProvider,
+		lastActions:  make([]BattleActionType, 0, 3),
+		rng:          rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
@@ -58,6 +71,9 @@ func (ai *BattleAI) SelectAction(battleState *BattleState, timeRemaining time.Du
 
 	// Select strategy based on situation and AI personality
 	action := ai.selectStrategicAction(battleState, threat, opportunity)
+
+	// Enhance action with items if available
+	action = ai.enhanceActionWithItem(action)
 
 	// Track action history to avoid repetition
 	ai.updateActionHistory(action.Type)
@@ -404,4 +420,106 @@ func (ai *BattleAI) ShouldActImmediately(battleState *BattleState) bool {
 	}
 
 	return false
+}
+
+// selectBestItem chooses the most beneficial item for the given action type
+func (ai *BattleAI) selectBestItem(actionType BattleActionType) string {
+	if ai.giftProvider == nil {
+		return "" // No gift system available
+	}
+
+	availableGifts := ai.giftProvider.GetAvailableGifts()
+	if len(availableGifts) == 0 {
+		return ""
+	}
+
+	bestItem := ""
+	bestScore := 0.0
+
+	for _, gift := range availableGifts {
+		score := ai.calculateItemScore(gift, actionType)
+		if score > bestScore {
+			bestItem = gift.ID
+			bestScore = score
+		}
+	}
+
+	return bestItem
+}
+
+// calculateItemScore evaluates how beneficial an item is for the given action
+func (ai *BattleAI) calculateItemScore(gift GiftDefinition, actionType BattleActionType) float64 {
+	effect := gift.BattleEffect
+
+	// Skip if item doesn't apply to this action type
+	if effect.ActionType != "" && effect.ActionType != string(actionType) {
+		return 0.0
+	}
+
+	score := 0.0
+
+	// Score based on relevant modifiers for the action type
+	switch actionType {
+	case ACTION_ATTACK, ACTION_DRAIN:
+		score += (effect.DamageModifier - 1.0) * 100 // Convert multiplier to score
+
+	case ACTION_HEAL:
+		score += (effect.HealModifier - 1.0) * 100
+
+	case ACTION_DEFEND, ACTION_SHIELD:
+		score += (effect.DefenseModifier - 1.0) * 100
+
+	default:
+		// For other actions, consider speed boost
+		score += (effect.SpeedModifier - 1.0) * 50
+	}
+
+	// Bonus for longer duration effects
+	if effect.Duration > 1 {
+		score += float64(effect.Duration) * 10
+	}
+
+	// Penalty for consumable items (based on AI difficulty)
+	if effect.Consumable {
+		switch ai.difficulty {
+		case AI_EASY:
+			score *= 0.5 // Easy AI is reluctant to use consumables
+		case AI_NORMAL:
+			score *= 0.7
+		case AI_HARD:
+			score *= 0.9
+		case AI_EXPERT:
+			// Expert AI uses consumables strategically, no penalty
+		}
+	}
+
+	return score
+}
+
+// enhanceActionWithItem adds the best available item to an action
+func (ai *BattleAI) enhanceActionWithItem(action BattleAction) BattleAction {
+	// Only consider items on higher difficulties or with specific chance
+	useItemChance := 0.0
+	switch ai.difficulty {
+	case AI_EASY:
+		useItemChance = 0.1 // 10% chance to use items
+	case AI_NORMAL:
+		useItemChance = 0.3 // 30% chance
+	case AI_HARD:
+		useItemChance = 0.6 // 60% chance
+	case AI_EXPERT:
+		useItemChance = 0.8 // 80% chance
+	}
+
+	if ai.rng.Float64() > useItemChance {
+		return action // Don't use item this time
+	}
+
+	// Select best item for this action
+	bestItem := ai.selectBestItem(action.Type)
+	if bestItem != "" {
+		action.ItemUsed = bestItem
+	}
+
+	return action
 }
