@@ -816,41 +816,71 @@ func configureTransparency(window fyne.Window, debug bool) {
 
 // setupKeyboardShortcuts configures keyboard shortcuts for the desktop window
 func (dw *DesktopWindow) setupKeyboardShortcuts() {
-	// Set up keyboard event handler for stats overlay toggle
 	canvas := dw.window.Canvas()
 
+	// Configure basic keyboard shortcuts
+	dw.setupBasicKeyShortcuts(canvas)
+
+	// Configure conditional shortcuts based on features
+	dw.setupConditionalShortcuts(canvas)
+
+	// Log available shortcuts for debugging
+	dw.logAvailableShortcuts()
+}
+
+// setupBasicKeyShortcuts configures core keyboard shortcuts available to all windows
+func (dw *DesktopWindow) setupBasicKeyShortcuts(canvas fyne.Canvas) {
 	canvas.SetOnTypedKey(func(key *fyne.KeyEvent) {
 		switch key.Name {
 		case fyne.KeyS:
-			// 'S' key toggles stats overlay
-			if dw.debug {
-				log.Println("Stats toggle shortcut pressed (S key)")
-			}
-			dw.ToggleStatsOverlay()
+			dw.handleStatsToggleShortcut()
 		case fyne.KeyC:
-			// 'C' key toggles chatbot interface
-			if dw.debug {
-				log.Println("Chat toggle shortcut pressed (C key)")
-			}
-			dw.ToggleChatbotInterfaceWithFocus()
+			dw.handleChatToggleShortcut()
 		case fyne.KeyN:
-			// 'N' key toggles network overlay
-			if dw.debug {
-				log.Println("Network toggle shortcut pressed (N key)")
-			}
-			dw.ToggleNetworkOverlay()
+			dw.handleNetworkToggleShortcut()
 		case fyne.KeyEscape:
-			// 'ESC' key closes chatbot interface if open
-			if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
-				if dw.debug {
-					log.Println("Escape key pressed - closing chatbot interface")
-				}
-				dw.chatbotInterface.Hide()
-			}
+			dw.handleEscapeKeyShortcut()
 		}
 	})
+}
 
-	// Add general events keyboard shortcuts with Ctrl modifier only if events are enabled
+// handleStatsToggleShortcut processes the 'S' key press for stats overlay toggle
+func (dw *DesktopWindow) handleStatsToggleShortcut() {
+	if dw.debug {
+		log.Println("Stats toggle shortcut pressed (S key)")
+	}
+	dw.ToggleStatsOverlay()
+}
+
+// handleChatToggleShortcut processes the 'C' key press for chatbot interface toggle
+func (dw *DesktopWindow) handleChatToggleShortcut() {
+	if dw.debug {
+		log.Println("Chat toggle shortcut pressed (C key)")
+	}
+	dw.ToggleChatbotInterfaceWithFocus()
+}
+
+// handleNetworkToggleShortcut processes the 'N' key press for network overlay toggle
+func (dw *DesktopWindow) handleNetworkToggleShortcut() {
+	if dw.debug {
+		log.Println("Network toggle shortcut pressed (N key)")
+	}
+	dw.ToggleNetworkOverlay()
+}
+
+// handleEscapeKeyShortcut processes the Escape key press for closing chatbot interface
+func (dw *DesktopWindow) handleEscapeKeyShortcut() {
+	if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
+		if dw.debug {
+			log.Println("Escape key pressed - closing chatbot interface")
+		}
+		dw.chatbotInterface.Hide()
+	}
+}
+
+// setupConditionalShortcuts configures feature-dependent keyboard shortcuts
+func (dw *DesktopWindow) setupConditionalShortcuts(canvas fyne.Canvas) {
+	// Add general events keyboard shortcuts only if events are enabled
 	if dw.eventsEnabled {
 		dw.setupGeneralEventsShortcuts(canvas)
 	}
@@ -859,23 +889,38 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 	if dw.character.GetCard().HasNewsFeatures() {
 		dw.setupNewsShortcuts(canvas)
 	}
+}
 
-	if dw.debug {
-		log.Println("Keyboard shortcuts configured:")
-		log.Println("  'S' - Toggle stats overlay")
-		log.Println("  'C' - Toggle chatbot")
-		log.Println("  'N' - Toggle network overlay")
-		log.Println("  'ESC' - Close chatbot")
-		if dw.eventsEnabled {
-			log.Println("  'Ctrl+E' - Open events menu")
-			log.Println("  'Ctrl+R' - Random roleplay scenario")
-			log.Println("  'Ctrl+G' - Mini-game session")
-			log.Println("  'Ctrl+H' - Humor/joke session")
-		}
-		if dw.character.GetCard().HasNewsFeatures() {
-			log.Println("  'Ctrl+L' - Read latest news")
-			log.Println("  'Ctrl+U' - Update news feeds")
-		}
+// logAvailableShortcuts outputs debugging information about configured shortcuts
+func (dw *DesktopWindow) logAvailableShortcuts() {
+	if !dw.debug {
+		return
+	}
+
+	log.Println("Keyboard shortcuts configured:")
+	dw.logBasicShortcuts()
+	dw.logConditionalShortcuts()
+}
+
+// logBasicShortcuts outputs information about basic keyboard shortcuts
+func (dw *DesktopWindow) logBasicShortcuts() {
+	log.Println("  'S' - Toggle stats overlay")
+	log.Println("  'C' - Toggle chatbot")
+	log.Println("  'N' - Toggle network overlay")
+	log.Println("  'ESC' - Close chatbot")
+}
+
+// logConditionalShortcuts outputs information about feature-dependent shortcuts
+func (dw *DesktopWindow) logConditionalShortcuts() {
+	if dw.eventsEnabled {
+		log.Println("  'Ctrl+E' - Open events menu")
+		log.Println("  'Ctrl+R' - Random roleplay scenario")
+		log.Println("  'Ctrl+G' - Mini-game session")
+		log.Println("  'Ctrl+H' - Humor/joke session")
+	}
+	if dw.character.GetCard().HasNewsFeatures() {
+		log.Println("  'Ctrl+L' - Read latest news")
+		log.Println("  'Ctrl+U' - Update news feeds")
 	}
 }
 
