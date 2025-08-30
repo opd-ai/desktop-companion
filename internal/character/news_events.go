@@ -40,32 +40,52 @@ func (c *Character) initializeNewsEvents() error {
 
 // initializeNewsBackend configures the news backend with character's feed configuration
 func (c *Character) initializeNewsBackend() error {
-	if c.dialogManager == nil {
-		return fmt.Errorf("dialog manager not available")
+	newsBackend, err := c.validateAndGetNewsBackend()
+	if err != nil {
+		return err
 	}
 
-	// Get the news backend
+	if err := c.addFeedsToBackend(newsBackend); err != nil {
+		return err
+	}
+
+	c.performInitialFeedUpdate(newsBackend)
+
+	return nil
+}
+
+// validateAndGetNewsBackend validates dialog manager and retrieves the news backend
+func (c *Character) validateAndGetNewsBackend() (*news.NewsBlogBackend, error) {
+	if c.dialogManager == nil {
+		return nil, fmt.Errorf("dialog manager not available")
+	}
+
 	backend, exists := c.dialogManager.GetBackend("news_blog")
 	if !exists {
-		return fmt.Errorf("news backend not registered")
+		return nil, fmt.Errorf("news backend not registered")
 	}
 
 	newsBackend, ok := backend.(*news.NewsBlogBackend)
 	if !ok {
-		return fmt.Errorf("invalid news backend type")
+		return nil, fmt.Errorf("invalid news backend type")
 	}
 
-	// Add feeds from character configuration
+	return newsBackend, nil
+}
+
+// addFeedsToBackend adds all configured feeds to the news backend
+func (c *Character) addFeedsToBackend(newsBackend *news.NewsBlogBackend) error {
 	for _, feed := range c.card.NewsFeatures.Feeds {
 		if err := newsBackend.AddFeed(feed); err != nil {
-			if c.debug {
-				fmt.Printf("[DEBUG] Failed to add feed %s: %v\n", feed.Name, err)
-			}
+			c.logDebugMessage("Failed to add feed %s: %v", feed.Name, err)
 			continue
 		}
 	}
+	return nil
+}
 
-	// Perform initial feed update if enabled
+// performInitialFeedUpdate starts initial feed update in background if feeds are configured
+func (c *Character) performInitialFeedUpdate(newsBackend *news.NewsBlogBackend) {
 	if len(c.card.NewsFeatures.Feeds) > 0 {
 		go func() {
 			if err := newsBackend.UpdateFeeds(); err != nil && c.debug {
@@ -73,8 +93,13 @@ func (c *Character) initializeNewsBackend() error {
 			}
 		}()
 	}
+}
 
-	return nil
+// logDebugMessage outputs debug message if debug mode is enabled
+func (c *Character) logDebugMessage(format string, args ...interface{}) {
+	if c.debug {
+		fmt.Printf("[DEBUG] "+format+"\n", args...)
+	}
 }
 
 // HandleNewsEvent processes a news-specific event trigger
