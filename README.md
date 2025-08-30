@@ -23,7 +23,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Personality System**: Sophisticated personality traits affecting all interactions and responses
   - **Romance Events**: Memory-based random events that respond to interaction history and relationship milestones
   - **Advanced Features**: Jealousy mechanics, compatibility analysis, and relationship crisis recovery systems
-  - **JSON-Configurable**: 90%+ of romance behavior customizable through character cards
+  - **JSON-Configurable**: Extensive romance behavior customizable through character cards
 - 💾 **Persistent State**: JSON-based save/load system with auto-save functionality *(Complete)*
 - 📊 **Stats Overlay**: Optional real-time stats display with progress bars *(Complete)*
 - 🤖 **AI-Powered Dialog**: Advanced Markov chain text generation with personality-driven responses *(Complete)*
@@ -32,7 +32,13 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Memory System**: Characters learn and reference past interactions
   - **Context Awareness**: Dialog varies based on triggers, relationship level, and character stats
   - **Quality Control**: Multi-layered filtering ensures coherent, character-appropriate responses
-- 💬 **Interactive Chatbot Interface**: Real-time conversation system with AI characters *(Complete)*
+- � **RSS/Atom News Integration**: Real-time news feed parsing and dialog integration *(Complete)*
+  - **Feed Management**: Multi-source RSS/Atom feed fetching with smart scheduling
+  - **News Backend**: AI dialog backend specializing in news-based conversations  
+  - **Caching System**: Memory-efficient news item caching with deduplication
+  - **Keyword Filtering**: Optional content filtering per feed source
+  - **Background Updates**: Automatic feed updates with error recovery
+- �💬 **Interactive Chatbot Interface**: Real-time conversation system with AI characters *(Complete)*
   - **Keyboard Integration**: Press 'C' to toggle chatbot interface instantly
   - **Context Menu Access**: Right-click → "Open Chat" for menu-driven access
   - **Multi-line Input**: Advanced text input with send button for natural conversations
@@ -201,6 +207,7 @@ This project follows the "lazy programmer" philosophy, using mature libraries in
 | Library | License | Purpose | Why Chosen |
 |---------|---------|---------|------------|
 | [fyne.io/fyne/v2](https://fyne.io/) | BSD-3-Clause | Cross-platform GUI | Only mature Go GUI with native transparency support |
+| [github.com/mmcdole/gofeed](https://github.com/mmcdole/gofeed) | MIT | RSS/Atom feed parsing | Mature RSS parser with 2.4k+ stars, handles multiple feed formats |
 | Go standard library | BSD-3-Clause | JSON parsing, GIF decoding, image processing, networking | Zero external dependencies, battle-tested |
 
 *Note: Full dependency list available in `go.mod` - all dependencies use permissive licenses compatible with commercial use.*
@@ -246,6 +253,9 @@ go run cmd/companion/main.go -game -stats -character assets/characters/slow_burn
 # AI-Powered Dialog Examples
 go run cmd/companion/main.go -character assets/characters/markov_example/character.json         # Basic Markov dialog
 go run cmd/companion/main.go -character assets/characters/examples/markov_dialog_example.json  # Advanced dialog system
+
+# RSS/Atom News Integration Examples
+go run cmd/companion/main.go -character assets/characters/news_example/character.json          # News-enabled character
 
 # Interactive Chatbot Interface Examples  
 go run cmd/companion/main.go -character assets/characters/markov_example/character.json         # AI chat with basic character
@@ -746,7 +756,7 @@ DDS/
 │   │   ├── multiplayer.go          # Multiplayer character support
 │   │   ├── multiplayer_battle.go   # Battle system character integration
 │   │   ├── network_events.go       # Network-based character events
-│   │   └── *_test.go               # Comprehensive unit tests (52+ files)
+│   │   └── *_test.go               # Comprehensive unit tests (45+ files)
 │   ├── ui/
 │   │   ├── window.go              # Transparent window (fyne)
 │   │   ├── renderer.go            # Character rendering
@@ -805,6 +815,8 @@ DDS/
 │   ├── romance_supportive/        # Romance with supportive traits
 │   ├── romance_tsundere/          # Romance with tsundere traits
 │   ├── markov_example/            # AI dialog demonstration
+│   ├── multiplayer/               # Multiplayer networking characters
+│   ├── news_example/              # RSS/Atom news integration
 │   ├── examples/                  # Example configurations
 │   └── templates/                 # Character creation templates
 ├── Makefile                       # Build automation
