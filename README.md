@@ -49,13 +49,18 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 - 🌐 **Multiplayer Networking**: Peer-to-peer networking infrastructure *(Phase 1 Complete)*
   - **Peer Discovery**: UDP-based automatic discovery of other DDS instances on local network
   - **Foundation Ready**: Core infrastructure for AI-controlled multiplayer companions
-- 🤖 **Bot Framework**: Autonomous AI character behavior system *(Phase 2 In Progress)*
+- 🤖 **Bot Framework**: Autonomous AI character behavior system *(Phase 2 Complete)*
   - **Personality-Driven Behavior**: Configurable traits drive all autonomous decisions
   - **Natural Timing**: Human-like delays and variations prevent mechanical behavior
   - **Character Integration**: Seamless integration with existing Character.Update() cycle
   - **Network Coordination**: Bot characters can interact with peers in multiplayer mode
   - **Performance Optimized**: <50ns per Update() call, suitable for 60 FPS real-time operation
   - **Rate Limiting**: Prevents excessive actions that would feel unnatural
+- 🎮 **Multiplayer UI**: Complete network overlay interface *(Phase 3 Complete)*
+  - **Character Distinction**: Clear visual separation of local (🏠) vs network (🌐) characters
+  - **Peer Management**: Real-time peer discovery and connection status
+  - **Network Chat**: Integrated chat system for multiplayer communication
+  - **Activity Monitoring**: Live status indicators for all characters and peers
   - **Reliable Messaging**: TCP-based message delivery with JSON protocol
   - **Cryptographic Security**: Ed25519 signature verification for message integrity
   - **Character Configuration**: Optional multiplayer settings in character cards
@@ -197,6 +202,12 @@ go run cmd/companion/main.go -character assets/characters/markov_example/charact
 # General Dialog Events Examples
 go run cmd/companion/main.go -character assets/characters/examples/interactive_events.json     # Interactive conversations
 go run cmd/companion/main.go -character assets/characters/examples/roleplay_character.json    # Roleplay scenarios
+
+# Multiplayer Networking Examples (New in Phase 3!)
+go run cmd/companion/main.go -network -character assets/characters/multiplayer/social_bot.json        # Social bot with networking
+go run cmd/companion/main.go -network -network-ui -character assets/characters/multiplayer/helper_bot.json  # Helper bot with UI overlay
+go run cmd/companion/main.go -network -network-ui -character assets/characters/default/character.json  # Regular character in network mode
+# Press 'N' key or right-click → "Network Overlay" to toggle network UI (shows local 🏠 vs network 🌐 characters)
 ```
 
 **General Dialog Events**:
@@ -217,12 +228,19 @@ go run cmd/companion/main.go -character assets/characters/examples/roleplay_char
 - **Stats overlay**: Toggle with 'S' key to monitor character's wellbeing
 - **Chatbot interface**: Toggle with 'C' key for AI-powered conversations (AI characters only)
 - **Context menu**: Right-click for advanced options including "Open Chat" for AI characters
+- **Network overlay**: Toggle with 'N' key to show multiplayer status (network mode only)
 - **Auto-save**: Game state automatically saves at intervals that vary by difficulty:
   - Easy: 10 minutes (600 seconds)
   - Normal/Romance: 5 minutes (300 seconds)  
   - Specialist: ~6.7 minutes (400 seconds)
   - Hard: 2 minutes (120 seconds)
   - Challenge: 1 minute (60 seconds)
+
+**Multiplayer Interactions** (network mode):
+- **Network overlay**: Shows local (🏠) vs network (🌐) characters with activity status
+- **Peer chat**: Send messages to other players through the network overlay
+- **Character visibility**: See all characters connected to the network session
+- **Real-time sync**: Character actions and status updates shared across peers
 
 **Character Care**:
 - **Monitor Stats**: Hunger, happiness, health, and energy decrease over time
@@ -599,6 +617,10 @@ go run cmd/companion/main.go [options]
 # Game features (Tamagotchi mode)
 -game                Enable Tamagotchi game features (stats, interactions, progression)
 -stats               Show real-time stats overlay (requires -game)
+
+# Multiplayer networking features (New in Phase 3!)
+-network             Enable multiplayer networking features
+-network-ui          Show network overlay UI (requires -network)
 
 # Performance profiling
 -memprofile <file>   Write memory profile to file for analysis
