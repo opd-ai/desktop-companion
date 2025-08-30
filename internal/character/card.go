@@ -1,6 +1,7 @@
 package character
 
 import (
+	"desktop-companion/internal/bot"
 	"desktop-companion/internal/dialog"
 	"encoding/json"
 	"fmt"
@@ -123,11 +124,12 @@ type InteractionConfigExtended struct {
 // MultiplayerConfig defines multiplayer networking configuration for character cards
 // Enables peer-to-peer networking features while maintaining backward compatibility
 type MultiplayerConfig struct {
-	Enabled       bool   `json:"enabled"`                 // Enable multiplayer networking features
-	BotCapable    bool   `json:"botCapable"`              // Can this character run autonomously as a bot
-	NetworkID     string `json:"networkID"`               // Unique identifier for this character type
-	MaxPeers      int    `json:"maxPeers,omitempty"`      // Maximum number of peers to connect to (default: 8)
-	DiscoveryPort int    `json:"discoveryPort,omitempty"` // UDP port for peer discovery (default: 8080)
+	Enabled        bool                      `json:"enabled"`                  // Enable multiplayer networking features
+	BotCapable     bool                      `json:"botCapable"`               // Can this character run autonomously as a bot
+	NetworkID      string                    `json:"networkID"`                // Unique identifier for this character type
+	MaxPeers       int                       `json:"maxPeers,omitempty"`       // Maximum number of peers to connect to (default: 8)
+	DiscoveryPort  int                       `json:"discoveryPort,omitempty"`  // UDP port for peer discovery (default: 8080)
+	BotPersonality *bot.PersonalityArchetype `json:"botPersonality,omitempty"` // Personality configuration for bot behavior
 }
 
 // LoadCard loads and validates a character card from a JSON file
@@ -1127,6 +1129,11 @@ func (c *CharacterCard) validateMultiplayerConfig() error {
 		return err
 	}
 
+	// Validate BotPersonality when bot capabilities are enabled
+	if err := c.validateBotPersonality(mp); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -1183,7 +1190,52 @@ func (c *CharacterCard) validateDiscoveryPort(discoveryPort int) error {
 	return nil
 }
 
+// validateBotPersonality validates bot personality configuration when bot capabilities are enabled
+func (c *CharacterCard) validateBotPersonality(mp *MultiplayerConfig) error {
+	// Skip validation if bot capabilities are not enabled
+	if !mp.BotCapable {
+		return nil
+	}
+
+	// BotPersonality is optional - skip validation if not provided
+	if mp.BotPersonality == nil {
+		return nil
+	}
+
+	// Use PersonalityManager to validate the personality archetype
+	pm := bot.NewPersonalityManager()
+
+	// Create a JSON representation to validate through the standard path
+	jsonData, err := json.Marshal(mp.BotPersonality)
+	if err != nil {
+		return fmt.Errorf("failed to marshal bot personality: %w", err)
+	}
+
+	// Validate using PersonalityManager
+	_, err = pm.LoadFromJSON(jsonData)
+	if err != nil {
+		return fmt.Errorf("invalid bot personality: %w", err)
+	}
+
+	return nil
+}
+
 // HasMultiplayer returns true if this character card has multiplayer networking enabled
 func (c *CharacterCard) HasMultiplayer() bool {
 	return c.Multiplayer != nil && c.Multiplayer.Enabled
+}
+
+// IsBotCapable returns true if this character can run autonomously as a bot
+func (c *CharacterCard) IsBotCapable() bool {
+	return c.Multiplayer != nil && c.Multiplayer.BotCapable
+}
+
+// GetBotPersonality returns the bot personality for this character, or nil if not configured
+func (c *CharacterCard) GetBotPersonality() (*bot.BotPersonality, error) {
+	if !c.IsBotCapable() || c.Multiplayer.BotPersonality == nil {
+		return nil, nil
+	}
+
+	pm := bot.NewPersonalityManager()
+	return pm.CreatePersonality(c.Multiplayer.BotPersonality)
 }
