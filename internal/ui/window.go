@@ -86,12 +86,12 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	if networkMode && networkManager != nil {
 		dw.networkOverlay = NewNetworkOverlay(networkManager)
 		dw.networkOverlay.RegisterNetworkEvents()
-		
+
 		// Set local character name for clear UI distinction
 		if char != nil && char.GetCard() != nil {
 			dw.networkOverlay.SetLocalCharacterName(char.GetCard().Name)
 		}
-		
+
 		if showNetwork {
 			dw.networkOverlay.Show()
 		}
@@ -231,6 +231,7 @@ func (dw *DesktopWindow) showContextMenu() {
 
 	menuItems = append(menuItems, dw.buildBasicMenuItems()...)
 	menuItems = append(menuItems, dw.buildGameModeMenuItems()...)
+	menuItems = append(menuItems, dw.buildBattleMenuItems()...)
 	menuItems = append(menuItems, dw.buildChatMenuItems()...)
 	menuItems = append(menuItems, dw.buildUtilityMenuItems()...)
 
@@ -293,6 +294,27 @@ func (dw *DesktopWindow) buildGameModeMenuItems() []ContextMenuItem {
 			},
 		})
 	}
+
+	return menuItems
+}
+
+// buildBattleMenuItems creates battle-related menu items for battle-capable characters
+// Only shows battle options if the character has battle system enabled
+func (dw *DesktopWindow) buildBattleMenuItems() []ContextMenuItem {
+	// Check if character has battle system enabled
+	if !dw.shouldShowBattleOptions() {
+		return nil
+	}
+
+	var menuItems []ContextMenuItem
+
+	// Battle initiation menu item
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "Initiate Battle",
+		Callback: func() {
+			dw.handleBattleInitiation()
+		},
+	})
 
 	return menuItems
 }
@@ -900,4 +922,24 @@ func (dw *DesktopWindow) handleChatOptionClick() {
 		hasConfig, enabled, summary := card.GetDialogBackendStatus()
 		dw.showDialog(fmt.Sprintf("Chat temporarily unavailable.\n\nDialog backend status: Config=%t, Enabled=%t\nSummary: %s\n\nThere may be an issue with the dialog backend configuration.", hasConfig, enabled, summary))
 	}
+}
+
+// shouldShowBattleOptions determines if battle options should appear in the context menu
+// Shows for characters with battle system enabled
+func (dw *DesktopWindow) shouldShowBattleOptions() bool {
+	card := dw.character.GetCard()
+	if card == nil {
+		return false
+	}
+
+	// Show battle options if character has battle system enabled
+	return card.HasBattleSystem()
+}
+
+// handleBattleInitiation handles when user clicks "Initiate Battle" in context menu
+// Shows the battle action dialog for selecting battle actions
+func (dw *DesktopWindow) handleBattleInitiation() {
+	// For now, show a placeholder dialog - this will be integrated with the actual battle system
+	// TODO: Replace with actual battle system integration when multiplayer battle is implemented
+	dw.showDialog("Battle system ready! Battle initiation will be available when connected to other players.")
 }

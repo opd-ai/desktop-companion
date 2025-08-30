@@ -11,6 +11,28 @@ import (
 	"time"
 )
 
+// Battle animation constants based on JRPG Battle System plan
+// These animations are optional for backward compatibility
+const (
+	// Core required animations (existing)
+	AnimationIdle    = "idle"
+	AnimationTalking = "talking"
+
+	// Battle animations (optional)
+	AnimationAttack  = "attack"  // Aggressive forward motion
+	AnimationDefend  = "defend"  // Protective blocking stance
+	AnimationStun    = "stun"    // Dizzied/stunned state
+	AnimationHeal    = "heal"    // Glowing recovery animation
+	AnimationBoost   = "boost"   // Power-up energy effect
+	AnimationCounter = "counter" // Reactive counter-attack
+	AnimationDrain   = "drain"   // Energy absorption visual
+	AnimationShield  = "shield"  // Barrier/shield formation
+	AnimationCharge  = "charge"  // Building energy/power
+	AnimationEvade   = "evade"   // Quick dodge movement
+	AnimationTaunt   = "taunt"   // Provocative gesture
+	AnimationVictory = "victory" // Battle won celebration
+)
+
 // CharacterCard represents the JSON configuration for a desktop companion character
 // This follows the "lazy programmer" approach - leveraging Go's built-in JSON package
 // instead of writing custom parsers
@@ -40,6 +62,8 @@ type CharacterCard struct {
 	GiftSystem *GiftSystemConfig `json:"giftSystem,omitempty"`
 	// Multiplayer networking (Phase 1 - Networking Infrastructure)
 	Multiplayer *MultiplayerConfig `json:"multiplayer,omitempty"`
+	// Battle system (Phase 3 - Animation & UI Integration)
+	BattleSystem *BattleSystemConfig `json:"battleSystem,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -132,6 +156,22 @@ type MultiplayerConfig struct {
 	BotPersonality *bot.PersonalityArchetype `json:"botPersonality,omitempty"` // Personality configuration for bot behavior
 }
 
+// BattleSystemConfig configures JRPG-style battle features for a character
+// This enables turn-based combat with animation integration
+type BattleSystemConfig struct {
+	Enabled           bool                    `json:"enabled"`                     // Enable battle system features
+	BattleStats       map[string]BattleStat   `json:"battleStats,omitempty"`       // HP, Attack, Defense, Speed stats
+	AIDifficulty      string                  `json:"aiDifficulty,omitempty"`      // "easy", "normal", "hard" for bot opponents
+	PreferredActions  []string                `json:"preferredActions,omitempty"`  // AI preferred action types
+	RequireAnimations bool                    `json:"requireAnimations,omitempty"` // Require battle animations for validation
+}
+
+// BattleStat represents a battle-specific stat with base and max values
+type BattleStat struct {
+	Base float64 `json:"base"` // Base value for the stat
+	Max  float64 `json:"max"`  // Maximum value for the stat
+}
+
 // LoadCard loads and validates a character card from a JSON file
 // Uses standard library encoding/json - no external dependencies needed
 func LoadCard(path string) (*CharacterCard, error) {
@@ -171,6 +211,10 @@ func (c *CharacterCard) Validate() error {
 	}
 
 	if err := c.validateMultiplayerSystems(); err != nil {
+		return err
+	}
+
+	if err := c.validateBattleSystems(); err != nil {
 		return err
 	}
 
@@ -241,13 +285,31 @@ func (c *CharacterCard) validateMultiplayerSystems() error {
 	return nil
 }
 
+// validateBattleSystems validates battle system configuration and animations
+func (c *CharacterCard) validateBattleSystems() error {
+	if err := c.validateBattleConfig(); err != nil {
+		return fmt.Errorf("battle config: %w", err)
+	}
+
+	return nil
+}
+
 // ValidateWithBasePath ensures the character card has valid configuration including file existence checks
 func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 	if err := c.validateCoreFields(basePath); err != nil {
 		return err
 	}
 
-	return c.validateFeatureSections()
+	if err := c.validateFeatureSections(); err != nil {
+		return err
+	}
+
+	// Additional validation for battle animations with file path checks
+	if err := c.validateBattleSystemWithBasePath(basePath); err != nil {
+		return fmt.Errorf("battle system: %w", err)
+	}
+
+	return nil
 }
 
 // validateCoreFields validates essential card fields and animations with file system checks
@@ -1301,6 +1363,187 @@ func (c *CharacterCard) validateBotPersonality(mp *MultiplayerConfig) error {
 	_, err = pm.LoadFromJSON(jsonData)
 	if err != nil {
 		return fmt.Errorf("invalid bot personality: %w", err)
+	}
+
+	return nil
+}
+
+// validateBattleConfig validates battle system configuration
+// Ensures battle settings are valid when enabled
+func (c *CharacterCard) validateBattleConfig() error {
+	// Skip validation if battle system is not configured
+	if c.BattleSystem == nil {
+		return nil
+	}
+
+	bs := c.BattleSystem
+
+	// Validate battle stats when provided
+	if err := c.validateBattleStats(bs.BattleStats); err != nil {
+		return err
+	}
+
+	// Validate AI difficulty setting
+	if err := c.validateAIDifficulty(bs.AIDifficulty); err != nil {
+		return err
+	}
+
+	// Validate preferred actions
+	if err := c.validatePreferredActions(bs.PreferredActions); err != nil {
+		return err
+	}
+
+	// Validate battle animations when required
+	if bs.RequireAnimations || bs.Enabled {
+		if err := c.validateBattleAnimations(); err != nil {
+			return fmt.Errorf("battle animations: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// validateBattleStats validates battle stat configurations
+func (c *CharacterCard) validateBattleStats(stats map[string]BattleStat) error {
+	if len(stats) == 0 {
+		return nil // Optional
+	}
+
+	for statName, stat := range stats {
+		if stat.Base < 0 {
+			return fmt.Errorf("battle stat '%s' base value cannot be negative: %f", statName, stat.Base)
+		}
+		if stat.Max < stat.Base {
+			return fmt.Errorf("battle stat '%s' max value (%f) cannot be less than base value (%f)", statName, stat.Max, stat.Base)
+		}
+	}
+	return nil
+}
+
+// validateAIDifficulty validates AI difficulty setting
+func (c *CharacterCard) validateAIDifficulty(difficulty string) error {
+	if difficulty == "" {
+		return nil // Optional
+	}
+
+	validDifficulties := []string{"easy", "normal", "hard"}
+	for _, valid := range validDifficulties {
+		if difficulty == valid {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("invalid AI difficulty '%s', must be one of: %v", difficulty, validDifficulties)
+}
+
+// validatePreferredActions validates preferred action configuration
+func (c *CharacterCard) validatePreferredActions(actions []string) error {
+	if len(actions) == 0 {
+		return nil // Optional
+	}
+
+	validActions := []string{"attack", "defend", "heal", "stun", "boost", "counter", "drain", "shield", "charge", "evade", "taunt"}
+	for _, action := range actions {
+		valid := false
+		for _, validAction := range validActions {
+			if action == validAction {
+				valid = true
+				break
+			}
+		}
+		if !valid {
+			return fmt.Errorf("invalid preferred action '%s', must be one of: %v", action, validActions)
+		}
+	}
+
+	return nil
+}
+
+// validateBattleAnimations validates that battle animations are present when required
+func (c *CharacterCard) validateBattleAnimations() error {
+	if c.Animations == nil {
+		return fmt.Errorf("animations map is required for battle system")
+	}
+
+	// Get list of available battle animations
+	battleAnimations := c.getAvailableBattleAnimations()
+
+	// Require at least one battle animation
+	if len(battleAnimations) == 0 {
+		return fmt.Errorf("at least one battle animation is required (attack, defend, heal, etc.)")
+	}
+
+	return nil
+}
+
+// getAvailableBattleAnimations returns a list of battle animations present in the character
+func (c *CharacterCard) getAvailableBattleAnimations() []string {
+	battleAnims := []string{
+		AnimationAttack, AnimationDefend, AnimationStun, AnimationHeal,
+		AnimationBoost, AnimationCounter, AnimationDrain, AnimationShield,
+		AnimationCharge, AnimationEvade, AnimationTaunt, AnimationVictory,
+	}
+
+	var available []string
+	for _, anim := range battleAnims {
+		if _, exists := c.Animations[anim]; exists {
+			available = append(available, anim)
+		}
+	}
+
+	return available
+}
+
+// HasBattleSystem returns true if this character card has battle system enabled
+func (c *CharacterCard) HasBattleSystem() bool {
+	return c.BattleSystem != nil && c.BattleSystem.Enabled
+}
+
+// validateBattleSystemWithBasePath validates battle system including animation file existence
+func (c *CharacterCard) validateBattleSystemWithBasePath(basePath string) error {
+	// Skip validation if battle system is not configured
+	if c.BattleSystem == nil {
+		return nil
+	}
+
+	// Validate battle animations with file existence checks when required
+	if c.BattleSystem.RequireAnimations || c.BattleSystem.Enabled {
+		if err := c.validateBattleAnimationsWithBasePath(basePath); err != nil {
+			return fmt.Errorf("battle animations: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// validateBattleAnimationsWithBasePath validates battle animation files exist and are accessible
+func (c *CharacterCard) validateBattleAnimationsWithBasePath(basePath string) error {
+	if c.Animations == nil {
+		return fmt.Errorf("animations map is required for battle system")
+	}
+
+	// Get list of available battle animations
+	battleAnimations := c.getAvailableBattleAnimations()
+
+	// Require at least one battle animation
+	if len(battleAnimations) == 0 {
+		return fmt.Errorf("at least one battle animation is required (attack, defend, heal, etc.)")
+	}
+
+	// Check that all battle animation files exist and are accessible
+	for _, animName := range battleAnimations {
+		animPath := c.Animations[animName]
+		if !strings.HasSuffix(strings.ToLower(animPath), ".gif") {
+			return fmt.Errorf("battle animation '%s' must be a GIF file, got: %s", animName, animPath)
+		}
+
+		fullPath := filepath.Join(basePath, animPath)
+		if _, err := os.Stat(fullPath); err != nil {
+			if os.IsNotExist(err) {
+				return fmt.Errorf("battle animation file '%s' not found: %s", animName, fullPath)
+			}
+			return fmt.Errorf("battle animation file '%s' not accessible: %s (%v)", animName, fullPath, err)
+		}
 	}
 
 	return nil
