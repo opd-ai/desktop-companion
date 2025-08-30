@@ -7,10 +7,10 @@ You are an expert Go developer working on the **Desktop Dating Simulator (DDS)**
 - **Version**: Go 1.24.5 compatible (verified runtime environment)
 - **Architecture**: Complete 4-phase implementation with production-ready release
 - **Features**: Full Tamagotchi game mechanics + advanced romance system + AI-powered dialog generation
-- **Testing**: 335+ tests across 6 modules with measured coverage: Character 62.2%, Config 93.5%, Persistence 83.2%, Monitoring 71.6%
-- **Documentation**: 72,000+ characters of user guides and technical documentation across 18 character archetypes
+- **Testing**: 670+ tests across 6 modules with comprehensive coverage validation
+- **Documentation**: 72,000+ characters of user guides and technical documentation across 19 character archetypes
 - **Release Status**: 100% production-ready with optimized builds (22MB binaries) and packaging (11MB releases)
-- **Codebase**: 56 internal Go files + 11 command files across 7 packages
+- **Codebase**: 110 internal Go files + 15 command files across 9 packages
 
 ## Technical Stack
 
@@ -88,9 +88,6 @@ Apply these mandatory patterns when working with this codebase:
 - Provide graceful degradation for non-critical features (e.g., animation loading failures)
 
 **Performance Requirements**:
-- Target ≤50MB memory usage (monitored with built-in profiling system)
-- Support 30+ FPS animation rendering (benchmarked in CI)
-- Startup time <2 seconds (measured in profiling)
 - Use `pprof` integration for memory and CPU profiling when `-memprofile`/`-cpuprofile` flags used
 
 ### 3. Testing and Quality Standards
@@ -130,7 +127,7 @@ Apply these mandatory patterns when working with this codebase:
 
 **Character Asset Management**:
 - All animations must be GIF format with transparency support
-- Support 18 character archetypes: default, easy, normal, hard, challenge, specialist, romance, tsundere, flirty, slow_burn, romance_flirty, romance_slowburn, romance_supportive, romance_tsundere, markov_example, plus templates and examples
+- Support 19 character archetypes: default, easy, normal, hard, challenge, specialist, romance, tsundere, flirty, slow_burn, romance_flirty, romance_slowburn, romance_supportive, romance_tsundere, markov_example, multiplayer, plus templates and examples
 - Validate character cards using comprehensive schema checking
 - Support template inheritance for character archetype families
 
@@ -140,11 +137,11 @@ Apply these mandatory patterns when working with this codebase:
 - Virtual desktop pet with transparent overlay functionality
 - Always-on-top window with system-native transparency support  
 - Cross-platform compatibility (Windows, macOS, Linux) via Fyne framework
-- Memory-efficient design targeting ≤50MB usage with 30+ FPS animation
+- Memory-efficient design with transparent overlay functionality
 
-**Package Structure** (67 total Go files):
+**Package Structure** (125 total Go files):
 ```
-internal/ (56 files)
+internal/ (110 files)
 ├── character/     # Core character logic, validation, romance system
 ├── config/        # Configuration management and JSON loading
 ├── dialog/        # Advanced dialog backends and Markov chain generation  
@@ -153,7 +150,7 @@ internal/ (56 files)
 ├── testing/       # Test utilities and shared testing infrastructure
 └── ui/           # Fyne-based GUI components and animation rendering
 
-cmd/ (11 files)
+cmd/ (15 files)
 ├── companion/     # Main desktop application entry point
 └── dialog_example/ # CLI example for dialog system testing
 ```
@@ -350,8 +347,8 @@ Remember: The laziest code is the code that's already been written, tested, and 
   - Updated Go version verification to 1.24.5 runtime environment
   - Added comprehensive AI dialog backend system with Markov chain generation
   - Integrated advanced romance features with personality-driven interactions
-  - Implemented production-ready release with 335+ tests and measured coverage
-  - Expanded to 18 character archetypes (14 main + 4 romance variants)
+  - Implemented production-ready release with 670+ tests and comprehensive coverage
+  - Expanded to 19 character archetypes (14 main + 5 variants including multiplayer)
   - Enhanced documentation suite to 72,000+ characters across multiple guides
   - Achieved 100% release readiness with optimized builds (22MB) and packaging (11MB)
   - Added build toolchain with goimports and staticcheck integration

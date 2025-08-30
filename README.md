@@ -68,7 +68,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Foundation Ready**: Core infrastructure for AI-controlled multiplayer companions
 - ⚙️ **Configurable**: JSON-based character cards for easy customization
 - 🌍 **Platform-Native**: Runs on Windows, macOS, and Linux (requires building on target platform)
-- 🪶 **Lightweight**: ≤50MB memory usage
+- 🪶 **Lightweight**: Efficient resource usage with built-in monitoring
 
 ## 🚀 Quick Start
 
@@ -150,7 +150,9 @@ This project follows the "lazy programmer" philosophy, using mature libraries in
 | Library | License | Purpose | Why Chosen |
 |---------|---------|---------|------------|
 | [fyne.io/fyne/v2](https://fyne.io/) | BSD-3-Clause | Cross-platform GUI | Only mature Go GUI with native transparency support |
-| Go standard library | BSD-3-Clause | JSON parsing, GIF decoding, image processing | Zero external dependencies, battle-tested |
+| Go standard library | BSD-3-Clause | JSON parsing, GIF decoding, image processing, networking | Zero external dependencies, battle-tested |
+
+*Note: Full dependency list available in `go.mod` - all dependencies use permissive licenses compatible with commercial use.*
 
 ### License Compliance
 
@@ -762,17 +764,12 @@ go tool pprof mem.prof
 go tool pprof cpu.prof
 ```
 
-**Performance Targets**:
-- Memory usage: ≤50MB during normal operation ✅ **MONITORED**
-- Animation framerate: 30+ FPS consistently ✅ **MONITORED**
-- Startup time: <2 seconds ✅ **MONITORED**
-
 **Real-time Monitoring**:
-- Memory usage tracking with target validation
+- Memory usage tracking and reporting
 - Frame rate monitoring with performance warnings
 - Startup time measurement
 - Concurrent frame rendering support
-- Automatic performance target validation
+- Built-in performance profiling capabilities
 
 ## 🔨 Building and Distribution
 
@@ -901,13 +898,13 @@ See [LICENSES.md](LICENSES.md) for complete license information.
 ---
 
 **Minimum System Requirements**:
-- 512MB RAM available (1GB recommended for game mode)
+- 512MB RAM available
 - 50MB disk space (100MB recommended with save files)
 - OpenGL 2.1 or higher (for hardware acceleration)
 - X11 (Linux), Cocoa (macOS), or Win32 (Windows) display server
 
 **Recommended for Game Mode**:
-- 1GB RAM for smooth stats processing
+- 1GB RAM for smooth performance
 - 100MB disk space for save files and multiple character cards
 - SSD storage for faster auto-save operations
 
