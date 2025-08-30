@@ -223,37 +223,60 @@ func (d *BattleActionDialog) startTimer() {
 		return
 	}
 
+	d.initializeTimerState()
+	go d.runTimerLoop()
+}
+
+// initializeTimerState sets up the initial timer state before starting the countdown
+func (d *BattleActionDialog) initializeTimerState() {
 	d.timerRunning = true
 	d.timeRemaining = d.turnTimeout
+}
 
-	go func() {
-		ticker := time.NewTicker(100 * time.Millisecond) // Update every 100ms for smooth countdown
-		defer ticker.Stop()
+// runTimerLoop executes the main timer countdown loop in a separate goroutine
+func (d *BattleActionDialog) runTimerLoop() {
+	ticker := time.NewTicker(100 * time.Millisecond) // Update every 100ms for smooth countdown
+	defer ticker.Stop()
 
-		for {
-			select {
-			case <-d.timerStop:
+	for {
+		select {
+		case <-d.timerStop:
+			return
+		case <-ticker.C:
+			if d.processTimerTick() {
 				return
-			case <-ticker.C:
-				d.timeRemaining -= 100 * time.Millisecond
-
-				if d.timeRemaining <= 0 {
-					// Timer expired - trigger timeout action
-					d.timerRunning = false
-					d.Hide()
-					if d.onCancel != nil {
-						d.onCancel() // Treat timeout as cancellation
-					}
-					return
-				}
-
-				// Update timer display
-				if d.timerLabel != nil {
-					d.timerLabel.SetText(fmt.Sprintf("Time: %.1fs", d.timeRemaining.Seconds()))
-				}
 			}
 		}
-	}()
+	}
+}
+
+// processTimerTick handles a single timer tick and returns true if timer should stop
+func (d *BattleActionDialog) processTimerTick() bool {
+	d.timeRemaining -= 100 * time.Millisecond
+
+	if d.timeRemaining <= 0 {
+		d.handleTimerExpiration()
+		return true
+	}
+
+	d.updateTimerDisplay()
+	return false
+}
+
+// handleTimerExpiration processes timer expiration and triggers timeout actions
+func (d *BattleActionDialog) handleTimerExpiration() {
+	d.timerRunning = false
+	d.Hide()
+	if d.onCancel != nil {
+		d.onCancel() // Treat timeout as cancellation
+	}
+}
+
+// updateTimerDisplay refreshes the timer label with the current remaining time
+func (d *BattleActionDialog) updateTimerDisplay() {
+	if d.timerLabel != nil {
+		d.timerLabel.SetText(fmt.Sprintf("Time: %.1fs", d.timeRemaining.Seconds()))
+	}
 }
 
 // stopTimer stops the turn countdown timer
