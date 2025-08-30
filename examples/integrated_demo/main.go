@@ -30,7 +30,8 @@ func main() {
 	// Create desktop window with chatbot integration
 	// Enable debug mode to see keyboard shortcuts in logs
 	// Note: Network mode disabled (false) and no network manager (nil) for this demo
-	window := ui.NewDesktopWindow(myApp, char, true, profiler, false, false, nil, false, false)
+	// Arguments: app, char, debugMode, profiler, networkEnabled, multiplayer, networkManager, showChatShortcuts, showGameShortcuts, showEventShortcuts
+	window := ui.NewDesktopWindow(myApp, char, true, profiler, false, false, nil, false, false, false)
 
 	log.Println("Desktop companion with chatbot interface started!")
 	log.Println("Use keyboard shortcuts:")
