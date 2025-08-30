@@ -1,0 +1,184 @@
+{
+  "name": "NewsBot",
+  "description": "A tech-savvy companion that keeps you updated with the latest news",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "reading": "animations/reading.gif",
+    "thinking": "animations/thinking.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello! I've been reading the news.",
+        "Hi there! Want to hear about today's headlines?",
+        "Hey! I found some interesting articles today."
+      ],
+      "animation": "talking",
+      "cooldown": 10
+    },
+    {
+      "trigger": "rightclick", 
+      "responses": [
+        "Let me check for news updates...",
+        "I'll refresh my news feeds for you!",
+        "Updating my news sources..."
+      ],
+      "animation": "thinking",
+      "cooldown": 30
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": false,
+    "defaultSize": 128
+  },
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "news_blog",
+    "fallbackChain": ["news_blog", "simple_random"],
+    "backends": {
+      "news_blog": {
+        "enabled": true,
+        "summaryLength": 100,
+        "personalityInfluence": true,
+        "cacheTimeout": 1800,
+        "updateInterval": 30,
+        "maxNewsPerResponse": 3,
+        "debugMode": false,
+        "preferredCategories": ["tech", "gaming"]
+      }
+    }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 30,
+    "maxStoredItems": 50,
+    "readingPersonality": "casual",
+    "preferredCategories": ["tech", "gaming", "general"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/oreilly/radar",
+        "name": "O'Reilly Radar",
+        "category": "tech",
+        "updateFreq": 60,
+        "maxItems": 15,
+        "keywords": ["AI", "programming", "technology"],
+        "enabled": true
+      },
+      {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "name": "The Verge",
+        "category": "tech",
+        "updateFreq": 30,
+        "maxItems": 10,
+        "keywords": [],
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.arstechnica.com/arstechnica/index",
+        "name": "Ars Technica",
+        "category": "tech",
+        "updateFreq": 45,
+        "maxItems": 12,
+        "keywords": ["software", "hardware", "security"],
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "name": "morning_headlines",
+        "category": "conversation",
+        "trigger": "daily_news",
+        "newsCategory": "headlines",
+        "maxNews": 3,
+        "includeSummary": false,
+        "readingStyle": "casual",
+        "triggerFrequency": "daily",
+        "responses": [
+          "Good morning! Here's what caught my attention today: {NEWS_HEADLINES}",
+          "Morning! I've been browsing the news. Check this out: {NEWS_SUMMARY}",
+          "Hey! The tech world is buzzing today: {NEWS_HEADLINES}"
+        ],
+        "animations": ["talking", "reading"],
+        "cooldown": 3600
+      },
+      {
+        "name": "tech_deep_dive",
+        "category": "conversation",
+        "trigger": "tech_news",
+        "newsCategory": "tech",
+        "maxNews": 2,
+        "includeSummary": true,
+        "readingStyle": "enthusiastic",
+        "triggerFrequency": "manual",
+        "responses": [
+          "Oh! I found some fascinating tech news: {NEWS_SUMMARY}",
+          "You'll love this tech update: {NEWS_HEADLINES}",
+          "This is incredible! {NEWS_SUMMARY}"
+        ],
+        "animations": ["excited", "talking"],
+        "cooldown": 1800
+      },
+      {
+        "name": "gaming_updates",
+        "category": "conversation",
+        "trigger": "gaming_news",
+        "newsCategory": "gaming",
+        "maxNews": 2,
+        "includeSummary": false,
+        "readingStyle": "casual",
+        "triggerFrequency": "manual",
+        "responses": [
+          "Gaming news! {NEWS_HEADLINES}",
+          "Check out these gaming updates: {NEWS_HEADLINES}",
+          "Some interesting gaming news: {NEWS_HEADLINES}"
+        ],
+        "animations": ["talking"],
+        "cooldown": 1800
+      }
+    ]
+  },
+  "generalEvents": [
+    {
+      "name": "news_discussion",
+      "category": "conversation",
+      "description": "Discuss current news and events",
+      "trigger": "Ctrl+N",
+      "interactive": true,
+      "choices": [
+        {
+          "text": "Tell me about today's headlines",
+          "effects": {},
+          "followUp": "morning_headlines"
+        },
+        {
+          "text": "Any interesting tech news?",
+          "effects": {},
+          "followUp": "tech_deep_dive"
+        },
+        {
+          "text": "What's happening in gaming?",
+          "effects": {},
+          "followUp": "gaming_updates"
+        },
+        {
+          "text": "I'm not interested in news right now",
+          "effects": {},
+          "responses": [
+            "No problem! Let me know if you want to hear news later.",
+            "That's fine! I'll keep reading and let you know if something important happens."
+          ]
+        }
+      ],
+      "responses": [
+        "What kind of news interests you today?",
+        "I've been keeping up with the latest news. What would you like to hear about?"
+      ],
+      "animations": ["talking"],
+      "cooldown": 300,
+      "conditions": {}
+    }
+  ]
+}
