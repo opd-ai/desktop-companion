@@ -456,7 +456,14 @@ assets/characters/[archetype]/animations/battle/
 }
 ```
 
-### Phase 2: Multiplayer Integration (Week 2)  
+### Phase 2: Multiplayer Integration (Week 2) — **COMPLETED**
+**Status:**
+- Network message types extended with `battle_invite`, `battle_action`, `battle_result`, `battle_end`
+- Protocol methods added for battle message creation/parsing with comprehensive unit tests
+- MultiplayerCharacter extensions implemented with battle functionality
+- All tests passing with >80% coverage and error path validation
+- Backward compatibility maintained with existing multiplayer features
+
 **Network Message Extensions:**
 ```go
 const (
@@ -470,7 +477,7 @@ const (
 **MultiplayerCharacter Extensions:**
 ```go
 func (mc *MultiplayerCharacter) InitiateBattle(targetPeerID string) error
-func (mc *MultiplayerCharacter) HandleBattleInvite(invite BattleInvite) error  
+func (mc *MultiplayerCharacter) HandleBattleInvite(invite BattleInvitePayload) error  
 func (mc *MultiplayerCharacter) PerformBattleAction(action BattleAction) error
 ```
 
