@@ -11,14 +11,14 @@ import (
 // GroupEventManager handles multi-character scenarios and collaborative events
 // Uses standard library for JSON marshaling and time management
 type GroupEventManager struct {
-	activeEvents    map[string]*GroupEvent        // sessionID -> event
-	eventTemplates  []GroupEventTemplate          // Available event templates
-	networkManager  GroupNetworkManagerInterface  // Network communication
-	participants    map[string]map[string]bool    // sessionID -> participantID -> joined
-	eventHistory    map[string][]CompletedEvent   // participantID -> completed events
-	mu              sync.RWMutex                  // Protects concurrent access
-	minParticipants int                           // Minimum participants for group events
-	maxParticipants int                           // Maximum participants for group events
+	activeEvents    map[string]*GroupEvent       // sessionID -> event
+	eventTemplates  []GroupEventTemplate         // Available event templates
+	networkManager  GroupNetworkManagerInterface // Network communication
+	participants    map[string]map[string]bool   // sessionID -> participantID -> joined
+	eventHistory    map[string][]CompletedEvent  // participantID -> completed events
+	mu              sync.RWMutex                 // Protects concurrent access
+	minParticipants int                          // Minimum participants for group events
+	maxParticipants int                          // Maximum participants for group events
 }
 
 // GroupNetworkManagerInterface defines required network operations for group events
@@ -33,18 +33,18 @@ type GroupNetworkManagerInterface interface {
 
 // GroupEvent represents an active multi-character scenario
 type GroupEvent struct {
-	SessionID       string                 `json:"sessionId"`
-	Template        GroupEventTemplate     `json:"template"`
-	Participants    []string               `json:"participants"`     // Peer IDs
-	InitiatorID     string                 `json:"initiatorId"`      // Who started the event
-	CurrentPhase    string                 `json:"currentPhase"`     // Current phase name
-	PhaseData       map[string]interface{} `json:"phaseData"`        // Phase-specific data
-	StartTime       time.Time              `json:"startTime"`
-	LastActivity    time.Time              `json:"lastActivity"`
-	Votes           map[string]int         `json:"votes"`            // choiceID -> vote count
-	ParticipantVotes map[string]string     `json:"participantVotes"` // participantID -> choiceID
-	Scores          map[string]int         `json:"scores"`           // participantID -> score
-	CompletedPhases []string               `json:"completedPhases"`
+	SessionID        string                 `json:"sessionId"`
+	Template         GroupEventTemplate     `json:"template"`
+	Participants     []string               `json:"participants"` // Peer IDs
+	InitiatorID      string                 `json:"initiatorId"`  // Who started the event
+	CurrentPhase     string                 `json:"currentPhase"` // Current phase name
+	PhaseData        map[string]interface{} `json:"phaseData"`    // Phase-specific data
+	StartTime        time.Time              `json:"startTime"`
+	LastActivity     time.Time              `json:"lastActivity"`
+	Votes            map[string]int         `json:"votes"`            // choiceID -> vote count
+	ParticipantVotes map[string]string      `json:"participantVotes"` // participantID -> choiceID
+	Scores           map[string]int         `json:"scores"`           // participantID -> score
+	CompletedPhases  []string               `json:"completedPhases"`
 }
 
 // GroupEventTemplate defines the structure of group events
@@ -55,8 +55,8 @@ type GroupEventTemplate struct {
 	Category        string                 `json:"category"`        // "scenario", "minigame", "decision"
 	MinParticipants int                    `json:"minParticipants"` // 2-8 participants
 	MaxParticipants int                    `json:"maxParticipants"`
-	EstimatedTime   time.Duration          `json:"estimatedTime"`   // Expected duration
-	Phases          []EventPhase           `json:"phases"`          // Sequential phases
+	EstimatedTime   time.Duration          `json:"estimatedTime"` // Expected duration
+	Phases          []EventPhase           `json:"phases"`        // Sequential phases
 	Metadata        map[string]interface{} `json:"metadata,omitempty"`
 }
 
@@ -81,21 +81,21 @@ type EventChoice struct {
 
 // CompletedEvent tracks group event history
 type CompletedEvent struct {
-	SessionID    string    `json:"sessionId"`
-	TemplateID   string    `json:"templateId"`
-	Participants []string  `json:"participants"`
-	CompletedAt  time.Time `json:"completedAt"`
-	FinalScore   int       `json:"finalScore"`
+	SessionID    string        `json:"sessionId"`
+	TemplateID   string        `json:"templateId"`
+	Participants []string      `json:"participants"`
+	CompletedAt  time.Time     `json:"completedAt"`
+	FinalScore   int           `json:"finalScore"`
 	Duration     time.Duration `json:"duration"`
 }
 
 // GroupEventMessage represents network messages for group events
 type GroupEventMessage struct {
-	Type        string                 `json:"type"` // "invite", "join", "vote", "advance", "end"
-	SessionID   string                 `json:"sessionId"`
-	Sender      string                 `json:"sender"`
-	Data        map[string]interface{} `json:"data"`
-	Timestamp   time.Time              `json:"timestamp"`
+	Type      string                 `json:"type"` // "invite", "join", "vote", "advance", "end"
+	SessionID string                 `json:"sessionId"`
+	Sender    string                 `json:"sender"`
+	Data      map[string]interface{} `json:"data"`
+	Timestamp time.Time              `json:"timestamp"`
 }
 
 // NewGroupEventManager creates a new group event manager
@@ -140,7 +140,7 @@ func (gem *GroupEventManager) StartGroupEvent(templateID string, initiatorID str
 	// Validate minimum participants available
 	connectedPeers := gem.networkManager.GetConnectedPeers()
 	if len(connectedPeers)+1 < template.MinParticipants {
-		return "", fmt.Errorf("insufficient participants: need %d, have %d", 
+		return "", fmt.Errorf("insufficient participants: need %d, have %d",
 			template.MinParticipants, len(connectedPeers)+1)
 	}
 
@@ -208,7 +208,7 @@ func (gem *GroupEventManager) JoinGroupEvent(sessionID, participantID string) er
 
 	// Check participant limits
 	if len(event.Participants) >= event.Template.MaxParticipants {
-		return fmt.Errorf("event full: %d/%d participants", 
+		return fmt.Errorf("event full: %d/%d participants",
 			len(event.Participants), event.Template.MaxParticipants)
 	}
 
@@ -237,61 +237,100 @@ func (gem *GroupEventManager) SubmitVote(sessionID, participantID, choiceID stri
 	gem.mu.Lock()
 	defer gem.mu.Unlock()
 
+	event, err := gem.validateEventAccess(sessionID, participantID)
+	if err != nil {
+		return err
+	}
+
+	currentPhase, err := gem.findCurrentPhase(event)
+	if err != nil {
+		return err
+	}
+
+	if err := gem.validateChoice(currentPhase, choiceID); err != nil {
+		return err
+	}
+
+	totalVotes := gem.recordVote(event, participantID, choiceID)
+	canAdvance := gem.checkCanAdvance(currentPhase, totalVotes, len(event.Participants))
+
+	voteMessage := gem.createVoteMessage(sessionID, participantID, choiceID, totalVotes, canAdvance, event.Votes)
+	if err := gem.broadcastGroupEventMessage(voteMessage); err != nil {
+		return fmt.Errorf("failed to broadcast vote: %w", err)
+	}
+
+	if canAdvance {
+		return gem.advancePhase(sessionID)
+	}
+
+	return nil
+}
+
+// validateEventAccess verifies that the event exists and participant has access.
+func (gem *GroupEventManager) validateEventAccess(sessionID, participantID string) (*GroupEvent, error) {
 	event, exists := gem.activeEvents[sessionID]
 	if !exists {
-		return fmt.Errorf("group event not found: %s", sessionID)
+		return nil, fmt.Errorf("group event not found: %s", sessionID)
 	}
 
-	// Verify participant
 	if !gem.participants[sessionID][participantID] {
-		return fmt.Errorf("not a participant in event: %s", sessionID)
+		return nil, fmt.Errorf("not a participant in event: %s", sessionID)
 	}
 
-	// Find current phase
-	var currentPhase *EventPhase
+	return event, nil
+}
+
+// findCurrentPhase locates the current phase in the event template.
+func (gem *GroupEventManager) findCurrentPhase(event *GroupEvent) (*EventPhase, error) {
 	for _, phase := range event.Template.Phases {
 		if phase.Name == event.CurrentPhase {
-			currentPhase = &phase
-			break
+			return &phase, nil
 		}
 	}
-	if currentPhase == nil {
-		return fmt.Errorf("invalid phase: %s", event.CurrentPhase)
-	}
+	return nil, fmt.Errorf("invalid phase: %s", event.CurrentPhase)
+}
 
-	// Validate choice ID
-	validChoice := false
+// validateChoice checks if the provided choice ID is valid for the current phase.
+func (gem *GroupEventManager) validateChoice(currentPhase *EventPhase, choiceID string) error {
 	for _, choice := range currentPhase.Choices {
 		if choice.ID == choiceID {
-			validChoice = true
-			break
+			return nil
 		}
 	}
-	if !validChoice {
-		return fmt.Errorf("invalid choice: %s", choiceID)
-	}
+	return fmt.Errorf("invalid choice: %s", choiceID)
+}
 
+// recordVote handles the vote recording logic and returns the total vote count.
+func (gem *GroupEventManager) recordVote(event *GroupEvent, participantID, choiceID string) int {
 	// Initialize vote count if not exists
 	if _, exists := event.Votes[choiceID]; !exists {
 		event.Votes[choiceID] = 0
 	}
 
-	// Record vote
+	// Remove previous vote if exists
 	if previousChoice, existed := event.ParticipantVotes[participantID]; existed {
 		if event.Votes[previousChoice] > 0 {
-			event.Votes[previousChoice]-- // Remove previous vote
+			event.Votes[previousChoice]--
 		}
 	}
+
+	// Record new vote
 	event.ParticipantVotes[participantID] = choiceID
 	event.Votes[choiceID]++
 	event.LastActivity = time.Now()
 
-	// Check if we can advance (all participants voted or minimum reached)
-	totalVotes := len(event.ParticipantVotes)
-	canAdvance := totalVotes >= currentPhase.MinVotes || 
-		(currentPhase.AutoAdvance && totalVotes == len(event.Participants))
+	return len(event.ParticipantVotes)
+}
 
-	voteMessage := GroupEventMessage{
+// checkCanAdvance determines if the voting phase can advance based on current votes.
+func (gem *GroupEventManager) checkCanAdvance(currentPhase *EventPhase, totalVotes, totalParticipants int) bool {
+	return totalVotes >= currentPhase.MinVotes ||
+		(currentPhase.AutoAdvance && totalVotes == totalParticipants)
+}
+
+// createVoteMessage builds the vote broadcast message with current voting state.
+func (gem *GroupEventManager) createVoteMessage(sessionID, participantID, choiceID string, totalVotes int, canAdvance bool, votes map[string]int) GroupEventMessage {
+	return GroupEventMessage{
 		Type:      "vote",
 		SessionID: sessionID,
 		Sender:    participantID,
@@ -299,21 +338,10 @@ func (gem *GroupEventManager) SubmitVote(sessionID, participantID, choiceID stri
 			"choiceId":   choiceID,
 			"totalVotes": totalVotes,
 			"canAdvance": canAdvance,
-			"votes":      event.Votes,
+			"votes":      votes,
 		},
 		Timestamp: time.Now(),
 	}
-
-	if err := gem.broadcastGroupEventMessage(voteMessage); err != nil {
-		return fmt.Errorf("failed to broadcast vote: %w", err)
-	}
-
-	// Auto-advance if conditions met
-	if canAdvance {
-		return gem.advancePhase(sessionID)
-	}
-
-	return nil
 }
 
 // advancePhase moves the event to the next phase
@@ -361,10 +389,10 @@ func (gem *GroupEventManager) advancePhase(sessionID string) error {
 		SessionID: sessionID,
 		Sender:    event.InitiatorID,
 		Data: map[string]interface{}{
-			"newPhase":        nextPhase.Name,
+			"newPhase":         nextPhase.Name,
 			"phaseDescription": nextPhase.Description,
-			"choices":         nextPhase.Choices,
-			"scores":          event.Scores,
+			"choices":          nextPhase.Choices,
+			"scores":           event.Scores,
 		},
 		Timestamp: time.Now(),
 	}
@@ -559,7 +587,7 @@ func (gem *GroupEventManager) handleEventCompletion(message GroupEventMessage, s
 	if _, exists := gem.activeEvents[message.SessionID]; exists {
 		delete(gem.activeEvents, message.SessionID)
 		delete(gem.participants, message.SessionID)
-		
+
 		if duration, ok := message.Data["duration"].(string); ok {
 			fmt.Printf("Group event %s completed in %s\n", message.SessionID, duration)
 		}

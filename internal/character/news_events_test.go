@@ -71,7 +71,7 @@ func TestNewsEventsInitialization(t *testing.T) {
 		},
 	}
 
-	char, err := New(card, "/workspaces/DDS/testdata")
+	char, err := New(card, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create character: %v", err)
 	}
@@ -117,7 +117,7 @@ func TestNewsEventsWithoutNewsFeatures(t *testing.T) {
 		// No NewsFeatures field
 	}
 
-	char, err := New(card, "/workspaces/DDS/testdata")
+	char, err := New(card, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create character: %v", err)
 	}
@@ -156,7 +156,7 @@ func TestNewsEventHandlingWithoutNewsFeatures(t *testing.T) {
 		},
 	}
 
-	char, err := New(card, "/workspaces/DDS/testdata")
+	char, err := New(card, "../../testdata")
 	if err != nil {
 		t.Fatalf("Failed to create character: %v", err)
 	}
