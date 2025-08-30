@@ -78,6 +78,7 @@ type BotController struct {
 	personality         BotPersonality
 	characterController CharacterController
 	networkController   NetworkController
+	actionExecutor      *ActionExecutor
 
 	// Decision engine state
 	actionHistory       []BotDecision
@@ -133,10 +134,14 @@ func NewBotController(personality BotPersonality, charController CharacterContro
 		return nil, fmt.Errorf("invalid personality: %w", err)
 	}
 
+	// Create action executor for advanced action handling
+	actionExecutor := NewActionExecutor(charController, netController)
+
 	return &BotController{
 		personality:         personality,
 		characterController: charController,
 		networkController:   netController,
+		actionExecutor:      actionExecutor,
 		actionHistory:       make([]BotDecision, 0, 100), // Limit history size
 		isEnabled:           true,
 		rng:                 rand.New(rand.NewSource(time.Now().UnixNano())),
@@ -436,7 +441,7 @@ func (bc *BotController) calculateRandomDelay() time.Duration {
 	return adjustedDelay
 }
 
-// executeScheduledAction performs the planned action and records it in history.
+// executeScheduledAction performs the planned action using the advanced action executor.
 // Returns true if action was successfully executed.
 func (bc *BotController) executeScheduledAction() bool {
 	if bc.nextScheduledAction == nil {
@@ -444,37 +449,17 @@ func (bc *BotController) executeScheduledAction() bool {
 	}
 
 	action := *bc.nextScheduledAction
+
+	// Use the action executor for comprehensive action handling
+	result, err := bc.actionExecutor.ExecuteAction(action)
+
+	// Record success/failure
 	success := false
-
-	// Execute action based on type
-	switch action.Action {
-	case "click":
-		bc.characterController.HandleClick()
+	if err == nil && result != nil && result.Success {
 		success = true
-
-	case "feed":
-		bc.characterController.HandleRightClick()
-		success = true
-
-	case "play":
-		bc.characterController.HandleDoubleClick()
-		success = true
-
-	case "chat":
-		if bc.networkController != nil && action.Target != "" {
-			err := bc.networkController.SendMessage(action.Target, map[string]interface{}{
-				"type":    "bot_chat",
-				"message": "Hello! How are you?",
-			})
-			success = (err == nil)
-		}
-
-	default:
-		// Unknown action type - do nothing
-		return false
 	}
 
-	// Record action in history (limit size to prevent memory growth)
+	// Record action in our own history for decision making
 	bc.recordAction(action)
 
 	return success
@@ -584,4 +569,82 @@ func (bc *BotController) GetStats() map[string]interface{} {
 		"timeSinceLastAction": time.Since(bc.lastActionTime),
 		"decisionsPerSecond":  bc.decisionsPerSecond,
 	}
+}
+
+// GetActionExecutionHistory returns the complete action execution history from the action executor.
+// Provides insights into bot learning and behavior patterns with detailed results.
+func (bc *BotController) GetActionExecutionHistory() []ActionResult {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+
+	if bc.actionExecutor == nil {
+		return []ActionResult{}
+	}
+
+	return bc.actionExecutor.GetActionHistory()
+}
+
+// GetActionStats returns performance statistics for each action type.
+// Useful for analyzing bot effectiveness and optimizing behavior.
+func (bc *BotController) GetActionStats() map[ActionType]ActionStats {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+
+	if bc.actionExecutor == nil {
+		return make(map[ActionType]ActionStats)
+	}
+
+	return bc.actionExecutor.GetActionStats()
+}
+
+// AnalyzeStatImpact returns the average impact of an action type on a character stat.
+// Helps the bot learn which actions are most effective for character care.
+func (bc *BotController) AnalyzeStatImpact(actionType ActionType, statName string) float64 {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+
+	if bc.actionExecutor == nil {
+		return 0.0
+	}
+
+	return bc.actionExecutor.AnalyzeStatImpact(actionType, statName)
+}
+
+// GetRecommendedAction suggests the best action based on current context and learning.
+// Uses the action executor's accumulated knowledge for intelligent recommendations.
+func (bc *BotController) GetRecommendedAction() ActionType {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+
+	if bc.actionExecutor == nil {
+		return ActionWait
+	}
+
+	return bc.actionExecutor.GetRecommendedAction()
+}
+
+// LearnFromPeerActions processes peer action events to improve bot behavior.
+// Implements the peer learning capabilities specified in the plan.
+func (bc *BotController) LearnFromPeerActions(peerActions []PeerActionEvent) {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+
+	if bc.actionExecutor == nil {
+		return
+	}
+
+	bc.actionExecutor.LearnFromPeerActions(peerActions)
+}
+
+// ResetActionHistory clears the action executor's history and statistics.
+// Useful for testing or when starting fresh learning cycles.
+func (bc *BotController) ResetActionHistory() {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+
+	if bc.actionExecutor == nil {
+		return
+	}
+
+	bc.actionExecutor.ResetHistory()
 }
