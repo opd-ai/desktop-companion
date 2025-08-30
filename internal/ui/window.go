@@ -339,6 +339,7 @@ func (dw *DesktopWindow) buildGameModeMenuItems() []ContextMenuItem {
 
 // buildBattleMenuItems creates battle-related menu items for battle-capable characters
 // Only shows battle options if the character has battle system enabled
+// In network mode, provides battle invitation options as documented in README.md
 func (dw *DesktopWindow) buildBattleMenuItems() []ContextMenuItem {
 	// Check if character has battle system enabled
 	if !dw.shouldShowBattleOptions() {
@@ -347,13 +348,39 @@ func (dw *DesktopWindow) buildBattleMenuItems() []ContextMenuItem {
 
 	var menuItems []ContextMenuItem
 
-	// Battle initiation menu item
-	menuItems = append(menuItems, ContextMenuItem{
-		Text: "Initiate Battle",
-		Callback: func() {
-			dw.handleBattleInitiation()
-		},
-	})
+	if dw.networkMode && dw.networkOverlay != nil && dw.networkOverlay.GetNetworkManager() != nil {
+		// Network mode: Provide battle invitation options as documented in README.md
+		// "Battle invitations available through context menu in multiplayer mode"
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Invite to Battle",
+			Callback: func() {
+				dw.handleBattleInvitation()
+			},
+		})
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Challenge Player",
+			Callback: func() {
+				dw.handleBattleChallenge()
+			},
+		})
+
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Send Battle Request",
+			Callback: func() {
+				dw.handleBattleRequest()
+			},
+		})
+	} else {
+		// Non-network mode: Basic battle initiation
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Initiate Battle",
+			Callback: func() {
+				dw.handleBattleInitiation()
+			},
+		})
+	}
 
 	return menuItems
 }
@@ -1013,4 +1040,61 @@ func (dw *DesktopWindow) handleBattleInitiation() {
 	// For now, show a placeholder dialog - this will be integrated with the actual battle system
 	// TODO: Replace with actual battle system integration when multiplayer battle is implemented
 	dw.showDialog("Battle system ready! Battle initiation will be available when connected to other players.")
+}
+
+// handleBattleInvitation handles sending battle invitations to other players in network mode
+func (dw *DesktopWindow) handleBattleInvitation() {
+	if dw.networkOverlay == nil || dw.networkOverlay.GetNetworkManager() == nil {
+		dw.showDialog("Network not available. Battle invitations require network mode.")
+		return
+	}
+
+	peers := dw.networkOverlay.GetNetworkManager().GetPeers()
+	if len(peers) == 0 {
+		dw.showDialog("No other players connected. Battle invitations require connected peers.")
+		return
+	}
+
+	// TODO: Show peer selection dialog and send battle invitation using the network protocol
+	// For now, show available peers and simulate invitation
+	dw.showDialog(fmt.Sprintf("Battle invitation ready! %d player(s) available for battle challenges.", len(peers)))
+}
+
+// handleBattleChallenge handles challenging specific players to battle
+func (dw *DesktopWindow) handleBattleChallenge() {
+	if dw.networkOverlay == nil || dw.networkOverlay.GetNetworkManager() == nil {
+		dw.showDialog("Network not available. Battle challenges require network mode.")
+		return
+	}
+
+	peers := dw.networkOverlay.GetNetworkManager().GetPeers()
+	if len(peers) == 0 {
+		dw.showDialog("No other players connected. Battle challenges require connected peers.")
+		return
+	}
+
+	// TODO: Show peer selection dialog with challenge options
+	// This could include different types of battles (ranked, casual, tournament, etc.)
+	dw.showDialog(fmt.Sprintf("Challenge system ready! %d player(s) available to challenge.", len(peers)))
+}
+
+// handleBattleRequest handles sending formal battle requests with specific terms
+func (dw *DesktopWindow) handleBattleRequest() {
+	if dw.networkOverlay == nil || dw.networkOverlay.GetNetworkManager() == nil {
+		dw.showDialog("Network not available. Battle requests require network mode.")
+		return
+	}
+
+	peers := dw.networkOverlay.GetNetworkManager().GetPeers()
+	if len(peers) == 0 {
+		dw.showDialog("No other players connected. Battle requests require connected peers.")
+		return
+	}
+
+	// TODO: Show detailed battle request dialog with options for:
+	// - Battle type (casual, ranked, tournament)
+	// - Rules and constraints
+	// - Time limits
+	// - Spectator settings
+	dw.showDialog(fmt.Sprintf("Battle request system ready! %d player(s) available for formal battle requests.", len(peers)))
 }

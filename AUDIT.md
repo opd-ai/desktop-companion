@@ -75,29 +75,40 @@ Total Gaps Found: 4
 - `TestBug2NetworkContextMenuFix` - Validates fix works for network mode enabled/disabled
 - `TestBug2NetworkContextMenuRegression` - Comprehensive regression prevention test
 
-### Gap #3: Non-functional -events Command Line Flag
+### ~~Gap #3: Non-functional -events Command Line Flag~~ **RESOLVED**
 **Documentation Reference:**
 > "-events               Enable general dialog events system for interactive scenarios" (README.md:623)
 
 **Implementation Location:** `cmd/companion/main.go:28, 265`
 
-**Expected Behavior:** The `-events` flag should enable/disable general dialog events functionality
+**~~Expected Behavior~~** **Resolution:** The `-events` flag now enables/disable general dialog events functionality
 
-**Actual Implementation:** Flag is declared and logged but not passed to DesktopWindow or used to conditionally enable events system
+**~~Actual Implementation~~** **Fixed Implementation:** Flag is now properly passed to DesktopWindow and conditionally enables/disables events system including:
+- Ctrl+E (Open events menu)
+- Ctrl+R (Random roleplay scenario)  
+- Ctrl+G (Mini-game session)
+- Ctrl+H (Humor/joke session)
 
-**Gap Details:** The events flag exists in command-line parsing but has no functional effect. General dialog events appear to be always available regardless of flag state, making the flag misleading.
+**~~Gap Details~~** **Resolution Details:** Events flag now has functional effect. General dialog events are conditionally available based on flag state, making the flag work as documented.
 
-**Reproduction:**
+**~~Reproduction~~** **Resolution Verification:**
 ```bash
-# Both commands behave identically:
+# Commands now behave differently:
 go run cmd/companion/main.go -character assets/characters/examples/interactive_events.json
-go run cmd/companion/main.go -events -character assets/characters/examples/interactive_events.json
-# Events work in both cases despite flag difference
+# Events shortcuts disabled, not shown in debug output
+
+go run cmd/companion/main.go -events -character assets/characters/examples/interactive_events.json  
+# Events shortcuts enabled, shown in debug output and functional
 ```
 
-**Production Impact:** Minor - Flag exists but provides no functional control, confusing users about its purpose
+**~~Production Impact~~** **Resolution Impact:** Minor improvement - Flag now provides functional control matching documentation
 
-**Evidence:**
+**~~Evidence~~** **Resolution Commit:** c90c702 - Fix: Make -events flag functionally control events system (#audit-gap-3)
+
+**Tests Added:**
+- `TestBug3EventsFlagFix` - Validates fix works for events enabled/disabled
+- `TestBug3EventsFlagRegression` - Comprehensive regression prevention test
+- `TestBug3EventsFlagDocumentationCompliance` - Ensures implementation matches README.md
 ```go
 // Flag is declared but unused functionally
 events = flag.Bool("events", false, "Enable general dialog events system")

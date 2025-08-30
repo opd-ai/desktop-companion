@@ -25,22 +25,22 @@ type NetworkManagerInterface interface {
 
 // CharacterInfo represents a character's location and status for UI display
 type CharacterInfo struct {
-	Name      string
-	Location  string // "Local" or peer ID
-	IsLocal   bool
-	IsActive  bool
-	CharType  string // Character archetype/type
+	Name     string
+	Location string // "Local" or peer ID
+	IsLocal  bool
+	IsActive bool
+	CharType string // Character archetype/type
 }
 
 // NetworkOverlay displays multiplayer network status as an optional UI overlay
 // Uses Fyne widgets to avoid custom implementations - follows "lazy programmer" approach
 type NetworkOverlay struct {
 	widget.BaseWidget
-	networkManager  NetworkManagerInterface
+	networkManager NetworkManagerInterface
 	container      *fyne.Container
 	statusLabel    *widget.Label
 	peerList       *widget.List
-	characterList  *widget.List  // New: shows local vs network characters
+	characterList  *widget.List // New: shows local vs network characters
 	peerCount      *widget.Label
 	chatLog        *widget.RichText
 	chatInput      *widget.Entry
@@ -49,15 +49,15 @@ type NetworkOverlay struct {
 	updateTicker   *time.Ticker
 	stopUpdate     chan bool
 	mu             sync.RWMutex // Protects updateTicker and background goroutine state
-	
+
 	// Peer data for list widget
-	peers          []network.Peer
-	peerMutex      sync.RWMutex
-	
+	peers     []network.Peer
+	peerMutex sync.RWMutex
+
 	// Character data for visual distinction between local and network characters
 	characters     []CharacterInfo
 	characterMutex sync.RWMutex
-	localCharName  string  // Name of the local character
+	localCharName  string // Name of the local character
 }
 
 // NewNetworkOverlay creates a new network overlay widget
@@ -76,6 +76,11 @@ func NewNetworkOverlay(nm NetworkManagerInterface) *NetworkOverlay {
 	no.createNetworkWidgets()
 
 	return no
+}
+
+// GetNetworkManager returns the network manager interface
+func (no *NetworkOverlay) GetNetworkManager() NetworkManagerInterface {
+	return no.networkManager
 }
 
 // createNetworkWidgets creates the network status and peer communication UI
@@ -101,14 +106,14 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 		func(id widget.ListItemID, obj fyne.CanvasObject) {
 			no.peerMutex.RLock()
 			defer no.peerMutex.RUnlock()
-			
+
 			if id < len(no.peers) {
 				peer := no.peers[id]
 				statusIcon := "🔴" // Disconnected
 				if peer.Conn != nil {
 					statusIcon = "🟢" // Connected
 				}
-				
+
 				obj.(*widget.Label).SetText(fmt.Sprintf("%s %s", statusIcon, peer.ID))
 			}
 		},
@@ -128,10 +133,10 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 		func(id widget.ListItemID, obj fyne.CanvasObject) {
 			no.characterMutex.RLock()
 			defer no.characterMutex.RUnlock()
-			
+
 			if id < len(no.characters) {
 				char := no.characters[id]
-				
+
 				// Visual indicators for character type and status
 				var locationIcon, statusIcon string
 				if char.IsLocal {
@@ -139,14 +144,14 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 				} else {
 					locationIcon = "🌐" // Globe icon for network/remote
 				}
-				
+
 				if char.IsActive {
 					statusIcon = "✅" // Active
 				} else {
 					statusIcon = "💤" // Idle
 				}
-				
-				displayText := fmt.Sprintf("%s %s %s (%s)", 
+
+				displayText := fmt.Sprintf("%s %s %s (%s)",
 					locationIcon, statusIcon, char.Name, char.Location)
 				obj.(*widget.Label).SetText(displayText)
 			}
@@ -172,7 +177,7 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 
 	// Layout components in a compact vertical arrangement
 	headerContainer := container.NewHBox(no.statusLabel, layout.NewSpacer(), no.peerCount)
-	
+
 	peerSection := container.NewBorder(
 		widget.NewLabel("Network Peers:"),
 		nil, nil, nil,
@@ -197,7 +202,7 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 	no.container = container.NewVBox(
 		headerContainer,
 		widget.NewSeparator(),
-		characterSection,  // Show characters first as this is most important for users
+		characterSection, // Show characters first as this is most important for users
 		widget.NewSeparator(),
 		peerSection,
 		widget.NewSeparator(),
@@ -212,16 +217,16 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 func (no *NetworkOverlay) styleNetworkWidgets() {
 	// Set background color for better visibility over character
 	// backgroundColor := color.RGBA{R: 0, G: 0, B: 0, A: 180} // Semi-transparent black
-	
+
 	// Style the main container - increased height to accommodate character list
 	no.container.Resize(fyne.NewSize(220, 380))
-	
+
 	// Style status label with appropriate colors
 	if no.networkManager != nil && no.networkManager.GetPeerCount() > 0 {
 		no.statusLabel.SetText("Network: Connected")
 		// Green tint for connected status could be added here if Fyne supports it
 	}
-	
+
 	// Initialize with local character
 	no.updateCharacterList()
 }
@@ -236,9 +241,9 @@ func (no *NetworkOverlay) sendChatMessage(message string) {
 	no.chatInput.SetText("")
 
 	// Send message through network manager
-	payload := []byte(fmt.Sprintf(`{"type":"chat","message":"%s","from":"%s"}`, 
+	payload := []byte(fmt.Sprintf(`{"type":"chat","message":"%s","from":"%s"}`,
 		message, no.networkManager.GetNetworkID()))
-	
+
 	err := no.networkManager.SendMessage(network.MessageTypeCharacterAction, payload, "")
 	if err != nil {
 		no.addChatMessage("System", fmt.Sprintf("Failed to send message: %v", err))
@@ -253,12 +258,12 @@ func (no *NetworkOverlay) sendChatMessage(message string) {
 func (no *NetworkOverlay) addChatMessage(sender, message string) {
 	timestamp := time.Now().Format("15:04")
 	formattedMessage := fmt.Sprintf("[%s] %s: %s\n", timestamp, sender, message)
-	
+
 	// Get current text and append new message
 	currentText := no.chatLog.String()
 	newText := fmt.Sprintf("%s%s", currentText, formattedMessage)
 	no.chatLog.ParseMarkdown(newText)
-	
+
 	// Note: Auto-scroll functionality would need custom implementation in Fyne
 }
 
@@ -296,7 +301,7 @@ func (no *NetworkOverlay) Hide() {
 		no.updateTicker.Stop()
 		no.updateTicker = nil
 	}
-	
+
 	// Signal update loop to stop
 	select {
 	case no.stopUpdate <- true:
@@ -334,11 +339,11 @@ func (no *NetworkOverlay) updateLoop() {
 	no.mu.RLock()
 	ticker := no.updateTicker
 	no.mu.RUnlock()
-	
+
 	if ticker == nil {
 		return
 	}
-	
+
 	for {
 		select {
 		case <-no.stopUpdate:
@@ -368,7 +373,7 @@ func (no *NetworkOverlay) updateNetworkStatus() {
 
 	// Update peer list
 	no.updatePeerList()
-	
+
 	// Update character list to show local vs network distinction
 	no.updateCharacterList()
 }
@@ -380,7 +385,7 @@ func (no *NetworkOverlay) updatePeerList() {
 	}
 
 	peers := no.networkManager.GetPeers()
-	
+
 	no.peerMutex.Lock()
 	no.peers = peers
 	no.peerMutex.Unlock()
@@ -393,10 +398,10 @@ func (no *NetworkOverlay) updatePeerList() {
 func (no *NetworkOverlay) updateCharacterList() {
 	no.characterMutex.Lock()
 	defer no.characterMutex.Unlock()
-	
+
 	// Clear existing character list
 	no.characters = no.characters[:0]
-	
+
 	// Always add local character first
 	localChar := CharacterInfo{
 		Name:     no.localCharName,
@@ -406,7 +411,7 @@ func (no *NetworkOverlay) updateCharacterList() {
 		CharType: "Local",
 	}
 	no.characters = append(no.characters, localChar)
-	
+
 	// Add network characters from peers
 	if no.networkManager != nil {
 		peers := no.networkManager.GetPeers()
@@ -423,7 +428,7 @@ func (no *NetworkOverlay) updateCharacterList() {
 			no.characters = append(no.characters, networkChar)
 		}
 	}
-	
+
 	// Refresh the character list widget
 	no.characterList.Refresh()
 }
@@ -441,7 +446,7 @@ func (no *NetworkOverlay) RegisterNetworkEvents() {
 	}
 
 	// Register handler for character action messages (including chat)
-	no.networkManager.RegisterMessageHandler(network.MessageTypeCharacterAction, 
+	no.networkManager.RegisterMessageHandler(network.MessageTypeCharacterAction,
 		func(msg network.Message, from *network.Peer) error {
 			// Try to parse as chat message
 			var chatData map[string]interface{}
@@ -462,7 +467,7 @@ func (no *NetworkOverlay) RegisterNetworkEvents() {
 func (no *NetworkOverlay) GetCharacterList() []CharacterInfo {
 	no.characterMutex.RLock()
 	defer no.characterMutex.RUnlock()
-	
+
 	// Return a copy to avoid race conditions
 	characters := make([]CharacterInfo, len(no.characters))
 	copy(characters, no.characters)
