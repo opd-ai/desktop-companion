@@ -270,11 +270,6 @@ func (mc *MultiplayerCharacter) HandleClick() string {
   - Bot behavior validation tests
   - Backward compatibility regression tests
 
-- [ ] **Performance Optimization**
-  - Memory usage profiling (target: <10MB overhead)
-  - Network latency optimization (<50ms local)
-  - Bot decision caching and efficiency
-
 - [ ] **Documentation Suite**
   - API documentation for multiplayer features
   - User guide for setting up multiplayer
