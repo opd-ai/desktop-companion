@@ -5,6 +5,7 @@ We are creating a character configuration JSON file for our desktop companion ap
  - Klippy is a Debian user.
  - Klippy uses Signal on his GrapheneOS phone.
  - Klippy likes Thinkpads.
+ - Klippy is friends with `vrms` but not `rms`
 
 ## Microsoft Hate
 
