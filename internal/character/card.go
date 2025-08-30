@@ -1113,35 +1113,71 @@ func (c *CharacterCard) validateMultiplayerConfig() error {
 	mp := c.Multiplayer
 
 	// Validate NetworkID when enabled
-	if mp.Enabled {
-		if mp.NetworkID == "" {
-			return fmt.Errorf("networkID is required when multiplayer is enabled")
-		}
-		if len(mp.NetworkID) > 50 {
-			return fmt.Errorf("networkID too long: %d characters, maximum 50 allowed", len(mp.NetworkID))
-		}
-		// NetworkID should contain only alphanumeric, underscore, and dash characters
-		for _, char := range mp.NetworkID {
-			if !((char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') ||
-				(char >= '0' && char <= '9') || char == '_' || char == '-') {
-				return fmt.Errorf("networkID contains invalid character '%c', only alphanumeric, underscore, and dash allowed", char)
-			}
-		}
+	if err := c.validateNetworkID(mp); err != nil {
+		return err
 	}
 
 	// Validate MaxPeers range
-	if mp.MaxPeers > 0 && mp.MaxPeers > 16 {
-		return fmt.Errorf("maxPeers cannot exceed 16, got %d", mp.MaxPeers)
+	if err := c.validateMaxPeers(mp.MaxPeers); err != nil {
+		return err
 	}
 
 	// Validate DiscoveryPort range
-	if mp.DiscoveryPort > 0 {
-		if mp.DiscoveryPort < 1024 {
-			return fmt.Errorf("discoveryPort must be >= 1024 to avoid system ports, got %d", mp.DiscoveryPort)
+	if err := c.validateDiscoveryPort(mp.DiscoveryPort); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateNetworkID validates the network ID configuration when multiplayer is enabled
+func (c *CharacterCard) validateNetworkID(mp *MultiplayerConfig) error {
+	if !mp.Enabled {
+		return nil
+	}
+
+	if mp.NetworkID == "" {
+		return fmt.Errorf("networkID is required when multiplayer is enabled")
+	}
+	if len(mp.NetworkID) > 50 {
+		return fmt.Errorf("networkID too long: %d characters, maximum 50 allowed", len(mp.NetworkID))
+	}
+
+	// NetworkID should contain only alphanumeric, underscore, and dash characters
+	for _, char := range mp.NetworkID {
+		if !c.isValidNetworkIDChar(char) {
+			return fmt.Errorf("networkID contains invalid character '%c', only alphanumeric, underscore, and dash allowed", char)
 		}
-		if mp.DiscoveryPort > 65535 {
-			return fmt.Errorf("discoveryPort cannot exceed 65535, got %d", mp.DiscoveryPort)
-		}
+	}
+
+	return nil
+}
+
+// isValidNetworkIDChar checks if a character is valid for network ID
+func (c *CharacterCard) isValidNetworkIDChar(char rune) bool {
+	return (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') ||
+		(char >= '0' && char <= '9') || char == '_' || char == '-'
+}
+
+// validateMaxPeers validates the maximum number of peers configuration
+func (c *CharacterCard) validateMaxPeers(maxPeers int) error {
+	if maxPeers > 0 && maxPeers > 16 {
+		return fmt.Errorf("maxPeers cannot exceed 16, got %d", maxPeers)
+	}
+	return nil
+}
+
+// validateDiscoveryPort validates the discovery port configuration
+func (c *CharacterCard) validateDiscoveryPort(discoveryPort int) error {
+	if discoveryPort <= 0 {
+		return nil
+	}
+
+	if discoveryPort < 1024 {
+		return fmt.Errorf("discoveryPort must be >= 1024 to avoid system ports, got %d", discoveryPort)
+	}
+	if discoveryPort > 65535 {
+		return fmt.Errorf("discoveryPort cannot exceed 65535, got %d", discoveryPort)
 	}
 
 	return nil
