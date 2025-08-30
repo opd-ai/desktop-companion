@@ -427,6 +427,11 @@ func (dw *DesktopWindow) buildChatMenuItems() []ContextMenuItem {
 // Only shows news options if the character has news features enabled
 // As documented in Phase 3: UI and Events Integration
 func (dw *DesktopWindow) buildNewsMenuItems() []ContextMenuItem {
+	// Check if character is nil
+	if dw.character == nil {
+		return nil
+	}
+
 	// Check if character has news features enabled
 	if !dw.character.GetCard().HasNewsFeatures() {
 		return nil
@@ -1174,13 +1179,16 @@ func (dw *DesktopWindow) handleBattleRequest() {
 // HandleNewsReading handles when user clicks "📰 Read News" in context menu
 // Triggers news reading events and displays news content through existing dialog system
 func (dw *DesktopWindow) HandleNewsReading() {
+	// Check if character is nil
+	if dw.character == nil {
+		return
+	}
+
 	// Check if character has news features enabled
 	if !dw.character.GetCard().HasNewsFeatures() {
 		dw.showDialog("News features not available for this character.")
 		return
-	}
-
-	// Try to trigger a news reading event
+	} // Try to trigger a news reading event
 	// Look for a configured news reading event to trigger
 	newsConfig := dw.character.GetCard().NewsFeatures
 	if newsConfig == nil || len(newsConfig.ReadingEvents) == 0 {
@@ -1207,13 +1215,16 @@ func (dw *DesktopWindow) HandleNewsReading() {
 // HandleFeedUpdate handles when user clicks "🔄 Update Feeds" in context menu
 // Manually triggers news feed updates and provides feedback to user
 func (dw *DesktopWindow) HandleFeedUpdate() {
+	// Check if character is nil
+	if dw.character == nil {
+		return
+	}
+
 	// Check if character has news features enabled
 	if !dw.character.GetCard().HasNewsFeatures() {
 		dw.showDialog("News features not available for this character.")
 		return
-	}
-
-	// Provide feedback that update is starting
+	} // Provide feedback that update is starting
 	dw.showDialog("Updating news feeds...")
 
 	// In a real implementation, this would trigger the news backend to refresh feeds
