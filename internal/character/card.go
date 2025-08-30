@@ -67,6 +67,8 @@ type CharacterCard struct {
 	BattleSystem *BattleSystemConfig `json:"battleSystem,omitempty"`
 	// News feature extensions (RSS/Atom integration)
 	NewsFeatures *news.NewsConfig `json:"newsFeatures,omitempty"`
+	// Platform-specific configuration (Phase 5.1 - JSON Schema Extensions)
+	PlatformConfig *PlatformConfig `json:"platformConfig,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -175,6 +177,52 @@ type BattleStat struct {
 	Max  float64 `json:"max"`  // Maximum value for the stat
 }
 
+// PlatformConfig enables platform-specific behavior customization for cross-platform compatibility.
+// This provides adaptive configuration for desktop vs mobile environments while maintaining
+// backward compatibility with existing character cards.
+type PlatformConfig struct {
+	Desktop *PlatformSpecificConfig `json:"desktop,omitempty"` // Desktop-specific configuration
+	Mobile  *PlatformSpecificConfig `json:"mobile,omitempty"`  // Mobile-specific configuration
+}
+
+// PlatformSpecificConfig defines platform-specific behavior and interaction overrides.
+// Follows the JSON-first approach for maximum configurability without code changes.
+type PlatformSpecificConfig struct {
+	// Behavior overrides for platform-specific customization
+	Behavior *Behavior `json:"behavior,omitempty"`
+
+	// Platform-specific interaction overrides
+	Interactions map[string]PlatformInteractionConfig `json:"interactions,omitempty"`
+
+	// Mobile-specific control configuration
+	MobileControls *MobileControlsConfig `json:"mobileControls,omitempty"`
+
+	// Window and display configuration
+	WindowMode     string `json:"windowMode,omitempty"`     // "overlay", "fullscreen", "pip" (picture-in-picture)
+	DefaultSize    int    `json:"defaultSize,omitempty"`    // Platform-specific default size override
+	TouchOptimized bool   `json:"touchOptimized,omitempty"` // Enable touch-optimized UI elements
+}
+
+// PlatformInteractionConfig extends InteractionConfig with platform-specific features.
+// Enables different interaction patterns for desktop (mouse) vs mobile (touch) environments.
+type PlatformInteractionConfig struct {
+	InteractionConfig          // Embed base interaction config
+	Triggers          []string `json:"triggers,omitempty"`       // Platform-specific triggers ("tap", "longpress", etc.)
+	HapticPattern     string   `json:"hapticPattern,omitempty"`  // Haptic feedback pattern ("light", "medium", "heavy")
+	TouchFeedback     bool     `json:"touchFeedback,omitempty"`  // Enable visual touch feedback
+	GestureEnabled    bool     `json:"gestureEnabled,omitempty"` // Enable gesture-based interactions
+}
+
+// MobileControlsConfig defines mobile-specific UI control settings.
+// Provides configuration for touch-friendly interface elements and navigation patterns.
+type MobileControlsConfig struct {
+	ShowBottomBar        bool   `json:"showBottomBar,omitempty"`        // Show bottom control bar
+	SwipeGesturesEnabled bool   `json:"swipeGesturesEnabled,omitempty"` // Enable swipe gesture navigation
+	HapticFeedback       bool   `json:"hapticFeedback,omitempty"`       // Global haptic feedback setting
+	LargeButtons         bool   `json:"largeButtons,omitempty"`         // Use larger, touch-friendly buttons
+	ContextMenuStyle     string `json:"contextMenuStyle,omitempty"`     // "bottomsheet", "popup", "fullscreen"
+}
+
 // LoadCard loads and validates a character card from a JSON file
 // Uses standard library encoding/json - no external dependencies needed
 func LoadCard(path string) (*CharacterCard, error) {
@@ -218,6 +266,10 @@ func (c *CharacterCard) Validate() error {
 	}
 
 	if err := c.validateBattleSystems(); err != nil {
+		return err
+	}
+
+	if err := c.validatePlatformSystems(); err != nil {
 		return err
 	}
 
@@ -297,6 +349,16 @@ func (c *CharacterCard) validateBattleSystems() error {
 	return nil
 }
 
+// validatePlatformSystems validates platform-specific configuration for cross-platform compatibility.
+// Ensures platform configs are consistent and don't conflict with base configuration.
+func (c *CharacterCard) validatePlatformSystems() error {
+	if err := ValidatePlatformConfig(c); err != nil {
+		return fmt.Errorf("platform config: %w", err)
+	}
+
+	return nil
+}
+
 // ValidateWithBasePath ensures the character card has valid configuration including file existence checks
 func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 	if err := c.validateCoreFields(basePath); err != nil {
@@ -310,6 +372,11 @@ func (c *CharacterCard) ValidateWithBasePath(basePath string) error {
 	// Additional validation for battle animations with file path checks
 	if err := c.validateBattleSystemWithBasePath(basePath); err != nil {
 		return fmt.Errorf("battle system: %w", err)
+	}
+
+	// Validate platform-specific configurations
+	if err := c.validatePlatformSystems(); err != nil {
+		return err
 	}
 
 	return nil

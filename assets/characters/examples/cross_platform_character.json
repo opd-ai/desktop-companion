@@ -1,0 +1,132 @@
+{
+  "name": "Cross-Platform Companion",
+  "description": "A modern virtual companion optimized for both desktop and mobile platforms",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "eating": "animations/eating.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello there!",
+        "How are you doing?",
+        "Nice to see you!",
+        "What's new today?"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "That tickles!",
+        "I'm feeling happy now!",
+        "Thanks for the attention!"
+      ],
+      "animation": "happy",
+      "cooldown": 3
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+  "platformConfig": {
+    "desktop": {
+      "behavior": {
+        "movementEnabled": true,
+        "defaultSize": 128,
+        "idleTimeout": 30
+      },
+      "windowMode": "overlay",
+      "interactions": {
+        "pet": {
+          "triggers": ["click"],
+          "effects": {"happiness": 10},
+          "animations": ["happy"],
+          "responses": ["You petted me!", "That feels nice!"],
+          "cooldown": 5
+        },
+        "feed": {
+          "triggers": ["rightclick"],
+          "effects": {"hunger": 20, "happiness": 5},
+          "animations": ["eating"],
+          "responses": ["Yummy!", "Thanks for the food!"],
+          "cooldown": 10
+        }
+      }
+    },
+    "mobile": {
+      "behavior": {
+        "movementEnabled": false,
+        "defaultSize": 256,
+        "idleTimeout": 60
+      },
+      "windowMode": "fullscreen",
+      "touchOptimized": true,
+      "mobileControls": {
+        "showBottomBar": true,
+        "swipeGesturesEnabled": true,
+        "hapticFeedback": true,
+        "largeButtons": true,
+        "contextMenuStyle": "bottomsheet"
+      },
+      "interactions": {
+        "pet": {
+          "triggers": ["tap"],
+          "effects": {"happiness": 15},
+          "animations": ["happy"],
+          "responses": ["You tapped me!", "That feels wonderful!"],
+          "cooldown": 3,
+          "hapticPattern": "light",
+          "touchFeedback": true
+        },
+        "feed": {
+          "triggers": ["longpress"],
+          "effects": {"hunger": 25, "happiness": 8},
+          "animations": ["eating"],
+          "responses": ["Delicious!", "Thanks for feeding me!"],
+          "cooldown": 8,
+          "hapticPattern": "medium",
+          "touchFeedback": true,
+          "gestureEnabled": true
+        }
+      }
+    }
+  },
+  "stats": {
+    "happiness": {
+      "min": 0,
+      "max": 100,
+      "initial": 50,
+      "decay": 1.0,
+      "criticalThreshold": 20
+    },
+    "hunger": {
+      "min": 0,
+      "max": 100,
+      "initial": 80,
+      "decay": 2.0,
+      "criticalThreshold": 30
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "criticalStateAnimationPriority": true,
+    "moodBasedAnimations": true
+  },
+  "interactions": {
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 20, "energy": -10},
+      "animations": ["happy"],
+      "responses": ["Let's play!", "This is fun!"],
+      "cooldown": 15
+    }
+  }
+}
