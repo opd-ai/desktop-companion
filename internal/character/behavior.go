@@ -3,6 +3,7 @@ package character
 import (
 	"desktop-companion/internal/dialog"
 	"desktop-companion/internal/news"
+	"desktop-companion/internal/platform"
 	"fmt"
 	"image"
 	"strings"
@@ -59,12 +60,22 @@ type Character struct {
 
 	// General dialog events (Phase 4)
 	generalEventManager *GeneralEventManager // User-initiated interactive scenarios
+
+	// Platform-aware behavior (Phase 5.4)
+	platformAdapter *PlatformBehaviorAdapter // Platform-aware behavior adaptation
 }
 
 // New creates a new character instance from a character card
 // Loads all animations and initializes behavior state
 func New(card *CharacterCard, basePath string) (*Character, error) {
-	char := createCharacterInstance(card, basePath)
+	// Use platform-aware constructor with nil platform (defaults to desktop behavior)
+	return NewWithPlatform(card, basePath, nil)
+}
+
+// NewWithPlatform creates a new character instance with platform-aware behavior adaptation.
+// This constructor integrates platform detection to optimize character behavior for the target platform.
+func NewWithPlatform(card *CharacterCard, basePath string, platformInfo *platform.PlatformInfo) (*Character, error) {
+	char := createCharacterInstanceWithPlatform(card, basePath, platformInfo)
 
 	if err := initializeCharacterSystems(char); err != nil {
 		return nil, err
@@ -84,6 +95,25 @@ func New(card *CharacterCard, basePath string) (*Character, error) {
 
 // createCharacterInstance initializes the basic character structure with default values.
 func createCharacterInstance(card *CharacterCard, basePath string) *Character {
+	return createCharacterInstanceWithPlatform(card, basePath, nil)
+}
+
+// createCharacterInstanceWithPlatform initializes a character with platform-aware behavior adaptation.
+func createCharacterInstanceWithPlatform(card *CharacterCard, basePath string, platformInfo *platform.PlatformInfo) *Character {
+	// Create platform behavior adapter
+	platformAdapter := NewPlatformBehaviorAdapter(platformInfo)
+
+	// Get platform-optimized behavior configuration
+	behaviorConfig := platformAdapter.GetBehaviorConfig()
+
+	// Calculate optimal character size based on platform and screen size
+	// Note: For now we use a default screen width, this will be updated when the UI system provides actual screen size
+	defaultScreenWidth := float32(1920) // Will be replaced by actual screen detection in UI layer
+	if platformInfo != nil && platformInfo.IsMobile() {
+		defaultScreenWidth = 400 // Typical mobile screen width
+	}
+	optimalSize := platformAdapter.GetOptimalCharacterSize(defaultScreenWidth, card.Behavior.DefaultSize)
+
 	return &Character{
 		card:                     card,
 		animationManager:         NewAnimationManager(),
@@ -95,9 +125,14 @@ func createCharacterInstance(card *CharacterCard, basePath string) *Character {
 		gameInteractionCooldowns: make(map[string]time.Time),
 		romanceEventCooldowns:    make(map[string]time.Time),
 		lastRomanceEventCheck:    time.Now().Add(-30 * time.Second), // Allow immediate first check
-		idleTimeout:              time.Duration(card.Behavior.IdleTimeout) * time.Second,
-		movementEnabled:          card.Behavior.MovementEnabled,
-		size:                     card.Behavior.DefaultSize,
+
+		// Platform-aware behavior settings
+		idleTimeout:     behaviorConfig.IdleTimeout,
+		movementEnabled: behaviorConfig.MovementEnabled,
+		size:            optimalSize,
+
+		// Platform behavior adapter
+		platformAdapter: platformAdapter,
 	}
 }
 
@@ -2344,37 +2379,111 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 // Uses personality traits to generate appropriate simple responses
 func (c *Character) handleChatFallback(message string) string {
 	// Simple personality-based responses
-	shyness := c.card.GetPersonalityTrait("shyness")
-	romanticism := c.card.GetPersonalityTrait("romanticism")
-
-	fallbackResponses := []string{
-		"That's interesting to hear!",
-		"I understand what you mean.",
-		"Thanks for sharing that with me.",
-		"I'm glad we can talk about this.",
-		"Tell me more about that.",
+	fallbacks := []string{
+		"I'm not sure how to respond to that, but I'm listening!",
+		"That's interesting! Tell me more.",
+		"I'm still learning how to express myself better.",
+		"Your words mean a lot to me.",
 	}
 
-	// Adjust responses based on personality
-	if shyness > 0.7 {
-		fallbackResponses = append(fallbackResponses,
-			"I... I'm not sure what to say... 😳",
-			"That makes me feel a bit shy...",
-		)
+	// Use message hash to get consistent response for same input
+	hash := 0
+	for _, char := range message {
+		hash += int(char)
 	}
 
-	if romanticism > 0.6 {
-		fallbackResponses = append(fallbackResponses,
-			"I love how we can share our thoughts! 💕",
-			"You always know what to say to me~",
-		)
+	return fallbacks[hash%len(fallbacks)]
+}
+
+// Platform-Aware Behavior Methods (Phase 5.4)
+
+// GetPlatformBehaviorConfig returns the current platform behavior configuration.
+// This provides access to platform-specific settings for UI components and interactions.
+func (c *Character) GetPlatformBehaviorConfig() *BehaviorConfig {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.platformAdapter == nil {
+		// Fallback to desktop behavior if no platform adapter
+		defaultAdapter := NewPlatformBehaviorAdapter(nil)
+		return defaultAdapter.GetBehaviorConfig()
 	}
 
-	// Select random response
-	if len(fallbackResponses) > 0 {
-		index := int(time.Now().UnixNano()) % len(fallbackResponses)
-		return fallbackResponses[index]
+	return c.platformAdapter.GetBehaviorConfig()
+}
+
+// GetInteractionDelay returns the appropriate delay for the given interaction type
+// based on the current platform (longer delays on mobile to prevent accidental interactions).
+func (c *Character) GetInteractionDelay(eventType string) time.Duration {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.platformAdapter == nil {
+		return 1 * time.Second // Default fallback
 	}
 
-	return "I'm listening..."
+	return c.platformAdapter.GetInteractionDelayForEvent(eventType)
+}
+
+// ShouldEnableFeature checks if a specific feature should be enabled on the current platform.
+// This allows the UI to conditionally enable/disable features based on platform capabilities.
+func (c *Character) ShouldEnableFeature(feature string) bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.platformAdapter == nil {
+		return true // Default to enabled if no adapter
+	}
+
+	return c.platformAdapter.ShouldEnableFeature(feature)
+}
+
+// GetOptimalSize returns the optimal character size for the current platform and screen size.
+// This integrates with the responsive layout system to provide appropriate sizing.
+func (c *Character) GetOptimalSize(screenWidth float32) int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.platformAdapter == nil {
+		return c.size // Use current size if no adapter
+	}
+
+	return c.platformAdapter.GetOptimalCharacterSize(screenWidth, c.card.Behavior.DefaultSize)
+}
+
+// GetAnimationFrameRate returns the optimal frame rate for animations on the current platform.
+// Mobile platforms use lower frame rates to conserve battery.
+func (c *Character) GetAnimationFrameRate() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.platformAdapter == nil {
+		return 60 // Default desktop frame rate
+	}
+
+	return c.platformAdapter.GetAnimationFrameRate()
+}
+
+// GetBackgroundFrameRate returns the frame rate to use when the app is in the background.
+// This helps conserve resources on mobile devices.
+func (c *Character) GetBackgroundFrameRate() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if c.platformAdapter == nil {
+		return 30 // Default background frame rate
+	}
+
+	return c.platformAdapter.GetBackgroundFrameRate()
+}
+
+// UpdatePlatformSize updates the character size based on new screen dimensions.
+// This should be called when the screen size changes (e.g., device rotation on mobile).
+func (c *Character) UpdatePlatformSize(screenWidth float32) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.platformAdapter != nil {
+		c.size = c.platformAdapter.GetOptimalCharacterSize(screenWidth, c.card.Behavior.DefaultSize)
+	}
 }
