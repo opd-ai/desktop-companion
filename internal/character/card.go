@@ -487,31 +487,58 @@ func (c *CharacterCard) GetAnimationPath(basePath, animationName string) (string
 // validateGameFeatures validates game-specific configuration fields
 // This ensures game stats, rules, and interactions are properly configured
 func (c *CharacterCard) validateGameFeatures() error {
-	// Stats validation (optional)
-	if c.Stats != nil {
-		for name, stat := range c.Stats {
-			if err := c.validateStatConfig(name, stat); err != nil {
-				return fmt.Errorf("stat '%s': %w", name, err)
-			}
-		}
+	if err := c.validateStatsConfig(); err != nil {
+		return err
 	}
 
-	// Game rules validation (optional)
-	if c.GameRules != nil {
-		if err := c.validateGameRules(); err != nil {
-			return fmt.Errorf("game rules: %w", err)
-		}
+	if err := c.validateGameRulesConfig(); err != nil {
+		return err
 	}
 
-	// Interactions validation (optional)
-	if c.Interactions != nil {
-		for name, interaction := range c.Interactions {
-			if err := c.validateInteractionConfig(name, interaction); err != nil {
-				return fmt.Errorf("interaction '%s': %w", name, err)
-			}
-		}
+	if err := c.validateInteractionsConfig(); err != nil {
+		return err
 	}
 
+	return nil
+}
+
+// validateStatsConfig validates all character stats configuration
+func (c *CharacterCard) validateStatsConfig() error {
+	if c.Stats == nil {
+		return nil
+	}
+
+	for name, stat := range c.Stats {
+		if err := c.validateStatConfig(name, stat); err != nil {
+			return fmt.Errorf("stat '%s': %w", name, err)
+		}
+	}
+	return nil
+}
+
+// validateGameRulesConfig validates game rules configuration
+func (c *CharacterCard) validateGameRulesConfig() error {
+	if c.GameRules == nil {
+		return nil
+	}
+
+	if err := c.validateGameRules(); err != nil {
+		return fmt.Errorf("game rules: %w", err)
+	}
+	return nil
+}
+
+// validateInteractionsConfig validates all interaction configurations
+func (c *CharacterCard) validateInteractionsConfig() error {
+	if c.Interactions == nil {
+		return nil
+	}
+
+	for name, interaction := range c.Interactions {
+		if err := c.validateInteractionConfig(name, interaction); err != nil {
+			return fmt.Errorf("interaction '%s': %w", name, err)
+		}
+	}
 	return nil
 }
 
@@ -882,31 +909,58 @@ func (c *CharacterCard) isSpecialRomanceCondition(conditionName string) bool {
 
 // validateRomanceFeatures validates romance-specific configuration fields
 func (c *CharacterCard) validateRomanceFeatures() error {
-	// Personality validation (optional)
-	if c.Personality != nil {
-		if err := c.validatePersonalityConfig(); err != nil {
-			return fmt.Errorf("personality: %w", err)
-		}
+	if err := c.validatePersonalitySection(); err != nil {
+		return err
 	}
 
-	// Romance dialogs validation (optional)
-	if len(c.RomanceDialogs) > 0 {
-		for i, dialog := range c.RomanceDialogs {
-			if err := c.validateRomanceDialog(dialog, i); err != nil {
-				return fmt.Errorf("romance dialog %d: %w", i, err)
-			}
-		}
+	if err := c.validateRomanceDialogsConfig(); err != nil {
+		return err
 	}
 
-	// Romance events validation (optional)
-	if len(c.RomanceEvents) > 0 {
-		for i, event := range c.RomanceEvents {
-			if err := c.validateRandomEventConfig(event, i); err != nil {
-				return fmt.Errorf("romance event %d (%s): %w", i, event.Name, err)
-			}
-		}
+	if err := c.validateRomanceEventsConfig(); err != nil {
+		return err
 	}
 
+	return nil
+}
+
+// validatePersonalitySection validates personality configuration if present
+func (c *CharacterCard) validatePersonalitySection() error {
+	if c.Personality == nil {
+		return nil
+	}
+
+	if err := c.validatePersonalityConfig(); err != nil {
+		return fmt.Errorf("personality: %w", err)
+	}
+	return nil
+}
+
+// validateRomanceDialogsConfig validates all romance dialog configurations
+func (c *CharacterCard) validateRomanceDialogsConfig() error {
+	if len(c.RomanceDialogs) == 0 {
+		return nil
+	}
+
+	for i, dialog := range c.RomanceDialogs {
+		if err := c.validateRomanceDialog(dialog, i); err != nil {
+			return fmt.Errorf("romance dialog %d: %w", i, err)
+		}
+	}
+	return nil
+}
+
+// validateRomanceEventsConfig validates all romance event configurations
+func (c *CharacterCard) validateRomanceEventsConfig() error {
+	if len(c.RomanceEvents) == 0 {
+		return nil
+	}
+
+	for i, event := range c.RomanceEvents {
+		if err := c.validateRandomEventConfig(event, i); err != nil {
+			return fmt.Errorf("romance event %d (%s): %w", i, event.Name, err)
+		}
+	}
 	return nil
 }
 
