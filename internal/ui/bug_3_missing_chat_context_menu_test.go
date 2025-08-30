@@ -3,11 +3,8 @@ package ui
 import (
 	"testing"
 
-	"fyne.io/fyne/v2/app"
-
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/dialog"
-	"desktop-companion/internal/monitoring"
 )
 
 // TestBug3MissingChatContextMenu tests that "Open Chat" context menu is missing for some AI characters
@@ -29,20 +26,18 @@ func TestBug3MissingChatContextMenu(t *testing.T) {
 			t.Fatalf("Failed to create character: %v", err)
 		}
 
-		// Create test app and window
-		testApp := app.New()
-		profiler := monitoring.NewProfiler(50)
+		// Create a minimal DesktopWindow for testing logic without GUI
+		window := &DesktopWindow{
+			character: char,
+		}
 
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
+		// Check if character should show chat option (using new logic)
+		shouldShowChat := window.shouldShowChatOption()
 
-		// Check if chatbot interface was created
-		hasChatbot := window.chatbotInterface != nil
-
-		if hasChatbot {
-			t.Log("Character without dialog backend has chatbot interface (unexpected)")
+		if shouldShowChat {
+			t.Log("FIXED: Character without dialog backend now shows 'Open Chat' option")
 		} else {
-			t.Log("Bug confirmed: Character without dialog backend has no chatbot interface")
-			t.Log("This means 'Open Chat' won't appear in context menu")
+			t.Log("Character without dialog backend has no 'Open Chat' option")
 		}
 
 		// Verify HasDialogBackend returns false
@@ -71,20 +66,18 @@ func TestBug3MissingChatContextMenu(t *testing.T) {
 			t.Fatalf("Failed to create character: %v", err)
 		}
 
-		// Create test app and window
-		testApp := app.New()
-		profiler := monitoring.NewProfiler(50)
+		// Create a minimal DesktopWindow for testing logic without GUI
+		window := &DesktopWindow{
+			character: char,
+		}
 
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
+		// Check if character should show chat option (using new logic)
+		shouldShowChat := window.shouldShowChatOption()
 
-		// Check if chatbot interface was created
-		hasChatbot := window.chatbotInterface != nil
-
-		if hasChatbot {
-			t.Log("Character with disabled dialog backend has chatbot interface (unexpected)")
+		if shouldShowChat {
+			t.Log("FIXED: Character with disabled dialog backend now shows 'Open Chat' option")
 		} else {
-			t.Log("Bug confirmed: Character with disabled dialog backend has no chatbot interface")
-			t.Log("This means 'Open Chat' won't appear in context menu even though backend exists")
+			t.Log("Character with disabled dialog backend has no 'Open Chat' option")
 		}
 
 		// Verify HasDialogBackend returns false (because Enabled is false)
@@ -96,6 +89,6 @@ func TestBug3MissingChatContextMenu(t *testing.T) {
 		t.Log("Expected behavior: 'Open Chat' should be available but show appropriate message when disabled")
 	})
 
-	t.Log("Bug #3 analysis: Context menu 'Open Chat' availability depends strictly on HasDialogBackend()")
-	t.Log("This may be too restrictive and could confuse users who expect to see the option")
+	t.Log("Bug #3 historical test: Shows behavior before and after fix")
+	t.Log("The shouldShowChatOption() method now handles both dialog backend config AND romance features")
 }

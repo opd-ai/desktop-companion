@@ -3,11 +3,8 @@ package ui
 import (
 	"testing"
 
-	"fyne.io/fyne/v2/app"
-
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/dialog"
-	"desktop-companion/internal/monitoring"
 )
 
 // TestBug3FixValidation tests that Bug #3 fix works correctly
@@ -33,10 +30,10 @@ func TestBug3FixValidation(t *testing.T) {
 			t.Fatalf("Failed to create character: %v", err)
 		}
 
-		// Create test app and window
-		testApp := app.New()
-		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
+		// Create a minimal DesktopWindow for testing logic without GUI
+		window := &DesktopWindow{
+			character: char,
+		}
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -77,10 +74,10 @@ func TestBug3FixValidation(t *testing.T) {
 			t.Fatalf("Failed to create character: %v", err)
 		}
 
-		// Create test app and window
-		testApp := app.New()
-		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
+		// Create a minimal DesktopWindow for testing logic without GUI
+		window := &DesktopWindow{
+			character: char,
+		}
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -92,13 +89,13 @@ func TestBug3FixValidation(t *testing.T) {
 
 		// Verify the character has dialog backend but it's disabled
 		hasBackend := char.GetCard().HasDialogBackend()
-		hasBackendConfig := char.GetCard().DialogBackend != nil
+		hasBackendConfig := char.GetCard().HasDialogBackendConfig()
 
 		if hasBackend {
 			t.Error("HasDialogBackend() should return false for disabled backend")
 		}
 		if !hasBackendConfig {
-			t.Error("Test setup error: character should have dialog backend config")
+			t.Error("HasDialogBackendConfig() should return true for disabled backend")
 		}
 
 		t.Log("PASS: 'Open Chat' will now appear in context menu even for disabled backends")
@@ -118,10 +115,10 @@ func TestBug3FixValidation(t *testing.T) {
 			t.Fatalf("Failed to create character: %v", err)
 		}
 
-		// Create test app and window
-		testApp := app.New()
-		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
+		// Create a minimal DesktopWindow for testing logic without GUI
+		window := &DesktopWindow{
+			character: char,
+		}
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -134,7 +131,7 @@ func TestBug3FixValidation(t *testing.T) {
 		// Verify the character has no AI capabilities
 		hasRomance := char.GetCard().HasRomanceFeatures()
 		hasBackend := char.GetCard().HasDialogBackend()
-		hasBackendConfig := char.GetCard().DialogBackend != nil
+		hasBackendConfig := char.GetCard().HasDialogBackendConfig()
 
 		if hasRomance || hasBackend || hasBackendConfig {
 			t.Error("Test setup error: character should have no AI capabilities")
@@ -160,10 +157,10 @@ func TestBug3FixValidation(t *testing.T) {
 			t.Fatalf("Failed to create character: %v", err)
 		}
 
-		// Create test app and window
-		testApp := app.New()
-		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
+		// Create a minimal DesktopWindow for testing logic without GUI
+		window := &DesktopWindow{
+			character: char,
+		}
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -174,7 +171,7 @@ func TestBug3FixValidation(t *testing.T) {
 		}
 
 		// Verify backend config exists
-		hasBackendConfig := char.GetCard().DialogBackend != nil
+		hasBackendConfig := char.GetCard().HasDialogBackendConfig()
 		if !hasBackendConfig {
 			t.Error("Test setup error: character should have dialog backend config")
 		}
