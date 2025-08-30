@@ -1,6 +1,7 @@
 package news
 
 import (
+	"context"
 	"desktop-companion/internal/dialog"
 	"encoding/json"
 	"fmt"
@@ -12,17 +13,23 @@ import (
 
 // NewsBlogBackend implements the DialogBackend interface for news summarization
 // It follows the existing plugin pattern established by the markov chain backend
+// Phase 4: Now includes background updating, smart scheduling, and error recovery
 type NewsBlogBackend struct {
 	// Core backend properties
 	enabled    bool
 	confidence float64
 	debug      bool
 
-	// News-specific components
+	// Phase 4: Production-ready components
+	feedManager *FeedManager
+	config      *NewsBackendConfig
+	ctx         context.Context
+	cancel      context.CancelFunc
+
+	// Legacy components (for backward compatibility)
 	fetcher *FeedFetcher
 	cache   *NewsCache
 	feeds   []RSSFeed
-	config  *NewsBackendConfig
 
 	// Concurrency protection
 	mu          sync.RWMutex
@@ -42,19 +49,39 @@ type NewsBackendConfig struct {
 	MaxNewsPerResponse   int      `json:"maxNewsPerResponse"`   // Maximum news items per response
 	DebugMode            bool     `json:"debugMode"`            // Enable debug logging
 	PreferredCategories  []string `json:"preferredCategories"`  // Preferred news categories
+	
+	// Phase 4: New configuration options
+	BackgroundUpdates    bool     `json:"backgroundUpdates"`    // Enable background feed updating
+	SmartScheduling      bool     `json:"smartScheduling"`      // Enable intelligent update scheduling
+	ErrorRecovery        bool     `json:"errorRecovery"`        // Enable comprehensive error handling
+	MaxCacheItems        int      `json:"maxCacheItems"`        // Maximum items in cache
+	BandwidthConscious   bool     `json:"bandwidthConscious"`   // Enable bandwidth-conscious policies
 }
 
-// NewNewsBlogBackend creates a new news blog backend
+// NewNewsBlogBackend creates a new news blog backend with Phase 4 enhancements
 func NewNewsBlogBackend() *NewsBlogBackend {
-	return &NewsBlogBackend{
+	// Create context for background operations
+	ctx, cancel := context.WithCancel(context.Background())
+	
+	// Phase 4: Create production-ready feed manager
+	feedManager := NewFeedManager()
+	
+	backend := &NewsBlogBackend{
 		enabled:              false,
 		confidence:           0.7, // Default confidence level
+		feedManager:          feedManager,
+		ctx:                  ctx,
+		cancel:               cancel,
+		
+		// Legacy components for backward compatibility
 		fetcher:              NewFeedFetcher(30 * time.Second),
 		cache:                NewNewsCache(100), // Default: store up to 100 news items
 		feeds:                []RSSFeed{},
 		personalityInfluence: true,
 		debug:                false,
 	}
+	
+	return backend
 }
 
 // Initialize sets up the backend with JSON configuration
@@ -76,9 +103,24 @@ func (nb *NewsBlogBackend) Initialize(config json.RawMessage) error {
 	nb.debug = backendConfig.DebugMode
 	nb.personalityInfluence = backendConfig.PersonalityInfluence
 
-	// Update cache size if specified
-	if backendConfig.SummaryLength > 0 {
-		nb.cache = NewNewsCache(backendConfig.SummaryLength)
+	// Phase 4: Configure production-ready cache
+	cacheSize := backendConfig.SummaryLength
+	if backendConfig.MaxCacheItems > 0 {
+		cacheSize = backendConfig.MaxCacheItems
+	}
+	if cacheSize > 0 {
+		nb.cache = NewNewsCache(cacheSize)
+	}
+
+	// Phase 4: Start background feed manager if enabled
+	if nb.enabled && backendConfig.BackgroundUpdates {
+		if err := nb.feedManager.Start(nb.ctx); err != nil {
+			return fmt.Errorf("failed to start feed manager: %w", err)
+		}
+		
+		if nb.debug {
+			fmt.Printf("[DEBUG] News backend: background updates enabled\n")
+		}
 	}
 
 	// Log initialization if debug mode is enabled
@@ -188,7 +230,7 @@ func (nb *NewsBlogBackend) UpdateMemory(context dialog.DialogContext, response d
 	return nil
 }
 
-// AddFeed adds a new RSS feed to the backend
+// AddFeed adds a new RSS feed to the backend with Phase 4 enhancements
 func (nb *NewsBlogBackend) AddFeed(feed RSSFeed) error {
 	nb.mu.Lock()
 	defer nb.mu.Unlock()
@@ -198,6 +240,18 @@ func (nb *NewsBlogBackend) AddFeed(feed RSSFeed) error {
 		return fmt.Errorf("invalid feed URL: %w", err)
 	}
 
+	// Phase 4: Register with feed manager for background updating
+	if nb.config != nil && nb.config.BackgroundUpdates {
+		if err := nb.feedManager.AddFeed(feed); err != nil {
+			return fmt.Errorf("failed to register feed with manager: %w", err)
+		}
+		
+		if nb.debug {
+			fmt.Printf("[DEBUG] Registered feed with background manager: %s\n", feed.Name)
+		}
+	}
+
+	// Maintain backward compatibility with legacy feeds list
 	nb.feeds = append(nb.feeds, feed)
 
 	if nb.debug {
@@ -259,8 +313,19 @@ func (nb *NewsBlogBackend) UpdateFeeds() error {
 	return nil
 }
 
-// getRelevantNews retrieves news items based on category and limits
+// getRelevantNews retrieves news items based on category and limits (Phase 4 enhanced)
 func (nb *NewsBlogBackend) getRelevantNews(category string, maxItems int) []*NewsItem {
+	// Phase 4: Try to get news from background feed manager first
+	if nb.config != nil && nb.config.BackgroundUpdates && nb.feedManager != nil {
+		if items, err := nb.feedManager.GetLatestNews(category, maxItems); err == nil && len(items) > 0 {
+			if nb.debug {
+				fmt.Printf("[DEBUG] Retrieved %d items from feed manager for category '%s'\n", len(items), category)
+			}
+			return items
+		}
+	}
+	
+	// Fallback to legacy cache for backward compatibility
 	if category == "headlines" || category == "recent" {
 		return nb.cache.GetRecentItems(maxItems)
 	}
@@ -499,4 +564,32 @@ func (nb *NewsBlogBackend) ClearCache() {
 	if nb.debug {
 		fmt.Println("[DEBUG] News cache cleared")
 	}
+}
+
+// Shutdown gracefully stops all background operations (Phase 4)
+func (nb *NewsBlogBackend) Shutdown() error {
+	nb.mu.Lock()
+	defer nb.mu.Unlock()
+
+	if nb.debug {
+		fmt.Println("[DEBUG] Shutting down news backend...")
+	}
+
+	// Stop background feed manager
+	if nb.feedManager != nil {
+		if err := nb.feedManager.Stop(); err != nil {
+			return fmt.Errorf("failed to stop feed manager: %w", err)
+		}
+	}
+
+	// Cancel context to stop all background operations
+	if nb.cancel != nil {
+		nb.cancel()
+	}
+
+	if nb.debug {
+		fmt.Println("[DEBUG] News backend shutdown complete")
+	}
+
+	return nil
 }

@@ -203,3 +203,17 @@ func (nc *NewsCache) Clear() {
 	nc.itemsByFeed = make(map[string][]*NewsItem)
 	nc.lastUpdate = make(map[string]time.Time)
 }
+
+// AddNews is an alias for AddItem for compatibility with FeedManager
+func (nc *NewsCache) AddNews(item *NewsItem) {
+	nc.AddItem(item)
+}
+
+// GetLatestNews returns the most recent news items, optionally filtered by category
+func (nc *NewsCache) GetLatestNews(category string, maxItems int) ([]*NewsItem, error) {
+	if category == "" || category == "all" {
+		return nc.GetRecentItems(maxItems), nil
+	}
+	
+	return nc.GetItemsByCategory(category, maxItems), nil
+}
