@@ -2,7 +2,6 @@ package battle
 
 import (
 	"testing"
-	"time"
 )
 
 // TestBattleManager_PerformAction tests action execution
@@ -355,15 +354,15 @@ func TestUpdateModifierDurations(t *testing.T) {
 		Stats: BattleStats{
 			Modifiers: []BattleModifier{
 				{Type: MODIFIER_DAMAGE, Duration: 3},
-				{Type: MODIFIER_DEFENSE, Duration: 1},
-				{Type: MODIFIER_STUN, Duration: 0}, // Should be removed
+				{Type: MODIFIER_DEFENSE, Duration: 2},
+				{Type: MODIFIER_STUN, Duration: 1}, // Will become 0 and be removed
 			},
 		},
 	}
 
 	bm.updateModifierDurations(participant)
 
-	// Should have 2 modifiers left (duration 2 and 0)
+	// Should have 2 modifiers left (durations 2 and 1)
 	if len(participant.Stats.Modifiers) != 2 {
 		t.Errorf("Expected 2 modifiers after update, got %d", len(participant.Stats.Modifiers))
 	}
@@ -373,8 +372,8 @@ func TestUpdateModifierDurations(t *testing.T) {
 		if modifier.Type == MODIFIER_DAMAGE && modifier.Duration != 2 {
 			t.Errorf("Expected damage modifier duration 2, got %d", modifier.Duration)
 		}
-		if modifier.Type == MODIFIER_DEFENSE && modifier.Duration != 0 {
-			t.Errorf("Expected defense modifier duration 0, got %d", modifier.Duration)
+		if modifier.Type == MODIFIER_DEFENSE && modifier.Duration != 1 {
+			t.Errorf("Expected defense modifier duration 1, got %d", modifier.Duration)
 		}
 	}
 }

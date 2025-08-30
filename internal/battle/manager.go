@@ -13,7 +13,6 @@
 package battle
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"sync"
@@ -236,7 +235,7 @@ func (bm *BattleManager) EndBattle() error {
 
 // copyBattleState creates a deep copy of battle state for thread safety
 func (bm *BattleManager) copyBattleState(original *BattleState) *BattleState {
-	copy := &BattleState{
+	stateCopy := &BattleState{
 		BattleID:    original.BattleID,
 		TurnOrder:   make([]string, len(original.TurnOrder)),
 		CurrentTurn: original.CurrentTurn,
@@ -245,11 +244,11 @@ func (bm *BattleManager) copyBattleState(original *BattleState) *BattleState {
 		Started:     original.Started,
 	}
 
-	copy(copy.TurnOrder, original.TurnOrder)
+	copy(stateCopy.TurnOrder, original.TurnOrder)
 
-	copy.Participants = make(map[string]*BattleParticipant)
+	stateCopy.Participants = make(map[string]*BattleParticipant)
 	for id, participant := range original.Participants {
-		copy.Participants[id] = &BattleParticipant{
+		stateCopy.Participants[id] = &BattleParticipant{
 			CharacterID:    participant.CharacterID,
 			PeerID:         participant.PeerID,
 			IsLocal:        participant.IsLocal,
@@ -259,12 +258,12 @@ func (bm *BattleManager) copyBattleState(original *BattleState) *BattleState {
 			LastActionTime: participant.LastActionTime,
 			IsReady:        participant.IsReady,
 		}
-		copy(copy.Participants[id].ActiveItems, participant.ActiveItems)
-		copy(copy.Participants[id].ActionHistory, participant.ActionHistory)
+		copy(stateCopy.Participants[id].ActiveItems, participant.ActiveItems)
+		copy(stateCopy.Participants[id].ActionHistory, participant.ActionHistory)
 	}
 
 	if original.LastAction != nil {
-		copy.LastAction = &BattleAction{
+		stateCopy.LastAction = &BattleAction{
 			Type:      original.LastAction.Type,
 			ActorID:   original.LastAction.ActorID,
 			TargetID:  original.LastAction.TargetID,
@@ -272,7 +271,7 @@ func (bm *BattleManager) copyBattleState(original *BattleState) *BattleState {
 			Timestamp: original.LastAction.Timestamp,
 		}
 		if original.LastAction.Result != nil {
-			copy.LastAction.Result = &BattleResult{
+			stateCopy.LastAction.Result = &BattleResult{
 				Success:       original.LastAction.Result.Success,
 				Damage:        original.LastAction.Result.Damage,
 				Healing:       original.LastAction.Result.Healing,
@@ -280,9 +279,9 @@ func (bm *BattleManager) copyBattleState(original *BattleState) *BattleState {
 				Animation:     original.LastAction.Result.Animation,
 				Response:      original.LastAction.Result.Response,
 			}
-			copy(copy.LastAction.Result.StatusEffects, original.LastAction.Result.StatusEffects)
+			copy(stateCopy.LastAction.Result.StatusEffects, original.LastAction.Result.StatusEffects)
 		}
 	}
 
-	return copy
+	return stateCopy
 }

@@ -1,8 +1,6 @@
 package battle
 
 import (
-	"context"
-	"fmt"
 	"math"
 	"time"
 )

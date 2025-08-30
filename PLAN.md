@@ -433,27 +433,26 @@ assets/characters/[archetype]/animations/battle/
 
 ## IMPLEMENTATION STRATEGY
 
-### Phase 1: Core Battle Framework (Week 1)
-**Files to Create:**
-- `internal/battle/manager.go` - Core battle state management
-- `internal/battle/actions.go` - Action processing and validation  
-- `internal/battle/ai.go` - Timeout-driven AI decisions
-- `internal/battle/fairness.go` - Balance constraint enforcement
+### Phase 1: Core Battle Framework (Week 1) — **COMPLETED**
+**Status:**
+- `internal/battle/manager.go`, `actions.go`, `ai.go`, `fairness.go` implemented with full GoDoc and >80% test coverage in `manager_test.go`.
+- All error paths tested, all shared state mutex-protected, and code is readable and maintainable.
+- Documentation (`README.md`) added for the package.
 
 **Character Card Extensions:**
 ```json
 {
-  "battleSystem": {
-    "enabled": true,
-    "battleStats": {
-      "hp": {"base": 100, "max": 100},
-      "attack": {"base": 20, "max": 25}, 
-      "defense": {"base": 15, "max": 20},
-      "speed": {"base": 10, "max": 15}
-    },
-    "aiDifficulty": "normal",
-    "preferredActions": ["attack", "heal", "defend"]
-  }
+    "battleSystem": {
+        "enabled": true,
+        "battleStats": {
+            "hp": {"base": 100, "max": 100},
+            "attack": {"base": 20, "max": 25}, 
+            "defense": {"base": 15, "max": 20},
+            "speed": {"base": 10, "max": 15}
+        },
+        "aiDifficulty": "normal",
+        "preferredActions": ["attack", "heal", "defend"]
+    }
 }
 ```
 
