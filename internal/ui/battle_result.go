@@ -167,41 +167,69 @@ func (o *BattleResultOverlay) formatActionDetails(result BattleResult) string {
 	var details []string
 
 	// Add damage and healing info
-	if result.Damage > 0 && result.Healing > 0 {
-		details = append(details, fmt.Sprintf("Damage: %.0f • Healing: %.0f", result.Damage, result.Healing))
-	} else if result.Damage > 0 {
-		details = append(details, fmt.Sprintf("Damage: %.0f", result.Damage))
-	} else if result.Healing > 0 {
-		details = append(details, fmt.Sprintf("Healing: %.0f", result.Healing))
+	if damageHealingText := o.formatDamageHealing(result.Damage, result.Healing); damageHealingText != "" {
+		details = append(details, damageHealingText)
 	}
 
 	// Add status effects
-	if len(result.StatusEffects) > 0 {
-		effects := "Effects: "
-		for i, effect := range result.StatusEffects {
-			if i > 0 {
-				effects += ", "
-			}
-			effects += effect
-		}
-		details = append(details, effects)
+	if effectsText := o.formatStatusEffects(result.StatusEffects); effectsText != "" {
+		details = append(details, effectsText)
 	}
 
 	// Add response if available
-	if result.Response != "" {
-		details = append(details, fmt.Sprintf("Response: %s", result.Response))
+	if responseText := o.formatResponse(result.Response); responseText != "" {
+		details = append(details, responseText)
 	}
 
-	// Join all details
-	result_details := ""
+	return o.joinDetails(details)
+}
+
+// formatDamageHealing creates damage and healing information text
+func (o *BattleResultOverlay) formatDamageHealing(damage, healing float64) string {
+	if damage > 0 && healing > 0 {
+		return fmt.Sprintf("Damage: %.0f • Healing: %.0f", damage, healing)
+	} else if damage > 0 {
+		return fmt.Sprintf("Damage: %.0f", damage)
+	} else if healing > 0 {
+		return fmt.Sprintf("Healing: %.0f", healing)
+	}
+	return ""
+}
+
+// formatStatusEffects creates status effects information text
+func (o *BattleResultOverlay) formatStatusEffects(statusEffects []string) string {
+	if len(statusEffects) == 0 {
+		return ""
+	}
+
+	effects := "Effects: "
+	for i, effect := range statusEffects {
+		if i > 0 {
+			effects += ", "
+		}
+		effects += effect
+	}
+	return effects
+}
+
+// formatResponse creates response information text
+func (o *BattleResultOverlay) formatResponse(response string) string {
+	if response == "" {
+		return ""
+	}
+	return fmt.Sprintf("Response: %s", response)
+}
+
+// joinDetails combines detail strings with newline separators
+func (o *BattleResultOverlay) joinDetails(details []string) string {
+	result := ""
 	for i, detail := range details {
 		if i > 0 {
-			result_details += "\n"
+			result += "\n"
 		}
-		result_details += detail
+		result += detail
 	}
-
-	return result_details
+	return result
 }
 
 // rebuildContent recreates the content container
