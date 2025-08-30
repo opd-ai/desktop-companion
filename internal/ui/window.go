@@ -259,6 +259,7 @@ func (dw *DesktopWindow) showContextMenu() {
 	menuItems = append(menuItems, dw.buildGameModeMenuItems()...)
 	menuItems = append(menuItems, dw.buildBattleMenuItems()...)
 	menuItems = append(menuItems, dw.buildChatMenuItems()...)
+	menuItems = append(menuItems, dw.buildNetworkMenuItems()...)
 	menuItems = append(menuItems, dw.buildUtilityMenuItems()...)
 
 	dw.displayContextMenu(menuItems)
@@ -392,6 +393,31 @@ func (dw *DesktopWindow) buildChatMenuItems() []ContextMenuItem {
 	return menuItems
 }
 
+// buildNetworkMenuItems creates network-related menu items when network mode is enabled
+func (dw *DesktopWindow) buildNetworkMenuItems() []ContextMenuItem {
+	if !dw.networkMode || dw.networkOverlay == nil {
+		return nil
+	}
+
+	var menuItems []ContextMenuItem
+
+	overlayText := "Network Overlay"
+	if dw.networkOverlay.IsVisible() {
+		overlayText = "Hide Network Overlay"
+	} else {
+		overlayText = "Show Network Overlay"
+	}
+
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: overlayText,
+		Callback: func() {
+			dw.ToggleNetworkOverlay()
+		},
+	})
+
+	return menuItems
+}
+
 // buildUtilityMenuItems creates utility menu items like About and Shortcuts
 func (dw *DesktopWindow) buildUtilityMenuItems() []ContextMenuItem {
 	return []ContextMenuItem{
@@ -423,6 +449,9 @@ func (dw *DesktopWindow) buildShortcutsText() string {
 	if dw.chatbotInterface != nil {
 		shortcutsText += "• 'C' - Toggle chatbot interface\n"
 		shortcutsText += "• 'ESC' - Close chatbot interface\n"
+	}
+	if dw.networkOverlay != nil {
+		shortcutsText += "• 'N' - Toggle network overlay\n"
 	}
 	shortcutsText += "• Right-click - Show this menu"
 	return shortcutsText
