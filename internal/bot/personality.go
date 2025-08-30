@@ -73,52 +73,70 @@ type PersonalityBehavior struct {
 func (pb *PersonalityBehavior) ParseResponseDelay() (min, max time.Duration, err error) {
 	delay := strings.TrimSpace(pb.ResponseDelay)
 	if delay == "" {
-		return 2 * time.Second, 4 * time.Second, nil // Default range
+		return pb.getDefaultDelayRange()
 	}
 
 	// Handle range format "1s-3s" or "500ms-2s"
 	if strings.Contains(delay, "-") {
-		parts := strings.Split(delay, "-")
-		if len(parts) != 2 {
-			return 0, 0, fmt.Errorf("invalid delay range format: %s", delay)
-		}
-
-		minStr := strings.TrimSpace(parts[0])
-		maxStr := strings.TrimSpace(parts[1])
-
-		// If minStr doesn't have a unit, extract it from maxStr
-		if !strings.ContainsAny(minStr, "msnhμ") {
-			// Extract unit from maxStr (e.g., "3s" -> "s")
-			unit := ""
-			for i := len(maxStr) - 1; i >= 0; i-- {
-				if maxStr[i] >= '0' && maxStr[i] <= '9' {
-					unit = maxStr[i+1:]
-					break
-				}
-			}
-			if unit != "" {
-				minStr += unit
-			}
-		}
-
-		min, err = time.ParseDuration(minStr)
-		if err != nil {
-			return 0, 0, fmt.Errorf("invalid minimum delay: %w", err)
-		}
-
-		max, err = time.ParseDuration(maxStr)
-		if err != nil {
-			return 0, 0, fmt.Errorf("invalid maximum delay: %w", err)
-		}
-
-		if min > max {
-			return 0, 0, fmt.Errorf("minimum delay (%v) cannot be greater than maximum (%v)", min, max)
-		}
-
-		return min, max, nil
+		return pb.parseDelayRange(delay)
 	}
 
 	// Handle single value "2s" - use as base with ±25% variation
+	return pb.parseSingleDelay(delay)
+}
+
+// getDefaultDelayRange returns the default delay range when no delay is specified.
+func (pb *PersonalityBehavior) getDefaultDelayRange() (min, max time.Duration, err error) {
+	return 2 * time.Second, 4 * time.Second, nil
+}
+
+// parseDelayRange parses range format delays like "1s-3s" or "500ms-2s".
+func (pb *PersonalityBehavior) parseDelayRange(delay string) (min, max time.Duration, err error) {
+	parts := strings.Split(delay, "-")
+	if len(parts) != 2 {
+		return 0, 0, fmt.Errorf("invalid delay range format: %s", delay)
+	}
+
+	minStr := strings.TrimSpace(parts[0])
+	maxStr := strings.TrimSpace(parts[1])
+
+	// If minStr doesn't have a unit, extract it from maxStr
+	if !strings.ContainsAny(minStr, "msnhμ") {
+		unit := pb.extractTimeUnit(maxStr)
+		if unit != "" {
+			minStr += unit
+		}
+	}
+
+	min, err = time.ParseDuration(minStr)
+	if err != nil {
+		return 0, 0, fmt.Errorf("invalid minimum delay: %w", err)
+	}
+
+	max, err = time.ParseDuration(maxStr)
+	if err != nil {
+		return 0, 0, fmt.Errorf("invalid maximum delay: %w", err)
+	}
+
+	if min > max {
+		return 0, 0, fmt.Errorf("minimum delay (%v) cannot be greater than maximum (%v)", min, max)
+	}
+
+	return min, max, nil
+}
+
+// extractTimeUnit extracts the unit portion from a duration string like "3s" -> "s".
+func (pb *PersonalityBehavior) extractTimeUnit(durationStr string) string {
+	for i := len(durationStr) - 1; i >= 0; i-- {
+		if durationStr[i] >= '0' && durationStr[i] <= '9' {
+			return durationStr[i+1:]
+		}
+	}
+	return ""
+}
+
+// parseSingleDelay parses single value delays like "2s" with ±25% variation.
+func (pb *PersonalityBehavior) parseSingleDelay(delay string) (min, max time.Duration, err error) {
 	base, err := time.ParseDuration(delay)
 	if err != nil {
 		return 0, 0, fmt.Errorf("invalid delay format: %w", err)
