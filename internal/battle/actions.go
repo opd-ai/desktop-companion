@@ -273,6 +273,14 @@ func (bm *BattleManager) applyItemEffects(action BattleAction, result *BattleRes
 
 // applyFairnessCaps enforces maximum effect limits to maintain balance
 func (bm *BattleManager) applyFairnessCaps(result *BattleResult) *BattleResult {
+	bm.capDirectEffects(result)
+	bm.capModifierValues(result)
+	bm.enforceModifierStacking(result)
+	return result
+}
+
+// capDirectEffects applies maximum limits to damage and healing values
+func (bm *BattleManager) capDirectEffects(result *BattleResult) {
 	// Cap damage modifications
 	if result.Damage > BASE_ATTACK_DAMAGE*MAX_DAMAGE_MODIFIER {
 		result.Damage = BASE_ATTACK_DAMAGE * MAX_DAMAGE_MODIFIER
@@ -282,8 +290,10 @@ func (bm *BattleManager) applyFairnessCaps(result *BattleResult) *BattleResult {
 	if result.Healing > BASE_HEAL_AMOUNT*MAX_HEAL_MODIFIER {
 		result.Healing = BASE_HEAL_AMOUNT * MAX_HEAL_MODIFIER
 	}
+}
 
-	// Cap modifier values to ensure fairness
+// capModifierValues enforces maximum values for all applied modifiers
+func (bm *BattleManager) capModifierValues(result *BattleResult) {
 	for i := range result.ModifiersApplied {
 		modifier := &result.ModifiersApplied[i]
 
@@ -306,13 +316,13 @@ func (bm *BattleManager) applyFairnessCaps(result *BattleResult) *BattleResult {
 			}
 		}
 	}
+}
 
-	// Validate modifier stacking
+// enforceModifierStacking limits the number of active modifiers to prevent abuse
+func (bm *BattleManager) enforceModifierStacking(result *BattleResult) {
 	if len(result.ModifiersApplied) > MAX_EFFECT_STACKING {
 		result.ModifiersApplied = result.ModifiersApplied[:MAX_EFFECT_STACKING]
 	}
-
-	return result
 }
 
 // executeEffect applies the calculated effects to the target participant
