@@ -60,6 +60,56 @@ type PeerListPayload struct {
 	Timestamp time.Time    `json:"timestamp"`
 }
 
+// BattleInvitePayload represents a battle invitation between peers
+type BattleInvitePayload struct {
+	FromCharacterID string    `json:"fromCharacterId"`
+	ToCharacterID   string    `json:"toCharacterId"`
+	BattleID        string    `json:"battleId"`
+	Timestamp       time.Time `json:"timestamp"`
+}
+
+// BattleActionPayload represents a battle action performed by a participant
+type BattleActionPayload struct {
+	BattleID   string    `json:"battleId"`
+	ActionType string    `json:"actionType"` // attack, heal, defend, etc.
+	ActorID    string    `json:"actorId"`
+	TargetID   string    `json:"targetId"`
+	ItemUsed   string    `json:"itemUsed,omitempty"`
+	Timestamp  time.Time `json:"timestamp"`
+}
+
+// BattleResultPayload represents the result of a battle action
+type BattleResultPayload struct {
+	BattleID         string                            `json:"battleId"`
+	ActionType       string                            `json:"actionType"`
+	ActorID          string                            `json:"actorId"`
+	TargetID         string                            `json:"targetId"`
+	Success          bool                              `json:"success"`
+	Damage           float64                           `json:"damage"`
+	Healing          float64                           `json:"healing"`
+	Animation        string                            `json:"animation,omitempty"`
+	Response         string                            `json:"response,omitempty"`
+	ParticipantStats map[string]BattleParticipantStats `json:"participantStats"`
+	Timestamp        time.Time                         `json:"timestamp"`
+}
+
+// BattleEndPayload represents the end of a battle
+type BattleEndPayload struct {
+	BattleID  string    `json:"battleId"`
+	Winner    string    `json:"winner,omitempty"` // Empty for draw
+	Reason    string    `json:"reason"`           // "defeat", "forfeit", "timeout"
+	Timestamp time.Time `json:"timestamp"`
+}
+
+// BattleParticipantStats represents current battle stats for network sync
+type BattleParticipantStats struct {
+	HP      float64 `json:"hp"`
+	MaxHP   float64 `json:"maxHp"`
+	Attack  float64 `json:"attack"`
+	Defense float64 `json:"defense"`
+	Speed   float64 `json:"speed"`
+}
+
 // SecurePeer extends Peer with cryptographic identity
 type SecurePeer struct {
 	ID        string    `json:"id"`
@@ -363,6 +413,78 @@ func (pm *ProtocolManager) CreatePeerListMessage(fromPeerID string, peers []Secu
 		Type:      MessageTypePeerList,
 		From:      fromPeerID,
 		To:        "", // Broadcast
+		Payload:   payloadBytes,
+		Timestamp: time.Now(),
+	}
+
+	return pm.SignMessage(msg)
+}
+
+// CreateBattleInviteMessage creates a signed battle invitation message
+func (pm *ProtocolManager) CreateBattleInviteMessage(fromPeerID, toPeerID string, payload BattleInvitePayload) (*SignedMessage, error) {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal battle invite payload: %w", err)
+	}
+
+	msg := Message{
+		Type:      MessageTypeBattleInvite,
+		From:      fromPeerID,
+		To:        toPeerID,
+		Payload:   payloadBytes,
+		Timestamp: time.Now(),
+	}
+
+	return pm.SignMessage(msg)
+}
+
+// CreateBattleActionMessage creates a signed battle action message
+func (pm *ProtocolManager) CreateBattleActionMessage(fromPeerID, toPeerID string, payload BattleActionPayload) (*SignedMessage, error) {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal battle action payload: %w", err)
+	}
+
+	msg := Message{
+		Type:      MessageTypeBattleAction,
+		From:      fromPeerID,
+		To:        toPeerID,
+		Payload:   payloadBytes,
+		Timestamp: time.Now(),
+	}
+
+	return pm.SignMessage(msg)
+}
+
+// CreateBattleResultMessage creates a signed battle result message
+func (pm *ProtocolManager) CreateBattleResultMessage(fromPeerID, toPeerID string, payload BattleResultPayload) (*SignedMessage, error) {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal battle result payload: %w", err)
+	}
+
+	msg := Message{
+		Type:      MessageTypeBattleResult,
+		From:      fromPeerID,
+		To:        toPeerID,
+		Payload:   payloadBytes,
+		Timestamp: time.Now(),
+	}
+
+	return pm.SignMessage(msg)
+}
+
+// CreateBattleEndMessage creates a signed battle end message
+func (pm *ProtocolManager) CreateBattleEndMessage(fromPeerID, toPeerID string, payload BattleEndPayload) (*SignedMessage, error) {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal battle end payload: %w", err)
+	}
+
+	msg := Message{
+		Type:      MessageTypeBattleEnd,
+		From:      fromPeerID,
+		To:        toPeerID,
 		Payload:   payloadBytes,
 		Timestamp: time.Now(),
 	}

@@ -57,6 +57,11 @@ const (
 	MessageTypeCharacterAction MessageType = "character_action"
 	MessageTypeStateSync       MessageType = "state_sync"
 	MessageTypePeerList        MessageType = "peer_list"
+	// Battle system message types (Phase 2)
+	MessageTypeBattleInvite    MessageType = "battle_invite"
+	MessageTypeBattleAction    MessageType = "battle_action"
+	MessageTypeBattleResult    MessageType = "battle_result"
+	MessageTypeBattleEnd       MessageType = "battle_end"
 )
 
 // Message represents a network message between peers
