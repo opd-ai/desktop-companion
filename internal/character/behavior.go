@@ -2,6 +2,7 @@ package character
 
 import (
 	"desktop-companion/internal/dialog"
+	"desktop-companion/internal/news"
 	"fmt"
 	"image"
 	"strings"
@@ -116,6 +117,13 @@ func initializeCharacterSystems(char *Character) error {
 
 	// Initialize general events if the character card has them
 	char.initializeGeneralEvents()
+
+	// Initialize news events if the character card has news features
+	if char.card.HasNewsFeatures() {
+		if err := char.initializeNewsEvents(); err != nil {
+			return fmt.Errorf("failed to initialize news events: %w", err)
+		}
+	}
 
 	return nil
 }
@@ -391,6 +399,16 @@ func (c *Character) initializeDialogSystem() error {
 	// Register available backends
 	c.dialogManager.RegisterBackend("simple_random", dialog.NewSimpleRandomBackend())
 	c.dialogManager.RegisterBackend("markov_chain", dialog.NewMarkovChainBackend())
+
+	// Register news backend if news features are enabled
+	if c.card.HasNewsFeatures() {
+		newsBackend := news.NewNewsBlogBackend()
+		c.dialogManager.RegisterBackend("news_blog", newsBackend)
+
+		if c.debug {
+			fmt.Printf("[DEBUG] Registered news backend for character with news features\n")
+		}
+	}
 
 	// Set default backend
 	if err := c.dialogManager.SetDefaultBackend(c.card.DialogBackend.DefaultBackend); err != nil {
