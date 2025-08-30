@@ -51,7 +51,7 @@ func TestDraggableCharacterCreation(t *testing.T) {
 	profiler := monitoring.NewProfiler(50)
 	defer profiler.Stop("", false)
 
-	window := NewDesktopWindow(testApp, char, true, profiler, false, false, nil, false, false)
+	window := NewDesktopWindow(testApp, char, true, profiler, false, false, nil, false, false, false)
 	defer window.Close()
 
 	// Test that draggable character can be created
@@ -165,7 +165,7 @@ func TestDragEventHandling(t *testing.T) {
 	profiler := monitoring.NewProfiler(50)
 	defer profiler.Stop("", false)
 
-	window := NewDesktopWindow(testApp, char, true, profiler, false, false, nil, false, false)
+	window := NewDesktopWindow(testApp, char, true, profiler, false, false, nil, false, false, false)
 	defer window.Close()
 
 	draggable := NewDraggableCharacter(window, char, true)

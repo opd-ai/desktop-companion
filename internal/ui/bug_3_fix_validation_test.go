@@ -36,7 +36,7 @@ func TestBug3FixValidation(t *testing.T) {
 		// Create test app and window
 		testApp := app.New()
 		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false)
+		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -80,7 +80,7 @@ func TestBug3FixValidation(t *testing.T) {
 		// Create test app and window
 		testApp := app.New()
 		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false)
+		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -121,7 +121,7 @@ func TestBug3FixValidation(t *testing.T) {
 		// Create test app and window
 		testApp := app.New()
 		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false)
+		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()
@@ -163,7 +163,7 @@ func TestBug3FixValidation(t *testing.T) {
 		// Create test app and window
 		testApp := app.New()
 		profiler := monitoring.NewProfiler(50)
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false)
+		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false, false)
 
 		// Test shouldShowChatOption
 		shouldShow := window.shouldShowChatOption()

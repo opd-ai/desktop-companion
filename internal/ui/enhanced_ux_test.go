@@ -25,7 +25,7 @@ func TestEnhancedUserExperience_EscapeKey(t *testing.T) {
 
 	// Create desktop window
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false, false)
 
 	if window.chatbotInterface == nil {
 		t.Error("Expected chatbot interface to be created")
@@ -71,7 +71,7 @@ func TestEnhancedUserExperience_FocusManagement(t *testing.T) {
 
 	// Create desktop window
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false, false)
 
 	if window.chatbotInterface == nil {
 		t.Error("Expected chatbot interface to be created")
@@ -112,7 +112,7 @@ func TestEnhancedUserExperience_ShortcutsMenu(t *testing.T) {
 
 	// Create desktop window
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false, false)
 
 	// Test that showContextMenu doesn't crash with new shortcuts menu
 	window.showContextMenu()

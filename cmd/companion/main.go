@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
@@ -179,9 +179,9 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 	}
 
 	myApp := app.NewWithID("com.opdai.desktop-companion")
-	
+
 	char := createCharacterInstance(card, characterDir)
-	
+
 	if *triggerEvent != "" {
 		if err := handleTriggerEventFlag(char); err != nil {
 			log.Fatalf("Failed to trigger event: %v", err)
@@ -195,7 +195,7 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 	}
 
 	window := createDesktopWindow(myApp, char, profiler, networkManager)
-	
+
 	window.Show()
 	myApp.Run()
 }
@@ -216,7 +216,7 @@ func setupNetworkManager(char *character.Character) *network.NetworkManager {
 	}
 
 	networkConfig := buildNetworkConfig(char)
-	
+
 	networkManager, err := network.NewNetworkManager(networkConfig)
 	if err != nil {
 		log.Fatalf("Failed to create network manager: %v", err)
@@ -241,7 +241,7 @@ func buildNetworkConfig(char *character.Character) network.NetworkManagerConfig 
 		NetworkID:         "dds-default-network",
 		DiscoveryInterval: 5 * time.Second,
 	}
-	
+
 	if char.GetCard() != nil && char.GetCard().HasMultiplayer() {
 		mpConfig := char.GetCard().Multiplayer
 		if mpConfig.DiscoveryPort > 0 {
@@ -258,7 +258,7 @@ func buildNetworkConfig(char *character.Character) network.NetworkManagerConfig 
 
 // createDesktopWindow creates the desktop window with all required components.
 func createDesktopWindow(myApp fyne.App, char *character.Character, profiler *monitoring.Profiler, networkManager *network.NetworkManager) *ui.DesktopWindow {
-	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats, networkManager, *networkMode, *showNetwork)
+	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats, networkManager, *networkMode, *showNetwork, *events)
 
 	if *debug {
 		log.Println("Created desktop window")

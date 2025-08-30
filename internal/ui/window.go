@@ -31,11 +31,12 @@ type DesktopWindow struct {
 	showStats        bool
 	networkMode      bool
 	showNetwork      bool
+	eventsEnabled    bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
-func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool, networkManager NetworkManagerInterface, networkMode bool, showNetwork bool) *DesktopWindow {
+func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool, networkManager NetworkManagerInterface, networkMode bool, showNetwork bool, eventsEnabled bool) *DesktopWindow {
 	// Create window with transparency support
 	window := app.NewWindow("Desktop Companion")
 
@@ -51,14 +52,15 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	configureAlwaysOnTop(window, debug)
 
 	dw := &DesktopWindow{
-		window:      window,
-		character:   char,
-		profiler:    profiler,
-		debug:       debug,
-		gameMode:    gameMode,
-		showStats:   showStats,
-		networkMode: networkMode,
-		showNetwork: showNetwork,
+		window:        window,
+		character:     char,
+		profiler:      profiler,
+		debug:         debug,
+		gameMode:      gameMode,
+		showStats:     showStats,
+		networkMode:   networkMode,
+		showNetwork:   showNetwork,
+		eventsEnabled: eventsEnabled,
 	}
 
 	// Create character renderer
@@ -781,8 +783,10 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 		}
 	})
 
-	// Add general events keyboard shortcuts with Ctrl modifier
-	dw.setupGeneralEventsShortcuts(canvas)
+	// Add general events keyboard shortcuts with Ctrl modifier only if events are enabled
+	if dw.eventsEnabled {
+		dw.setupGeneralEventsShortcuts(canvas)
+	}
 
 	if dw.debug {
 		log.Println("Keyboard shortcuts configured:")
@@ -790,10 +794,12 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 		log.Println("  'C' - Toggle chatbot")
 		log.Println("  'N' - Toggle network overlay")
 		log.Println("  'ESC' - Close chatbot")
-		log.Println("  'Ctrl+E' - Open events menu")
-		log.Println("  'Ctrl+R' - Random roleplay scenario")
-		log.Println("  'Ctrl+G' - Mini-game session")
-		log.Println("  'Ctrl+H' - Humor/joke session")
+		if dw.eventsEnabled {
+			log.Println("  'Ctrl+E' - Open events menu")
+			log.Println("  'Ctrl+R' - Random roleplay scenario")
+			log.Println("  'Ctrl+G' - Mini-game session")
+			log.Println("  'Ctrl+H' - Humor/joke session")
+		}
 	}
 }
 

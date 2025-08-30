@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"desktop-companion/internal/character"
+	"desktop-companion/internal/monitoring"
 
 	"fyne.io/fyne/v2/test"
 )
@@ -54,7 +55,7 @@ func TestBattleMenuIntegration(t *testing.T) {
 	}
 
 	// Create desktop window
-	window := NewDesktopWindow(app, char, false, nil, false, false, nil, false, false)
+	window := NewDesktopWindow(app, char, false, monitoring.NewProfiler(50), false, false, nil, false, false, false)
 
 	t.Run("should_show_battle_options", func(t *testing.T) {
 		shouldShow := window.shouldShowBattleOptions()
@@ -137,7 +138,7 @@ func TestBattleMenuWithoutBattleSystem(t *testing.T) {
 	}
 
 	// Create desktop window
-	window := NewDesktopWindow(app, char, false, nil, false, false, nil, false, false)
+	window := NewDesktopWindow(app, char, false, monitoring.NewProfiler(50), false, false, nil, false, false, false)
 
 	t.Run("should_not_show_battle_options", func(t *testing.T) {
 		shouldShow := window.shouldShowBattleOptions()
@@ -191,7 +192,7 @@ func TestBattleInitiationHandler(t *testing.T) {
 	}
 
 	// Create desktop window
-	window := NewDesktopWindow(app, char, false, nil, false, false, nil, false, false)
+	window := NewDesktopWindow(app, char, false, monitoring.NewProfiler(50), false, false, nil, false, false, false)
 
 	t.Run("handle_battle_initiation", func(t *testing.T) {
 		// Should not panic when called

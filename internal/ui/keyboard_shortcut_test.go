@@ -22,7 +22,7 @@ func TestStatsOverlayKeyboardToggle(t *testing.T) {
 	profiler := monitoring.NewProfiler(50)
 
 	// Create window with game mode and no initial stats display
-	window := NewDesktopWindow(testApp, char, false, profiler, true, false, nil, false, false)
+	window := NewDesktopWindow(testApp, char, false, profiler, true, false, nil, false, false, false)
 
 	// Verify stats overlay exists but is not visible initially
 	if window.statsOverlay == nil {
