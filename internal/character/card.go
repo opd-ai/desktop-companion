@@ -3,6 +3,7 @@ package character
 import (
 	"desktop-companion/internal/bot"
 	"desktop-companion/internal/dialog"
+	"desktop-companion/internal/news"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -64,6 +65,8 @@ type CharacterCard struct {
 	Multiplayer *MultiplayerConfig `json:"multiplayer,omitempty"`
 	// Battle system (Phase 3 - Animation & UI Integration)
 	BattleSystem *BattleSystemConfig `json:"battleSystem,omitempty"`
+	// News feature extensions (RSS/Atom integration)
+	NewsFeatures *news.NewsConfig `json:"newsFeatures,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -1567,4 +1570,14 @@ func (c *CharacterCard) GetBotPersonality() (*bot.BotPersonality, error) {
 
 	pm := bot.NewPersonalityManager()
 	return pm.CreatePersonality(c.Multiplayer.BotPersonality)
+}
+
+// HasNewsFeatures returns true if this character has news features enabled
+func (c *CharacterCard) HasNewsFeatures() bool {
+	return c.NewsFeatures != nil && c.NewsFeatures.Enabled
+}
+
+// GetNewsConfig returns the news configuration for this character, or nil if not configured
+func (c *CharacterCard) GetNewsConfig() *news.NewsConfig {
+	return c.NewsFeatures
 }
