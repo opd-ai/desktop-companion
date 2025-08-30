@@ -120,38 +120,56 @@ if *events {
 // Flag not passed to DesktopWindow constructor
 ```
 
-### Gap #4: Inconsistent Context Menu Documentation for Battle System
+### ~~Gap #4: Inconsistent Context Menu Documentation for Battle System~~ **RESOLVED**
 **Documentation Reference:**
 > "**Battle invitations** available through context menu in multiplayer mode" (README.md:213)
 
-**Implementation Location:** `internal/ui/window.go:303-318`
+**Implementation Location:** `internal/ui/window.go:340-384`
 
-**Expected Behavior:** Context menu should show battle-related options when in multiplayer mode with battle-capable characters
+**~~Expected Behavior~~** **Resolution:** Context menu now shows battle invitation options when in multiplayer mode with battle-capable characters
 
-**Actual Implementation:** Battle menu items only show "Initiate Battle" but documentation implies broader "battle invitations" functionality for multiplayer context
+**~~Actual Implementation~~** **Fixed Implementation:** Battle menu items now provide comprehensive battle invitation functionality:
+- Non-network mode: "Initiate Battle" (preserved existing functionality)
+- Network mode: "Invite to Battle", "Challenge Player", "Send Battle Request" (new invitation features)
 
-**Gap Details:** The battle system context menu implementation is minimal compared to the documented scope. Only basic battle initiation exists, not the implied multiplayer invitation system.
+**~~Gap Details~~** **Resolution Details:** The battle system context menu now matches documented scope. Multiplayer invitation system implemented with three distinct invitation types leveraging existing network battle protocols.
 
-**Reproduction:**
-```go
-// Start with battle-capable character in network mode
-go run cmd/companion/main.go -network -character assets/characters/multiplayer/social_bot.json
-// Right-click character
-// Expected: Comprehensive battle invitation options
-// Actual: Only basic "Initiate Battle" option
+**~~Reproduction~~** **Resolution Verification:**
+```bash
+# Commands now behave as documented:
+go run cmd/companion/main.go -character assets/characters/multiplayer/social_bot.json
+# Right-click → Shows "Initiate Battle" (non-network mode)
+
+go run cmd/companion/main.go -network -character assets/characters/multiplayer/social_bot.json  
+# Right-click → Shows "Invite to Battle", "Challenge Player", "Send Battle Request" (network mode)
 ```
 
-**Production Impact:** Minor - Basic functionality works but scope is narrower than documented
+**~~Production Impact~~** **Resolution Impact:** Minor improvement - Battle invitation functionality now matches documentation completely
 
-**Evidence:**
+**~~Evidence~~** **Resolution Commit:** ceb02e3 - Fix: Add battle invitations to multiplayer context menu (#audit-gap-4)
+
+**Tests Added:**
+- `TestBug4BattleInvitationsValidation` - Validates original gap and fix
+- `TestBug4BattleInvitationsRegression` - Comprehensive regression prevention test  
+- `TestBug4BattleMenuLogicFix` - Core battle menu logic validation
+- `TestBug4DocumentationCompliance` - Ensures implementation matches README.md
+
+**Updated Implementation:**
 ```go
-// Minimal battle menu implementation
+// Enhanced battle menu with conditional multiplayer options
 func (dw *DesktopWindow) buildBattleMenuItems() []ContextMenuItem {
-    return []ContextMenuItem{
-        {
-            Text: "Initiate Battle", // Single option vs. documented "invitations"
-            Callback: func() { dw.handleBattleInitiation() },
-        },
+    if dw.networkMode && dw.networkOverlay != nil {
+        // Network mode: Battle invitation options
+        return []ContextMenuItem{
+            {Text: "Invite to Battle", Callback: dw.handleBattleInvitation},
+            {Text: "Challenge Player", Callback: dw.handleBattleChallenge},  
+            {Text: "Send Battle Request", Callback: dw.handleBattleRequest},
+        }
+    } else {
+        // Non-network mode: Basic battle initiation
+        return []ContextMenuItem{
+            {Text: "Initiate Battle", Callback: dw.handleBattleInitiation},
+        }
     }
 }
 ```
