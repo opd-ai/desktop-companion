@@ -37,19 +37,7 @@ type DesktopWindow struct {
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
 func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool, networkManager NetworkManagerInterface, networkMode bool, showNetwork bool, eventsEnabled bool) *DesktopWindow {
-	// Create window with transparency support
-	window := app.NewWindow("Desktop Companion")
-
-	// Configure window for desktop overlay behavior
-	window.SetFixedSize(true)
-	window.Resize(fyne.NewSize(float32(char.GetSize()), float32(char.GetSize())))
-
-	// Configure transparency for desktop overlay
-	configureTransparency(window, debug)
-
-	// Attempt to configure always-on-top behavior using available Fyne capabilities
-	// Note: Fyne has limited always-on-top support, but we can try available approaches
-	configureAlwaysOnTop(window, debug)
+	window := createConfiguredWindow(app, char, debug)
 
 	dw := &DesktopWindow{
 		window:        window,
@@ -63,6 +51,46 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		eventsEnabled: eventsEnabled,
 	}
 
+	initializeBasicComponents(dw, char, debug)
+	initializeGameFeatures(dw, gameMode, showStats, char)
+	initializeDialogFeatures(dw, char)
+	initializeGiftSystem(dw, gameMode, char)
+	initializeNetworkFeatures(dw, networkMode, networkManager, showNetwork, char)
+
+	// Set up window content and interactions
+	dw.setupContent()
+	dw.setupInteractions()
+
+	// Start animation update loop
+	go dw.animationLoop()
+
+	if debug {
+		log.Printf("Created desktop window: %dx%d with always-on-top configuration", char.GetSize(), char.GetSize())
+	}
+
+	return dw
+}
+
+// createConfiguredWindow creates and configures the basic window properties
+func createConfiguredWindow(app fyne.App, char *character.Character, debug bool) fyne.Window {
+	window := app.NewWindow("Desktop Companion")
+
+	// Configure window for desktop overlay behavior
+	window.SetFixedSize(true)
+	window.Resize(fyne.NewSize(float32(char.GetSize()), float32(char.GetSize())))
+
+	// Configure transparency for desktop overlay
+	configureTransparency(window, debug)
+
+	// Attempt to configure always-on-top behavior using available Fyne capabilities
+	// Note: Fyne has limited always-on-top support, but we can try available approaches
+	configureAlwaysOnTop(window, debug)
+
+	return window
+}
+
+// initializeBasicComponents creates the essential UI components for the desktop window
+func initializeBasicComponents(dw *DesktopWindow, char *character.Character, debug bool) {
 	// Create character renderer
 	dw.renderer = NewCharacterRenderer(char, debug)
 
@@ -71,21 +99,27 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 
 	// Create context menu (initially hidden)
 	dw.contextMenu = NewContextMenu()
+}
 
-	// Create stats overlay if game features are enabled
+// initializeGameFeatures sets up game-related features like stats overlay
+func initializeGameFeatures(dw *DesktopWindow, gameMode bool, showStats bool, char *character.Character) {
 	if gameMode && char.GetGameState() != nil {
 		dw.statsOverlay = NewStatsOverlay(char)
 		if showStats {
 			dw.statsOverlay.Show()
 		}
 	}
+}
 
-	// Create chatbot interface (initially hidden) if character supports AI chat
+// initializeDialogFeatures configures AI-powered dialog capabilities
+func initializeDialogFeatures(dw *DesktopWindow, char *character.Character) {
 	if char.GetCard() != nil && char.GetCard().HasDialogBackend() {
 		dw.chatbotInterface = NewChatbotInterface(char)
 	}
+}
 
-	// Create gift selection dialog (initially hidden) if character has gift system
+// initializeGiftSystem sets up the gift selection dialog and related functionality
+func initializeGiftSystem(dw *DesktopWindow, gameMode bool, char *character.Character) {
 	if gameMode && char.GetCard() != nil && char.GetCard().HasGiftSystem() && char.GetGameState() != nil {
 		giftManager := character.NewGiftManager(char.GetCard(), char.GetGameState())
 		dw.giftDialog = NewGiftSelectionDialog(giftManager)
@@ -104,8 +138,10 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 			// Dialog closed, no action needed
 		})
 	}
+}
 
-	// Create network overlay if networking is enabled
+// initializeNetworkFeatures configures multiplayer networking capabilities
+func initializeNetworkFeatures(dw *DesktopWindow, networkMode bool, networkManager NetworkManagerInterface, showNetwork bool, char *character.Character) {
 	if networkMode && networkManager != nil {
 		dw.networkOverlay = NewNetworkOverlay(networkManager)
 		dw.networkOverlay.RegisterNetworkEvents()
@@ -119,19 +155,6 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 			dw.networkOverlay.Show()
 		}
 	}
-
-	// Set up window content and interactions
-	dw.setupContent()
-	dw.setupInteractions()
-
-	// Start animation update loop
-	go dw.animationLoop()
-
-	if debug {
-		log.Printf("Created desktop window: %dx%d with always-on-top configuration", char.GetSize(), char.GetSize())
-	}
-
-	return dw
 }
 
 // setupContent configures the window's visual content
