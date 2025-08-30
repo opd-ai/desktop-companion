@@ -242,64 +242,81 @@ func (n *NetworkDialogBackend) selectBestResponse(context DialogContext, localRe
 	priority := n.config.ResponsePriority
 	n.mu.RUnlock()
 
+	allResponses := n.combineResponses(localResponse, peerResponses)
+
+	switch priority {
+	case "first":
+		return n.selectFirstValidResponse(allResponses)
+	case "personality":
+		return n.selectByPersonality(context, localResponse, peerResponses)
+	case "random":
+		return n.selectRandomResponse(allResponses)
+	case "confidence":
+		return n.selectHighestConfidenceResponse(localResponse, peerResponses)
+	default:
+		return n.selectHighestConfidenceResponse(localResponse, peerResponses)
+	}
+}
+
+// combineResponses creates a unified list of all available responses
+func (n *NetworkDialogBackend) combineResponses(localResponse DialogResponse, peerResponses []PeerDialogResponse) []DialogResponse {
 	allResponses := []DialogResponse{localResponse}
 	for _, peer := range peerResponses {
 		allResponses = append(allResponses, peer.Response)
 	}
+	return allResponses
+}
 
-	switch priority {
-	case "first":
-		// Return first valid response
-		for _, response := range allResponses {
-			if response.Text != "" {
-				return response
-			}
+// selectFirstValidResponse returns the first response with non-empty text
+func (n *NetworkDialogBackend) selectFirstValidResponse(allResponses []DialogResponse) DialogResponse {
+	for _, response := range allResponses {
+		if response.Text != "" {
+			return response
 		}
-
-	case "personality":
-		// Select based on personality compatibility
-		return n.selectByPersonality(context, localResponse, peerResponses)
-
-	case "random":
-		// Random selection from valid responses
-		validResponses := make([]DialogResponse, 0)
-		for _, response := range allResponses {
-			if response.Text != "" {
-				validResponses = append(validResponses, response)
-			}
-		}
-		if len(validResponses) > 0 {
-			return validResponses[rand.Intn(len(validResponses))]
-		}
-
-	case "confidence":
-		// Select highest confidence response
-		bestResponse := localResponse
-		bestConfidence := localResponse.Confidence
-
-		for _, peer := range peerResponses {
-			if peer.Confidence > bestConfidence {
-				bestResponse = peer.Response
-				bestConfidence = peer.Confidence
-			}
-		}
-		return bestResponse
-
-	default:
-		// Default to highest confidence
-		bestResponse := localResponse
-		bestConfidence := localResponse.Confidence
-
-		for _, peer := range peerResponses {
-			if peer.Confidence > bestConfidence {
-				bestResponse = peer.Response
-				bestConfidence = peer.Confidence
-			}
-		}
-		return bestResponse
 	}
+	// Fallback to first response even if empty
+	if len(allResponses) > 0 {
+		return allResponses[0]
+	}
+	return DialogResponse{}
+}
 
-	return localResponse // Fallback to local response
+// selectRandomResponse chooses randomly from valid responses
+func (n *NetworkDialogBackend) selectRandomResponse(allResponses []DialogResponse) DialogResponse {
+	validResponses := n.filterValidResponses(allResponses)
+	if len(validResponses) > 0 {
+		return validResponses[rand.Intn(len(validResponses))]
+	}
+	// Fallback to first response if no valid ones
+	if len(allResponses) > 0 {
+		return allResponses[0]
+	}
+	return DialogResponse{}
+}
+
+// filterValidResponses returns only responses with non-empty text
+func (n *NetworkDialogBackend) filterValidResponses(responses []DialogResponse) []DialogResponse {
+	validResponses := make([]DialogResponse, 0)
+	for _, response := range responses {
+		if response.Text != "" {
+			validResponses = append(validResponses, response)
+		}
+	}
+	return validResponses
+}
+
+// selectHighestConfidenceResponse chooses the response with the highest confidence score
+func (n *NetworkDialogBackend) selectHighestConfidenceResponse(localResponse DialogResponse, peerResponses []PeerDialogResponse) DialogResponse {
+	bestResponse := localResponse
+	bestConfidence := localResponse.Confidence
+
+	for _, peer := range peerResponses {
+		if peer.Confidence > bestConfidence {
+			bestResponse = peer.Response
+			bestConfidence = peer.Confidence
+		}
+	}
+	return bestResponse
 }
 
 // selectByPersonality selects response based on personality compatibility
