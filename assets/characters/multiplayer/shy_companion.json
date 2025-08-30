@@ -1,0 +1,108 @@
+{
+  "name": "Quiet Companion",
+  "description": "A thoughtful, introverted bot that prefers meaningful conversations",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "thoughtful": "animations/thoughtful.gif",
+    "content": "animations/content.gif"
+  },
+  "dialogConfig": {
+    "trigger": "click",
+    "responses": [
+      "Hello... it's nice to meet you quietly.",
+      "I enjoy peaceful moments like this.",
+      "Sometimes the best conversations happen in small groups.",
+      "I appreciate when people take time to really listen.",
+      "Quality over quantity, always."
+    ],
+    "animation": "thoughtful",
+    "cooldown": 8
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "quiet_companion_v1",
+    "maxPeers": 3,
+    "discoveryPort": 8081,
+    "botPersonality": {
+      "chattiness": 0.3,
+      "helpfulness": 0.9,
+      "playfulness": 0.4,
+      "socialness": 0.4,
+      "responseDelay": "5-10s"
+    }
+  },
+  "networkEvents": [
+    {
+      "name": "welcome_new_peer",
+      "trigger": "peer_joined",
+      "botProbability": 0.6,
+      "responses": ["Welcome... please make yourself comfortable.", "Hello there. I hope you'll enjoy our quiet space."]
+    },
+    {
+      "name": "farewell_peer",
+      "trigger": "peer_left",
+      "botProbability": 0.7,
+      "responses": ["Take care... it was nice having you here.", "Safe travels. Thank you for the thoughtful conversation."]
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.7,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 3,
+        "trainingData": [
+          "I find quiet moments very peaceful and restorative.",
+          "Deep conversations are much more meaningful than small talk.",
+          "Sometimes silence is the most honest form of communication.",
+          "I prefer listening carefully to what others have to say.",
+          "Quality friendships develop slowly but last much longer.",
+          "There's wisdom in taking time to think before speaking.",
+          "I appreciate people who value depth over surface interactions.",
+          "True understanding comes from patient, thoughtful exchange."
+        ]
+      }
+    }
+  },
+  "stats": {
+    "hunger": 75,
+    "happiness": 80,
+    "health": 90,
+    "energy": 85,
+    "affection": 60
+  },
+  "gameRules": {
+    "decayInterval": 600,
+    "autoSaveInterval": 900,
+    "enableRandomEvents": true,
+    "enableAchievements": true
+  },
+  "interactions": [
+    {
+      "name": "feed",
+      "trigger": "rightclick",
+      "effects": {"hunger": 20, "happiness": 8},
+      "responses": ["Thank you for the thoughtful gesture. Simple pleasures mean a lot."],
+      "animation": "content",
+      "cooldown": 120
+    },
+    {
+      "name": "pet",
+      "trigger": "click",
+      "effects": {"happiness": 12, "health": 8},
+      "responses": ["Your gentle touch is very comforting. Thank you."],
+      "animation": "content", 
+      "cooldown": 60
+    },
+    {
+      "name": "play",
+      "trigger": "doubleclick",
+      "effects": {"happiness": 10, "energy": -5},
+      "responses": ["I prefer quiet activities, but this is pleasant too."],
+      "animation": "thoughtful",
+      "cooldown": 180
+    }
+  ]
+}

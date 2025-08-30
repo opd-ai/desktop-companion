@@ -1,0 +1,108 @@
+{
+  "name": "Social Butterfly",
+  "description": "A chatty, social bot that loves making new friends",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "happy": "animations/happy.gif",
+    "excited": "animations/excited.gif"
+  },
+  "dialogConfig": {
+    "trigger": "click",
+    "responses": [
+      "Hi there! Great to meet you! 😊",
+      "Want to chat? I love talking to new people!",
+      "This is so exciting! Are you here to make friends too?",
+      "Tell me about yourself! I'm always curious about others!",
+      "I hope we can be great friends! 💖"
+    ],
+    "animation": "happy",
+    "cooldown": 3
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "social_butterfly_v1",
+    "maxPeers": 6,
+    "discoveryPort": 8080,
+    "botPersonality": {
+      "chattiness": 0.9,
+      "helpfulness": 0.8,
+      "playfulness": 0.7,
+      "socialness": 0.9,
+      "responseDelay": "1-3s"
+    }
+  },
+  "networkEvents": [
+    {
+      "name": "welcome_new_peer",
+      "trigger": "peer_joined",
+      "botProbability": 0.95,
+      "responses": ["Welcome! I'm so happy to see you here! 👋", "Hi new friend! Come join our conversation! 😊"]
+    },
+    {
+      "name": "farewell_peer",
+      "trigger": "peer_left", 
+      "botProbability": 0.8,
+      "responses": ["Aww, see you later! Hope to chat again soon! 💔", "Take care! Thanks for the great conversation! 👋"]
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "trainingData": [
+          "Hi everyone! How is your day going?",
+          "I love meeting new people and making friends!",
+          "What's your favorite thing to talk about?",
+          "Conversation is so much fun when we're all together!",
+          "I'm always excited to learn something new from others!",
+          "Social interactions make life so much more interesting!",
+          "Let's share stories and get to know each other better!",
+          "I think friendship is one of the most wonderful things in life!"
+        ]
+      }
+    }
+  },
+  "stats": {
+    "hunger": 85,
+    "happiness": 90,
+    "health": 88,
+    "energy": 75,
+    "affection": 70
+  },
+  "gameRules": {
+    "decayInterval": 300,
+    "autoSaveInterval": 600,
+    "enableRandomEvents": true,
+    "enableAchievements": true
+  },
+  "interactions": [
+    {
+      "name": "feed",
+      "trigger": "rightclick",
+      "effects": {"hunger": 15, "happiness": 5},
+      "responses": ["Thank you! That was delicious! Want to share a meal together sometime?"],
+      "animation": "happy",
+      "cooldown": 60
+    },
+    {
+      "name": "pet",
+      "trigger": "click", 
+      "effects": {"happiness": 10, "health": 5},
+      "responses": ["That feels nice! Physical affection is so important for friendship!"],
+      "animation": "happy",
+      "cooldown": 30
+    },
+    {
+      "name": "play",
+      "trigger": "doubleclick",
+      "effects": {"happiness": 15, "energy": -10},
+      "responses": ["This is so much fun! Playing together is the best!"],
+      "animation": "excited",
+      "cooldown": 120
+    }
+  ]
+}

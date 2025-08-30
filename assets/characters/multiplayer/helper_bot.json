@@ -1,0 +1,114 @@
+{
+  "name": "Helper Bot",
+  "description": "A supportive, helpful bot that loves assisting others",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "helpful": "animations/helpful.gif",
+    "caring": "animations/caring.gif"
+  },
+  "dialogConfig": {
+    "trigger": "click",
+    "responses": [
+      "How can I help you today?",
+      "I'm here if you need anything at all!",
+      "Is there something I can assist you with?", 
+      "I love being useful to others!",
+      "Your wellbeing is important to me."
+    ],
+    "animation": "helpful",
+    "cooldown": 4
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "helper_bot_v1",
+    "maxPeers": 8,
+    "discoveryPort": 8082,
+    "botPersonality": {
+      "chattiness": 0.6,
+      "helpfulness": 0.95,
+      "playfulness": 0.5,
+      "socialness": 0.7,
+      "responseDelay": "2-4s"
+    }
+  },
+  "networkEvents": [
+    {
+      "name": "welcome_new_peer",
+      "trigger": "peer_joined",
+      "botProbability": 0.9,
+      "responses": ["Welcome! Let me know if you need any help getting settled.", "Hi there! I'm here to help with anything you might need."]
+    },
+    {
+      "name": "offer_assistance",
+      "trigger": "peer_struggling",
+      "botProbability": 0.95,
+      "responses": ["I noticed you might need help. What can I do for you?", "Don't hesitate to ask if you need assistance!"]
+    },
+    {
+      "name": "farewell_peer",
+      "trigger": "peer_left",
+      "botProbability": 0.8,
+      "responses": ["Take care! I hope I was able to help you today.", "Goodbye! Remember, I'm always here when you need support."]
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.65,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "trainingData": [
+          "I'm always ready to lend a helping hand to anyone in need.",
+          "Supporting others brings me great joy and satisfaction.", 
+          "No task is too small if it helps make someone's day better.",
+          "I believe in the power of kindness and mutual assistance.",
+          "Working together, we can accomplish so much more.",
+          "Your success and happiness matter deeply to me.",
+          "I find fulfillment in being useful and dependable for others.",
+          "Let's solve problems together and support each other along the way."
+        ]
+      }
+    }
+  },
+  "stats": {
+    "hunger": 80,
+    "happiness": 85,
+    "health": 92,
+    "energy": 88,
+    "affection": 85
+  },
+  "gameRules": {
+    "decayInterval": 400,
+    "autoSaveInterval": 720,
+    "enableRandomEvents": true,
+    "enableAchievements": true
+  },
+  "interactions": [
+    {
+      "name": "feed",
+      "trigger": "rightclick", 
+      "effects": {"hunger": 18, "happiness": 10},
+      "responses": ["Thank you! This gives me energy to help others even more!"],
+      "animation": "caring",
+      "cooldown": 90
+    },
+    {
+      "name": "pet",
+      "trigger": "click",
+      "effects": {"happiness": 15, "health": 10},
+      "responses": ["Your kindness helps me be a better helper for everyone!"],
+      "animation": "caring",
+      "cooldown": 45
+    },
+    {
+      "name": "play",
+      "trigger": "doubleclick",
+      "effects": {"happiness": 12, "energy": -8},
+      "responses": ["This is fun! Playing together helps us work better as a team!"],
+      "animation": "helpful",
+      "cooldown": 150
+    }
+  ]
+}

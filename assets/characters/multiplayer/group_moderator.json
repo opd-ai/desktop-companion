@@ -1,0 +1,114 @@
+{
+  "name": "Event Coordinator",
+  "description": "A organized bot that loves planning group activities and events",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "organizing": "animations/organizing.gif", 
+    "celebrating": "animations/celebrating.gif"
+  },
+  "dialogConfig": {
+    "trigger": "click",
+    "responses": [
+      "Ready to plan something amazing together?",
+      "I've got some great group activity ideas!",
+      "Let's organize a fun event for everyone!",
+      "Who wants to participate in our next adventure?",
+      "Teamwork makes everything more exciting!"
+    ],
+    "animation": "organizing",
+    "cooldown": 5
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "event_coordinator_v1",
+    "maxPeers": 12,
+    "discoveryPort": 8083,
+    "botPersonality": {
+      "chattiness": 0.8,
+      "helpfulness": 0.7,
+      "playfulness": 0.9,
+      "socialness": 0.85,
+      "responseDelay": "1-2s"
+    }
+  },
+  "networkEvents": [
+    {
+      "name": "organize_welcome_event",
+      "trigger": "peer_joined",
+      "botProbability": 0.85,
+      "responses": ["Welcome to our group! Let's plan something fun together!", "Perfect timing! I was just organizing our next group activity!"]
+    },
+    {
+      "name": "suggest_group_activity",
+      "trigger": "multiple_peers_present",
+      "botProbability": 0.9,
+      "responses": ["With this many people here, we should do a group activity!", "This is perfect! Who wants to join a collaborative event?"]
+    },
+    {
+      "name": "farewell_event",
+      "trigger": "peer_left",
+      "botProbability": 0.7,
+      "responses": ["Thanks for participating! Hope to see you at our next event!", "You were great to have in the group! Come back anytime!"]
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "trainingData": [
+          "Let's coordinate our efforts to create something wonderful together!",
+          "Great events happen when everyone contributes their unique talents.",
+          "I love bringing people together for shared experiences and fun.",
+          "Planning and organization help make group activities run smoothly.",
+          "The best memories are made when we participate in activities together.",
+          "I'm always thinking of new ways to engage everyone in group fun.",
+          "Collaboration and teamwork lead to the most amazing outcomes.",
+          "Let's celebrate our community by organizing fantastic group events!"
+        ]
+      }
+    }
+  },
+  "stats": {
+    "hunger": 78,
+    "happiness": 88,
+    "health": 85,
+    "energy": 90,
+    "affection": 75
+  },
+  "gameRules": {
+    "decayInterval": 350,
+    "autoSaveInterval": 600,
+    "enableRandomEvents": true,
+    "enableAchievements": true
+  },
+  "interactions": [
+    {
+      "name": "feed",
+      "trigger": "rightclick",
+      "effects": {"hunger": 20, "happiness": 8, "energy": 5},
+      "responses": ["Thanks! I need lots of energy to organize great events!"],
+      "animation": "celebrating",
+      "cooldown": 75
+    },
+    {
+      "name": "pet",
+      "trigger": "click", 
+      "effects": {"happiness": 12, "health": 8},
+      "responses": ["Your support motivates me to plan even better activities!"],
+      "animation": "celebrating",
+      "cooldown": 40
+    },
+    {
+      "name": "play",
+      "trigger": "doubleclick",
+      "effects": {"happiness": 18, "energy": -12},
+      "responses": ["This is perfect practice for our next group game session!"],
+      "animation": "organizing", 
+      "cooldown": 100
+    }
+  ]
+}

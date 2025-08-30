@@ -263,11 +263,19 @@ func (no *NetworkOverlay) GetContainer() *fyne.Container {
 
 // updateLoop periodically refreshes network status and peer information
 func (no *NetworkOverlay) updateLoop() {
+	no.mu.RLock()
+	ticker := no.updateTicker
+	no.mu.RUnlock()
+	
+	if ticker == nil {
+		return
+	}
+	
 	for {
 		select {
 		case <-no.stopUpdate:
 			return
-		case <-no.updateTicker.C:
+		case <-ticker.C:
 			no.updateNetworkStatus()
 		}
 	}
