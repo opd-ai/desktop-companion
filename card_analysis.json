@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "repository": "/workspaces/DDS/internal/character",
-    "generated_at": "2025-08-27T19:39:18.514873176Z",
-    "analysis_time": 6052229,
+    "repository": "/home/user/go/src/github.com/opd-ai/DDS/internal/character",
+    "generated_at": "2025-08-29T21:35:19.197918063-04:00",
+    "analysis_time": 15481145,
     "files_processed": 1,
     "tool_version": "1.0.0",
     "go_version": ""
@@ -10,8 +10,8 @@
   "overview": {
     "total_lines_of_code": 0,
     "total_functions": 1,
-    "total_methods": 51,
-    "total_structs": 10,
+    "total_methods": 70,
+    "total_structs": 11,
     "total_interfaces": 0,
     "total_packages": 1,
     "total_files": 1
@@ -21,7 +21,7 @@
       "name": "LoadCard",
       "package": "character",
       "file": "character",
-      "line": 118,
+      "line": 137,
       "is_exported": true,
       "is_method": false,
       "lines": {
@@ -56,15 +56,15 @@
       "name": "Validate",
       "package": "character",
       "file": "character",
-      "line": 141,
+      "line": 160,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
       "lines": {
-        "total": 37,
-        "code": 28,
+        "total": 17,
+        "code": 13,
         "comments": 0,
-        "blank": 9
+        "blank": 4
       },
       "signature": {
         "parameter_count": 0,
@@ -76,10 +76,10 @@
         "signature_complexity": 0.3
       },
       "complexity": {
-        "cyclomatic": 10,
-        "cognitive": 10,
+        "cyclomatic": 5,
+        "cognitive": 5,
         "nesting_depth": 1,
-        "overall": 13.5
+        "overall": 7
       },
       "documentation": {
         "has_comment": true,
@@ -89,10 +89,154 @@
       }
     },
     {
+      "name": "validateCoreElements",
+      "package": "character",
+      "file": "character",
+      "line": 181,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 17,
+        "code": 13,
+        "comments": 0,
+        "blank": 4
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 5,
+        "cognitive": 5,
+        "nesting_depth": 1,
+        "overall": 7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 72,
+        "has_example": false,
+        "quality_score": 0.288
+      }
+    },
+    {
+      "name": "validateGameSystems",
+      "package": "character",
+      "file": "character",
+      "line": 202,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 13,
+        "code": 10,
+        "comments": 0,
+        "blank": 3
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 1,
+        "overall": 5.7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 69,
+        "has_example": false,
+        "quality_score": 0.27599999999999997
+      }
+    },
+    {
+      "name": "validateRomanceSystems",
+      "package": "character",
+      "file": "character",
+      "line": 219,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 13,
+        "code": 10,
+        "comments": 0,
+        "blank": 3
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 1,
+        "overall": 5.7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 69,
+        "has_example": false,
+        "quality_score": 0.27599999999999997
+      }
+    },
+    {
+      "name": "validateMultiplayerSystems",
+      "package": "character",
+      "file": "character",
+      "line": 236,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 5,
+        "code": 4,
+        "comments": 0,
+        "blank": 1
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 74,
+        "has_example": false,
+        "quality_score": 0.296
+      }
+    },
+    {
       "name": "ValidateWithBasePath",
       "package": "character",
       "file": "character",
-      "line": 182,
+      "line": 245,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -128,7 +272,7 @@
       "name": "validateCoreFields",
       "package": "character",
       "file": "character",
-      "line": 191,
+      "line": 254,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -164,15 +308,15 @@
       "name": "validateFeatureSections",
       "package": "character",
       "file": "character",
-      "line": 212,
+      "line": 275,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
       "lines": {
-        "total": 21,
-        "code": 16,
+        "total": 25,
+        "code": 19,
         "comments": 0,
-        "blank": 5
+        "blank": 6
       },
       "signature": {
         "parameter_count": 0,
@@ -184,10 +328,10 @@
         "signature_complexity": 0.3
       },
       "complexity": {
-        "cyclomatic": 6,
-        "cognitive": 6,
+        "cyclomatic": 7,
+        "cognitive": 7,
         "nesting_depth": 1,
-        "overall": 8.3
+        "overall": 9.6
       },
       "documentation": {
         "has_comment": true,
@@ -200,7 +344,7 @@
       "name": "validateBasicFields",
       "package": "character",
       "file": "character",
-      "line": 237,
+      "line": 304,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -236,7 +380,7 @@
       "name": "validateAnimations",
       "package": "character",
       "file": "character",
-      "line": 250,
+      "line": 317,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -272,7 +416,7 @@
       "name": "validateAnimationsWithBasePath",
       "package": "character",
       "file": "character",
-      "line": 263,
+      "line": 330,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -308,7 +452,7 @@
       "name": "validateRequiredAnimations",
       "package": "character",
       "file": "character",
-      "line": 276,
+      "line": 343,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -344,7 +488,7 @@
       "name": "validateAnimationPaths",
       "package": "character",
       "file": "character",
-      "line": 287,
+      "line": 354,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -380,7 +524,7 @@
       "name": "validateAnimationPathsWithBasePath",
       "package": "character",
       "file": "character",
-      "line": 297,
+      "line": 364,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -416,7 +560,7 @@
       "name": "validateDialogs",
       "package": "character",
       "file": "character",
-      "line": 316,
+      "line": 383,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -452,7 +596,7 @@
       "name": "Validate",
       "package": "character",
       "file": "character",
-      "line": 331,
+      "line": 398,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -488,7 +632,7 @@
       "name": "validateTrigger",
       "package": "character",
       "file": "character",
-      "line": 349,
+      "line": 416,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -524,7 +668,7 @@
       "name": "validateResponses",
       "package": "character",
       "file": "character",
-      "line": 360,
+      "line": 427,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -560,7 +704,7 @@
       "name": "validateAnimationReference",
       "package": "character",
       "file": "character",
-      "line": 375,
+      "line": 442,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -596,7 +740,7 @@
       "name": "setDefaultCooldown",
       "package": "character",
       "file": "character",
-      "line": 383,
+      "line": 450,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -632,7 +776,7 @@
       "name": "Validate",
       "package": "character",
       "file": "character",
-      "line": 390,
+      "line": 457,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*Behavior",
@@ -668,7 +812,7 @@
       "name": "GetAnimationPath",
       "package": "character",
       "file": "character",
-      "line": 404,
+      "line": 471,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -704,7 +848,7 @@
       "name": "validateGameFeatures",
       "package": "character",
       "file": "character",
-      "line": 422,
+      "line": 489,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -740,7 +884,7 @@
       "name": "validateStatConfig",
       "package": "character",
       "file": "character",
-      "line": 452,
+      "line": 519,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -776,7 +920,7 @@
       "name": "validateGameRules",
       "package": "character",
       "file": "character",
-      "line": 473,
+      "line": 540,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -812,7 +956,7 @@
       "name": "validateInteractionConfig",
       "package": "character",
       "file": "character",
-      "line": 486,
+      "line": 553,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -848,7 +992,7 @@
       "name": "validateInteractionTriggers",
       "package": "character",
       "file": "character",
-      "line": 507,
+      "line": 574,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -884,7 +1028,7 @@
       "name": "validateInteractionAnimations",
       "package": "character",
       "file": "character",
-      "line": 527,
+      "line": 594,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -920,7 +1064,7 @@
       "name": "validateInteractionResponses",
       "package": "character",
       "file": "character",
-      "line": 537,
+      "line": 604,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -956,7 +1100,7 @@
       "name": "validateInteractionCooldown",
       "package": "character",
       "file": "character",
-      "line": 545,
+      "line": 612,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -992,7 +1136,7 @@
       "name": "calculateMaxCooldown",
       "package": "character",
       "file": "character",
-      "line": 556,
+      "line": 623,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1028,7 +1172,7 @@
       "name": "isValidTrigger",
       "package": "character",
       "file": "character",
-      "line": 569,
+      "line": 636,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1064,7 +1208,7 @@
       "name": "validateProgression",
       "package": "character",
       "file": "character",
-      "line": 579,
+      "line": 646,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1100,7 +1244,7 @@
       "name": "validateProgressionLevel",
       "package": "character",
       "file": "character",
-      "line": 606,
+      "line": 673,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1136,7 +1280,7 @@
       "name": "validateProgressionAchievement",
       "package": "character",
       "file": "character",
-      "line": 633,
+      "line": 700,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1172,7 +1316,7 @@
       "name": "HasGameFeatures",
       "package": "character",
       "file": "character",
-      "line": 658,
+      "line": 725,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1208,7 +1352,7 @@
       "name": "GetRandomResponse",
       "package": "character",
       "file": "character",
-      "line": 664,
+      "line": 731,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -1244,7 +1388,7 @@
       "name": "CanTrigger",
       "package": "character",
       "file": "character",
-      "line": 676,
+      "line": 743,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*Dialog",
@@ -1280,7 +1424,7 @@
       "name": "validateRandomEvents",
       "package": "character",
       "file": "character",
-      "line": 681,
+      "line": 748,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1316,7 +1460,7 @@
       "name": "validateRandomEventConfig",
       "package": "character",
       "file": "character",
-      "line": 696,
+      "line": 763,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1352,7 +1496,7 @@
       "name": "validateEventBasicFields",
       "package": "character",
       "file": "character",
-      "line": 721,
+      "line": 788,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1388,7 +1532,7 @@
       "name": "validateEventNumericRanges",
       "package": "character",
       "file": "character",
-      "line": 734,
+      "line": 801,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1424,7 +1568,7 @@
       "name": "validateEventAnimations",
       "package": "character",
       "file": "character",
-      "line": 751,
+      "line": 818,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1460,7 +1604,7 @@
       "name": "validateEventResponses",
       "package": "character",
       "file": "character",
-      "line": 762,
+      "line": 829,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1496,7 +1640,7 @@
       "name": "validateEventStatReferences",
       "package": "character",
       "file": "character",
-      "line": 771,
+      "line": 838,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1532,7 +1676,7 @@
       "name": "isSpecialRomanceCondition",
       "package": "character",
       "file": "character",
-      "line": 798,
+      "line": 865,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1568,7 +1712,7 @@
       "name": "validateRomanceFeatures",
       "package": "character",
       "file": "character",
-      "line": 817,
+      "line": 884,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1604,7 +1748,7 @@
       "name": "validatePersonalityConfig",
       "package": "character",
       "file": "character",
-      "line": 847,
+      "line": 914,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1640,7 +1784,7 @@
       "name": "validateRomanceDialog",
       "package": "character",
       "file": "character",
-      "line": 868,
+      "line": 935,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1676,7 +1820,7 @@
       "name": "validateRomanceRequirements",
       "package": "character",
       "file": "character",
-      "line": 885,
+      "line": 952,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1712,7 +1856,7 @@
       "name": "validateDialogBackend",
       "package": "character",
       "file": "character",
-      "line": 910,
+      "line": 977,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1748,7 +1892,7 @@
       "name": "HasRomanceFeatures",
       "package": "character",
       "file": "character",
-      "line": 919,
+      "line": 986,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1784,7 +1928,7 @@
       "name": "HasDialogBackend",
       "package": "character",
       "file": "character",
-      "line": 924,
+      "line": 991,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1817,10 +1961,118 @@
       }
     },
     {
+      "name": "HasDialogBackendConfig",
+      "package": "character",
+      "file": "character",
+      "line": 1000,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 211,
+        "has_example": false,
+        "quality_score": 0.5
+      }
+    },
+    {
+      "name": "IsDialogBackendEnabled",
+      "package": "character",
+      "file": "character",
+      "line": 1006,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 160,
+        "has_example": false,
+        "quality_score": 0.5
+      }
+    },
+    {
+      "name": "GetDialogBackendStatus",
+      "package": "character",
+      "file": "character",
+      "line": 1012,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 9,
+        "code": 7,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 3,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8999999999999999
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 166,
+        "has_example": false,
+        "quality_score": 0.5
+      }
+    },
+    {
       "name": "GetPersonalityTrait",
       "package": "character",
       "file": "character",
-      "line": 929,
+      "line": 1025,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1856,7 +2108,7 @@
       "name": "GetCompatibilityModifier",
       "package": "character",
       "file": "character",
-      "line": 940,
+      "line": 1036,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*CharacterCard",
@@ -1887,6 +2139,438 @@
         "has_example": false,
         "quality_score": 0.476
       }
+    },
+    {
+      "name": "validateGeneralEvents",
+      "package": "character",
+      "file": "character",
+      "line": 1047,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 11,
+        "code": 9,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 2,
+        "overall": 6.2
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 68,
+        "has_example": false,
+        "quality_score": 0.272
+      }
+    },
+    {
+      "name": "validateGiftSystem",
+      "package": "character",
+      "file": "character",
+      "line": 1063,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 36,
+        "code": 29,
+        "comments": 3,
+        "blank": 4
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 11,
+        "cognitive": 11,
+        "nesting_depth": 2,
+        "overall": 15.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 124,
+        "has_example": false,
+        "quality_score": 0.4
+      }
+    },
+    {
+      "name": "HasGiftSystem",
+      "package": "character",
+      "file": "character",
+      "line": 1103,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 85,
+        "has_example": false,
+        "quality_score": 0.44000000000000006
+      }
+    },
+    {
+      "name": "validateMultiplayerConfig",
+      "package": "character",
+      "file": "character",
+      "line": 1109,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 28,
+        "code": 17,
+        "comments": 5,
+        "blank": 6
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 6,
+        "cognitive": 6,
+        "nesting_depth": 1,
+        "overall": 8.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 125,
+        "has_example": false,
+        "quality_score": 0.4
+      }
+    },
+    {
+      "name": "validateNetworkID",
+      "package": "character",
+      "file": "character",
+      "line": 1141,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 19,
+        "code": 15,
+        "comments": 1,
+        "blank": 3
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 6,
+        "cognitive": 6,
+        "nesting_depth": 2,
+        "overall": 8.8
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 85,
+        "has_example": false,
+        "quality_score": 0.34
+      }
+    },
+    {
+      "name": "isValidNetworkIDChar",
+      "package": "character",
+      "file": "character",
+      "line": 1164,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 2,
+        "code": 2,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 67,
+        "has_example": false,
+        "quality_score": 0.268
+      }
+    },
+    {
+      "name": "validateMaxPeers",
+      "package": "character",
+      "file": "character",
+      "line": 1170,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 4,
+        "code": 4,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 69,
+        "has_example": false,
+        "quality_score": 0.27599999999999997
+      }
+    },
+    {
+      "name": "validateDiscoveryPort",
+      "package": "character",
+      "file": "character",
+      "line": 1178,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 12,
+        "code": 10,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 1,
+        "overall": 5.7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 65,
+        "has_example": false,
+        "quality_score": 0.26
+      }
+    },
+    {
+      "name": "validateBotPersonality",
+      "package": "character",
+      "file": "character",
+      "line": 1194,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 26,
+        "code": 16,
+        "comments": 5,
+        "blank": 5
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 5,
+        "cognitive": 5,
+        "nesting_depth": 1,
+        "overall": 7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 97,
+        "has_example": false,
+        "quality_score": 0.388
+      }
+    },
+    {
+      "name": "HasMultiplayer",
+      "package": "character",
+      "file": "character",
+      "line": 1224,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 86,
+        "has_example": false,
+        "quality_score": 0.44400000000000006
+      }
+    },
+    {
+      "name": "IsBotCapable",
+      "package": "character",
+      "file": "character",
+      "line": 1229,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 74,
+        "has_example": false,
+        "quality_score": 0.396
+      }
+    },
+    {
+      "name": "GetBotPersonality",
+      "package": "character",
+      "file": "character",
+      "line": 1234,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CharacterCard",
+      "lines": {
+        "total": 6,
+        "code": 5,
+        "comments": 0,
+        "blank": 1
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 2,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.6
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 91,
+        "has_example": false,
+        "quality_score": 0.4640000000000001
+      }
     }
   ],
   "structs": [
@@ -1894,14 +2578,14 @@
       "name": "CharacterCard",
       "package": "character",
       "file": "character",
-      "line": 15,
+      "line": 17,
       "is_exported": true,
-      "total_fields": 14,
+      "total_fields": 17,
       "fields_by_type": {
         "map": 3,
-        "pointer": 4,
+        "pointer": 6,
         "primitive": 2,
-        "slice": 4,
+        "slice": 5,
         "struct": 1
       },
       "embedded_types": null,
@@ -1920,22 +2604,150 @@
             "signature_complexity": 0.3
           },
           "lines": {
-            "total": 37,
-            "code": 25,
-            "comments": 7,
-            "blank": 5
+            "total": 17,
+            "code": 11,
+            "comments": 3,
+            "blank": 3
           },
           "complexity": {
-            "cyclomatic": 10,
+            "cyclomatic": 5,
             "cognitive": 0,
-            "nesting_depth": 9,
-            "overall": 14.5
+            "nesting_depth": 4,
+            "overall": 7
           },
           "documentation": {
             "has_comment": true,
             "comment_length": 191,
             "has_example": true,
             "quality_score": 0.7
+          }
+        },
+        {
+          "name": "validateCoreElements",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 17,
+            "code": 11,
+            "comments": 3,
+            "blank": 3
+          },
+          "complexity": {
+            "cyclomatic": 5,
+            "cognitive": 0,
+            "nesting_depth": 4,
+            "overall": 7
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 75,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateGameSystems",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 13,
+            "code": 9,
+            "comments": 2,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 4,
+            "cognitive": 0,
+            "nesting_depth": 3,
+            "overall": 5.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 72,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateRomanceSystems",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 13,
+            "code": 9,
+            "comments": 2,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 4,
+            "cognitive": 0,
+            "nesting_depth": 3,
+            "overall": 5.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 72,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateMultiplayerSystems",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 5,
+            "code": 3,
+            "comments": 1,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 2,
+            "cognitive": 0,
+            "nesting_depth": 1,
+            "overall": 2.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 77,
+            "has_example": true,
+            "quality_score": 0.5
           }
         },
         {
@@ -2016,16 +2828,16 @@
             "signature_complexity": 0.3
           },
           "lines": {
-            "total": 21,
-            "code": 14,
-            "comments": 4,
+            "total": 25,
+            "code": 17,
+            "comments": 5,
             "blank": 3
           },
           "complexity": {
-            "cyclomatic": 6,
+            "cyclomatic": 7,
             "cognitive": 0,
-            "nesting_depth": 5,
-            "overall": 8.5
+            "nesting_depth": 6,
+            "overall": 10
           },
           "documentation": {
             "has_comment": true,
@@ -3219,6 +4031,102 @@
           }
         },
         {
+          "name": "HasDialogBackendConfig",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 220,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
+          "name": "IsDialogBackendEnabled",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 166,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
+          "name": "GetDialogBackendStatus",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 3,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8999999999999999
+          },
+          "lines": {
+            "total": 9,
+            "code": 6,
+            "comments": 1,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 3,
+            "cognitive": 0,
+            "nesting_depth": 2,
+            "overall": 4
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 172,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
           "name": "GetPersonalityTrait",
           "is_exported": true,
           "is_pointer_receiver": true,
@@ -3281,16 +4189,400 @@
             "has_example": true,
             "quality_score": 0.5
           }
+        },
+        {
+          "name": "validateGeneralEvents",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 11,
+            "code": 7,
+            "comments": 2,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 4,
+            "cognitive": 0,
+            "nesting_depth": 3,
+            "overall": 5.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 71,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateGiftSystem",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 36,
+            "code": 25,
+            "comments": 7,
+            "blank": 4
+          },
+          "complexity": {
+            "cyclomatic": 11,
+            "cognitive": 0,
+            "nesting_depth": 10,
+            "overall": 16
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 130,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
+          "name": "HasGiftSystem",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 88,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateMultiplayerConfig",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 28,
+            "code": 19,
+            "comments": 5,
+            "blank": 4
+          },
+          "complexity": {
+            "cyclomatic": 6,
+            "cognitive": 0,
+            "nesting_depth": 5,
+            "overall": 8.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 131,
+            "has_example": true,
+            "quality_score": 0.7
+          }
+        },
+        {
+          "name": "validateNetworkID",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8
+          },
+          "lines": {
+            "total": 19,
+            "code": 13,
+            "comments": 3,
+            "blank": 3
+          },
+          "complexity": {
+            "cyclomatic": 6,
+            "cognitive": 0,
+            "nesting_depth": 5,
+            "overall": 8.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 88,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "isValidNetworkIDChar",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8
+          },
+          "lines": {
+            "total": 2,
+            "code": 1,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 70,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateMaxPeers",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8
+          },
+          "lines": {
+            "total": 4,
+            "code": 2,
+            "comments": 0,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 2,
+            "cognitive": 0,
+            "nesting_depth": 1,
+            "overall": 2.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 72,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateDiscoveryPort",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8
+          },
+          "lines": {
+            "total": 12,
+            "code": 8,
+            "comments": 2,
+            "blank": 2
+          },
+          "complexity": {
+            "cyclomatic": 4,
+            "cognitive": 0,
+            "nesting_depth": 3,
+            "overall": 5.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 68,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "validateBotPersonality",
+          "is_exported": false,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 1,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.8
+          },
+          "lines": {
+            "total": 26,
+            "code": 18,
+            "comments": 5,
+            "blank": 3
+          },
+          "complexity": {
+            "cyclomatic": 5,
+            "cognitive": 0,
+            "nesting_depth": 4,
+            "overall": 7
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 100,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "HasMultiplayer",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 89,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "IsBotCapable",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 1,
+            "has_variadic": false,
+            "returns_error": false,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.3
+          },
+          "lines": {
+            "total": 1,
+            "code": 0,
+            "comments": 0,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 1,
+            "cognitive": 0,
+            "nesting_depth": 0,
+            "overall": 1
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 77,
+            "has_example": true,
+            "quality_score": 0.5
+          }
+        },
+        {
+          "name": "GetBotPersonality",
+          "is_exported": true,
+          "is_pointer_receiver": true,
+          "signature": {
+            "parameter_count": 0,
+            "return_count": 2,
+            "has_variadic": false,
+            "returns_error": true,
+            "interface_parameters": 0,
+            "generic_parameters": null,
+            "signature_complexity": 0.6
+          },
+          "lines": {
+            "total": 6,
+            "code": 4,
+            "comments": 1,
+            "blank": 1
+          },
+          "complexity": {
+            "cyclomatic": 2,
+            "cognitive": 0,
+            "nesting_depth": 1,
+            "overall": 2.5
+          },
+          "documentation": {
+            "has_comment": true,
+            "comment_length": 94,
+            "has_example": true,
+            "quality_score": 0.5
+          }
         }
       ],
       "tag_usage": {
-        "json": 14
+        "json": 17
       },
       "complexity": {
-        "cyclomatic": 31,
+        "cyclomatic": 37,
         "cognitive": 0,
         "nesting_depth": 0,
-        "overall": 31
+        "overall": 37
       },
       "documentation": {
         "has_comment": true,
@@ -3303,7 +4595,7 @@
       "name": "Dialog",
       "package": "character",
       "file": "character",
-      "line": 38,
+      "line": 46,
       "is_exported": true,
       "total_fields": 4,
       "fields_by_type": {
@@ -3557,7 +4849,7 @@
       "name": "Behavior",
       "package": "character",
       "file": "character",
-      "line": 46,
+      "line": 54,
       "is_exported": true,
       "total_fields": 3,
       "fields_by_type": {
@@ -3618,7 +4910,7 @@
       "name": "GameRulesConfig",
       "package": "character",
       "file": "character",
-      "line": 53,
+      "line": 61,
       "is_exported": true,
       "total_fields": 6,
       "fields_by_type": {
@@ -3646,7 +4938,7 @@
       "name": "InteractionConfig",
       "package": "character",
       "file": "character",
-      "line": 63,
+      "line": 71,
       "is_exported": true,
       "total_fields": 7,
       "fields_by_type": {
@@ -3676,7 +4968,7 @@
       "name": "RandomEventConfig",
       "package": "character",
       "file": "character",
-      "line": 75,
+      "line": 83,
       "is_exported": true,
       "total_fields": 9,
       "fields_by_type": {
@@ -3706,7 +4998,7 @@
       "name": "PersonalityConfig",
       "package": "character",
       "file": "character",
-      "line": 89,
+      "line": 97,
       "is_exported": true,
       "total_fields": 2,
       "fields_by_type": {
@@ -3734,7 +5026,7 @@
       "name": "RomanceRequirement",
       "package": "character",
       "file": "character",
-      "line": 95,
+      "line": 103,
       "is_exported": true,
       "total_fields": 4,
       "fields_by_type": {
@@ -3764,7 +5056,7 @@
       "name": "DialogExtended",
       "package": "character",
       "file": "character",
-      "line": 103,
+      "line": 111,
       "is_exported": true,
       "total_fields": 3,
       "fields_by_type": {
@@ -3801,7 +5093,7 @@
       "name": "InteractionConfigExtended",
       "package": "character",
       "file": "character",
-      "line": 110,
+      "line": 118,
       "is_exported": true,
       "total_fields": 3,
       "fields_by_type": {
@@ -3833,6 +5125,35 @@
         "has_example": true,
         "quality_score": 0.5
       }
+    },
+    {
+      "name": "MultiplayerConfig",
+      "package": "character",
+      "file": "character",
+      "line": 126,
+      "is_exported": true,
+      "total_fields": 6,
+      "fields_by_type": {
+        "pointer": 1,
+        "primitive": 5
+      },
+      "embedded_types": null,
+      "methods": null,
+      "tag_usage": {
+        "json": 6
+      },
+      "complexity": {
+        "cyclomatic": 12,
+        "cognitive": 0,
+        "nesting_depth": 0,
+        "overall": 12
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 171,
+        "has_example": true,
+        "quality_score": 0.7
+      }
     }
   ],
   "interfaces": null,
@@ -3841,16 +5162,16 @@
       "name": "character",
       "path": "character",
       "files": [
-        "/workspaces/DDS/internal/character/card.go"
+        "/home/user/go/src/github.com/opd-ai/DDS/internal/character/card.go"
       ],
       "lines": {
-        "total": 948,
-        "code": 948,
+        "total": 1241,
+        "code": 1241,
         "comments": 0,
         "blank": 0
       },
-      "functions": 52,
-      "structs": 10,
+      "functions": 71,
+      "structs": 11,
       "interfaces": 0,
       "dependencies": [],
       "dependents": null,

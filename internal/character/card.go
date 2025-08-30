@@ -1060,33 +1060,66 @@ func (c *CharacterCard) validateGeneralEvents() error {
 
 // validateGiftSystem validates gift system configuration
 // Maintains backward compatibility by treating nil GiftSystem as valid
+// validateGiftSystem validates the optional gift system configuration.
 func (c *CharacterCard) validateGiftSystem() error {
 	if c.GiftSystem == nil {
 		return nil // Optional feature, validation not required when absent
 	}
 
-	// Validate inventory settings
-	if c.GiftSystem.InventorySettings.MaxSlots < 1 {
-		return fmt.Errorf("inventory maxSlots must be at least 1, got %d", c.GiftSystem.InventorySettings.MaxSlots)
-	}
-	if c.GiftSystem.InventorySettings.MaxSlots > 100 {
-		return fmt.Errorf("inventory maxSlots cannot exceed 100, got %d", c.GiftSystem.InventorySettings.MaxSlots)
+	if err := c.validateInventorySettings(); err != nil {
+		return err
 	}
 
-	// Validate category preferences
+	if err := c.validateGiftCategories(); err != nil {
+		return err
+	}
+
+	if err := c.validatePersonalityResponses(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateInventorySettings checks that inventory configuration is within valid bounds.
+func (c *CharacterCard) validateInventorySettings() error {
+	maxSlots := c.GiftSystem.InventorySettings.MaxSlots
+	if maxSlots < 1 {
+		return fmt.Errorf("inventory maxSlots must be at least 1, got %d", maxSlots)
+	}
+	if maxSlots > 100 {
+		return fmt.Errorf("inventory maxSlots cannot exceed 100, got %d", maxSlots)
+	}
+	return nil
+}
+
+// validateGiftCategories ensures all gift categories are from the allowed set.
+func (c *CharacterCard) validateGiftCategories() error {
 	validCategories := []string{"food", "flowers", "books", "jewelry", "toys", "electronics", "clothing", "art", "practical", "expensive"}
-	for _, category := range c.GiftSystem.Preferences.FavoriteCategories {
-		if !sliceContains(validCategories, category) {
-			return fmt.Errorf("invalid favorite category '%s', must be one of: %v", category, validCategories)
-		}
-	}
-	for _, category := range c.GiftSystem.Preferences.DislikedCategories {
-		if !sliceContains(validCategories, category) {
-			return fmt.Errorf("invalid disliked category '%s', must be one of: %v", category, validCategories)
-		}
+
+	if err := c.validateCategoryList(c.GiftSystem.Preferences.FavoriteCategories, "favorite", validCategories); err != nil {
+		return err
 	}
 
-	// Validate personality responses
+	if err := c.validateCategoryList(c.GiftSystem.Preferences.DislikedCategories, "disliked", validCategories); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateCategoryList validates a category list against valid categories.
+func (c *CharacterCard) validateCategoryList(categories []string, categoryType string, validCategories []string) error {
+	for _, category := range categories {
+		if !sliceContains(validCategories, category) {
+			return fmt.Errorf("invalid %s category '%s', must be one of: %v", categoryType, category, validCategories)
+		}
+	}
+	return nil
+}
+
+// validatePersonalityResponses ensures personality response configuration is valid.
+func (c *CharacterCard) validatePersonalityResponses() error {
 	for personality, response := range c.GiftSystem.Preferences.PersonalityResponses {
 		if len(response.GiftReceived) == 0 {
 			return fmt.Errorf("personality '%s' must have at least one gift received response", personality)
@@ -1095,7 +1128,6 @@ func (c *CharacterCard) validateGiftSystem() error {
 			return fmt.Errorf("personality '%s' cannot have more than 10 gift received responses, got %d", personality, len(response.GiftReceived))
 		}
 	}
-
 	return nil
 }
 
