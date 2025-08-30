@@ -246,6 +246,118 @@ func TestNetworkOverlay_SendEmptyMessage(t *testing.T) {
 	}
 }
 
+func TestNetworkOverlay_UpdateCharacterList(t *testing.T) {
+	app := test.NewApp()
+	defer app.Quit()
+
+	mockNM := NewMockNetworkManager()
+	overlay := NewNetworkOverlay(mockNM)
+
+	// Test initial state - should have local character
+	chars := overlay.GetCharacterList()
+	if len(chars) != 1 {
+		t.Errorf("Initial character list length = %d, want 1", len(chars))
+	}
+	
+	if !chars[0].IsLocal {
+		t.Error("First character should be local")
+	}
+	
+	if chars[0].Name != "Local Character" {
+		t.Errorf("Local character name = %q, want %q", chars[0].Name, "Local Character")
+	}
+
+	// Add some test peers
+	mockNM.AddPeer("peer1", true)  // Connected
+	mockNM.AddPeer("peer2", false) // Disconnected
+
+	// Update character list
+	overlay.updateCharacterList()
+
+	// Verify character data was updated
+	chars = overlay.GetCharacterList()
+	expectedCount := 3 // 1 local + 2 network characters
+	if len(chars) != expectedCount {
+		t.Errorf("Character list length = %d, want %d", len(chars), expectedCount)
+	}
+
+	// Verify local character is first
+	if !chars[0].IsLocal {
+		t.Error("First character should be local")
+	}
+
+	// Verify network characters
+	networkCharCount := 0
+	for _, char := range chars {
+		if !char.IsLocal {
+			networkCharCount++
+		}
+	}
+	
+	if networkCharCount != 2 {
+		t.Errorf("Network character count = %d, want 2", networkCharCount)
+	}
+}
+
+func TestNetworkOverlay_SetLocalCharacterName(t *testing.T) {
+	app := test.NewApp()
+	defer app.Quit()
+
+	mockNM := NewMockNetworkManager()
+	overlay := NewNetworkOverlay(mockNM)
+
+	// Test setting local character name
+	newName := "My Custom Character"
+	overlay.SetLocalCharacterName(newName)
+
+	chars := overlay.GetCharacterList()
+	if len(chars) == 0 {
+		t.Fatal("Character list is empty")
+	}
+
+	if chars[0].Name != newName {
+		t.Errorf("Local character name = %q, want %q", chars[0].Name, newName)
+	}
+}
+
+func TestNetworkOverlay_CharacterVisualDistinction(t *testing.T) {
+	app := test.NewApp()
+	defer app.Quit()
+
+	mockNM := NewMockNetworkManager()
+	overlay := NewNetworkOverlay(mockNM)
+
+	// Add peers to test network character distinction
+	mockNM.AddPeer("active-peer", true)
+	mockNM.AddPeer("inactive-peer", false)
+	
+	overlay.updateCharacterList()
+	chars := overlay.GetCharacterList()
+
+	// Verify local character properties
+	localChar := chars[0]
+	if !localChar.IsLocal {
+		t.Error("First character should be local")
+	}
+	if !localChar.IsActive {
+		t.Error("Local character should be active")
+	}
+	if localChar.Location != "Local" {
+		t.Errorf("Local character location = %q, want %q", localChar.Location, "Local")
+	}
+
+	// Verify network character properties
+	if len(chars) >= 2 {
+		networkChar := chars[1]
+		if networkChar.IsLocal {
+			t.Error("Network character should not be local")
+		}
+		if networkChar.Location == "Local" {
+			t.Error("Network character location should not be 'Local'")
+		}
+	}
+}
+
 func TestNetworkOverlay_UpdatePeerList(t *testing.T) {
 	app := test.NewApp()
 	defer app.Quit()

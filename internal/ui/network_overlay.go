@@ -23,6 +23,15 @@ type NetworkManagerInterface interface {
 	RegisterMessageHandler(msgType network.MessageType, handler network.MessageHandler)
 }
 
+// CharacterInfo represents a character's location and status for UI display
+type CharacterInfo struct {
+	Name      string
+	Location  string // "Local" or peer ID
+	IsLocal   bool
+	IsActive  bool
+	CharType  string // Character archetype/type
+}
+
 // NetworkOverlay displays multiplayer network status as an optional UI overlay
 // Uses Fyne widgets to avoid custom implementations - follows "lazy programmer" approach
 type NetworkOverlay struct {
@@ -31,6 +40,7 @@ type NetworkOverlay struct {
 	container      *fyne.Container
 	statusLabel    *widget.Label
 	peerList       *widget.List
+	characterList  *widget.List  // New: shows local vs network characters
 	peerCount      *widget.Label
 	chatLog        *widget.RichText
 	chatInput      *widget.Entry
@@ -43,6 +53,11 @@ type NetworkOverlay struct {
 	// Peer data for list widget
 	peers          []network.Peer
 	peerMutex      sync.RWMutex
+	
+	// Character data for visual distinction between local and network characters
+	characters     []CharacterInfo
+	characterMutex sync.RWMutex
+	localCharName  string  // Name of the local character
 }
 
 // NewNetworkOverlay creates a new network overlay widget
@@ -53,6 +68,8 @@ func NewNetworkOverlay(nm NetworkManagerInterface) *NetworkOverlay {
 		visible:        false,
 		stopUpdate:     make(chan bool, 1),
 		peers:          make([]network.Peer, 0),
+		characters:     make([]CharacterInfo, 0),
+		localCharName:  "Local Character", // Default name, can be updated
 	}
 
 	no.ExtendBaseWidget(no)
@@ -96,7 +113,46 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 			}
 		},
 	)
-	no.peerList.Resize(fyne.NewSize(200, 100))
+	no.peerList.Resize(fyne.NewSize(200, 80)) // Reduced height to make room for character list
+
+	// Character list widget - clearly distinguishes local vs network characters
+	no.characterList = widget.NewList(
+		func() int {
+			no.characterMutex.RLock()
+			defer no.characterMutex.RUnlock()
+			return len(no.characters)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("Character")
+		},
+		func(id widget.ListItemID, obj fyne.CanvasObject) {
+			no.characterMutex.RLock()
+			defer no.characterMutex.RUnlock()
+			
+			if id < len(no.characters) {
+				char := no.characters[id]
+				
+				// Visual indicators for character type and status
+				var locationIcon, statusIcon string
+				if char.IsLocal {
+					locationIcon = "🏠" // House icon for local
+				} else {
+					locationIcon = "🌐" // Globe icon for network/remote
+				}
+				
+				if char.IsActive {
+					statusIcon = "✅" // Active
+				} else {
+					statusIcon = "💤" // Idle
+				}
+				
+				displayText := fmt.Sprintf("%s %s %s (%s)", 
+					locationIcon, statusIcon, char.Name, char.Location)
+				obj.(*widget.Label).SetText(displayText)
+			}
+		},
+	)
+	no.characterList.Resize(fyne.NewSize(200, 80))
 
 	// Chat log display
 	no.chatLog = widget.NewRichText()
@@ -118,9 +174,16 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 	headerContainer := container.NewHBox(no.statusLabel, layout.NewSpacer(), no.peerCount)
 	
 	peerSection := container.NewBorder(
-		widget.NewLabel("Connected Peers:"),
+		widget.NewLabel("Network Peers:"),
 		nil, nil, nil,
 		no.peerList,
+	)
+
+	// New character section to clearly show local vs network characters
+	characterSection := container.NewBorder(
+		widget.NewLabel("Characters (🏠=Local, 🌐=Network):"),
+		nil, nil, nil,
+		no.characterList,
 	)
 
 	chatControls := container.NewBorder(nil, nil, nil, no.sendButton, no.chatInput)
@@ -130,9 +193,11 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 		no.chatLog,
 	)
 
-	// Main container with all network UI elements
+	// Main container with all network UI elements - character section added
 	no.container = container.NewVBox(
 		headerContainer,
+		widget.NewSeparator(),
+		characterSection,  // Show characters first as this is most important for users
 		widget.NewSeparator(),
 		peerSection,
 		widget.NewSeparator(),
@@ -148,14 +213,17 @@ func (no *NetworkOverlay) styleNetworkWidgets() {
 	// Set background color for better visibility over character
 	// backgroundColor := color.RGBA{R: 0, G: 0, B: 0, A: 180} // Semi-transparent black
 	
-	// Style the main container
-	no.container.Resize(fyne.NewSize(220, 300))
+	// Style the main container - increased height to accommodate character list
+	no.container.Resize(fyne.NewSize(220, 380))
 	
 	// Style status label with appropriate colors
 	if no.networkManager != nil && no.networkManager.GetPeerCount() > 0 {
 		no.statusLabel.SetText("Network: Connected")
 		// Green tint for connected status could be added here if Fyne supports it
 	}
+	
+	// Initialize with local character
+	no.updateCharacterList()
 }
 
 // sendChatMessage handles sending messages through the network
@@ -300,6 +368,9 @@ func (no *NetworkOverlay) updateNetworkStatus() {
 
 	// Update peer list
 	no.updatePeerList()
+	
+	// Update character list to show local vs network distinction
+	no.updateCharacterList()
 }
 
 // updatePeerList refreshes the peer list display with current peer information
@@ -316,6 +387,51 @@ func (no *NetworkOverlay) updatePeerList() {
 
 	// Refresh the list widget
 	no.peerList.Refresh()
+}
+
+// updateCharacterList refreshes the character list to clearly show local vs network characters
+func (no *NetworkOverlay) updateCharacterList() {
+	no.characterMutex.Lock()
+	defer no.characterMutex.Unlock()
+	
+	// Clear existing character list
+	no.characters = no.characters[:0]
+	
+	// Always add local character first
+	localChar := CharacterInfo{
+		Name:     no.localCharName,
+		Location: "Local",
+		IsLocal:  true,
+		IsActive: true, // Assume local character is always active
+		CharType: "Local",
+	}
+	no.characters = append(no.characters, localChar)
+	
+	// Add network characters from peers
+	if no.networkManager != nil {
+		peers := no.networkManager.GetPeers()
+		for _, peer := range peers {
+			// Each peer may have one or more characters
+			// For now, assume one character per peer
+			networkChar := CharacterInfo{
+				Name:     fmt.Sprintf("%s's Character", peer.ID),
+				Location: peer.ID,
+				IsLocal:  false,
+				IsActive: peer.Conn != nil, // Active if connected
+				CharType: "Network",
+			}
+			no.characters = append(no.characters, networkChar)
+		}
+	}
+	
+	// Refresh the character list widget
+	no.characterList.Refresh()
+}
+
+// SetLocalCharacterName updates the local character name for display
+func (no *NetworkOverlay) SetLocalCharacterName(name string) {
+	no.localCharName = name
+	no.updateCharacterList()
 }
 
 // RegisterNetworkEvents sets up handlers for network events like peer join/leave
@@ -340,6 +456,17 @@ func (no *NetworkOverlay) RegisterNetworkEvents() {
 		})
 
 	// Future: Add handlers for peer join/leave events when available
+}
+
+// GetCharacterList returns current character information (for testing)
+func (no *NetworkOverlay) GetCharacterList() []CharacterInfo {
+	no.characterMutex.RLock()
+	defer no.characterMutex.RUnlock()
+	
+	// Return a copy to avoid race conditions
+	characters := make([]CharacterInfo, len(no.characters))
+	copy(characters, no.characters)
+	return characters
 }
 
 // CreateObject implements fyne.Widget interface - required but not used

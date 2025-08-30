@@ -86,6 +86,12 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	if networkMode && networkManager != nil {
 		dw.networkOverlay = NewNetworkOverlay(networkManager)
 		dw.networkOverlay.RegisterNetworkEvents()
+		
+		// Set local character name for clear UI distinction
+		if char != nil && char.GetCard() != nil {
+			dw.networkOverlay.SetLocalCharacterName(char.GetCard().Name)
+		}
+		
 		if showNetwork {
 			dw.networkOverlay.Show()
 		}
