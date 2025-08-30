@@ -153,52 +153,109 @@ func (fv *FairnessValidator) ValidateHealingOutput(baseHealing, actualHealing fl
 
 // ValidateModifier ensures a battle modifier respects fairness constraints
 func (fv *FairnessValidator) ValidateModifier(modifier BattleModifier) error {
-	// Duration validation
-	if modifier.Duration < 0 {
+	if err := fv.validateModifierDuration(modifier.Duration); err != nil {
+		return err
+	}
+
+	if err := fv.validateModifierValue(modifier); err != nil {
+		return err
+	}
+
+	if err := fv.validateModifierSource(modifier.Source); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateModifierDuration checks if the modifier duration is within acceptable limits
+func (fv *FairnessValidator) validateModifierDuration(duration int) error {
+	if duration < 0 {
 		return errors.New("modifier duration cannot be negative")
 	}
-	if modifier.Duration > 10 {
+	if duration > 10 {
 		return errors.New("modifier duration cannot exceed 10 turns")
 	}
+	return nil
+}
 
-	// Value validation based on modifier type
+// validateModifierValue validates the modifier value based on its type
+func (fv *FairnessValidator) validateModifierValue(modifier BattleModifier) error {
 	switch modifier.Type {
 	case MODIFIER_DAMAGE:
-		if modifier.Value > fv.maxDamageModifier {
-			return fmt.Errorf("damage modifier %.2f exceeds maximum %.2f",
-				modifier.Value, fv.maxDamageModifier)
-		}
+		return fv.validateDamageModifierValue(modifier.Value)
 	case MODIFIER_DEFENSE:
-		if modifier.Value > fv.maxDefenseModifier {
-			return fmt.Errorf("defense modifier %.2f exceeds maximum %.2f",
-				modifier.Value, fv.maxDefenseModifier)
-		}
+		return fv.validateDefenseModifierValue(modifier.Value)
 	case MODIFIER_SPEED:
-		if modifier.Value > fv.maxSpeedModifier {
-			return fmt.Errorf("speed modifier %.2f exceeds maximum %.2f",
-				modifier.Value, fv.maxSpeedModifier)
-		}
+		return fv.validateSpeedModifierValue(modifier.Value)
 	case MODIFIER_HEALING:
-		if modifier.Value > fv.maxHealModifier {
-			return fmt.Errorf("healing modifier %.2f exceeds maximum %.2f",
-				modifier.Value, fv.maxHealModifier)
-		}
+		return fv.validateHealingModifierValue(modifier.Value)
 	case MODIFIER_STUN:
-		if modifier.Value != 1 || modifier.Duration > 3 {
-			return errors.New("stun modifier must have value 1 and duration ≤ 3")
-		}
+		return fv.validateStunModifierValue(modifier.Value, modifier.Duration)
 	case MODIFIER_SHIELD:
-		if modifier.Value > BASE_SHIELD_ABSORPTION*2 {
-			return fmt.Errorf("shield absorption %.1f exceeds maximum %.1f",
-				modifier.Value, BASE_SHIELD_ABSORPTION*2)
-		}
+		return fv.validateShieldModifierValue(modifier.Value)
 	}
+	return nil
+}
 
-	// Source validation (must be non-empty)
-	if modifier.Source == "" {
+// validateModifierSource ensures the modifier has a valid source
+func (fv *FairnessValidator) validateModifierSource(source string) error {
+	if source == "" {
 		return errors.New("modifier must have a source")
 	}
+	return nil
+}
 
+// validateDamageModifierValue checks if damage modifier value is within limits
+func (fv *FairnessValidator) validateDamageModifierValue(value float64) error {
+	if value > fv.maxDamageModifier {
+		return fmt.Errorf("damage modifier %.2f exceeds maximum %.2f",
+			value, fv.maxDamageModifier)
+	}
+	return nil
+}
+
+// validateDefenseModifierValue checks if defense modifier value is within limits
+func (fv *FairnessValidator) validateDefenseModifierValue(value float64) error {
+	if value > fv.maxDefenseModifier {
+		return fmt.Errorf("defense modifier %.2f exceeds maximum %.2f",
+			value, fv.maxDefenseModifier)
+	}
+	return nil
+}
+
+// validateSpeedModifierValue checks if speed modifier value is within limits
+func (fv *FairnessValidator) validateSpeedModifierValue(value float64) error {
+	if value > fv.maxSpeedModifier {
+		return fmt.Errorf("speed modifier %.2f exceeds maximum %.2f",
+			value, fv.maxSpeedModifier)
+	}
+	return nil
+}
+
+// validateHealingModifierValue checks if healing modifier value is within limits
+func (fv *FairnessValidator) validateHealingModifierValue(value float64) error {
+	if value > fv.maxHealModifier {
+		return fmt.Errorf("healing modifier %.2f exceeds maximum %.2f",
+			value, fv.maxHealModifier)
+	}
+	return nil
+}
+
+// validateStunModifierValue checks if stun modifier has correct value and duration
+func (fv *FairnessValidator) validateStunModifierValue(value float64, duration int) error {
+	if value != 1 || duration > 3 {
+		return errors.New("stun modifier must have value 1 and duration ≤ 3")
+	}
+	return nil
+}
+
+// validateShieldModifierValue checks if shield modifier value is within limits
+func (fv *FairnessValidator) validateShieldModifierValue(value float64) error {
+	if value > BASE_SHIELD_ABSORPTION*2 {
+		return fmt.Errorf("shield absorption %.1f exceeds maximum %.1f",
+			value, BASE_SHIELD_ABSORPTION*2)
+	}
 	return nil
 }
 
