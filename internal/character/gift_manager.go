@@ -137,7 +137,7 @@ func (gm *GiftManager) meetsRelationshipLevel(required string) bool {
 // meetsStatRequirements checks if current stats meet the gift requirements
 // Reuses existing stat checking patterns from interaction system
 func (gm *GiftManager) meetsStatRequirements(requirements map[string]interface{}) bool {
-	if gm.gameState == nil {
+	if !gm.validateGameState() {
 		return false
 	}
 
@@ -145,30 +145,68 @@ func (gm *GiftManager) meetsStatRequirements(requirements map[string]interface{}
 	defer gm.gameState.mu.RUnlock()
 
 	for statName, requirement := range requirements {
-		stat := gm.gameState.Stats[statName]
-		if stat == nil {
-			return false // Required stat doesn't exist
+		if !gm.validateStatExists(statName) {
+			return false
 		}
 
-		if reqMap, ok := requirement.(map[string]interface{}); ok {
-			if minVal, exists := reqMap["min"]; exists {
-				if minFloat, ok := minVal.(float64); ok {
-					if stat.Current < minFloat {
-						return false
-					}
-				}
-			}
-			if maxVal, exists := reqMap["max"]; exists {
-				if maxFloat, ok := maxVal.(float64); ok {
-					if stat.Current > maxFloat {
-						return false
-					}
-				}
-			}
+		if !gm.checkStatRequirement(statName, requirement) {
+			return false
 		}
 	}
 
 	return true
+}
+
+// validateGameState checks if the game state is available for stat validation
+func (gm *GiftManager) validateGameState() bool {
+	return gm.gameState != nil
+}
+
+// validateStatExists checks if the required stat exists in the game state
+func (gm *GiftManager) validateStatExists(statName string) bool {
+	stat := gm.gameState.Stats[statName]
+	return stat != nil
+}
+
+// checkStatRequirement validates a single stat against its requirement criteria
+func (gm *GiftManager) checkStatRequirement(statName string, requirement interface{}) bool {
+	stat := gm.gameState.Stats[statName]
+	reqMap, ok := requirement.(map[string]interface{})
+	if !ok {
+		return true // No specific requirements to check
+	}
+
+	return gm.checkMinRequirement(stat, reqMap) && gm.checkMaxRequirement(stat, reqMap)
+}
+
+// checkMinRequirement validates the minimum value requirement for a stat
+func (gm *GiftManager) checkMinRequirement(stat *Stat, reqMap map[string]interface{}) bool {
+	minVal, exists := reqMap["min"]
+	if !exists {
+		return true // No minimum requirement
+	}
+
+	minFloat, ok := minVal.(float64)
+	if !ok {
+		return true // Invalid requirement format, skip check
+	}
+
+	return stat.Current >= minFloat
+}
+
+// checkMaxRequirement validates the maximum value requirement for a stat
+func (gm *GiftManager) checkMaxRequirement(stat *Stat, reqMap map[string]interface{}) bool {
+	maxVal, exists := reqMap["max"]
+	if !exists {
+		return true // No maximum requirement
+	}
+
+	maxFloat, ok := maxVal.(float64)
+	if !ok {
+		return true // Invalid requirement format, skip check
+	}
+
+	return stat.Current <= maxFloat
 }
 
 // GiveGift processes gift giving with personality-aware responses
