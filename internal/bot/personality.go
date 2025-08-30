@@ -254,20 +254,45 @@ func (pm *PersonalityManager) LoadFromJSON(data []byte) (*PersonalityArchetype, 
 // validateArchetype ensures personality archetype values are within acceptable ranges.
 // Prevents configuration errors that could cause poor bot behavior.
 func (pm *PersonalityManager) validateArchetype(archetype *PersonalityArchetype) error {
+	if err := pm.validateArchetypeBasics(archetype); err != nil {
+		return err
+	}
+
+	if err := pm.validateArchetypeTraits(archetype); err != nil {
+		return err
+	}
+
+	if err := pm.validateBehaviorParameters(&archetype.Behavior); err != nil {
+		return err
+	}
+
+	if err := pm.validateResponseDelayFormat(&archetype.Behavior); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateArchetypeBasics checks fundamental archetype properties like name.
+func (pm *PersonalityManager) validateArchetypeBasics(archetype *PersonalityArchetype) error {
 	if archetype.Name == "" {
 		return fmt.Errorf("personality name cannot be empty")
 	}
+	return nil
+}
 
-	// Validate trait values are in 0.0-1.0 range
+// validateArchetypeTraits ensures all trait values are within the valid 0.0-1.0 range.
+func (pm *PersonalityManager) validateArchetypeTraits(archetype *PersonalityArchetype) error {
 	for trait, value := range archetype.Traits {
 		if value < 0.0 || value > 1.0 {
 			return fmt.Errorf("trait '%s' value %.2f must be between 0.0 and 1.0", trait, value)
 		}
 	}
+	return nil
+}
 
-	// Validate behavior parameters
-	behavior := &archetype.Behavior
-
+// validateBehaviorParameters checks behavior configuration values are within acceptable ranges.
+func (pm *PersonalityManager) validateBehaviorParameters(behavior *PersonalityBehavior) error {
 	if behavior.InteractionRate < 0.1 || behavior.InteractionRate > 10.0 {
 		return fmt.Errorf("interaction rate %.2f must be between 0.1 and 10.0", behavior.InteractionRate)
 	}
@@ -284,12 +309,15 @@ func (pm *PersonalityManager) validateArchetype(archetype *PersonalityArchetype)
 		return fmt.Errorf("min time between same action %d must be between 0 and 300 seconds", behavior.MinTimeBetweenSame)
 	}
 
-	// Validate response delay format
+	return nil
+}
+
+// validateResponseDelayFormat ensures the response delay configuration is parseable and valid.
+func (pm *PersonalityManager) validateResponseDelayFormat(behavior *PersonalityBehavior) error {
 	_, _, err := behavior.ParseResponseDelay()
 	if err != nil {
 		return fmt.Errorf("invalid response delay: %w", err)
 	}
-
 	return nil
 }
 
