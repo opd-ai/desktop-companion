@@ -42,7 +42,8 @@ Total Gaps Found: 4
 - `TestBug1GiftContextMenuFix` - Validates fix works for characters with/without gift system
 - `TestBug1GiftContextMenuRegression` - Comprehensive regression prevention test
 
-### Gap #2: Missing Network Overlay Context Menu Access
+### Gap #2: Missing Network Overlay Context Menu Access ✅ **RESOLVED**
+**Status:** Fixed in commit 5c5a5c4 (August 30, 2025 16:15:00 UTC)
 **Documentation Reference:**
 > "Press 'N' key or right-click → "Network Overlay" to toggle network UI (shows local 🏠 vs network 🌐 characters)" (README.md:226)
 
@@ -50,33 +51,29 @@ Total Gaps Found: 4
 
 **Expected Behavior:** Right-click context menu should include "Network Overlay" option when network mode is enabled
 
-**Actual Implementation:** Network overlay can only be toggled via 'N' key. No context menu option exists despite documentation claiming right-click access.
+**~~Actual Implementation~~** **Fixed Implementation:** Context menu now includes "Show/Hide Network Overlay" option when network mode is enabled
 
-**Gap Details:** The `ToggleNetworkOverlay()` function exists and 'N' key works correctly, but the context menu in `showContextMenu()` does not call any network-related menu builder that would include "Network Overlay".
+**~~Gap Details~~** **Resolution Details:**
+- Added `buildNetworkMenuItems()` function to create network-related context menu items
+- Added call to `buildNetworkMenuItems()` in `showContextMenu()` function
+- Network overlay option shows "Show Network Overlay" when hidden, "Hide Network Overlay" when visible
+- Option only appears when `networkMode=true` and `networkOverlay` exists
+- Added 'N' key shortcut to keyboard shortcuts help text for discoverability
 
-**Reproduction:**
+**~~Reproduction~~** **Verification:**
 ```go
+// Now works correctly:
 // Start with: go run cmd/companion/main.go -network -network-ui
 // Right-click on character
-// Expected: Menu includes "Network Overlay" option  
-// Actual: No network-related menu items present
+// Menu now includes "Show Network Overlay" option
+// Both 'N' key and right-click access work as documented
 ```
 
-**Production Impact:** Moderate - Users cannot access documented context menu path to network functionality, relying only on undiscoverable keyboard shortcut
+**~~Production Impact~~** **Resolution Impact:** Moderate improvement - users can now access network functionality through documented context menu path
 
-**Evidence:**
-```go
-// showContextMenu() missing network menu items
-func (dw *DesktopWindow) showContextMenu() {
-    var menuItems []ContextMenuItem
-    menuItems = append(menuItems, dw.buildBasicMenuItems()...)
-    menuItems = append(menuItems, dw.buildGameModeMenuItems()...)
-    menuItems = append(menuItems, dw.buildBattleMenuItems()...)
-    menuItems = append(menuItems, dw.buildChatMenuItems()...)
-    menuItems = append(menuItems, dw.buildUtilityMenuItems()...)
-    // Missing: dw.buildNetworkMenuItems()...
-}
-```
+**Tests Added:**
+- `TestBug2NetworkContextMenuFix` - Validates fix works for network mode enabled/disabled
+- `TestBug2NetworkContextMenuRegression` - Comprehensive regression prevention test
 
 ### Gap #3: Non-functional -events Command Line Flag
 **Documentation Reference:**
