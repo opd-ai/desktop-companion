@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2"
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
@@ -173,21 +174,14 @@ func loadCharacterConfiguration() (*character.CharacterCard, string) {
 
 // runDesktopApplication creates and runs the desktop companion application.
 func runDesktopApplication(card *character.CharacterCard, characterDir string, profiler *monitoring.Profiler) {
-	// Check if we're in a headless environment before attempting to create UI
 	if err := checkDisplayAvailable(); err != nil {
 		log.Fatalf("Cannot run desktop application: %v", err)
 	}
 
-	// Create Fyne application
 	myApp := app.NewWithID("com.opdai.desktop-companion")
-
-	// Create character instance
-	char, err := character.New(card, characterDir)
-	if err != nil {
-		log.Fatalf("Failed to create character: %v", err)
-	}
-
-	// Handle trigger-event flag if specified
+	
+	char := createCharacterInstance(card, characterDir)
+	
 	if *triggerEvent != "" {
 		if err := handleTriggerEventFlag(char); err != nil {
 			log.Fatalf("Failed to trigger event: %v", err)
@@ -195,45 +189,75 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 		return
 	}
 
-	// Create network manager if networking is enabled
-	var networkManager *network.NetworkManager
-	if *networkMode {
-		networkConfig := network.NetworkManagerConfig{
-			DiscoveryPort:     8080, // Default port
-			MaxPeers:          8,    // Default max peers
-			NetworkID:         "dds-default-network",
-			DiscoveryInterval: 5 * time.Second,
-		}
-		
-		// Use character's multiplayer config if available
-		if char.GetCard() != nil && char.GetCard().HasMultiplayer() {
-			mpConfig := char.GetCard().Multiplayer
-			if mpConfig.DiscoveryPort > 0 {
-				networkConfig.DiscoveryPort = mpConfig.DiscoveryPort
-			}
-			if mpConfig.MaxPeers > 0 {
-				networkConfig.MaxPeers = mpConfig.MaxPeers
-			}
-			networkConfig.NetworkID = mpConfig.NetworkID
-		}
-
-		networkManager, err = network.NewNetworkManager(networkConfig)
-		if err != nil {
-			log.Fatalf("Failed to create network manager: %v", err)
-		}
-
-		// Start networking
-		if err := networkManager.Start(); err != nil {
-			log.Fatalf("Failed to start network manager: %v", err)
-		}
+	networkManager := setupNetworkManager(char)
+	if networkManager != nil {
 		defer networkManager.Stop()
-
-		if *debug {
-			log.Printf("Network manager started with ID: %s", networkConfig.NetworkID)
-		}
 	}
 
-	// Create and show desktop window with profiler integration
+	window := createDesktopWindow(myApp, char, profiler, networkManager)
+	
+	window.Show()
+	myApp.Run()
+}
+
+// createCharacterInstance creates a new character from the given card and directory.
+func createCharacterInstance(card *character.CharacterCard, characterDir string) *character.Character {
+	char, err := character.New(card, characterDir)
+	if err != nil {
+		log.Fatalf("Failed to create character: %v", err)
+	}
+	return char
+}
+
+// setupNetworkManager creates and starts the network manager if networking is enabled.
+func setupNetworkManager(char *character.Character) *network.NetworkManager {
+	if !*networkMode {
+		return nil
+	}
+
+	networkConfig := buildNetworkConfig(char)
+	
+	networkManager, err := network.NewNetworkManager(networkConfig)
+	if err != nil {
+		log.Fatalf("Failed to create network manager: %v", err)
+	}
+
+	if err := networkManager.Start(); err != nil {
+		log.Fatalf("Failed to start network manager: %v", err)
+	}
+
+	if *debug {
+		log.Printf("Network manager started with ID: %s", networkConfig.NetworkID)
+	}
+
+	return networkManager
+}
+
+// buildNetworkConfig creates network configuration using character settings and defaults.
+func buildNetworkConfig(char *character.Character) network.NetworkManagerConfig {
+	networkConfig := network.NetworkManagerConfig{
+		DiscoveryPort:     8080, // Default port
+		MaxPeers:          8,    // Default max peers
+		NetworkID:         "dds-default-network",
+		DiscoveryInterval: 5 * time.Second,
+	}
+	
+	if char.GetCard() != nil && char.GetCard().HasMultiplayer() {
+		mpConfig := char.GetCard().Multiplayer
+		if mpConfig.DiscoveryPort > 0 {
+			networkConfig.DiscoveryPort = mpConfig.DiscoveryPort
+		}
+		if mpConfig.MaxPeers > 0 {
+			networkConfig.MaxPeers = mpConfig.MaxPeers
+		}
+		networkConfig.NetworkID = mpConfig.NetworkID
+	}
+
+	return networkConfig
+}
+
+// createDesktopWindow creates the desktop window with all required components.
+func createDesktopWindow(myApp fyne.App, char *character.Character, profiler *monitoring.Profiler, networkManager *network.NetworkManager) *ui.DesktopWindow {
 	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats, networkManager, *networkMode, *showNetwork)
 
 	if *debug {
@@ -243,9 +267,7 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 		}
 	}
 
-	// Show window and start event loop
-	window.Show()
-	myApp.Run()
+	return window
 }
 
 // handleTriggerEventFlag handles the -trigger-event command line flag
