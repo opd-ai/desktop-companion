@@ -21,7 +21,7 @@ func TestNewsCache(t *testing.T) {
 
 	item2 := &NewsItem{
 		ID:        "item2",
-		Title:     "Test Article 2", 
+		Title:     "Test Article 2",
 		URL:       "https://example.com/2",
 		Published: time.Now(),
 		Source:    "TestFeed",
@@ -101,7 +101,7 @@ func TestNewsCacheTimestamps(t *testing.T) {
 
 	// Test timestamp tracking
 	feedName := "TestFeed"
-	
+
 	// Initially no timestamp
 	lastUpdate := cache.GetLastUpdate(feedName)
 	if !lastUpdate.IsZero() {
@@ -110,7 +110,7 @@ func TestNewsCacheTimestamps(t *testing.T) {
 
 	// Update timestamp
 	cache.UpdateFeedTimestamp(feedName)
-	
+
 	// Should now have a recent timestamp
 	lastUpdate = cache.GetLastUpdate(feedName)
 	if lastUpdate.IsZero() {
@@ -128,26 +128,26 @@ func TestNewsCacheStats(t *testing.T) {
 
 	// Add items from different feeds
 	item1 := &NewsItem{
-		ID:     "item1",
-		Source: "Feed1",
-		Title:  "Article 1",
-		URL:    "https://example.com/1",
+		ID:        "item1",
+		Source:    "Feed1",
+		Title:     "Article 1",
+		URL:       "https://example.com/1",
 		Published: time.Now(),
 	}
 
 	item2 := &NewsItem{
-		ID:     "item2", 
-		Source: "Feed2",
-		Title:  "Article 2",
-		URL:    "https://example.com/2",
+		ID:        "item2",
+		Source:    "Feed2",
+		Title:     "Article 2",
+		URL:       "https://example.com/2",
 		Published: time.Now(),
 	}
 
 	item3 := &NewsItem{
-		ID:     "item3",
-		Source: "Feed1", // Same feed as item1
-		Title:  "Article 3",
-		URL:    "https://example.com/3",
+		ID:        "item3",
+		Source:    "Feed1", // Same feed as item1
+		Title:     "Article 3",
+		URL:       "https://example.com/3",
 		Published: time.Now(),
 	}
 
@@ -182,10 +182,10 @@ func TestNewsCacheClear(t *testing.T) {
 
 	// Add some items
 	item := &NewsItem{
-		ID:    "item1",
-		Title: "Test Article",
-		URL:   "https://example.com/1",
-		Source: "TestFeed",
+		ID:        "item1",
+		Title:     "Test Article",
+		URL:       "https://example.com/1",
+		Source:    "TestFeed",
 		Published: time.Now(),
 	}
 	cache.AddItem(item)

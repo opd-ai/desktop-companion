@@ -18,8 +18,8 @@ func TestNewsBlogBackend_Initialize(t *testing.T) {
 		CacheTimeout:         1800,
 		UpdateInterval:       30,
 		MaxNewsPerResponse:   3,
-		DebugMode:           false,
-		PreferredCategories: []string{"tech", "gaming"},
+		DebugMode:            false,
+		PreferredCategories:  []string{"tech", "gaming"},
 	}
 
 	configJSON, err := json.Marshal(config)
@@ -76,7 +76,7 @@ func TestNewsBlogBackend_GetBackendInfo(t *testing.T) {
 	expectedCapabilities := []string{
 		"news_summarization",
 		"category_filtering",
-		"personality_adaptation", 
+		"personality_adaptation",
 		"feed_management",
 	}
 
@@ -189,7 +189,7 @@ func TestNewsBlogBackend_ResponseGeneration(t *testing.T) {
 
 	// Enable backend
 	config := NewsBackendConfig{
-		Enabled: true,
+		Enabled:              true,
 		PersonalityInfluence: true,
 	}
 	configJSON, _ := json.Marshal(config)
@@ -223,8 +223,8 @@ func TestNewsBlogBackend_ResponseGeneration(t *testing.T) {
 
 	// Test response with different personality traits
 	contexts := []struct {
-		name   string
-		traits map[string]float64
+		name     string
+		traits   map[string]float64
 		expected string
 	}{
 		{
@@ -353,9 +353,9 @@ func TestNewsBlogBackend_UpdateMemory(t *testing.T) {
 
 // Helper function to check if a string contains a substring
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || 
-		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr || 
-		 containsSubstring(s, substr))))
+	return len(s) >= len(substr) && (s == substr || len(substr) == 0 ||
+		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr ||
+			containsSubstring(s, substr))))
 }
 
 func containsSubstring(s, substr string) bool {

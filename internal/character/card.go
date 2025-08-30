@@ -162,11 +162,11 @@ type MultiplayerConfig struct {
 // BattleSystemConfig configures JRPG-style battle features for a character
 // This enables turn-based combat with animation integration
 type BattleSystemConfig struct {
-	Enabled           bool                    `json:"enabled"`                     // Enable battle system features
-	BattleStats       map[string]BattleStat   `json:"battleStats,omitempty"`       // HP, Attack, Defense, Speed stats
-	AIDifficulty      string                  `json:"aiDifficulty,omitempty"`      // "easy", "normal", "hard" for bot opponents
-	PreferredActions  []string                `json:"preferredActions,omitempty"`  // AI preferred action types
-	RequireAnimations bool                    `json:"requireAnimations,omitempty"` // Require battle animations for validation
+	Enabled           bool                  `json:"enabled"`                     // Enable battle system features
+	BattleStats       map[string]BattleStat `json:"battleStats,omitempty"`       // HP, Attack, Defense, Speed stats
+	AIDifficulty      string                `json:"aiDifficulty,omitempty"`      // "easy", "normal", "hard" for bot opponents
+	PreferredActions  []string              `json:"preferredActions,omitempty"`  // AI preferred action types
+	RequireAnimations bool                  `json:"requireAnimations,omitempty"` // Require battle animations for validation
 }
 
 // BattleStat represents a battle-specific stat with base and max values
