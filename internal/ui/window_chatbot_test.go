@@ -25,7 +25,7 @@ func TestDesktopWindow_ChatbotIntegration(t *testing.T) {
 
 	// Create desktop window with debug mode
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
 
 	// Test 1: Verify chatbot interface is created for AI-enabled characters
 	if window.chatbotInterface == nil {
@@ -80,7 +80,7 @@ func TestDesktopWindow_ChatbotToggleMethod(t *testing.T) {
 
 	// Create desktop window
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
 
 	if window.chatbotInterface == nil {
 		t.Error("Expected chatbot interface to be created")
@@ -121,7 +121,7 @@ func TestDesktopWindow_WithoutAI(t *testing.T) {
 
 	// Create desktop window
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
 
 	// Test: Verify chatbot interface is NOT created for non-AI characters
 	if window.chatbotInterface != nil {
@@ -149,7 +149,7 @@ func TestDesktopWindow_ContextMenuChatOption(t *testing.T) {
 
 	// Create desktop window
 	profiler := monitoring.NewProfiler(50)
-	window := NewDesktopWindow(app, char, true, profiler, false, false)
+	window := NewDesktopWindow(app, char, true, profiler, false, false, nil, false, false)
 
 	if window.chatbotInterface == nil {
 		t.Error("Expected chatbot interface to be created")

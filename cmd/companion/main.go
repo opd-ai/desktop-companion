@@ -6,11 +6,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"fyne.io/fyne/v2/app"
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
+	"desktop-companion/internal/network"
 	"desktop-companion/internal/ui"
 )
 
@@ -24,14 +26,19 @@ var (
 	showStats     = flag.Bool("stats", false, "Show stats overlay")
 	events        = flag.Bool("events", false, "Enable general dialog events system")
 	triggerEvent  = flag.String("trigger-event", "", "Manually trigger a specific event by name")
+	networkMode   = flag.Bool("network", false, "Enable multiplayer networking features")
+	showNetwork   = flag.Bool("network-ui", false, "Show network overlay UI")
 )
 
 const appVersion = "1.0.0"
 
 // validateFlagDependencies checks that flag combinations are valid
-func validateFlagDependencies(gameMode, showStats bool) error {
+func validateFlagDependencies(gameMode, showStats, networkMode, showNetwork bool) error {
 	if showStats && !gameMode {
 		return fmt.Errorf("-stats flag requires -game flag to be enabled")
+	}
+	if showNetwork && !networkMode {
+		return fmt.Errorf("-network-ui flag requires -network flag to be enabled")
 	}
 	return nil
 }
@@ -40,7 +47,7 @@ func main() {
 	flag.Parse()
 
 	// Validate flag dependencies
-	if err := validateFlagDependencies(*gameMode, *showStats); err != nil {
+	if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Use -help for usage information\n")
 		os.Exit(1)
@@ -188,8 +195,46 @@ func runDesktopApplication(card *character.CharacterCard, characterDir string, p
 		return
 	}
 
+	// Create network manager if networking is enabled
+	var networkManager *network.NetworkManager
+	if *networkMode {
+		networkConfig := network.NetworkManagerConfig{
+			DiscoveryPort:     8080, // Default port
+			MaxPeers:          8,    // Default max peers
+			NetworkID:         "dds-default-network",
+			DiscoveryInterval: 5 * time.Second,
+		}
+		
+		// Use character's multiplayer config if available
+		if char.GetCard() != nil && char.GetCard().HasMultiplayer() {
+			mpConfig := char.GetCard().Multiplayer
+			if mpConfig.DiscoveryPort > 0 {
+				networkConfig.DiscoveryPort = mpConfig.DiscoveryPort
+			}
+			if mpConfig.MaxPeers > 0 {
+				networkConfig.MaxPeers = mpConfig.MaxPeers
+			}
+			networkConfig.NetworkID = mpConfig.NetworkID
+		}
+
+		networkManager, err = network.NewNetworkManager(networkConfig)
+		if err != nil {
+			log.Fatalf("Failed to create network manager: %v", err)
+		}
+
+		// Start networking
+		if err := networkManager.Start(); err != nil {
+			log.Fatalf("Failed to start network manager: %v", err)
+		}
+		defer networkManager.Stop()
+
+		if *debug {
+			log.Printf("Network manager started with ID: %s", networkConfig.NetworkID)
+		}
+	}
+
 	// Create and show desktop window with profiler integration
-	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats)
+	window := ui.NewDesktopWindow(myApp, char, *debug, profiler, *gameMode, *showStats, networkManager, *networkMode, *showNetwork)
 
 	if *debug {
 		log.Println("Created desktop window")

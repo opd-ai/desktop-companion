@@ -49,7 +49,7 @@ func TestRightClickBehavior(t *testing.T) {
 	profiler := monitoring.NewProfiler(50)
 	defer profiler.Stop("", false)
 
-	window := NewDesktopWindow(testApp, char, true, profiler, true, false) // gameMode=true, showStats=false
+	window := NewDesktopWindow(testApp, char, true, profiler, true, false, nil, false, false) // gameMode=true, showStats=false
 	defer window.Close()
 
 	// Simulate right-click event

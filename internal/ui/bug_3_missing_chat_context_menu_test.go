@@ -33,7 +33,7 @@ func TestBug3MissingChatContextMenu(t *testing.T) {
 		testApp := app.New()
 		profiler := monitoring.NewProfiler(50)
 
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false)
+		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false)
 
 		// Check if chatbot interface was created
 		hasChatbot := window.chatbotInterface != nil
@@ -75,7 +75,7 @@ func TestBug3MissingChatContextMenu(t *testing.T) {
 		testApp := app.New()
 		profiler := monitoring.NewProfiler(50)
 
-		window := NewDesktopWindow(testApp, char, false, profiler, false, false)
+		window := NewDesktopWindow(testApp, char, false, profiler, false, false, nil, false, false)
 
 		// Check if chatbot interface was created
 		hasChatbot := window.chatbotInterface != nil

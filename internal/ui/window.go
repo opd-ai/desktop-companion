@@ -23,15 +23,18 @@ type DesktopWindow struct {
 	contextMenu      *ContextMenu
 	statsOverlay     *StatsOverlay
 	chatbotInterface *ChatbotInterface
+	networkOverlay   *NetworkOverlay
 	profiler         *monitoring.Profiler
 	debug            bool
 	gameMode         bool
 	showStats        bool
+	networkMode      bool
+	showNetwork      bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
-func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool) *DesktopWindow {
+func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool, networkManager NetworkManagerInterface, networkMode bool, showNetwork bool) *DesktopWindow {
 	// Create window with transparency support
 	window := app.NewWindow("Desktop Companion")
 
@@ -47,12 +50,14 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	configureAlwaysOnTop(window, debug)
 
 	dw := &DesktopWindow{
-		window:    window,
-		character: char,
-		profiler:  profiler,
-		debug:     debug,
-		gameMode:  gameMode,
-		showStats: showStats,
+		window:      window,
+		character:   char,
+		profiler:    profiler,
+		debug:       debug,
+		gameMode:    gameMode,
+		showStats:   showStats,
+		networkMode: networkMode,
+		showNetwork: showNetwork,
 	}
 
 	// Create character renderer
@@ -75,6 +80,15 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 	// Create chatbot interface (initially hidden) if character supports AI chat
 	if char.GetCard() != nil && char.GetCard().HasDialogBackend() {
 		dw.chatbotInterface = NewChatbotInterface(char)
+	}
+
+	// Create network overlay if networking is enabled
+	if networkMode && networkManager != nil {
+		dw.networkOverlay = NewNetworkOverlay(networkManager)
+		dw.networkOverlay.RegisterNetworkEvents()
+		if showNetwork {
+			dw.networkOverlay.Show()
+		}
 	}
 
 	// Set up window content and interactions
@@ -108,6 +122,11 @@ func (dw *DesktopWindow) setupContent() {
 	// Add chatbot interface if available
 	if dw.chatbotInterface != nil {
 		objects = append(objects, dw.chatbotInterface)
+	}
+
+	// Add network overlay if available
+	if dw.networkOverlay != nil {
+		objects = append(objects, dw.networkOverlay.GetContainer())
 	}
 
 	// Create container with transparent background for overlay effect
@@ -580,6 +599,20 @@ func (dw *DesktopWindow) ToggleChatbotInterfaceWithFocus() {
 	}
 }
 
+// ToggleNetworkOverlay shows/hides the network overlay if available
+func (dw *DesktopWindow) ToggleNetworkOverlay() {
+	if dw.networkOverlay != nil {
+		dw.networkOverlay.Toggle()
+		if dw.debug {
+			if dw.networkOverlay.IsVisible() {
+				log.Println("Network overlay shown")
+			} else {
+				log.Println("Network overlay hidden")
+			}
+		}
+	}
+}
+
 // configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities
 // Following the "lazy programmer" principle: use what's available rather than implementing platform-specific code
 func configureAlwaysOnTop(window fyne.Window, debug bool) {
@@ -638,6 +671,12 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 				log.Println("Chat toggle shortcut pressed (C key)")
 			}
 			dw.ToggleChatbotInterfaceWithFocus()
+		case fyne.KeyN:
+			// 'N' key toggles network overlay
+			if dw.debug {
+				log.Println("Network toggle shortcut pressed (N key)")
+			}
+			dw.ToggleNetworkOverlay()
 		case fyne.KeyEscape:
 			// 'ESC' key closes chatbot interface if open
 			if dw.chatbotInterface != nil && dw.chatbotInterface.IsVisible() {
@@ -656,6 +695,7 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 		log.Println("Keyboard shortcuts configured:")
 		log.Println("  'S' - Toggle stats overlay")
 		log.Println("  'C' - Toggle chatbot")
+		log.Println("  'N' - Toggle network overlay")
 		log.Println("  'ESC' - Close chatbot")
 		log.Println("  'Ctrl+E' - Open events menu")
 		log.Println("  'Ctrl+R' - Random roleplay scenario")
