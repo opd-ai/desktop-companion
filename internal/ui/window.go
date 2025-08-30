@@ -24,6 +24,7 @@ type DesktopWindow struct {
 	statsOverlay     *StatsOverlay
 	chatbotInterface *ChatbotInterface
 	networkOverlay   *NetworkOverlay
+	giftDialog       *GiftSelectionDialog
 	profiler         *monitoring.Profiler
 	debug            bool
 	gameMode         bool
@@ -82,6 +83,26 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		dw.chatbotInterface = NewChatbotInterface(char)
 	}
 
+	// Create gift selection dialog (initially hidden) if character has gift system
+	if gameMode && char.GetCard() != nil && char.GetCard().HasGiftSystem() && char.GetGameState() != nil {
+		giftManager := character.NewGiftManager(char.GetCard(), char.GetGameState())
+		dw.giftDialog = NewGiftSelectionDialog(giftManager)
+
+		// Set up callbacks for gift dialog
+		dw.giftDialog.SetOnGiftGiven(func(response *character.GiftResponse) {
+			// Show response message to user
+			if response.Response != "" {
+				dw.showDialog(response.Response)
+			} else if response.ErrorMessage != "" {
+				dw.showDialog(response.ErrorMessage)
+			}
+		})
+
+		dw.giftDialog.SetOnCancel(func() {
+			// Dialog closed, no action needed
+		})
+	}
+
 	// Create network overlay if networking is enabled
 	if networkMode && networkManager != nil {
 		dw.networkOverlay = NewNetworkOverlay(networkManager)
@@ -128,6 +149,11 @@ func (dw *DesktopWindow) setupContent() {
 	// Add chatbot interface if available
 	if dw.chatbotInterface != nil {
 		objects = append(objects, dw.chatbotInterface)
+	}
+
+	// Add gift dialog if available
+	if dw.giftDialog != nil {
+		objects = append(objects, dw.giftDialog)
 	}
 
 	// Add network overlay if available
@@ -280,6 +306,16 @@ func (dw *DesktopWindow) buildGameModeMenuItems() []ContextMenuItem {
 			}
 		},
 	})
+
+	// Add gift option if character has gift system enabled
+	if dw.character.GetCard().HasGiftSystem() && dw.giftDialog != nil {
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Give Gift",
+			Callback: func() {
+				dw.giftDialog.Show()
+			},
+		})
+	}
 
 	if dw.statsOverlay != nil {
 		statsText := "Show Stats"
