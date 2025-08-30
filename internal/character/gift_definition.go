@@ -265,39 +265,79 @@ func (g *GiftDefinition) validateNotes() error {
 func LoadGiftCatalog(giftsPath string) (map[string]*GiftDefinition, error) {
 	catalog := make(map[string]*GiftDefinition)
 
-	// Check if gifts directory exists
-	if _, err := os.Stat(giftsPath); os.IsNotExist(err) {
+	if !directoryExists(giftsPath) {
 		// Return empty catalog if directory doesn't exist (gifts are optional)
 		return catalog, nil
 	}
 
-	// Read directory contents
+	entries, err := readGiftDirectory(giftsPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := processGiftFiles(entries, giftsPath, catalog); err != nil {
+		return nil, err
+	}
+
+	return catalog, nil
+}
+
+// directoryExists checks if the gifts directory exists
+func directoryExists(giftsPath string) bool {
+	_, err := os.Stat(giftsPath)
+	return !os.IsNotExist(err)
+}
+
+// readGiftDirectory reads the contents of the gifts directory
+func readGiftDirectory(giftsPath string) ([]os.DirEntry, error) {
 	entries, err := os.ReadDir(giftsPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read gifts directory %s: %w", giftsPath, err)
 	}
+	return entries, nil
+}
 
-	// Load each JSON file
+// processGiftFiles processes each JSON file in the directory and loads gift definitions
+func processGiftFiles(entries []os.DirEntry, giftsPath string, catalog map[string]*GiftDefinition) error {
 	for _, entry := range entries {
-		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".json") {
+		if !isValidGiftFile(entry) {
 			continue
 		}
 
 		giftPath := filepath.Join(giftsPath, entry.Name())
-		gift, err := LoadGiftDefinition(giftPath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to load gift from %s: %w", giftPath, err)
+		if err := loadAndValidateGift(giftPath, catalog); err != nil {
+			return err
 		}
+	}
+	return nil
+}
 
-		// Check for duplicate IDs
-		if _, exists := catalog[gift.ID]; exists {
-			return nil, fmt.Errorf("duplicate gift ID '%s' found in %s", gift.ID, giftPath)
-		}
+// isValidGiftFile checks if a directory entry is a valid JSON gift file
+func isValidGiftFile(entry os.DirEntry) bool {
+	return !entry.IsDir() && strings.HasSuffix(entry.Name(), ".json")
+}
 
-		catalog[gift.ID] = gift
+// loadAndValidateGift loads a gift definition and validates for duplicates
+func loadAndValidateGift(giftPath string, catalog map[string]*GiftDefinition) error {
+	gift, err := LoadGiftDefinition(giftPath)
+	if err != nil {
+		return fmt.Errorf("failed to load gift from %s: %w", giftPath, err)
 	}
 
-	return catalog, nil
+	if err := checkDuplicateGiftID(gift.ID, giftPath, catalog); err != nil {
+		return err
+	}
+
+	catalog[gift.ID] = gift
+	return nil
+}
+
+// checkDuplicateGiftID validates that a gift ID is unique in the catalog
+func checkDuplicateGiftID(giftID, giftPath string, catalog map[string]*GiftDefinition) error {
+	if _, exists := catalog[giftID]; exists {
+		return fmt.Errorf("duplicate gift ID '%s' found in %s", giftID, giftPath)
+	}
+	return nil
 }
 
 // contains is a utility function to check if a slice contains a string
