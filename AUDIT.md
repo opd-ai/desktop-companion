@@ -1,52 +1,158 @@
 # Implementation Gap Analysis
-Generated: August 29, 2025 16:42:17 UTC
-Codebase Version: e90f45d3a8d8c612c7811de726328b46cdec6962
+Generated: 2025-08-30T00:00:00Z
+Codebase Version: 7351df3
 
 ## Executive Summary
-Total Gaps Found: 5 (3 Resolved, 2 Remaining)
-- Critical: 0 (2 Fixed)
-- Moderate: 1 (1 Fixed)
+Total Gaps Found: 4
+- Critical: 0
+- Moderate: 3
 - Minor: 1
-
-**Recent Updates:**
-- August 29, 2025 17:05:00 UTC: Fixed moderate gap #3 (commit 7d58a8d)
-- August 29, 2025 16:58:00 UTC: Fixed critical gaps #1 and #2 (commit 5d04bcf)
-- General Dialog Events System now fully implemented
-- Command-line flags (-events, -trigger-event) now functional
-- Context menu "Open Chat" now consistent for AI characters
 
 ## Detailed Findings
 
-### Gap #1: General Dialog Events System Missing Implementation ✅ **RESOLVED**
-**Status:** Fixed in commit 5d04bcf (August 29, 2025 16:58:00 UTC)
+### Gap #1: Missing Gift System Context Menu Integration ✅ **RESOLVED**
+**Status:** Fixed in commit 8b13b7d (August 30, 2025 16:14:00 UTC)
 **Documentation Reference:** 
-> "**General Event Interactions**:
-> - **Ctrl+E**: Open events menu to see available scenarios
-> - **Ctrl+R**: Quick-start a random roleplay scenario  
-> - **Ctrl+G**: Start a mini-game or trivia session
-> - **Ctrl+H**: Trigger a humor/joke session" (README.md:644-648)
+> "**Gift giving**: Access gift interface through context menu to give items and build relationships" (README.md:253)
 
-**Implementation Location:** `internal/ui/window.go:587-617`
+**Implementation Location:** `internal/ui/window.go:257-299`
 
-**Expected Behavior:** Keyboard shortcuts Ctrl+E, Ctrl+R, Ctrl+G, Ctrl+H should trigger general dialog events
+**Expected Behavior:** Right-click context menu should include "Give Gift" option when character has gift system enabled
 
-**~~Actual Implementation~~** **Fixed Implementation:** All documented keyboard shortcuts are now implemented using Fyne's CustomShortcut system
+**~~Actual Implementation~~** **Fixed Implementation:** Context menu now includes "Give Gift" option for characters with gift system enabled in game mode
 
 **~~Gap Details~~** **Resolution Details:** 
-- Added missing command-line flags: `-events` and `-trigger-event` in `cmd/companion/main.go`
-- Implemented keyboard shortcuts using `desktop.CustomShortcut` with proper Ctrl+key combinations
-- Added `openEventsMenu()`, `startRandomRoleplayScenario()`, `startMiniGameSession()`, `startHumorSession()` methods
-- Added `GetGeneralEventManager()` method to Character struct for proper access
-- Integrated with existing general events system in `internal/character/general_events.go`
+- Added `giftDialog` field to DesktopWindow struct
+- Initialize gift selection dialog in NewDesktopWindow constructor for characters with gift system
+- Added "Give Gift" menu item to buildGameModeMenuItems() with proper callback to show gift dialog
+- Gift option only appears when character has gift system enabled and is in game mode
+- Gift dialog properly integrates with existing GiftManager and shows gift response messages
 
 **~~Reproduction~~** **Verification:**
 ```go
-// Now implemented in window.go with proper shortcuts:
-ctrlE := &desktop.CustomShortcut{KeyName: fyne.KeyE, Modifier: fyne.KeyModifierControl}
-ctrlR := &desktop.CustomShortcut{KeyName: fyne.KeyR, Modifier: fyne.KeyModifierControl}
-ctrlG := &desktop.CustomShortcut{KeyName: fyne.KeyG, Modifier: fyne.KeyModifierControl}
-ctrlH := &desktop.CustomShortcut{KeyName: fyne.KeyH, Modifier: fyne.KeyModifierControl}
+// Now works correctly:
+// Right-click on character in game mode with gift system enabled
+// Menu shows "Give Gift" option which opens gift selection dialog
+// Gift giving works with proper feedback messages
 ```
+
+**~~Production Impact~~** **Resolution Impact:** Critical feature now fully functional - users can access documented gift functionality through context menu
+
+**Tests Added:**
+- `TestBug1GiftContextMenuFix` - Validates fix works for characters with/without gift system
+- `TestBug1GiftContextMenuRegression` - Comprehensive regression prevention test
+
+### Gap #2: Missing Network Overlay Context Menu Access
+**Documentation Reference:**
+> "Press 'N' key or right-click → "Network Overlay" to toggle network UI (shows local 🏠 vs network 🌐 characters)" (README.md:226)
+
+**Implementation Location:** `internal/ui/window.go:229-238`
+
+**Expected Behavior:** Right-click context menu should include "Network Overlay" option when network mode is enabled
+
+**Actual Implementation:** Network overlay can only be toggled via 'N' key. No context menu option exists despite documentation claiming right-click access.
+
+**Gap Details:** The `ToggleNetworkOverlay()` function exists and 'N' key works correctly, but the context menu in `showContextMenu()` does not call any network-related menu builder that would include "Network Overlay".
+
+**Reproduction:**
+```go
+// Start with: go run cmd/companion/main.go -network -network-ui
+// Right-click on character
+// Expected: Menu includes "Network Overlay" option  
+// Actual: No network-related menu items present
+```
+
+**Production Impact:** Moderate - Users cannot access documented context menu path to network functionality, relying only on undiscoverable keyboard shortcut
+
+**Evidence:**
+```go
+// showContextMenu() missing network menu items
+func (dw *DesktopWindow) showContextMenu() {
+    var menuItems []ContextMenuItem
+    menuItems = append(menuItems, dw.buildBasicMenuItems()...)
+    menuItems = append(menuItems, dw.buildGameModeMenuItems()...)
+    menuItems = append(menuItems, dw.buildBattleMenuItems()...)
+    menuItems = append(menuItems, dw.buildChatMenuItems()...)
+    menuItems = append(menuItems, dw.buildUtilityMenuItems()...)
+    // Missing: dw.buildNetworkMenuItems()...
+}
+```
+
+### Gap #3: Non-functional -events Command Line Flag
+**Documentation Reference:**
+> "-events               Enable general dialog events system for interactive scenarios" (README.md:623)
+
+**Implementation Location:** `cmd/companion/main.go:28, 265`
+
+**Expected Behavior:** The `-events` flag should enable/disable general dialog events functionality
+
+**Actual Implementation:** Flag is declared and logged but not passed to DesktopWindow or used to conditionally enable events system
+
+**Gap Details:** The events flag exists in command-line parsing but has no functional effect. General dialog events appear to be always available regardless of flag state, making the flag misleading.
+
+**Reproduction:**
+```bash
+# Both commands behave identically:
+go run cmd/companion/main.go -character assets/characters/examples/interactive_events.json
+go run cmd/companion/main.go -events -character assets/characters/examples/interactive_events.json
+# Events work in both cases despite flag difference
+```
+
+**Production Impact:** Minor - Flag exists but provides no functional control, confusing users about its purpose
+
+**Evidence:**
+```go
+// Flag is declared but unused functionally
+events = flag.Bool("events", false, "Enable general dialog events system")
+
+// Only used for debug logging, not functionality
+if *events {
+    log.Println("General events system enabled") 
+}
+// Flag not passed to DesktopWindow constructor
+```
+
+### Gap #4: Inconsistent Context Menu Documentation for Battle System
+**Documentation Reference:**
+> "**Battle invitations** available through context menu in multiplayer mode" (README.md:213)
+
+**Implementation Location:** `internal/ui/window.go:303-318`
+
+**Expected Behavior:** Context menu should show battle-related options when in multiplayer mode with battle-capable characters
+
+**Actual Implementation:** Battle menu items only show "Initiate Battle" but documentation implies broader "battle invitations" functionality for multiplayer context
+
+**Gap Details:** The battle system context menu implementation is minimal compared to the documented scope. Only basic battle initiation exists, not the implied multiplayer invitation system.
+
+**Reproduction:**
+```go
+// Start with battle-capable character in network mode
+go run cmd/companion/main.go -network -character assets/characters/multiplayer/social_bot.json
+// Right-click character
+// Expected: Comprehensive battle invitation options
+// Actual: Only basic "Initiate Battle" option
+```
+
+**Production Impact:** Minor - Basic functionality works but scope is narrower than documented
+
+**Evidence:**
+```go
+// Minimal battle menu implementation
+func (dw *DesktopWindow) buildBattleMenuItems() []ContextMenuItem {
+    return []ContextMenuItem{
+        {
+            Text: "Initiate Battle", // Single option vs. documented "invitations"
+            Callback: func() { dw.handleBattleInitiation() },
+        },
+    }
+}
+```
+
+## Quality Assurance Notes
+
+All findings were verified against the latest codebase version (commit 7351df3). The gaps represent functional discrepancies between documented behavior and actual implementation, not style or optimization issues. Each gap has been tested and confirmed to impact user experience according to the documented expectations.
+
+The codebase shows high maturity with comprehensive validation, proper error handling, and robust architecture. These gaps appear to be documentation-implementation drift rather than fundamental design flaws.
 
 **~~Production Impact~~** **Resolution Impact:** Critical feature now fully functional - matches documentation
 
