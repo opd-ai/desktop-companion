@@ -46,6 +46,12 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Choice Consequences**: User decisions affect character stats and relationship progression
   - **Event Chaining**: Complex scenarios with multiple phases and branching narratives
   - **Backward Compatible**: Seamlessly integrates with existing dialog and game systems
+- 🎁 **Gift System**: Interactive item giving and relationship building *(Complete)*
+  - **Gift Categories**: Food, toys, accessories, and special items with stat effects
+  - **Relationship Impact**: Gifts affect affection, trust, and character mood
+  - **Inventory Management**: Track given gifts and character preferences
+  - **Gift UI**: Dedicated interface for browsing and giving gifts
+  - **Integration**: Works with both single-player and multiplayer modes
 - 🌐 **Multiplayer Networking**: Peer-to-peer networking infrastructure *(Phase 1 Complete)*
   - **Peer Discovery**: UDP-based automatic discovery of other DDS instances on local network
   - **Foundation Ready**: Core infrastructure for AI-controlled multiplayer companions
@@ -56,6 +62,14 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Network Coordination**: Bot characters can interact with peers in multiplayer mode
   - **Performance Optimized**: <50ns per Update() call, suitable for 60 FPS real-time operation
   - **Rate Limiting**: Prevents excessive actions that would feel unnatural
+- ⚔️ **Battle System**: Turn-based tactical combat system *(Complete)*
+  - **Fair Combat**: Balanced turn-based mechanics with timeout protection
+  - **Multiplayer Ready**: Seamless integration with network multiplayer sessions
+  - **AI Opponents**: Intelligent AI-driven battle decisions with personality traits
+  - **Battle Actions**: Attack, defend, and special abilities with strategic depth
+  - **Battle UI**: Complete interface for battle management and visualization
+  - **Cryptographic Security**: Ed25519-signed battle messages for cheat prevention
+  - **Performance Optimized**: Sub-millisecond action processing for real-time play
 - 🎮 **Multiplayer UI**: Complete network overlay interface *(Phase 3 Complete)*
   - **Character Distinction**: Clear visual separation of local (🏠) vs network (🌐) characters
   - **Peer Management**: Real-time peer discovery and connection status
@@ -210,6 +224,11 @@ go run cmd/companion/main.go -network -character assets/characters/multiplayer/s
 go run cmd/companion/main.go -network -network-ui -character assets/characters/multiplayer/helper_bot.json  # Helper bot with UI overlay
 go run cmd/companion/main.go -network -network-ui -character assets/characters/default/character.json  # Regular character in network mode
 # Press 'N' key or right-click → "Network Overlay" to toggle network UI (shows local 🏠 vs network 🌐 characters)
+
+# Battle System Examples (Complete!)
+go run cmd/companion/main.go -network -character assets/characters/multiplayer/social_bot.json        # Enable battle-capable character
+# Battle invitations available through context menu in multiplayer mode
+# Turn-based combat with AI opponents and strategic decision making
 ```
 
 **General Dialog Events**:
@@ -229,8 +248,10 @@ go run cmd/companion/main.go -network -network-ui -character assets/characters/d
 - **Double-click**: Play with your character (increases happiness, decreases energy)
 - **Stats overlay**: Toggle with 'S' key to monitor character's wellbeing
 - **Chatbot interface**: Toggle with 'C' key for AI-powered conversations (AI characters only)
-- **Context menu**: Right-click for advanced options including "Open Chat" for AI characters
+- **Context menu**: Right-click for advanced options including "Open Chat" for AI characters, "Give Gift" for gift system, and "Battle Invite" for multiplayer combat
 - **Network overlay**: Toggle with 'N' key to show multiplayer status (network mode only)
+- **Gift giving**: Access gift interface through context menu to give items and build relationships
+- **Battle system**: Initiate turn-based combat through multiplayer context menu options
 - **Auto-save**: Game state automatically saves at intervals that vary by difficulty:
   - Easy: 10 minutes (600 seconds)
   - Normal/Romance: 5 minutes (300 seconds)  
@@ -243,6 +264,8 @@ go run cmd/companion/main.go -network -network-ui -character assets/characters/d
 - **Peer chat**: Send messages to other players through the network overlay
 - **Character visibility**: See all characters connected to the network session
 - **Real-time sync**: Character actions and status updates shared across peers
+- **Battle system**: Challenge other players to turn-based combat matches
+- **Gift exchange**: Share gifts between characters in multiplayer sessions
 
 **Character Care**:
 - **Monitor Stats**: Hunger, happiness, health, and energy decrease over time
@@ -624,6 +647,10 @@ go run cmd/companion/main.go [options]
 -network             Enable multiplayer networking features
 -network-ui          Show network overlay UI (requires -network)
 
+# General dialog events system
+-events               Enable general dialog events system for interactive scenarios
+-trigger-event <name> Manually trigger a specific event by name
+
 # Performance profiling
 -memprofile <file>   Write memory profile to file for analysis
 -cpuprofile <file>   Write CPU profile to file for analysis
@@ -643,9 +670,9 @@ go run cmd/companion/main.go -game -stats -character assets/characters/challenge
 # Debug mode with performance profiling
 go run cmd/companion/main.go -debug -memprofile=mem.prof -cpuprofile=cpu.prof
 
-# Command-line options for general events
--events               Enable general dialog events system
--trigger-event <name> Manually trigger a specific event by name
+# Interactive dialog events examples  
+go run cmd/companion/main.go -events -character assets/characters/examples/interactive_events.json
+go run cmd/companion/main.go -events -trigger-event daily_check_in -character assets/characters/examples/interactive_events.json
 
 # Example usage with events
 go run cmd/companion/main.go -game -stats -events -character assets/characters/examples/interactive_events.json
@@ -676,12 +703,23 @@ DDS/
 │   │   ├── compatibility.go        # Advanced compatibility analysis
 │   │   ├── crisis_recovery.go      # Relationship crisis management
 │   │   ├── jealousy.go             # Jealousy mechanics
-│   │   └── *_test.go               # Comprehensive unit tests
+│   │   ├── gift_definition.go      # Gift system and item management
+│   │   ├── gift_manager.go         # Gift giving mechanics
+│   │   ├── general_events.go       # Interactive dialog events system
+│   │   ├── multiplayer.go          # Multiplayer character support
+│   │   ├── multiplayer_battle.go   # Battle system character integration
+│   │   ├── network_events.go       # Network-based character events
+│   │   └── *_test.go               # Comprehensive unit tests (52+ files)
 │   ├── ui/
 │   │   ├── window.go              # Transparent window (fyne)
 │   │   ├── renderer.go            # Character rendering
 │   │   ├── interaction.go         # Dialog bubbles (fyne)
 │   │   ├── stats_overlay.go       # Real-time stats display
+│   │   ├── chatbot_interface.go   # AI chatbot interface
+│   │   ├── context_menu.go        # Right-click context menu
+│   │   ├── network_overlay.go     # Multiplayer network UI
+│   │   ├── gift_dialog.go         # Gift giving interface
+│   │   ├── battle_ui.go           # Battle system interface
 │   │   └── *_test.go              # UI component tests
 │   ├── config/
 │   │   └── loader.go              # Configuration file loading
@@ -692,9 +730,28 @@ DDS/
 │   ├── persistence/               # Game state persistence
 │   │   ├── save_manager.go        # JSON-based save/load system
 │   │   └── save_manager_test.go   # Comprehensive persistence tests
-│   └── monitoring/                # Performance monitoring
-│       ├── profiler.go            # Performance profiling and metrics
-│       └── profiler_test.go       # Performance testing
+│   ├── monitoring/                # Performance monitoring
+│   │   ├── profiler.go            # Performance profiling and metrics
+│   │   └── profiler_test.go       # Performance testing
+│   ├── battle/                    # Turn-based battle system
+│   │   ├── manager.go             # Battle state management and coordination
+│   │   ├── actions.go             # Battle action processing and validation
+│   │   ├── fairness.go            # Fairness constraint enforcement
+│   │   ├── ai.go                  # AI battle decision making
+│   │   └── *_test.go              # Battle system tests
+│   ├── bot/                       # Autonomous AI character behavior
+│   │   ├── controller.go          # Bot behavior coordination
+│   │   ├── actions.go             # Autonomous action processing
+│   │   ├── personality.go         # Personality-driven AI decisions
+│   │   └── *_test.go              # Bot system tests
+│   ├── network/                   # Multiplayer networking infrastructure
+│   │   ├── manager.go             # Network session management
+│   │   ├── protocol.go            # Network protocol and message handling
+│   │   ├── sync.go                # State synchronization between peers
+│   │   ├── group_events.go        # Multiplayer group event coordination
+│   │   └── *_test.go              # Network system tests
+│   └── testing/                   # Shared testing utilities
+│       └── helpers.go             # Common test infrastructure
 ├── assets/characters/             # Character configurations
 │   ├── default/                   # Basic character without game features
 │   ├── easy/                      # Easy difficulty game character
