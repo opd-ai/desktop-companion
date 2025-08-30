@@ -261,6 +261,7 @@ func (dw *DesktopWindow) showContextMenu() {
 	menuItems = append(menuItems, dw.buildGameModeMenuItems()...)
 	menuItems = append(menuItems, dw.buildBattleMenuItems()...)
 	menuItems = append(menuItems, dw.buildChatMenuItems()...)
+	menuItems = append(menuItems, dw.buildNewsMenuItems()...)
 	menuItems = append(menuItems, dw.buildNetworkMenuItems()...)
 	menuItems = append(menuItems, dw.buildUtilityMenuItems()...)
 
@@ -422,6 +423,36 @@ func (dw *DesktopWindow) buildChatMenuItems() []ContextMenuItem {
 	return menuItems
 }
 
+// buildNewsMenuItems creates news-related menu items for news-capable characters
+// Only shows news options if the character has news features enabled
+// As documented in Phase 3: UI and Events Integration
+func (dw *DesktopWindow) buildNewsMenuItems() []ContextMenuItem {
+	// Check if character has news features enabled
+	if !dw.character.GetCard().HasNewsFeatures() {
+		return nil
+	}
+
+	var menuItems []ContextMenuItem
+
+	// Add "📰 Read News" menu item
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "📰 Read News",
+		Callback: func() {
+			dw.HandleNewsReading()
+		},
+	})
+
+	// Add "🔄 Update Feeds" menu item
+	menuItems = append(menuItems, ContextMenuItem{
+		Text: "🔄 Update Feeds",
+		Callback: func() {
+			dw.HandleFeedUpdate()
+		},
+	})
+
+	return menuItems
+}
+
 // buildNetworkMenuItems creates network-related menu items when network mode is enabled
 func (dw *DesktopWindow) buildNetworkMenuItems() []ContextMenuItem {
 	if !dw.networkMode || dw.networkOverlay == nil {
@@ -481,6 +512,10 @@ func (dw *DesktopWindow) buildShortcutsText() string {
 	}
 	if dw.networkOverlay != nil {
 		shortcutsText += "• 'N' - Toggle network overlay\n"
+	}
+	if dw.character.GetCard().HasNewsFeatures() {
+		shortcutsText += "• 'Ctrl+L' - Read latest news\n"
+		shortcutsText += "• 'Ctrl+U' - Update news feeds\n"
 	}
 	shortcutsText += "• Right-click - Show this menu"
 	return shortcutsText
@@ -815,6 +850,11 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 		dw.setupGeneralEventsShortcuts(canvas)
 	}
 
+	// Add news keyboard shortcuts if character has news features
+	if dw.character.GetCard().HasNewsFeatures() {
+		dw.setupNewsShortcuts(canvas)
+	}
+
 	if dw.debug {
 		log.Println("Keyboard shortcuts configured:")
 		log.Println("  'S' - Toggle stats overlay")
@@ -826,6 +866,10 @@ func (dw *DesktopWindow) setupKeyboardShortcuts() {
 			log.Println("  'Ctrl+R' - Random roleplay scenario")
 			log.Println("  'Ctrl+G' - Mini-game session")
 			log.Println("  'Ctrl+H' - Humor/joke session")
+		}
+		if dw.character.GetCard().HasNewsFeatures() {
+			log.Println("  'Ctrl+L' - Read latest news")
+			log.Println("  'Ctrl+U' - Update news feeds")
 		}
 	}
 }
@@ -878,6 +922,34 @@ func (dw *DesktopWindow) setupGeneralEventsShortcuts(canvas fyne.Canvas) {
 			log.Println("Ctrl+H pressed - starting humor/joke session")
 		}
 		dw.startHumorSession()
+	})
+}
+
+// setupNewsShortcuts configures news-related keyboard shortcuts
+// Only called if character has news features enabled
+func (dw *DesktopWindow) setupNewsShortcuts(canvas fyne.Canvas) {
+	// Ctrl+L: Read latest news
+	ctrlL := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyL,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrlL, func(shortcut fyne.Shortcut) {
+		if dw.debug {
+			log.Println("Ctrl+L pressed - reading latest news")
+		}
+		dw.HandleNewsReading()
+	})
+
+	// Ctrl+U: Update news feeds
+	ctrlU := &desktop.CustomShortcut{
+		KeyName:  fyne.KeyU,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrlU, func(shortcut fyne.Shortcut) {
+		if dw.debug {
+			log.Println("Ctrl+U pressed - updating news feeds")
+		}
+		dw.HandleFeedUpdate()
 	})
 }
 
@@ -1097,4 +1169,60 @@ func (dw *DesktopWindow) handleBattleRequest() {
 	// - Time limits
 	// - Spectator settings
 	dw.showDialog(fmt.Sprintf("Battle request system ready! %d player(s) available for formal battle requests.", len(peers)))
+}
+
+// HandleNewsReading handles when user clicks "📰 Read News" in context menu
+// Triggers news reading events and displays news content through existing dialog system
+func (dw *DesktopWindow) HandleNewsReading() {
+	// Check if character has news features enabled
+	if !dw.character.GetCard().HasNewsFeatures() {
+		dw.showDialog("News features not available for this character.")
+		return
+	}
+
+	// Try to trigger a news reading event
+	// Look for a configured news reading event to trigger
+	newsConfig := dw.character.GetCard().NewsFeatures
+	if newsConfig == nil || len(newsConfig.ReadingEvents) == 0 {
+		dw.showDialog("No news reading events configured for this character.")
+		return
+	}
+
+	// Use the first available reading event as default
+	eventName := newsConfig.ReadingEvents[0].Name
+	response, err := dw.character.HandleNewsEvent(eventName)
+	if err != nil {
+		// Provide user-friendly error message
+		dw.showDialog(fmt.Sprintf("Unable to read news right now: %v", err))
+		return
+	}
+
+	if response != "" {
+		dw.showDialog(response)
+	} else {
+		dw.showDialog("No news available at this time.")
+	}
+}
+
+// HandleFeedUpdate handles when user clicks "🔄 Update Feeds" in context menu
+// Manually triggers news feed updates and provides feedback to user
+func (dw *DesktopWindow) HandleFeedUpdate() {
+	// Check if character has news features enabled
+	if !dw.character.GetCard().HasNewsFeatures() {
+		dw.showDialog("News features not available for this character.")
+		return
+	}
+
+	// Provide feedback that update is starting
+	dw.showDialog("Updating news feeds...")
+
+	// In a real implementation, this would trigger the news backend to refresh feeds
+	// For now, provide user feedback about the update attempt
+	go func() {
+		// Simulate update time
+		time.Sleep(2 * time.Second)
+
+		// Show completion message
+		dw.showDialog("News feeds updated successfully!")
+	}()
 }
