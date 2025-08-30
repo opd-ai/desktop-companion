@@ -397,8 +397,6 @@ func (no *NetworkOverlay) updatePeerList() {
 // updateCharacterList refreshes the character list to clearly show local vs network characters
 func (no *NetworkOverlay) updateCharacterList() {
 	no.characterMutex.Lock()
-	defer no.characterMutex.Unlock()
-
 	// Clear existing character list
 	no.characters = no.characters[:0]
 
@@ -428,8 +426,10 @@ func (no *NetworkOverlay) updateCharacterList() {
 			no.characters = append(no.characters, networkChar)
 		}
 	}
+	no.characterMutex.Unlock()
 
-	// Refresh the character list widget
+	// Refresh the character list widget AFTER releasing the mutex
+	// This prevents deadlock when Fyne calls back into list functions
 	no.characterList.Refresh()
 }
 

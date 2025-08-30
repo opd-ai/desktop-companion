@@ -7,7 +7,6 @@ import (
 
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
-	"desktop-companion/internal/network"
 )
 
 // TestBug4BattleInvitationsValidation validates the current gap in battle context menu functionality
@@ -142,7 +141,7 @@ func TestBug4DocumentationCompliance(t *testing.T) {
 	app := test.NewApp()
 	defer app.Quit()
 	profiler := monitoring.NewProfiler(50)
-	networkManager := &network.NetworkManager{} // Simplified for test
+	networkManager := NewMockNetworkManager() // Use proper mock network manager
 
 	t.Run("Multiplayer mode should have invitation features", func(t *testing.T) {
 		window := NewDesktopWindow(app, char, false, profiler, true, false, networkManager, true, false, false)
