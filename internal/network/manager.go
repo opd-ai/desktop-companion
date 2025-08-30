@@ -205,6 +205,11 @@ func (nm *NetworkManager) GetPeerCount() int {
 	return len(nm.peers)
 }
 
+// GetNetworkID returns the local network identifier
+func (nm *NetworkManager) GetNetworkID() string {
+	return nm.networkID
+}
+
 // RegisterMessageHandler registers a handler for a specific message type
 func (nm *NetworkManager) RegisterMessageHandler(msgType MessageType, handler MessageHandler) {
 	nm.mu.Lock()
