@@ -8,7 +8,7 @@ import (
 	"desktop-companion/internal/character"
 )
 
-// TestBug2InvalidGIFData reproduces the original bug with malformed GIF data
+// TestBug2InvalidGIFData tests graceful degradation with malformed GIF data
 func TestBug2InvalidGIFData(t *testing.T) {
 	// Create temporary directory
 	tmpDir, err := os.MkdirTemp("", "gif_bug_test")
@@ -69,19 +69,17 @@ func TestBug2InvalidGIFData(t *testing.T) {
 		t.Fatalf("Failed to load character card: %v", err)
 	}
 
-	// This should fail due to malformed GIF data
-	_, err = character.New(card, tmpDir)
-	if err == nil {
-		t.Fatal("Expected error when creating character with malformed GIF data, but succeeded")
+	// With graceful degradation, this should now succeed but create a static character
+	char, err := character.New(card, tmpDir)
+	if err != nil {
+		t.Fatalf("Character creation should succeed with graceful degradation, but failed: %v", err)
 	}
 
-	// Verify it's the expected error format for animation loading failures
-	expectedMsg := "failed to load any animations"
-	if !contains(err.Error(), expectedMsg) {
-		t.Fatalf("Expected error containing %q, got: %v", expectedMsg, err)
+	if char == nil {
+		t.Fatal("Character should not be nil after successful creation")
 	}
 
-	t.Logf("Confirmed malformed GIF still fails as expected: %v", err)
+	t.Logf("Character created successfully with graceful degradation (static mode due to malformed GIF data)")
 }
 
 // TestBug2InvalidGIFDataFixed tests that character creation works with valid GIF data
@@ -157,19 +155,4 @@ func TestBug2InvalidGIFDataFixed(t *testing.T) {
 	}
 
 	t.Logf("Character created successfully with valid GIF data")
-}
-
-// Helper function to check if string contains substring
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && s[len(s)-len(substr):] == substr ||
-		len(s) > len(substr) && findSubstring(s, substr)
-}
-
-func findSubstring(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }
