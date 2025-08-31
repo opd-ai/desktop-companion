@@ -127,7 +127,7 @@ func createCharacterInstanceWithPlatform(card *CharacterCard, basePath string, p
 		lastRomanceEventCheck:    time.Now().Add(-30 * time.Second), // Allow immediate first check
 
 		// Platform-aware behavior settings
-		idleTimeout:     behaviorConfig.IdleTimeout,
+		idleTimeout:     time.Duration(card.Behavior.IdleTimeout) * time.Second,
 		movementEnabled: behaviorConfig.MovementEnabled,
 		size:            optimalSize,
 
