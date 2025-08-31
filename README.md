@@ -1,4 +1,3 @@
-````markdown
 # Desktop Companion (DDS)
 
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
@@ -1015,4 +1014,3 @@ See [LICENSES.md](LICENSES.md) for complete license information.
 - SSD storage for faster auto-save operations
 
 **Note**: This application requires GIF animation files to run. See the setup instructions above for details on adding animations. Game features require character cards with `stats`, `interactions`, and `gameRules` configuration sections.
-````
