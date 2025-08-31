@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 MAX_PARALLEL=${MAX_PARALLEL:-4}
-PLATFORMS=${PLATFORMS:-"linux/amd64"}
+PLATFORMS=${PLATFORMS:-"$(go env GOOS)/$(go env GOARCH)"}
 LDFLAGS=${LDFLAGS:-"-s -w"}
 
 # Print colored output
@@ -48,6 +48,7 @@ COMMANDS:
     list                List all available characters
     build [CHARACTER]   Build specific character (or all if none specified)
     clean              Clean build artifacts
+    platforms          Show platform matrix configuration and limitations
     help               Show this help message
 
 OPTIONS:
@@ -68,6 +69,30 @@ ENVIRONMENT VARIABLES:
     PLATFORMS          Target platforms for builds
     LDFLAGS           Linker flags for optimization
 EOF
+}
+
+# Show platform matrix configuration information
+show_platform_info() {
+    echo
+    log "Platform Matrix Configuration:"
+    echo "  Current OS: $(go env GOOS)/$(go env GOARCH)"
+    echo
+    echo "  Supported Platforms:"
+    echo "    • linux/amd64   - Linux 64-bit"
+    echo "    • windows/amd64 - Windows 64-bit"  
+    echo "    • darwin/amd64  - macOS 64-bit"
+    echo
+    echo "  Cross-Compilation Limitations:"
+    echo "    Due to Fyne GUI framework CGO requirements, cross-compilation"
+    echo "    between different operating systems may fail. For production"
+    echo "    builds, use GitHub Actions matrix builds which run on native"
+    echo "    environments for each target platform."
+    echo
+    echo "  Recommended Approach:"
+    echo "    • Local development: Build for current platform only"
+    echo "    • Production releases: Use GitHub Actions workflow"
+    echo "    • Testing: Use './scripts/build-characters.sh build CHAR --platforms \$(go env GOOS)/\$(go env GOARCH)'"
+    echo
 }
 
 # List all available characters (excluding examples and templates)
@@ -110,6 +135,49 @@ generate_character() {
     return 0
 }
 
+# Validate platform compatibility and provide warnings
+# Due to Fyne CGO requirements, cross-compilation has limitations
+validate_platform() {
+    local goos="$1"
+    local current_os
+    current_os=$(go env GOOS)
+    
+    # Check if we're attempting cross-compilation
+    if [[ "$goos" != "$current_os" ]]; then
+        case "$current_os" in
+            "linux")
+                case "$goos" in
+                    "windows"|"darwin")
+                        warning "Cross-compiling from Linux to $goos may fail due to CGO/Fyne requirements"
+                        warning "For production builds, use native $goos environment or GitHub Actions matrix"
+                        return 1
+                        ;;
+                esac
+                ;;
+            "darwin")
+                case "$goos" in
+                    "linux"|"windows")
+                        warning "Cross-compiling from macOS to $goos may fail due to CGO/Fyne requirements"
+                        warning "For production builds, use native $goos environment or GitHub Actions matrix"
+                        return 1
+                        ;;
+                esac
+                ;;
+            "windows")
+                case "$goos" in
+                    "linux"|"darwin")
+                        warning "Cross-compiling from Windows to $goos may fail due to CGO/Fyne requirements"
+                        warning "For production builds, use native $goos environment or GitHub Actions matrix"
+                        return 1
+                        ;;
+                esac
+                ;;
+        esac
+    fi
+    
+    return 0
+}
+
 # Build character binary for a specific platform
 build_character_platform() {
     local char="$1"
@@ -117,6 +185,12 @@ build_character_platform() {
     local goos="${platform%/*}"
     local goarch="${platform#*/}"
     local ext=""
+    
+    # Validate platform compatibility
+    if ! validate_platform "$goos"; then
+        warning "Skipping cross-compilation for $char to $platform (use native build environment)"
+        return 0  # Don't fail the entire build, just skip this platform
+    fi
     
     if [[ "$goos" == "windows" ]]; then
         ext=".exe"
@@ -292,6 +366,10 @@ parse_args() {
                 ;;
             clean)
                 clean_builds
+                exit 0
+                ;;
+            platforms)
+                show_platform_info
                 exit 0
                 ;;
             *)

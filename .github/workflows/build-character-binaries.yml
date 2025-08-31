@@ -1,0 +1,170 @@
+name: Build Character-Specific Binaries
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: '1.21'
+  
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      characters: ${{ steps.characters.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate character matrix
+        id: characters
+        run: |
+          # Use existing build script to list characters
+          CHARS=$(./scripts/build-characters.sh list | grep "•" | sed 's/.*• //' | jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix=$CHARS" >> $GITHUB_OUTPUT
+          echo "Generated matrix: $CHARS"
+
+  build-binaries:
+    needs: generate-matrix
+    strategy:
+      matrix:
+        character: ${{ fromJson(needs.generate-matrix.outputs.characters) }}
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            ext: ""
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            ext: ".exe"
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            ext: ""
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            ext: ""
+            target_suffix: "-arm64"
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod tidy
+      
+      - name: Install platform dependencies
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y gcc pkg-config libgl1-mesa-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            # macOS has necessary dependencies built-in
+            echo "macOS dependencies ready"
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            # Windows Go includes necessary CGO support
+            echo "Windows dependencies ready"
+          fi
+      
+      - name: Generate embedded character
+        run: |
+          go run scripts/embed-character.go \
+            -character ${{ matrix.character }} \
+            -output cmd/companion-${{ matrix.character }}
+      
+      - name: Build character binary
+        env:
+          CGO_ENABLED: 1
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        shell: bash
+        run: |
+          mkdir -p build
+          binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+          go build -ldflags="-s -w" \
+            -o "build/$binary_name" \
+            ./cmd/companion-${{ matrix.character }}
+          echo "Built binary: $binary_name"
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.character }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.target_suffix || '' }}
+          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}
+          retention-days: 30
+
+  package-releases:
+    needs: [generate-matrix, build-binaries]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+      
+      - name: Create release packages
+        shell: bash
+        run: |
+          mkdir -p releases/
+          for char in $(echo '${{ needs.generate-matrix.outputs.characters }}' | jq -r '.[]'); do
+            echo "Packaging $char..."
+            mkdir -p releases/$char/
+            # Copy all platform binaries for this character
+            find artifacts/ -name "$char-*" -type d -exec cp {}/* releases/$char/ \; 2>/dev/null || true
+            
+            # Create platform-specific archives
+            for os in linux windows darwin; do
+              if [[ "$os" == "windows" ]]; then
+                ext=".exe"
+              else
+                ext=""
+              fi
+              
+              binary_file="releases/$char/${char}_${os}_amd64${ext}"
+              if [[ -f "$binary_file" ]]; then
+                cd releases/$char/
+                if [[ "$os" == "windows" ]]; then
+                  zip -r "../${char}_${os}_amd64.zip" "${char}_${os}_amd64${ext}"
+                else
+                  tar -czf "../${char}_${os}_amd64.tar.gz" "${char}_${os}_amd64${ext}"
+                fi
+                cd ../../
+                echo "✓ Created package for $char on $os"
+              fi
+            done
+          done
+          
+          # List created packages
+          echo "Created packages:"
+          ls -la releases/*.{tar.gz,zip} 2>/dev/null || echo "No packages created"
+      
+      - name: Upload release packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: character-releases
+          path: releases/*.{tar.gz,zip}
+          retention-days: 90
+          if-no-files-found: ignore

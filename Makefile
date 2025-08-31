@@ -136,6 +136,41 @@ release-linux: $(BUILD_DIR)
 package-all: package-native
 	@echo "Packaging complete. Note: Android APK must be built separately using 'make android-apk'"
 
+# Character-specific binary generation
+.PHONY: build-characters list-characters clean-characters build-character help-characters
+
+# List available characters
+list-characters:
+	@./scripts/build-characters.sh list
+
+# Build all character binaries for current platform
+build-characters: $(BUILD_DIR)
+	@echo "Building character-specific binaries..."
+	@./scripts/build-characters.sh build
+
+# Build single character for current platform  
+build-character: $(BUILD_DIR)
+	@if [ -z "$(CHAR)" ]; then echo "Usage: make build-character CHAR=character_name"; exit 1; fi
+	@./scripts/build-characters.sh build $(CHAR)
+
+# Clean character build artifacts
+clean-characters:
+	@./scripts/build-characters.sh clean
+	@rm -rf cmd/companion-* cmd/*-embedded
+
+# Help for character builds
+help-characters:
+	@echo "Character-specific build targets:"
+	@echo "  list-characters    - List all available character archetypes"
+	@echo "  build-characters   - Build all characters for current platform"
+	@echo "  build-character    - Build single character (specify CHAR=name)"
+	@echo "  clean-characters   - Remove character build artifacts"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make build-character CHAR=default"
+	@echo "  make build-character CHAR=tsundere"
+	@echo "  make build-character CHAR=romance_flirty"
+
 # Help target
 help:
 	@echo "Available targets:"
@@ -147,6 +182,13 @@ help:
 	@echo "  clean              - Remove build artifacts"
 	@echo "  deps               - Install/update dependencies"
 	@echo "  package-native     - Create release package for current platform"
+	@echo ""
+	@echo "Character-specific builds:"
+	@echo "  list-characters    - List all available character archetypes"
+	@echo "  build-characters   - Build all characters for current platform"
+	@echo "  build-character    - Build single character (specify CHAR=name)"
+	@echo "  clean-characters   - Remove character build artifacts"
+	@echo "  help-characters    - Show detailed character build help"
 	@echo ""
 	@echo "Android builds:"
 	@echo "  android-setup      - Show Android build requirements"
