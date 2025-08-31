@@ -277,7 +277,7 @@ func validateBasicEventFields(event GeneralDialogEvent) error {
 
 // validateEventCategory validates the category field against allowed values.
 func validateEventCategory(category string) error {
-	validCategories := []string{"conversation", "roleplay", "game", "humor"}
+	validCategories := []string{"conversation", "roleplay", "game", "humor", "romance"}
 	categoryValid := false
 	for _, cat := range validCategories {
 		if category == cat {
