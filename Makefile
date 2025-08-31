@@ -96,14 +96,14 @@ android-setup:
 android-apk: $(BUILD_DIR)
 	@echo "Building Android APK..."
 	cd $(BUILD_DIR) && fyne package --target android --app-id ai.opd.dds --name "Desktop Companion" \
-		--app-version "1.0.0" --app-build 1 --icon ../assets/characters/default/animations/idle.gif \
+		--app-version "1.0.0" --app-build 1 --icon ../assets/app/icon.gif \
 		--src ../$(CMD_DIR) --release
 
 # Build Android APK (debug version)
 android-debug: $(BUILD_DIR)
 	@echo "Building Android APK (debug)..."
 	cd $(BUILD_DIR) && fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
-		--app-version "1.0.0-debug" --app-build 1 --icon ../assets/characters/default/animations/idle.gif \
+		--app-version "1.0.0-debug" --app-build 1 --icon ../assets/app/icon.gif \
 		--src ../$(CMD_DIR)
 
 # Install APK to connected Android device
