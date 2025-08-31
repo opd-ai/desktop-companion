@@ -249,5 +249,59 @@
       "degradationRate": 0.01,
       "criticalThreshold": 3
     }
-  }
+  },
+  "generalEvents": [
+    {
+      "name": "sleepy_conversation",
+      "description": "A drowsy moment of connection",
+      "responses": [
+        "*yawn* I was just thinking about you... *sleepy smile*",
+        "Being tired makes me feel closer to you somehow... *yawn*",
+        "Even when I'm sleepy, I still love spending time with you... 😴"
+      ],
+      "choices": [
+        {
+          "text": "Offer a cozy nap together",
+          "effects": {"happiness": 8, "energy": 10, "affection": 3},
+          "responses": ["*contented yawn* That sounds perfect... thank you for understanding me 💤"],
+          "animation": "happy"
+        },
+        {
+          "text": "Just be quietly together",
+          "effects": {"trust": 4, "happiness": 5},
+          "responses": ["*peaceful sleepy contentment* Your presence is so comforting... 😌"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"energy": {"max": 40}},
+      "cooldown": 7200,
+      "category": "comfort"
+    },
+    {
+      "name": "dream_sharing",
+      "description": "A dreamy, intimate moment",
+      "responses": [
+        "*sleepy whisper* I had the most wonderful dream about us...",
+        "Sometimes I wonder if this is all a beautiful dream... *yawn*",
+        "In my dreams, we're always together in the most peaceful places... 💭"
+      ],
+      "choices": [
+        {
+          "text": "Ask about the dream",
+          "effects": {"affection": 4, "trust": 2, "happiness": 3},
+          "responses": ["*sleepy smile* We were floating on soft clouds, just resting together... so peaceful 🌙"],
+          "animation": "talking"
+        },
+        {
+          "text": "Share your own dreams",
+          "effects": {"trust": 5, "affection": 2},
+          "responses": ["*drowsy contentment* I love that you share your dreams with me... *yawn* 💕"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"affection": {"min": 8}, "trust": {"min": 10}},
+      "cooldown": 10800,
+      "category": "intimacy"
+    }
+  ]
 }

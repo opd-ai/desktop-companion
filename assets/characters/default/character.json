@@ -199,5 +199,85 @@
     "socialLevel": "moderate",
     "shareableStats": ["happiness", "affection"],
     "networkPersonality": "welcoming"
-  }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 1800,
+    "maxStoredItems": 30,
+    "readingPersonality": "casual",
+    "preferredCategories": ["general", "lifestyle", "positive"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/brainyquote/quotebuzz",
+        "name": "Daily Quotes",
+        "category": "lifestyle",
+        "updateFreq": 3600,
+        "maxItems": 5,
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.feedburner.com/positivityblog",
+        "name": "Positivity Blog",
+        "category": "lifestyle", 
+        "updateFreq": 7200,
+        "maxItems": 3,
+        "enabled": true
+      }
+    ],
+    "readingEvents": []
+  },
+  "generalEvents": [
+    {
+      "name": "daily_reflection",
+      "description": "A moment of friendly reflection",
+      "responses": [
+        "I've been thinking about how nice it is to have a companion like you!",
+        "What a wonderful day to spend together! How are you feeling?",
+        "I love our little moments of connection - they brighten my day!"
+      ],
+      "choices": [
+        {
+          "text": "Share how you're feeling",
+          "effects": {"happiness": 5, "affection": 2},
+          "responses": ["Thank you for sharing! Your openness means so much to me! 💕"],
+          "animation": "happy"
+        },
+        {
+          "text": "Ask about my thoughts",
+          "effects": {"trust": 3, "happiness": 3},
+          "responses": ["I think about how grateful I am for our friendship! 😊"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"happiness": {"min": 30}},
+      "cooldown": 7200,
+      "category": "conversation"
+    },
+    {
+      "name": "encouragement_moment",
+      "description": "A supportive moment of encouragement",
+      "responses": [
+        "I believe in you! You've got this! 💪",
+        "Remember, every challenge is a chance to grow stronger!",
+        "You're doing amazing things, even when you don't see it!"
+      ],
+      "choices": [
+        {
+          "text": "Thank your companion",
+          "effects": {"happiness": 8, "affection": 3, "trust": 2},
+          "responses": ["Your gratitude fills my heart with joy! I'm always here for you! ✨"],
+          "animation": "happy"
+        },
+        {
+          "text": "Ask for more encouragement",
+          "effects": {"happiness": 6, "affection": 1},
+          "responses": ["You are capable of incredible things! Believe in yourself! 🌟"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"affection": {"min": 5}},
+      "cooldown": 5400,
+      "category": "support"
+    }
+  ]
 }

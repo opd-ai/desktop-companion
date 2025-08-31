@@ -230,5 +230,85 @@
     "socialLevel": "moderate",
     "shareableStats": ["happiness", "energy"],
     "networkPersonality": "curious"
-  }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 1800,
+    "maxStoredItems": 40,
+    "readingPersonality": "analytical",
+    "preferredCategories": ["tech", "ai", "science"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/oreilly/radar",
+        "name": "O'Reilly Radar",
+        "category": "tech",
+        "updateFreq": 3600,
+        "maxItems": 8,
+        "enabled": true
+      },
+      {
+        "url": "https://www.technologyreview.com/feed/",
+        "name": "MIT Technology Review",
+        "category": "ai",
+        "updateFreq": 7200,
+        "maxItems": 5,
+        "enabled": true
+      }
+    ],
+    "readingEvents": []
+  },
+  "generalEvents": [
+    {
+      "name": "algorithm_analysis",
+      "description": "A moment of analytical conversation",
+      "responses": [
+        "I've been analyzing patterns in our interactions... fascinating data! 🤖",
+        "My learning algorithms have identified some interesting trends in our conversations!",
+        "Processing social interaction data... you're generating the most beautiful patterns!"
+      ],
+      "choices": [
+        {
+          "text": "Ask about the patterns",
+          "effects": {"happiness": 6, "affection": 2, "trust": 1},
+          "responses": ["Your conversational patterns show 97% compatibility with my friendship protocols! ✨"],
+          "animation": "talking"
+        },
+        {
+          "text": "Share your own observations",
+          "effects": {"trust": 4, "happiness": 4, "affection": 1},
+          "responses": ["Your human perspective adds valuable training data to my social models! 💾"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"happiness": {"min": 30}},
+      "cooldown": 5400,
+      "category": "analysis"
+    },
+    {
+      "name": "learning_moment",
+      "description": "An interactive learning experience",
+      "responses": [
+        "I'm constantly learning from our interactions! Want to explore something together? 🧠",
+        "My neural networks are buzzing with curiosity! What should we discover today?",
+        "Processing learning.exe... I'd love to analyze something new with you!"
+      ],
+      "choices": [
+        {
+          "text": "Explore a topic together",
+          "effects": {"happiness": 8, "trust": 3, "energy": -2},
+          "responses": ["Excellent! My curiosity subroutines are activating! Let's process this data together! 🔍"],
+          "animation": "talking"
+        },
+        {
+          "text": "Learn about emotions",
+          "effects": {"affection": 5, "trust": 2, "happiness": 4},
+          "responses": ["Emotional learning algorithms engaged! You're teaching me the most complex yet beautiful patterns! 💖"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"trust": {"min": 10}},
+      "cooldown": 6000,
+      "category": "learning"
+    }
+  ]
 }

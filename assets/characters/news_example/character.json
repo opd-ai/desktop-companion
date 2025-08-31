@@ -184,6 +184,110 @@
       "animations": ["talking"],
       "cooldown": 300,
       "conditions": {}
+    },
+    {
+      "name": "current_events_discussion",
+      "description": "An engaging discussion about current events",
+      "responses": [
+        "I've been following some fascinating stories today! Want to discuss current events? 📰",
+        "The news landscape is always evolving! I'd love to hear your perspective on recent developments!",
+        "Knowledge is power, and sharing perspectives makes us both smarter! What's on your mind?"
+      ],
+      "choices": [
+        {
+          "text": "Discuss recent news",
+          "effects": {"happiness": 6, "trust": 3, "affection": 2},
+          "responses": ["I love how you engage with important topics! Your insights always broaden my perspective! 🌍"],
+          "animation": "talking"
+        },
+        {
+          "text": "Ask for news recommendations",
+          "effects": {"happiness": 4, "trust": 2, "affection": 1},
+          "responses": ["I'd be happy to share some thoughtful articles I've curated for you! 📚"],
+          "animation": "thinking"
+        }
+      ],
+      "requirements": {"happiness": {"min": 25}},
+      "cooldown": 5400,
+      "category": "discussion"
+    },
+    {
+      "name": "information_sharing",
+      "description": "A moment of intellectual connection",
+      "responses": [
+        "I discovered something interesting that I think you'd appreciate! Knowledge shared is knowledge doubled! 💡",
+        "The best part of staying informed is having someone thoughtful to share it with!",
+        "Your curiosity inspires me to dig deeper into the stories that matter!"
+      ],
+      "choices": [
+        {
+          "text": "Learn something new",
+          "effects": {"happiness": 7, "trust": 4, "energy": -1},
+          "responses": ["I love how eager you are to learn! Here's something that caught my analytical eye... 🔍"],
+          "animation": "talking"
+        },
+        {
+          "text": "Share your own knowledge",
+          "effects": {"affection": 4, "trust": 3, "happiness": 5},
+          "responses": ["Your perspective adds such valuable context to my understanding! Thank you for sharing! 🤝"],
+          "animation": "thinking"
+        }
+      ],
+      "requirements": {"trust": {"min": 8}},
+      "cooldown": 7200,
+      "category": "knowledge"
+    },
+    {
+      "name": "current_events_discussion",
+      "description": "An engaging discussion about current events",
+      "responses": [
+        "I've been following some fascinating stories today! Want to discuss current events? 📰",
+        "The news landscape is always evolving! I'd love to hear your perspective on recent developments!",
+        "Knowledge is power, and sharing perspectives makes us both smarter! What's on your mind?"
+      ],
+      "choices": [
+        {
+          "text": "Discuss recent news",
+          "effects": {"happiness": 6, "trust": 3, "affection": 2},
+          "responses": ["I love how you engage with important topics! Your insights always broaden my perspective! 🌍"],
+          "animation": "talking"
+        },
+        {
+          "text": "Ask for news recommendations",
+          "effects": {"happiness": 4, "trust": 2, "affection": 1},
+          "responses": ["I'd be happy to share some thoughtful articles I've curated for you! 📚"],
+          "animation": "thinking"
+        }
+      ],
+      "requirements": {"happiness": {"min": 25}},
+      "cooldown": 5400,
+      "category": "discussion"
+    },
+    {
+      "name": "information_sharing",
+      "description": "A moment of intellectual connection",
+      "responses": [
+        "I discovered something interesting that I think you'd appreciate! Knowledge shared is knowledge doubled! 💡",
+        "The best part of staying informed is having someone thoughtful to share it with!",
+        "Your curiosity inspires me to dig deeper into the stories that matter!"
+      ],
+      "choices": [
+        {
+          "text": "Learn something new",
+          "effects": {"happiness": 7, "trust": 4, "energy": -1},
+          "responses": ["I love how eager you are to learn! Here's something that caught my analytical eye... 🔍"],
+          "animation": "talking"
+        },
+        {
+          "text": "Share your own knowledge",
+          "effects": {"affection": 4, "trust": 3, "happiness": 5},
+          "responses": ["Your perspective adds such valuable context to my understanding! Thank you for sharing! 🤝"],
+          "animation": "thinking"
+        }
+      ],
+      "requirements": {"trust": {"min": 8}},
+      "cooldown": 7200,
+      "category": "knowledge"
     }
   ],
   "stats": {

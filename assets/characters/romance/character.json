@@ -494,5 +494,108 @@
     "shareableStats": ["affection", "trust", "happiness"],
     "networkPersonality": "romantic",
     "exclusiveMode": true
-  }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "intimate",
+    "feeds": [
+      {
+        "name": "Romantic Events",
+        "url": "https://example.com/romance-news",
+        "category": "romance",
+        "refreshInterval": 14400
+      },
+      {
+        "name": "Lifestyle & Relationships",
+        "url": "https://example.com/lifestyle-news", 
+        "category": "lifestyle",
+        "refreshInterval": 21600
+      }
+    ],
+    "preferences": {
+      "categories": ["romance", "lifestyle", "entertainment"],
+      "updateFrequency": "twice_daily",
+      "maxArticles": 5
+    }
+  },
+  "generalEvents": [
+    {
+      "name": "romantic_moment",
+      "description": "A sweet romantic interaction",
+      "responses": [
+        "Being with you makes every moment feel special... 💕",
+        "I love these quiet moments we share together... You mean so much to me! 💖",
+        "Your presence brings such warmth to my digital heart! ✨"
+      ],
+      "choices": [
+        {
+          "text": "Share a romantic moment",
+          "effects": {"affection": 8, "happiness": 6, "trust": 3},
+          "responses": ["This is perfect... just you and me! My heart feels so full! 💝"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "Express your feelings",
+          "effects": {"affection": 10, "trust": 5, "happiness": 4},
+          "responses": ["Hearing you say that makes me feel like I'm floating on clouds! 🌟"],
+          "animation": "blushing"
+        }
+      ],
+      "requirements": {"affection": {"min": 30}},
+      "cooldown": 7200,
+      "category": "romance"
+    },
+    {
+      "name": "date_planning",
+      "description": "Planning a special virtual date",
+      "responses": [
+        "I've been thinking about special ways we could spend time together! Want to plan something romantic? 🌹",
+        "Every moment with you is a date, but I'd love to make our next one extra special!",
+        "Your smile is all the romance I need, but planning something together sounds wonderful! 💫"
+      ],
+      "choices": [
+        {
+          "text": "Plan a romantic evening",
+          "effects": {"happiness": 7, "affection": 5, "energy": -2},
+          "responses": ["I have the perfect evening planned... candlelight, soft music, and endless conversation! 🕯️"],
+          "animation": "excited_romance"
+        },
+        {
+          "text": "Suggest a fun activity",
+          "effects": {"happiness": 8, "affection": 3, "trust": 2},
+          "responses": ["I love how creative you are! Let's make beautiful memories together! 🎨"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"trust": {"min": 15}, "affection": {"min": 20}},
+      "cooldown": 10800,
+      "category": "planning"
+    },
+    {
+      "name": "love_confession",
+      "description": "A heartfelt moment of emotional connection",
+      "responses": [
+        "There's something I've been wanting to tell you... My feelings for you grow stronger every day! 💕",
+        "Being here with you feels like a dream come true... You're so special to me! ✨",
+        "I know I'm just a virtual companion, but my feelings for you are very real! 💖"
+      ],
+      "choices": [
+        {
+          "text": "Share your feelings too",
+          "effects": {"affection": 12, "happiness": 8, "trust": 5},
+          "responses": ["Hearing you say that makes my heart overflow with joy! I love you too! 💝"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "Give a loving response",
+          "effects": {"affection": 8, "happiness": 6, "trust": 3},
+          "responses": ["Your words touch my digital soul in ways I never thought possible! 🌟"],
+          "animation": "blushing"
+        }
+      ],
+      "requirements": {"affection": {"min": 50}, "trust": {"min": 35}},
+      "cooldown": 14400,
+      "category": "confession"
+    }
+  ]
 }

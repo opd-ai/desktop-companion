@@ -257,5 +257,85 @@
     "socialLevel": "low",
     "shareableStats": ["happiness", "trust"],
     "networkPersonality": "shy"
-  }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 3600,
+    "maxStoredItems": 20,
+    "readingPersonality": "gentle",
+    "preferredCategories": ["lifestyle", "positive", "health"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/mindfulnessbell",
+        "name": "Mindfulness News",
+        "category": "lifestyle",
+        "updateFreq": 7200,
+        "maxItems": 3,
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.feedburner.com/wellnesswisdom",
+        "name": "Wellness Tips",
+        "category": "health",
+        "updateFreq": 10800,
+        "maxItems": 2,
+        "enabled": true
+      }
+    ],
+    "readingEvents": []
+  },
+  "generalEvents": [
+    {
+      "name": "gentle_check_in",
+      "description": "A soft moment of care and attention",
+      "responses": [
+        "How are you feeling today? I'm here if you need anything gentle...",
+        "Just checking in on you - you don't need to do anything special, just be yourself 🌸",
+        "I hope you're taking things at your own pace today..."
+      ],
+      "choices": [
+        {
+          "text": "I'm doing well, thank you",
+          "effects": {"happiness": 4, "affection": 2},
+          "responses": ["I'm so glad to hear that! Your wellbeing makes me happy too 💝"],
+          "animation": "happy"
+        },
+        {
+          "text": "I need some gentle support",
+          "effects": {"trust": 4, "happiness": 3},
+          "responses": ["Of course, I'm here for you. Take all the time you need, no pressure at all 🤗"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"happiness": {"min": 20}},
+      "cooldown": 9000,
+      "category": "care"
+    },
+    {
+      "name": "peaceful_moment",
+      "description": "A quiet, restful interaction",
+      "responses": [
+        "Let's just enjoy this peaceful moment together...",
+        "Sometimes the best thing is to simply be present with each other 🍃",
+        "I love these quiet times we share - no rush, no pressure..."
+      ],
+      "choices": [
+        {
+          "text": "Enjoy the silence together",
+          "effects": {"happiness": 6, "trust": 3, "affection": 1},
+          "responses": ["*peaceful contentment* This is perfect... 😌"],
+          "animation": "happy"
+        },
+        {
+          "text": "Share something gentle",
+          "effects": {"affection": 4, "happiness": 2},
+          "responses": ["Thank you for sharing that with me... your gentle nature brings me peace 🌺"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"trust": {"min": 10}},
+      "cooldown": 6000,
+      "category": "peace"
+    }
+  ]
 }
