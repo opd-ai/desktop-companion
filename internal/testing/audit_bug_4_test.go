@@ -16,6 +16,22 @@ func TestBug4CharacterNameValidationInvestigation(t *testing.T) {
 		card := &character.CharacterCard{
 			Name:        "", // 0 characters
 			Description: "Valid description",
+			Animations: map[string]string{
+				"idle":    "idle.gif",
+				"talking": "talking.gif",
+			},
+			Dialogs: []character.Dialog{
+				{
+					Trigger:   "click",
+					Responses: []string{"Hello!"},
+					Animation: "talking",
+					Cooldown:  5,
+				},
+			},
+			Behavior: character.Behavior{
+				IdleTimeout: 30,
+				DefaultSize: 128,
+			},
 		}
 
 		err := card.Validate()
@@ -46,6 +62,22 @@ func TestBug4CharacterNameValidationInvestigation(t *testing.T) {
 				card := &character.CharacterCard{
 					Name:        tc.input,
 					Description: "Valid description",
+					Animations: map[string]string{
+						"idle":    "idle.gif",
+						"talking": "talking.gif",
+					},
+					Dialogs: []character.Dialog{
+						{
+							Trigger:   "click",
+							Responses: []string{"Hello!"},
+							Animation: "talking",
+							Cooldown:  5,
+						},
+					},
+					Behavior: character.Behavior{
+						IdleTimeout: 30,
+						DefaultSize: 128,
+					},
 				}
 
 				err := card.Validate()
