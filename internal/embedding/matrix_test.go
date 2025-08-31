@@ -262,6 +262,6 @@ func validatePlatformCompatibility(hostOS, targetOS string) bool {
 func validateArtifactNaming(filename, character, goos, goarch string) bool {
 	// Basic validation of naming pattern: character_goos_goarch[suffix].ext
 	expectedPrefix := character + "_" + goos + "_" + goarch
-	return len(filename) >= len(expectedPrefix) && 
-		   filename[:len(expectedPrefix)] == expectedPrefix
+	return len(filename) >= len(expectedPrefix) &&
+		filename[:len(expectedPrefix)] == expectedPrefix
 }
