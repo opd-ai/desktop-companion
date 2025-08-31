@@ -5,13 +5,13 @@
 Total Issues Found: 8
 
 CRITICAL BUG: 0 (1 resolved)
-FUNCTIONAL MISMATCH: 2  
-MISSING FEATURE: 2
+FUNCTIONAL MISMATCH: 1 (1 resolved)  
+MISSING FEATURE: 1 (1 resolved)
 EDGE CASE BUG: 2
 PERFORMANCE ISSUE: 1
 
-RESOLVED: 1
-REMAINING: 7
+RESOLVED: 3
+REMAINING: 5
 ```
 
 ## DETAILED FINDINGS
@@ -37,40 +37,43 @@ func (c *Character) loadAnimations() error {
 }
 ```
 
-### FUNCTIONAL MISMATCH: Mood-Based Animation Integration Inconsistent
+### FUNCTIONAL MISMATCH: Mood-Based Animation Integration Inconsistent [RESOLVED]
 **File:** internal/character/mood_based_animation_test.go:265
 **Severity:** Medium  
-**Description:** TestMoodBasedAnimationIntegration fails consistently, showing mood-based animation selection doesn't work as documented. Character remains in 'talking' state instead of transitioning to 'happy' when mood conditions are met.
+**Status:** RESOLVED - 2025-08-31 (commit: 0392abc)
+**Description:** TestMoodBasedAnimationIntegration failed consistently, showing mood-based animation selection didn't work as documented. Character remained in 'talking' state instead of transitioning to 'happy' when mood conditions were met.
 **Expected Behavior:** README.md states "Dynamic animation selection based on character's overall mood" should switch to appropriate animations
 **Actual Behavior:** Character state stuck in non-mood-based animation even after idle timeout and high mood stats
-**Impact:** Major documented feature doesn't work correctly, affecting user experience of game mode
+**Impact:** Major documented feature didn't work correctly, affecting user experience of game mode
 **Reproduction:** Run test: `go test ./internal/character -run TestMoodBasedAnimationIntegration`
+**Resolution:** Fixed platform adapter to use character card's idle timeout instead of overriding with hardcoded values. Character cards with IdleTimeout=1 now properly trigger mood-based animation selection after 1 second instead of being overridden by platform adapter's 30-second default.
 **Code Reference:**
 ```go
-// Test expects mood-based transition but gets:
-// "After idle timeout with high mood, should be in 'happy' state, got: talking"
-currentState := char.GetCurrentState()
-if currentState != "happy" {
-    t.Errorf("After idle timeout with high mood, should be in 'happy' state, got: %s", currentState)
-}
+// FIXED: Now uses character card's idle timeout
+idleTimeout: time.Duration(card.Behavior.IdleTimeout) * time.Second,
+// Previously used platform adapter's hardcoded timeout:
+// idleTimeout: behaviorConfig.IdleTimeout, (30*time.Second for desktop)
 ```
 
-### MISSING FEATURE: Character Path Resolution for Deployed Binaries
+### MISSING FEATURE: Character Path Resolution for Deployed Binaries [RESOLVED]
 **File:** cmd/companion/main.go:71-88
 **Severity:** Medium
-**Description:** The resolveProjectRoot() function only searches for go.mod files, which won't exist in deployed binary distributions. This makes the default character path resolution fail when running standalone binaries.
+**Status:** RESOLVED - 2025-08-31 (commit: c4e81e3)
+**Description:** The resolveProjectRoot() function only searched for go.mod files, which won't exist in deployed binary distributions. This made the default character path resolution fail when running standalone binaries.
 **Expected Behavior:** Default character paths should work for both development (with go.mod) and production deployments
-**Actual Behavior:** Binary deployments will fail to find default character files because they search for go.mod
-**Impact:** Deployed applications cannot find default character assets, breaking "out-of-box" experience
+**Actual Behavior:** Binary deployments failed to find default character files because they searched for go.mod
+**Impact:** Deployed applications couldn't find default character assets, breaking "out-of-box" experience
 **Reproduction:** Build binary: `go build cmd/companion/main.go` and run outside the development directory
+**Resolution:** Enhanced resolveProjectRoot() to check for assets/ directory when go.mod is not found. Now supports both development (go.mod-based) and deployment (assets/-based) environments.
 **Code Reference:**
 ```go
-func resolveProjectRoot() string {
-    // Only searches for go.mod - doesn't handle binary deployment
-    if _, statErr := os.Stat(filepath.Join(searchDir, "go.mod")); statErr == nil {
-        return searchDir
-    }
-    // Fallback to executable directory may not contain assets
+// FIXED: Enhanced logic for deployment support
+// 1. Search upward for go.mod (development)
+// 2. If no go.mod, check if assets/ exists relative to executable
+// 3. Use executable directory if assets/ found (deployment)
+// 4. Fallback to executable directory (preserves existing behavior)
+if _, err := os.Stat(assetsPath); err == nil {
+    return execDir // Found assets/ - this is a deployment
 }
 ```
 
