@@ -152,41 +152,44 @@ func (nm *NetworkManager) Start() error {
 }
 ```
 
-### PERFORMANCE ISSUE: Inefficient Memory Profiling in Production
-**File:** internal/monitoring/profiler.go:85-110  
-**Severity:** Low
-**Description:** The profiler continuously tracks memory statistics and frame rates even when profiling is disabled, causing unnecessary overhead in production deployments.
-**Expected Behavior:** Monitoring overhead should be minimal when profiling is disabled
-**Actual Behavior:** Background goroutines continue collecting metrics regardless of profiling state
-**Impact:** ~2-3% CPU overhead and memory allocation for unused monitoring data
-**Reproduction:** Run with monitoring disabled and check CPU usage during idle periods
+### PERFORMANCE ISSUE: Memory Profiling Overhead in Production [RESOLVED]
+**File:** internal/monitoring/profiler.go:57-73
+**Severity:** Medium
+**Status:** RESOLVED - 2025-08-31 (commit: 4686853)
+**Description:** Profiler always starts memory and frame rate monitoring goroutines even when no profiling is requested, creating unnecessary overhead in production deployments.
+**Expected Behavior:** Profiler should only create monitoring overhead when profiling is explicitly requested
+**Actual Behavior:** Background monitoring goroutines now only start when profiling is needed
+**Impact:** Production overhead eliminated - no more unnecessary memory/CPU usage from continuous monitoring
+**Reproduction:** Test demonstrates fix: `go test -run TestProfilerProductionOverhead`
+**Resolution:** Modified Start() method to conditionally enable monitoring only when profiling paths are provided or debug mode is enabled. Added protection to RecordStartupComplete() method.
 **Code Reference:**
 ```go
-func (p *Profiler) startMonitoring(debug bool) {
-    // Goroutine runs continuously even when profiling disabled
-    go func() {
-        for {
-            // Expensive memory stats collection always runs
-            var memStats runtime.MemStats
-            runtime.ReadMemStats(&memStats)
-        }
-    }()
-}
-```
+// FIXED: Conditional monitoring based on actual profiling needs
+func (p *Profiler) Start(memProfilePath, cpuProfilePath string, debug bool) error {
+    // Only enable profiler if profiling is actually requested
+    profilingRequested := memProfilePath != "" || cpuProfilePath != "" || debug
 
-### FUNCTIONAL MISMATCH: GIF Frame Rate Calculation Error
+    if profilingRequested {
+        p.initializeProfiler()
+        p.startMonitoring(debug) // Only start monitoring when needed
+    }
+}
+```### FUNCTIONAL MISMATCH: GIF Frame Rate Calculation Error [INVALID]
 **File:** internal/character/animation.go:141-148
 **Severity:** Medium
+**Status:** INVALID - 2025-08-31 (Investigation Complete)
 **Description:** The frame delay calculation multiplies GIF delay by 10 milliseconds but GIF delays are already in centiseconds (10ms units), causing animations to play 10x slower than intended.
 **Expected Behavior:** GIF animations should play at their specified frame rate
-**Actual Behavior:** All animations play 10 times slower than their encoded frame rate
-**Impact:** All character animations appear sluggish and unresponsive
-**Reproduction:** Create a GIF with 100ms delays (10 centiseconds) - it will display at 1000ms (1 second) per frame
+**Actual Behavior:** GIF animations play at correct frame rate - no 10x slowdown exists
+**Impact:** NO IMPACT - This bug report was based on incorrect analysis
+**Investigation:** Comprehensive testing shows frame timing works correctly. A 5 centisecond delay properly results in 50ms frame timing, and 10 centisecond delays result in 100ms frame timing.
+**Resolution:** Bug report was invalid. The calculation `time.Duration(delay) * 10 * time.Millisecond` correctly converts GIF centiseconds to Go time.Duration milliseconds.
 **Code Reference:**
 ```go
-// BUG: Double conversion - GIF delays are already in centiseconds
+// CORRECT IMPLEMENTATION: Properly converts centiseconds to milliseconds
 frameDelay := time.Duration(currentGif.Delay[am.frameIndex]) * 10 * time.Millisecond
-// Should be: time.Duration(currentGif.Delay[am.frameIndex]) * time.Millisecond
+// For delay=10 centiseconds: 10 * 10ms = 100ms (correct)
+// Test evidence shows frame updates at expected ~100ms intervals
 ```
 
 ## RECOMMENDATIONS
