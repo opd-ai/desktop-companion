@@ -129,6 +129,9 @@ func TestInteractionHandling(t *testing.T) {
 		t.Errorf("Expected 'Right-click response!', got '%s'", response)
 	}
 
+	// Wait for cooldown to expire before testing hover
+	time.Sleep(2*time.Second + 10*time.Millisecond)
+
 	// Test hover interaction
 	response = char.HandleHover()
 	if response != "Hover response!" {
