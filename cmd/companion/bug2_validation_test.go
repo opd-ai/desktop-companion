@@ -14,7 +14,7 @@ func TestBug2ResolveProjectRootBehavior(t *testing.T) {
 		// Test that current behavior still works in development (with go.mod)
 		projectRoot := resolveProjectRoot()
 		t.Logf("Current project root: %s", projectRoot)
-		
+
 		// Check if go.mod exists in the resolved path
 		goModPath := filepath.Join(projectRoot, "go.mod")
 		if _, err := os.Stat(goModPath); err == nil {
@@ -24,28 +24,28 @@ func TestBug2ResolveProjectRootBehavior(t *testing.T) {
 			t.Logf("ℹ️  No go.mod found at: %s (may be in test environment)", goModPath)
 		}
 	})
-	
+
 	t.Run("simulated_deployment_behavior", func(t *testing.T) {
 		// Create a mock executable path check function to test the logic
 		// This simulates what would happen in a real deployment
-		
+
 		tmpDir, err := os.MkdirTemp("", "mock_deployment")
 		if err != nil {
 			t.Fatalf("Failed to create temp dir: %v", err)
 		}
 		defer os.RemoveAll(tmpDir)
-		
+
 		// Create assets directory structure like a real deployment
 		assetsDir := filepath.Join(tmpDir, "assets", "characters", "default")
 		err = os.MkdirAll(assetsDir, 0755)
 		if err != nil {
 			t.Fatalf("Failed to create assets directory: %v", err)
 		}
-		
+
 		// The key improvement: check if assets/ directory detection would work
 		mockExecDir := tmpDir
 		assetsPath := filepath.Join(mockExecDir, "assets")
-		
+
 		if _, err := os.Stat(assetsPath); err == nil {
 			t.Logf("✅ Assets directory found at: %s", assetsPath)
 			t.Log("✅ Fix validated: resolveProjectRoot would correctly identify deployment structure")
@@ -58,17 +58,17 @@ func TestBug2ResolveProjectRootBehavior(t *testing.T) {
 // TestBug2CharacterPathResolutionLogic tests the character path resolution end-to-end
 func TestBug2CharacterPathResolutionLogic(t *testing.T) {
 	t.Log("Testing character path resolution logic...")
-	
+
 	// Test that resolveCharacterPath function works with current resolveProjectRoot
 	// This should work in development environment
 	characterPath := resolveCharacterPath()
 	t.Logf("Resolved character path: %s", characterPath)
-	
+
 	// Check if the default path structure makes sense
 	if filepath.Base(characterPath) == "character.json" {
 		t.Log("✅ Character path resolves to character.json file")
 	}
-	
+
 	if strings.Contains(characterPath, "assets") && strings.Contains(characterPath, "characters") {
 		t.Log("✅ Character path contains expected directory structure (assets/characters)")
 	}
