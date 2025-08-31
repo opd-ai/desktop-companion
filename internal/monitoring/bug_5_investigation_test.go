@@ -15,11 +15,11 @@ func TestBug5FrameRateMonitoringIsActuallyWorking(t *testing.T) {
 	// Reality: Frame rate tracking IS implemented via RecordFrame() and background monitoring
 
 	profiler := NewProfiler(50)
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
-	defer profiler.Stop("", false)
+	defer profiler.Stop("", true)
 
 	// Test 1: Verify that RecordFrame() properly updates frame counters
 	t.Run("RecordFrameUpdatesCounters", func(t *testing.T) {
@@ -94,11 +94,11 @@ func TestBug5FrameRateMonitoringIntegrationEvidence(t *testing.T) {
 
 	// This test shows the exact integration path mentioned in AUDIT.md
 	profiler := NewProfiler(50)
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
-	defer profiler.Stop("", false)
+	defer profiler.Stop("", true)
 
 	// Evidence 1: RecordFrame is called from processFrameUpdates in window.go:393
 	t.Log("Evidence 1: UI calls RecordFrame() during animation loop")

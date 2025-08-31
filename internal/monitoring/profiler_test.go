@@ -28,8 +28,8 @@ func TestNewProfiler(t *testing.T) {
 func TestStartStopProfiler(t *testing.T) {
 	profiler := NewProfiler(50)
 
-	// Test start
-	err := profiler.Start("", "", false)
+	// Test start with debug=true to enable monitoring for testing
+	err := profiler.Start("", "", true)
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
@@ -120,12 +120,12 @@ func TestMemoryProfiling(t *testing.T) {
 func TestRecordFrame(t *testing.T) {
 	profiler := NewProfiler(50)
 
-	// Start profiler
-	err := profiler.Start("", "", false)
+	// Start profiler with debug=true to enable monitoring
+	err := profiler.Start("", "", true)
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
-	defer profiler.Stop("", false)
+	defer profiler.Stop("", true)
 
 	// Record some frames
 	initialFrames := profiler.GetTotalFrames()
@@ -146,7 +146,7 @@ func TestStartupRecording(t *testing.T) {
 	profiler := NewProfiler(50)
 
 	// Start profiler
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
@@ -171,7 +171,7 @@ func TestMemoryMonitoring(t *testing.T) {
 	profiler := NewProfiler(50)
 
 	// Start profiler
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
@@ -200,7 +200,7 @@ func TestTargetValidation(t *testing.T) {
 	profiler := NewProfiler(1) // Very low memory target for testing
 
 	// Start profiler
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}
@@ -220,7 +220,7 @@ func TestConcurrentAccess(t *testing.T) {
 	profiler := NewProfiler(50)
 
 	// Start profiler
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}

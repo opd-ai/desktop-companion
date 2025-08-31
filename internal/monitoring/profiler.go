@@ -62,16 +62,28 @@ func (p *Profiler) Start(memProfilePath, cpuProfilePath string, debug bool) erro
 		return err
 	}
 
-	p.initializeProfiler()
+	// Enable profiler if any profiling is requested OR debug mode is enabled
+	// In production with debug=false and no profile paths, no monitoring overhead
+	profilingRequested := memProfilePath != "" || cpuProfilePath != "" || debug
 
-	if err := p.startCPUProfilingIfEnabled(cpuProfilePath, debug); err != nil {
-		return err
+	if profilingRequested {
+		p.initializeProfiler()
+
+		if err := p.startCPUProfilingIfEnabled(cpuProfilePath, debug); err != nil {
+			return err
+		}
+
+		p.startMonitoring(debug)
+		p.logStartupIfDebug(debug)
 	}
 
-	p.startMonitoring(debug)
-	p.logStartupIfDebug(debug)
-
 	return nil
+}
+
+// StartWithMonitoring forces monitoring to be enabled regardless of profiling settings.
+// This is primarily for testing purposes where monitoring behavior needs to be validated.
+func (p *Profiler) StartWithMonitoring() error {
+	return p.Start("", "", true) // Force debug=true to enable monitoring
 }
 
 // validateStartConditions checks if profiler can be started
@@ -141,16 +153,16 @@ func (p *Profiler) Stop(memProfilePath string, debug bool) error {
 
 // validateProfilerState checks if profiler is in valid state for stopping
 func (p *Profiler) validateProfilerState() error {
-	if !p.enabled {
-		return fmt.Errorf("profiler not started")
-	}
+	// Allow stopping even if profiler was never started (for clean shutdown)
 	return nil
 }
 
 // shutdownProfiler performs core profiler shutdown operations
 func (p *Profiler) shutdownProfiler() {
 	p.enabled = false
-	p.cancel()
+	if p.cancel != nil {
+		p.cancel()
+	}
 }
 
 // stopCPUProfilingIfActive stops CPU profiling if currently active
@@ -301,6 +313,10 @@ func (p *Profiler) RecordFrame() {
 
 // RecordStartupComplete marks the end of application startup
 func (p *Profiler) RecordStartupComplete() {
+	if !p.enabled {
+		return
+	}
+
 	p.stats.mu.Lock()
 	p.stats.StartupDuration = time.Since(p.stats.StartTime)
 	p.stats.mu.Unlock()

@@ -14,7 +14,7 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 	// Test 1: Verify frame rate calculation works
 	t.Run("FrameRateCalculation", func(t *testing.T) {
 		profiler := NewProfiler(50)
-		err := profiler.Start("", "", false)
+		err := profiler.Start("", "", true) // Enable debug mode for testing
 		if err != nil {
 			t.Fatalf("Failed to start profiler: %v", err)
 		}
@@ -53,7 +53,7 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 	// Test 2: Verify IsFrameRateTargetMet works
 	t.Run("FrameRateTargetCheck", func(t *testing.T) {
 		profiler := NewProfiler(50)
-		err := profiler.Start("", "", false)
+		err := profiler.Start("", "", true) // Enable debug mode for testing
 		if err != nil {
 			t.Fatalf("Failed to start profiler: %v", err)
 		}
@@ -90,7 +90,7 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 			t.Errorf("Initial frame rate should be 0, got %.1f", initialFrameRate)
 		}
 
-		profiler.Start("", "", false) // Start monitoring
+		profiler.Start("", "", true) // Start monitoring with debug mode for testing
 		defer profiler.Stop("", false)
 
 		// Record some frames
@@ -118,7 +118,7 @@ func TestBug5FrameRateIntegration(t *testing.T) {
 	t.Log("Testing Bug #5 Integration: Frame Rate Monitoring in UI Context")
 
 	profiler := NewProfiler(50)
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}

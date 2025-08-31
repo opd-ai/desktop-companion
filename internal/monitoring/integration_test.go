@@ -8,7 +8,7 @@ import (
 func TestProfilerIntegration(t *testing.T) {
 	profiler := NewProfiler(50)
 
-	err := profiler.Start("", "", false)
+	err := profiler.Start("", "", true) // Enable debug mode for testing
 	if err != nil {
 		t.Fatalf("Failed to start profiler: %v", err)
 	}

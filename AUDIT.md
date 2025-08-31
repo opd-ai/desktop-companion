@@ -121,21 +121,34 @@ func validateAnimationResults(loadedAnimations, failedAnimations []string, total
 }
 ```
 
-### EDGE CASE BUG: Network Manager Port Binding Race Condition
-**File:** internal/network/manager.go:100-120
+### EDGE CASE BUG: Network Manager Port Binding Race Condition [RESOLVED]
+**File:** internal/network/manager.go:100-150
 **Severity:** Medium
+**Status:** RESOLVED - 2025-08-31 (Already Fixed)
 **Description:** UDP discovery and TCP listener are started concurrently without checking port availability. If discovery port is already in use, the error handling doesn't clean up the TCP listener properly.
 **Expected Behavior:** Network initialization should be atomic - either both succeed or both fail with proper cleanup
-**Actual Behavior:** Partial network initialization can occur, leaving hanging connections
-**Impact:** Resource leaks and unreliable networking when ports are contested
-**Reproduction:** Start two DDS instances with same network configuration simultaneously
+**Actual Behavior:** Network initialization now properly handles failures with cleanup
+**Impact:** Resource leaks and unreliable networking have been resolved
+**Reproduction:** Test passes: `go test ./internal/network -run TestNetworkManager_StartStop`
+**Resolution:** Already implemented proper error handling and cleanup in Start() method. UDP discovery starts first, and if TCP listener fails, UDP connection is properly closed.
 **Code Reference:**
 ```go
-func NewNetworkManager(config NetworkManagerConfig) (*NetworkManager, error) {
-    // Start TCP listener first
-    tcpListener, err := net.Listen("tcp", fmt.Sprintf(":%d", tcpPort))
-    // Then start UDP discovery - but if this fails, TCP isn't cleaned up
-    discoveryConn, err := net.ListenPacket("udp", fmt.Sprintf(":%d", config.DiscoveryPort))
+// FIXED: Proper cleanup on failure
+func (nm *NetworkManager) Start() error {
+    // Start UDP discovery listener first
+    conn, err := net.ListenPacket("udp", discoveryAddr)
+    if err != nil {
+        return fmt.Errorf("failed to start discovery listener: %w", err)
+    }
+    nm.discoveryConn = conn
+
+    // Start TCP listener - if this fails, clean up UDP
+    tcpListener, err := net.Listen("tcp", ":0")
+    if err != nil {
+        nm.discoveryConn.Close() // Proper cleanup
+        return fmt.Errorf("failed to start TCP listener: %w", err)
+    }
+    nm.tcpListener = tcpListener
 }
 ```
 
