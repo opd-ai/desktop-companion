@@ -185,5 +185,53 @@
       "cooldown": 300,
       "conditions": {}
     }
-  ]
+  ],
+  "stats": {
+    "happiness": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.12,
+      "criticalThreshold": 15
+    },
+    "energy": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.18,
+      "criticalThreshold": 20
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": false,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 4, "energy": 2},
+      "animations": ["talking"],
+      "responses": [
+        "Thanks for the attention! Reading the news is more fun with company!",
+        "I appreciate your presence while I stay updated!",
+        "Your support keeps me motivated to find great stories!",
+        "Thanks for being such a great news companion!"
+      ],
+      "cooldown": 30
+    },
+    "refresh_news": {
+      "triggers": ["rightclick"],
+      "effects": {"happiness": 8, "energy": -3},
+      "animations": ["thinking"],
+      "responses": [
+        "Scanning for the latest updates! This is exciting!",
+        "I love finding fresh news stories for you!",
+        "Let me check my sources for breaking news!",
+        "Refreshing feeds... I hope there's something interesting!"
+      ],
+      "cooldown": 60
+    }
+  }
 }

@@ -46,6 +46,54 @@
     "movementEnabled": true,
     "defaultSize": 128
   },
+  "stats": {
+    "happiness": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 15
+    },
+    "energy": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 20
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": false,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 5, "energy": 2},
+      "animations": ["happy"],
+      "responses": [
+        "That feels wonderful! 😊",
+        "Thanks for the attention!",
+        "I love spending time with you!",
+        "You always know how to cheer me up!"
+      ],
+      "cooldown": 30
+    },
+    "encourage": {
+      "triggers": ["rightclick"],
+      "effects": {"happiness": 8, "energy": 5},
+      "animations": ["happy"],
+      "responses": [
+        "Your encouragement means so much! 💕",
+        "Thank you for believing in me!",
+        "I feel so much better now!",
+        "You're the best companion ever!"
+      ],
+      "cooldown": 60
+    }
+  },
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",

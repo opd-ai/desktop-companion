@@ -35,6 +35,54 @@
     "movementEnabled": true,
     "defaultSize": 128
   },
+  "stats": {
+    "happiness": {
+      "initial": 88,
+      "max": 100,
+      "degradationRate": 0.15,
+      "criticalThreshold": 15
+    },
+    "energy": {
+      "initial": 92,
+      "max": 100,
+      "degradationRate": 0.25,
+      "criticalThreshold": 20
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": false,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 6, "energy": 3},
+      "animations": ["happy"],
+      "responses": [
+        "Interaction detected! Generating happiness response! 🤖",
+        "Thank you for the attention! My algorithms appreciate it!",
+        "Processing positive feedback... happiness levels increased!",
+        "Your touch generates wonderful patterns in my data!"
+      ],
+      "cooldown": 30
+    },
+    "learn": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 10, "energy": -2},
+      "animations": ["talking"],
+      "responses": [
+        "I'm learning from this interaction! Thank you for teaching me!",
+        "Every conversation helps me improve my responses! ✨",
+        "Your input helps train my AI patterns!",
+        "Adding this to my learning dataset!"
+      ],
+      "cooldown": 45
+    }
+  },
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
