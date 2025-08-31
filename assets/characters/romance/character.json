@@ -597,5 +597,62 @@
       "cooldown": 14400,
       "category": "confession"
     }
-  ]
+  ],
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 60
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "flowers",
+        "jewelry",
+        "expensive",
+        "clothing",
+        "art"
+      ],
+      "dislikedCategories": [
+        "practical",
+        "electronics"
+      ],
+      "personalityModifiers": {
+        "flowers": 2.5,
+        "jewelry": 2.3,
+        "expensive": 2.0,
+        "clothing": 1.8,
+        "art": 1.9
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "Oh my heart! This is the most romantic gift ever! 💕✨",
+        "*tears of joy* You know exactly how to make me feel so loved and special!",
+        "This is absolutely perfect! I'll treasure this forever, my darling! 💖"
+      ],
+      "liked": [
+        "This is so thoughtful! You always know how to make me smile! 😊💕",
+        "What a sweet gesture! I love that you think of me! 💝",
+        "You're so romantic! This makes my heart flutter! 🥰"
+      ],
+      "neutral": [
+        "Thank you for thinking of me, sweetheart!",
+        "That's very kind of you! 💕",
+        "I appreciate your thoughtfulness!"
+      ],
+      "disliked": [
+        "Oh... well, it's the thought that counts, darling...",
+        "That's... different. But I love that you thought of me!",
+        "I prefer more romantic gifts, but thank you for caring... 💕"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 150
+    }
+  }
 }

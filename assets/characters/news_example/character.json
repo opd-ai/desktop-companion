@@ -4,8 +4,13 @@
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
+    "happy": "animations/thinking.gif",
+    "sad": "animations/idle.gif",
+    "thinking": "animations/thinking.gif",
     "reading": "animations/reading.gif",
-    "thinking": "animations/thinking.gif"
+    "attack": "animations/talking.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/thinking.gif"
   },
   "dialogs": [
     {
@@ -393,5 +398,113 @@
     "socialLevel": "high",
     "shareableStats": ["happiness", "trust"],
     "networkPersonality": "informative"
+  },
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "normal",
+    "battleStats": {
+      "hp": {
+        "base": 78,
+        "growth": 2.1
+      },
+      "attack": {
+        "base": 13,
+        "growth": 1.9
+      },
+      "defense": {
+        "base": 11,
+        "growth": 2.0
+      },
+      "speed": {
+        "base": 9,
+        "growth": 1.7
+      }
+    },
+    "personalities": {
+      "aggressive": 0.2,
+      "defensive": 0.5,
+      "balanced": 0.8,
+      "supportive": 0.7
+    },
+    "availableActions": [
+      "attack",
+      "defend", 
+      "inform",
+      "strategize",
+      "news_flash",
+      "analysis"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Breaking news: Victory achieved through strategic information warfare! 📰",
+        "In a stunning turn of events, tactical superiority led to triumph!",
+        "This just in: Superior battle analysis resulted in decisive victory!"
+      ],
+      "defeat": [
+        "Reporting live: A well-fought battle ends in honorable defeat!",
+        "In other news, excellent strategic play deserves recognition!",
+        "Breaking: Opponent demonstrates superior tactical knowledge!"
+      ],
+      "startBattle": [
+        "This is breaking news: Battle commencing with strategic analysis!",
+        "Live from the battlefield: Let's see some tactical combat!",
+        "News flash: Engaging in strategic battle for informational supremacy!"
+      ]
+    }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 7,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 50
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "books",
+        "electronics",
+        "practical",
+        "art"
+      ],
+      "dislikedCategories": [
+        "toys",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "books": 2.0,
+        "electronics": 1.8,
+        "practical": 1.7,
+        "art": 1.6
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "Breaking news: Perfect gift received! This enhances my informational database! 📰💕",
+        "Exclusive report: This is exactly the type of knowledge I treasure most!",
+        "News flash: Gift analysis shows 100% compatibility with my interests!"
+      ],
+      "liked": [
+        "Thank you for this informative contribution to my collection!",
+        "This addition to my knowledge base is much appreciated!",
+        "Positive gift assessment: This aligns well with my informational focus! 😊"
+      ],
+      "neutral": [
+        "Gift received and catalogued in my information systems.",
+        "Thank you for your thoughtful contribution.",
+        "Your gesture is noted and appreciated."
+      ],
+      "disliked": [
+        "Hmm, this doesn't quite fit my informational criteria, but thank you...",
+        "I prefer more knowledge-based gifts, but I appreciate the thought.",
+        "Not quite my style, but I value your consideration."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
   }
 }

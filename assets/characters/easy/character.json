@@ -8,7 +8,10 @@
     "happy": "animations/happy.gif",
     "sad": "animations/sad.gif",
     "hungry": "animations/hungry.gif",
-    "eating": "animations/eating.gif"
+    "eating": "animations/eating.gif",
+    "attack": "animations/sad.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif"
   },
 
   "dialogs": [
@@ -337,5 +340,112 @@
       "cooldown": 6000,
       "category": "peace"
     }
-  ]
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "easy",
+    "battleStats": {
+      "hp": {
+        "base": 80,
+        "growth": 2.0
+      },
+      "attack": {
+        "base": 10,
+        "growth": 1.5
+      },
+      "defense": {
+        "base": 12,
+        "growth": 2.2
+      },
+      "speed": {
+        "base": 6,
+        "growth": 1.2
+      }
+    },
+    "personalities": {
+      "aggressive": 0.1,
+      "defensive": 0.8,
+      "balanced": 0.5,
+      "supportive": 0.9
+    },
+    "availableActions": [
+      "defend",
+      "heal",
+      "encourage",
+      "gift_share",
+      "rest"
+    ],
+    "battleResponses": {
+      "victory": [
+        "That was a gentle battle! I hope you had fun too! 😊",
+        "Thanks for playing with me! You're so considerate!",
+        "I enjoyed that peaceful competition!"
+      ],
+      "defeat": [
+        "Well played! I'm just happy we could play together!",
+        "You were so gentle with me - thank you!",
+        "That was lovely! Let's play again sometime!"
+      ],
+      "startBattle": [
+        "Let's have a gentle, friendly battle!",
+        "I promise to be gentle - this will be fun!",
+        "Ready for some easy-going fun?"
+      ]
+    }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 6,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 40
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "food",
+        "flowers",
+        "books",
+        "toys"
+      ],
+      "dislikedCategories": [
+        "expensive",
+        "electronics"
+      ],
+      "personalityModifiers": {
+        "food": 1.8,
+        "flowers": 2.0,
+        "books": 1.6,
+        "toys": 1.7
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is so perfect and gentle! Thank you! 🌸",
+        "You understand me so well! I love simple, beautiful things!",
+        "What a thoughtful, peaceful gift! 💕"
+      ],
+      "liked": [
+        "This is lovely! Thank you for being so kind!",
+        "I appreciate your gentle thoughtfulness!",
+        "What a sweet, simple pleasure! 😊"
+      ],
+      "neutral": [
+        "Thank you for thinking of me!",
+        "That's very considerate!",
+        "I appreciate your kindness!"
+      ],
+      "disliked": [
+        "Oh... that's quite intense for me, but thank you...",
+        "I prefer simpler things, but I appreciate the thought.",
+        "That's... a bit much for me, but thank you."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 80
+    }
+  }
 }

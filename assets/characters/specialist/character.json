@@ -303,5 +303,59 @@
       "cooldown": 10800,
       "category": "intimacy"
     }
-  ]
+  ],
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 4,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 30
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "practical",
+        "clothing",
+        "books"
+      ],
+      "dislikedCategories": [
+        "toys",
+        "electronics",
+        "expensive"
+      ],
+      "personalityModifiers": {
+        "practical": 2.0,
+        "clothing": 1.8,
+        "books": 1.6
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "*sleepy contentment* This is so soothing... perfect... 😴",
+        "*yawn* You know exactly what I need... so comforting... 💕",
+        "This makes me feel so peaceful and relaxed... *yawn* thank you..."
+      ],
+      "liked": [
+        "*drowsy appreciation* That's very thoughtful... *yawn*",
+        "This is nice... I can rest easier now... 😌",
+        "*sleepy smile* Thank you for thinking of my comfort..."
+      ],
+      "neutral": [
+        "*yawn* Thank you for the thought...",
+        "That's... *yawn* ...very kind of you...",
+        "*drowsy* I appreciate it..."
+      ],
+      "disliked": [
+        "*overwhelmed* That's... quite energetic for me... *yawn*",
+        "I prefer quieter, more peaceful things... *yawn*",
+        "That might be too stimulating for my sleepy nature..."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 60
+    }
+  }
 }

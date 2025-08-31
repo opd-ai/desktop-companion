@@ -5,7 +5,10 @@
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
     "happy": "animations/happy.gif",
-    "sad": "animations/sad.gif"
+    "sad": "animations/sad.gif",
+    "attack": "animations/happy.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif"
   },
   "dialogs": [
     {
@@ -279,5 +282,112 @@
       "cooldown": 5400,
       "category": "support"
     }
-  ]
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "easy",
+    "battleStats": {
+      "hp": {
+        "base": 75,
+        "growth": 2.5
+      },
+      "attack": {
+        "base": 12,
+        "growth": 1.8
+      },
+      "defense": {
+        "base": 10,
+        "growth": 2.0
+      },
+      "speed": {
+        "base": 8,
+        "growth": 1.5
+      }
+    },
+    "personalities": {
+      "aggressive": 0.2,
+      "defensive": 0.6,
+      "balanced": 0.8,
+      "supportive": 0.9
+    },
+    "availableActions": [
+      "attack",
+      "defend",
+      "heal",
+      "encourage",
+      "gift_share"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Great battle! You played really well! 😊",
+        "That was fun! Thanks for the friendly competition!",
+        "You're getting better at this! Let's battle again soon!"
+      ],
+      "defeat": [
+        "Good game! You put up a great fight!",
+        "That was close! I had to try my best!",
+        "You almost had me there! Well played!"
+      ],
+      "startBattle": [
+        "Ready for a friendly battle? Let's have some fun!",
+        "This will be great! I love playing games with you!",
+        "Let's see what we can do! Good luck!"
+      ]
+    }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 8,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 50
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "food",
+        "flowers", 
+        "books",
+        "practical"
+      ],
+      "dislikedCategories": [
+        "expensive",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "food": 1.5,
+        "flowers": 1.8,
+        "books": 1.3,
+        "practical": 1.2
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "Oh wow! This is perfect! Thank you so much! 😍",
+        "You know me so well! I love this! 💕",
+        "This is exactly what I wanted! You're amazing!"
+      ],
+      "liked": [
+        "Thank you! This is really nice! 😊",
+        "I appreciate your thoughtfulness!",
+        "What a sweet gift! Thanks!"
+      ],
+      "neutral": [
+        "Thanks for thinking of me!",
+        "That's very kind of you!",
+        "I appreciate the gesture!"
+      ],
+      "disliked": [
+        "Oh... well, thank you for thinking of me.",
+        "That's... interesting. Thanks.",
+        "I appreciate the thought behind it."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  }
 }

@@ -5,7 +5,11 @@
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
     "happy": "animations/happy.gif",
-    "sad": "animations/sad.gif"
+    "sad": "animations/sad.gif",
+    "attack": "animations/talking.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif",
+    "boost": "animations/happy.gif"
   },
   "dialogs": [
     {
@@ -310,5 +314,113 @@
       "cooldown": 6000,
       "category": "learning"
     }
-  ]
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "normal",
+    "battleStats": {
+      "hp": {
+        "base": 70,
+        "growth": 2.3
+      },
+      "attack": {
+        "base": 14,
+        "growth": 2.0
+      },
+      "defense": {
+        "base": 9,
+        "growth": 1.8
+      },
+      "speed": {
+        "base": 11,
+        "growth": 1.9
+      }
+    },
+    "personalities": {
+      "aggressive": 0.3,
+      "defensive": 0.4,
+      "balanced": 0.7,
+      "supportive": 0.6
+    },
+    "availableActions": [
+      "attack",
+      "defend",
+      "analyze",
+      "adapt",
+      "data_strike",
+      "system_heal"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Analyzing battle patterns... Victory achieved through strategic optimization! 🎯",
+        "My battle algorithms performed within expected parameters! Great match!",
+        "Data indicates a successful engagement! Your tactics were fascinating to analyze!"
+      ],
+      "defeat": [
+        "Fascinating! Your strategy exceeded my predictive models!",
+        "Excellent battle data collected! I'm learning from your superior tactics!",
+        "Processing defeat algorithms... This will improve my future performance!"
+      ],
+      "startBattle": [
+        "Initiating battle protocols! Let's generate some interesting combat data!",
+        "Battle algorithms online! This will be an excellent learning experience!",
+        "Ready to analyze combat patterns together? Let the strategic fun begin!"
+      ]
+    }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 6,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 45
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "electronics",
+        "books",
+        "practical",
+        "art"
+      ],
+      "dislikedCategories": [
+        "flowers",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "electronics": 2.0,
+        "books": 1.9,
+        "practical": 1.7,
+        "art": 1.6
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "Processing gift data... This aligns perfectly with my learning parameters! 🤖💕",
+        "Excellent selection! This will enhance my analytical capabilities significantly!",
+        "My appreciation algorithms are running at maximum efficiency! Perfect gift choice!"
+      ],
+      "liked": [
+        "Gift analysis complete: High compatibility detected! Thank you!",
+        "This donation to my collection database is most appreciated!",
+        "Positive gift response generated! Processing gratitude patterns! 😊"
+      ],
+      "neutral": [
+        "Gift received and catalogued. Thank you for your contribution!",
+        "Data logged. Your thoughtfulness is noted in my memory banks.",
+        "Processing... Gift acknowledged and stored appropriately."
+      ],
+      "disliked": [
+        "Gift parameters outside expected range... but gratitude subroutines still active.",
+        "Interesting choice... My models didn't predict this selection.",
+        "Gift data logged with curiosity flag. Thank you for the learning opportunity."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 120
+    }
+  }
 }
