@@ -10,7 +10,7 @@ import (
 // TestArtifactManager tests the core artifact management functionality
 func TestArtifactManager(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
@@ -29,7 +29,7 @@ func TestArtifactManager(t *testing.T) {
 			"version": "1.0.0",
 			"type":    "test",
 		}
-		
+
 		info, err := manager.StoreArtifact(testFile, "default", "linux", "amd64", metadata)
 		if err != nil {
 			t.Fatalf("Failed to store artifact: %v", err)
@@ -125,7 +125,7 @@ func TestArtifactManager(t *testing.T) {
 // TestRetentionPolicies tests artifact retention and cleanup functionality
 func TestRetentionPolicies(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
@@ -133,7 +133,7 @@ func TestRetentionPolicies(t *testing.T) {
 
 	t.Run("DefaultPolicies", func(t *testing.T) {
 		policies := DefaultRetentionPolicies()
-		
+
 		// Validate that default policies exist and are reasonable
 		expectedPolicies := []string{"development", "production", "release"}
 		for _, policyName := range expectedPolicies {
@@ -229,7 +229,7 @@ func TestRetentionPolicies(t *testing.T) {
 // TestArtifactCompression tests the compression functionality
 func TestArtifactCompression(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)

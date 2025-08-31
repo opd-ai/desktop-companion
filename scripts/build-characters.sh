@@ -2,12 +2,14 @@
 
 # Character-specific build automation script
 # Implements Phase 1, Task 3: Create build automation scripts
+# Enhanced with Phase 2, Task 3: Artifact management and retention
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="$PROJECT_ROOT/build"
+ARTIFACTS_DIR="$PROJECT_ROOT/build/artifacts"
 CHARACTERS_DIR="$PROJECT_ROOT/assets/characters"
 
 # Colors for output
@@ -21,6 +23,7 @@ NC='\033[0m' # No Color
 MAX_PARALLEL=${MAX_PARALLEL:-4}
 PLATFORMS=${PLATFORMS:-"$(go env GOOS)/$(go env GOARCH)"}
 LDFLAGS=${LDFLAGS:-"-s -w"}
+ENABLE_ARTIFACT_MGMT=${ENABLE_ARTIFACT_MGMT:-"true"}
 
 # Print colored output
 log() {
@@ -48,6 +51,7 @@ COMMANDS:
     list                List all available characters
     build [CHARACTER]   Build specific character (or all if none specified)
     clean              Clean build artifacts
+    manage             Manage stored artifacts (list, cleanup, compress)
     platforms          Show platform matrix configuration and limitations
     help               Show this help message
 
@@ -56,18 +60,21 @@ OPTIONS:
     -o, --output DIR    Set output directory (default: $BUILD_DIR)
     --platforms LIST    Comma-separated list of platforms (default: $PLATFORMS)
     --ldflags FLAGS     Linker flags for builds (default: "$LDFLAGS")
+    --no-artifact-mgmt  Disable automatic artifact management
 
 EXAMPLES:
     $0 list                           # List available characters
     $0 build                          # Build all characters
     $0 build default                  # Build only default character
     $0 build --parallel 8             # Build with 8 parallel workers
+    $0 manage                         # Access artifact management tools
     $0 clean                          # Clean build directory
 
 ENVIRONMENT VARIABLES:
     MAX_PARALLEL       Maximum parallel builds
     PLATFORMS          Target platforms for builds
     LDFLAGS           Linker flags for optimization
+    ENABLE_ARTIFACT_MGMT   Enable automatic artifact management (true/false)
 EOF
 }
 
@@ -289,8 +296,110 @@ clean_builds() {
     
     rm -rf "$BUILD_DIR"
     rm -rf "$PROJECT_ROOT"/cmd/*-embedded
+    if [[ -d "$ARTIFACTS_DIR" ]]; then
+        rm -rf "$ARTIFACTS_DIR"
+    fi
     
     success "Cleaned build artifacts"
+}
+
+# Manage stored artifacts using the artifact manager tool
+manage_artifacts() {
+    log "Artifact Management Tools"
+    
+    # Check if artifact manager is built
+    ARTIFACT_MANAGER="$BUILD_DIR/artifact-manager"
+    if [[ ! -f "$ARTIFACT_MANAGER" ]]; then
+        log "Building artifact manager..."
+        mkdir -p "$BUILD_DIR"
+        go build -ldflags="$LDFLAGS" -o "$ARTIFACT_MANAGER" cmd/artifact-manager/main.go
+        if [[ $? -ne 0 ]]; then
+            error "Failed to build artifact manager"
+            return 1
+        fi
+        success "Built artifact manager"
+    fi
+    
+    echo
+    echo "Available artifact management commands:"
+    echo "  list     - List stored artifacts"
+    echo "  stats    - Show artifact statistics"
+    echo "  cleanup  - Clean up expired artifacts"
+    echo "  compress - Compress old artifacts"
+    echo "  policies - Show retention policies"
+    echo
+    
+    while true; do
+        echo -n "Enter command (or 'quit' to exit): "
+        read -r cmd
+        
+        case "$cmd" in
+            list)
+                echo -n "Character (optional): "
+                read -r character
+                if [[ -n "$character" ]]; then
+                    "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" list "$character"
+                else
+                    "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" list
+                fi
+                ;;
+            stats)
+                "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" stats
+                ;;
+            cleanup)
+                echo "Available policies: development, production, release"
+                echo -n "Enter policy name: "
+                read -r policy
+                if [[ -n "$policy" ]]; then
+                    "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" cleanup "$policy"
+                fi
+                ;;
+            compress)
+                echo "Available policies: development, production, release"
+                echo -n "Enter policy name: "
+                read -r policy
+                if [[ -n "$policy" ]]; then
+                    "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" compress "$policy"
+                fi
+                ;;
+            policies)
+                "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" policies
+                ;;
+            quit|exit|q)
+                break
+                ;;
+            help|h)
+                echo "Available commands: list, stats, cleanup, compress, policies, quit"
+                ;;
+            *)
+                echo "Unknown command: $cmd (type 'help' for available commands)"
+                ;;
+        esac
+        echo
+    done
+}
+
+# Store artifact using artifact manager (if enabled)
+store_artifact() {
+    local binary_path="$1"
+    local character="$2" 
+    local platform="$3"
+    local arch="$4"
+    
+    if [[ "$ENABLE_ARTIFACT_MGMT" != "true" ]]; then
+        return 0
+    fi
+    
+    # Build artifact manager if needed
+    ARTIFACT_MANAGER="$BUILD_DIR/artifact-manager"
+    if [[ ! -f "$ARTIFACT_MANAGER" ]]; then
+        go build -ldflags="$LDFLAGS" -o "$ARTIFACT_MANAGER" cmd/artifact-manager/main.go >/dev/null 2>&1
+    fi
+    
+    # Store the artifact
+    if [[ -f "$ARTIFACT_MANAGER" && -f "$binary_path" ]]; then
+        "$ARTIFACT_MANAGER" -dir "$ARTIFACTS_DIR" store "$character" "$platform" "$arch" "$binary_path" >/dev/null 2>&1
+    fi
 }
 
 # Validate build environment
@@ -366,6 +475,10 @@ parse_args() {
                 ;;
             clean)
                 clean_builds
+                exit 0
+                ;;
+            manage)
+                manage_artifacts
                 exit 0
                 ;;
             platforms)

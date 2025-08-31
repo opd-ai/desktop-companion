@@ -46,22 +46,22 @@ func DefaultRetentionPolicies() map[string]RetentionPolicy {
 	return map[string]RetentionPolicy{
 		"development": {
 			Name:            "development",
-			RetentionPeriod: 7 * 24 * time.Hour,   // 7 days
-			MaxCount:        50,                    // Keep max 50 development builds
-			CompressAfter:   24 * time.Hour,       // Compress after 1 day
-			CleanupInterval: 4 * time.Hour,        // Cleanup every 4 hours
+			RetentionPeriod: 7 * 24 * time.Hour, // 7 days
+			MaxCount:        50,                 // Keep max 50 development builds
+			CompressAfter:   24 * time.Hour,     // Compress after 1 day
+			CleanupInterval: 4 * time.Hour,      // Cleanup every 4 hours
 		},
 		"production": {
 			Name:            "production",
-			RetentionPeriod: 90 * 24 * time.Hour,  // 90 days
-			MaxCount:        200,                   // Keep max 200 production builds
-			CompressAfter:   7 * 24 * time.Hour,   // Compress after 1 week
-			CleanupInterval: 24 * time.Hour,       // Cleanup daily
+			RetentionPeriod: 90 * 24 * time.Hour, // 90 days
+			MaxCount:        200,                 // Keep max 200 production builds
+			CompressAfter:   7 * 24 * time.Hour,  // Compress after 1 week
+			CleanupInterval: 24 * time.Hour,      // Cleanup daily
 		},
 		"release": {
 			Name:            "release",
 			RetentionPeriod: 365 * 24 * time.Hour, // 1 year
-			MaxCount:        -1,                    // Unlimited count
+			MaxCount:        -1,                   // Unlimited count
 			CompressAfter:   30 * 24 * time.Hour,  // Compress after 1 month
 			CleanupInterval: 7 * 24 * time.Hour,   // Cleanup weekly
 		},
@@ -188,7 +188,7 @@ func (m *Manager) storeMetadata(dir string, info *ArtifactInfo) error {
 	// Use Go's standard encoding/json for metadata storage
 	// This follows the project's "standard library first" principle
 	metadataPath := filepath.Join(dir, strings.TrimSuffix(info.Name, filepath.Ext(info.Name))+".json")
-	
+
 	file, err := os.Create(metadataPath)
 	if err != nil {
 		return err
@@ -263,34 +263,56 @@ func (m *Manager) CleanupArtifacts(policyName string) error {
 	}
 
 	cutoffTime := time.Now().Add(-policy.RetentionPeriod)
+	var filesToRemove []string
+	var metadataToRemove []string
 
+	// First pass: collect files to remove
 	err := filepath.Walk(m.artifactsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Skip directories and metadata files
-		if info.IsDir() || strings.HasSuffix(path, ".json") {
+		// Skip directories
+		if info.IsDir() {
+			return nil
+		}
+
+		// Skip metadata files in the first pass
+		if strings.HasSuffix(path, ".json") {
 			return nil
 		}
 
 		// Check if artifact is expired
 		if info.ModTime().Before(cutoffTime) {
-			// Remove both artifact and metadata
-			if err := os.Remove(path); err != nil {
-				return fmt.Errorf("failed to remove expired artifact %s: %w", path, err)
-			}
-
+			filesToRemove = append(filesToRemove, path)
+			// Calculate corresponding metadata file
 			metadataPath := strings.TrimSuffix(path, filepath.Ext(path)) + ".json"
-			if err := os.Remove(metadataPath); err != nil && !os.IsNotExist(err) {
-				return fmt.Errorf("failed to remove metadata %s: %w", metadataPath, err)
-			}
+			metadataToRemove = append(metadataToRemove, metadataPath)
 		}
 
 		return nil
 	})
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Second pass: remove collected files
+	for _, path := range filesToRemove {
+		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+			return fmt.Errorf("failed to remove expired artifact %s: %w", path, err)
+		}
+	}
+
+	// Third pass: remove metadata files
+	for _, metadataPath := range metadataToRemove {
+		if err := os.Remove(metadataPath); err != nil && !os.IsNotExist(err) {
+			// Log warning but don't fail - metadata might not exist
+			fmt.Printf("Warning: failed to remove metadata %s: %v\n", metadataPath, err)
+		}
+	}
+
+	return nil
 }
 
 // CompressOldArtifacts compresses artifacts older than the policy threshold
