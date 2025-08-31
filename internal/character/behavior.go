@@ -235,9 +235,10 @@ func loadSingleAnimation(char *Character, animationName string) animationLoadRes
 
 // validateAnimationResults checks animation loading results and returns loaded animations or error.
 func validateAnimationResults(loadedAnimations, failedAnimations []string, totalAnimations int) ([]string, error) {
-	// Only fail if no animations could be loaded at all
+	// Graceful degradation: Allow character creation even if no animations can be loaded
+	// The character will be static but still functional
 	if len(loadedAnimations) == 0 && totalAnimations > 0 {
-		return nil, fmt.Errorf("failed to load any animations (attempted %d, all failed)", totalAnimations)
+		fmt.Printf("Warning: failed to load any animations (attempted %d, all failed) - character will be static\n", totalAnimations)
 	}
 
 	// Report success with any partial failures
