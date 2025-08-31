@@ -522,6 +522,7 @@
     {
       "name": "romantic_moment",
       "description": "A sweet romantic interaction",
+      "trigger": "rightclick",
       "responses": [
         "Being with you makes every moment feel special... 💕",
         "I love these quiet moments we share together... You mean so much to me! 💖",
@@ -548,6 +549,7 @@
     {
       "name": "date_planning",
       "description": "Planning a special virtual date",
+      "trigger": "doubleclick",
       "responses": [
         "I've been thinking about special ways we could spend time together! Want to plan something romantic? 🌹",
         "Every moment with you is a date, but I'd love to make our next one extra special!",
@@ -569,11 +571,12 @@
       ],
       "requirements": {"trust": {"min": 15}, "affection": {"min": 20}},
       "cooldown": 10800,
-      "category": "planning"
+      "category": "romance"
     },
     {
       "name": "love_confession",
       "description": "A heartfelt moment of emotional connection",
+      "trigger": "longpress",
       "responses": [
         "There's something I've been wanting to tell you... My feelings for you grow stronger every day! 💕",
         "Being here with you feels like a dream come true... You're so special to me! ✨",
@@ -595,7 +598,7 @@
       ],
       "requirements": {"affection": {"min": 50}, "trust": {"min": 35}},
       "cooldown": 14400,
-      "category": "confession"
+      "category": "romance"
     }
   ],
   "giftSystem": {
