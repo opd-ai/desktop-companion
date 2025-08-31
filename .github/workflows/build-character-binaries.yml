@@ -76,7 +76,7 @@ jobs:
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
             sudo apt-get update
-            sudo apt-get install -y gcc pkg-config libgl1-mesa-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev
+            sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
           elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
             # macOS has necessary dependencies built-in
             echo "macOS dependencies ready"
