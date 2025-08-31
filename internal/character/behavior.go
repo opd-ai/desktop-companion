@@ -93,6 +93,29 @@ func NewWithPlatform(card *CharacterCard, basePath string, platformInfo *platfor
 	return char, nil
 }
 
+// NewEmbedded creates a character instance with embedded assets (no filesystem dependencies)
+// This constructor supports standalone binary distribution with embedded animations
+// Uses pre-loaded AnimationManager instead of filesystem-based asset loading
+func NewEmbedded(card *CharacterCard, animManager *AnimationManager) (*Character, error) {
+	// Create character instance without base path (not needed for embedded assets)
+	char := createCharacterInstanceWithPlatform(card, "", nil)
+
+	// Override the animation manager with the pre-loaded embedded one
+	char.animationManager = animManager
+
+	if err := initializeCharacterSystems(char); err != nil {
+		return nil, err
+	}
+
+	// Skip filesystem-based animation loading since we have embedded animations
+	// Verify at least one animation is available
+	if len(animManager.GetLoadedAnimations()) == 0 {
+		return nil, fmt.Errorf("no embedded animations available for character %s", card.Name)
+	}
+
+	return char, nil
+}
+
 // createCharacterInstance initializes the basic character structure with default values.
 func createCharacterInstance(card *CharacterCard, basePath string) *Character {
 	return createCharacterInstanceWithPlatform(card, basePath, nil)

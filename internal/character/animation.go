@@ -63,6 +63,27 @@ func (am *AnimationManager) LoadAnimation(name, filepath string) error {
 	return nil
 }
 
+// LoadEmbeddedAnimation loads a pre-decoded GIF animation into the manager
+// This method supports embedded asset loading for standalone binaries
+// Uses standard library gif.GIF structure - no additional dependencies
+func (am *AnimationManager) LoadEmbeddedAnimation(name string, gifData *gif.GIF) error {
+	am.mu.Lock()
+	defer am.mu.Unlock()
+
+	if len(gifData.Image) == 0 {
+		return fmt.Errorf("embedded GIF animation %s contains no frames", name)
+	}
+
+	am.animations[name] = gifData
+
+	// Set as current animation if this is the first one loaded
+	if am.currentAnim == "" {
+		am.currentAnim = name
+	}
+
+	return nil
+}
+
 // SetCurrentAnimation switches to a different loaded animation
 func (am *AnimationManager) SetCurrentAnimation(name string) error {
 	am.mu.Lock()
