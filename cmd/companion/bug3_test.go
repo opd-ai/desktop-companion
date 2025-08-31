@@ -1,14 +1,82 @@
 package main
 
 import (
+	"desktop-companion/internal/character"
 	"image"
+	"image/color"
 	"image/gif"
+	"os"
+	"path/filepath"
 	"sync"
 	"testing"
 	"time"
-
-	"desktop-companion/internal/character"
 )
+
+// Helper function to create a test GIF file
+func createTestGIF(t *testing.T, filename string, frameCount int, delays []int) string {
+	t.Helper()
+
+	// Create a temporary directory
+	tempDir, err := os.MkdirTemp("", "animation_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+
+	// Create simple test images for GIF frames
+	images := make([]*image.Paletted, frameCount)
+	disposals := make([]byte, frameCount)
+
+	// Use provided delays or default ones
+	if delays == nil {
+		delays = make([]int, frameCount)
+		for i := range delays {
+			delays[i] = 10 // 100ms per frame
+		}
+	}
+
+	for i := 0; i < frameCount; i++ {
+		// Create a simple 64x64 paletted image
+		img := image.NewPaletted(image.Rect(0, 0, 64, 64), color.Palette{
+			color.RGBA{0, 0, 0, 0},     // Transparent
+			color.RGBA{255, 0, 0, 255}, // Red
+			color.RGBA{0, 255, 0, 255}, // Green
+			color.RGBA{0, 0, 255, 255}, // Blue
+		})
+
+		// Fill with different color per frame
+		colorIndex := byte((i % 3) + 1)
+		for y := 0; y < 64; y++ {
+			for x := 0; x < 64; x++ {
+				img.SetColorIndex(x, y, colorIndex)
+			}
+		}
+
+		images[i] = img
+		disposals[i] = gif.DisposalNone
+	}
+
+	// Create GIF structure
+	testGIF := &gif.GIF{
+		Image:     images,
+		Delay:     delays,
+		Disposal:  disposals,
+		LoopCount: 0, // Infinite loop
+	}
+
+	// Write to file
+	fullPath := filepath.Join(tempDir, filename)
+	file, err := os.Create(fullPath)
+	if err != nil {
+		t.Fatalf("Failed to create test GIF file: %v", err)
+	}
+	defer file.Close()
+
+	if err := gif.EncodeAll(file, testGIF); err != nil {
+		t.Fatalf("Failed to encode test GIF: %v", err)
+	}
+
+	return fullPath
+}
 
 // TestBug3AnimationFrameRaceCondition reproduces the race condition described in the audit
 // where GetCurrentFrame() timing checks might be inconsistent with Update() modifications
@@ -16,18 +84,11 @@ func TestBug3AnimationFrameRaceCondition(t *testing.T) {
 	// Create animation manager with test animation
 	am := character.NewAnimationManager()
 
-	// Add test animation with multiple frames
-	testGif := &gif.GIF{
-		Image: []*image.Paletted{
-			{Pix: []uint8{0}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
-			{Pix: []uint8{1}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
-			{Pix: []uint8{2}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
-		},
-		Delay: []int{1, 1, 1}, // Very fast 10ms frames to trigger race
-	}
+	// Create test animation with multiple frames and very fast timing to trigger race
+	testGifPath := createTestGIF(t, "test.gif", 3, []int{1, 1, 1}) // Very fast 10ms frames to trigger race
 
-	// Load the animation (this would normally be done through LoadAnimation)
-	err := am.LoadAnimation("test", testGif)
+	// Load the animation
+	err := am.LoadAnimation("test", testGifPath)
 	if err != nil {
 		t.Fatalf("Failed to load test animation: %v", err)
 	}
@@ -105,15 +166,9 @@ func TestBug3FrameTimingConsistency(t *testing.T) {
 	am := character.NewAnimationManager()
 
 	// Create test animation with known timing
-	testGif := &gif.GIF{
-		Image: []*image.Paletted{
-			{Pix: []uint8{0}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
-			{Pix: []uint8{1}, Stride: 1, Rect: image.Rect(0, 0, 1, 1)},
-		},
-		Delay: []int{10, 10}, // 100ms per frame
-	}
+	testGifPath := createTestGIF(t, "timing_test.gif", 2, []int{10, 10}) // 100ms per frame
 
-	err := am.LoadAnimation("timing_test", testGif)
+	err := am.LoadAnimation("timing_test", testGifPath)
 	if err != nil {
 		t.Fatalf("Failed to load test animation: %v", err)
 	}
