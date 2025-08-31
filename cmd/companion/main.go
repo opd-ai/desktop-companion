@@ -109,6 +109,7 @@ func configureDebugLogging() {
 }
 
 // resolveProjectRoot finds the project root by searching upward for go.mod file.
+// For deployed binaries, falls back to executable directory if assets/ exists there.
 func resolveProjectRoot() string {
 	execPath, execErr := os.Executable()
 	if execErr != nil {
@@ -117,18 +118,28 @@ func resolveProjectRoot() string {
 
 	searchDir := filepath.Dir(execPath)
 
-	// Search upward for go.mod file
+	// Search upward for go.mod file (development environment)
 	for {
 		if _, statErr := os.Stat(filepath.Join(searchDir, "go.mod")); statErr == nil {
 			return searchDir
 		}
 		parent := filepath.Dir(searchDir)
 		if parent == searchDir {
-			// Reached filesystem root, use executable directory
-			return filepath.Dir(execPath)
+			break // Reached filesystem root
 		}
 		searchDir = parent
 	}
+
+	// No go.mod found - check if this is a deployed binary with assets/ directory
+	execDir := filepath.Dir(execPath)
+	assetsPath := filepath.Join(execDir, "assets")
+	if _, err := os.Stat(assetsPath); err == nil {
+		// assets/ directory exists relative to executable - use executable directory
+		return execDir
+	}
+
+	// Fallback to executable directory (preserves existing behavior)
+	return execDir
 }
 
 // resolveCharacterPath converts the character path to an absolute path.
