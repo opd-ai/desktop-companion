@@ -20,14 +20,10 @@ func TestLoadAnimations(t *testing.T) {
 		},
 	}
 
-	// Create test GIF file (minimal valid GIF)
+	// Create test GIF file (minimal valid GIF generated using Go's standard library)
 	testGifData := []byte{
-		0x47, 0x49, 0x46, 0x38, 0x37, 0x61, // GIF87a header
-		0x01, 0x00, 0x01, 0x00, // 1x1 image
-		0x00, 0x00, 0x00, // Global color table
-		0x2C, 0x00, 0x00, 0x00, 0x00, // Image descriptor
-		0x01, 0x00, 0x01, 0x00, 0x00, // 1x1 image with no color table
-		0x02, 0x02, 0x04, 0x01, 0x00, 0x3B, // Image data and trailer
+		71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 0, 0, 0, 255, 255, 255, 44, 0, 0, 0, 0,
+		1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59,
 	}
 
 	animPath := filepath.Join(tempDir, "test.gif")
@@ -127,14 +123,10 @@ func TestLoadAnimations_NoAnimations(t *testing.T) {
 }
 
 func TestIsValidGIF(t *testing.T) {
-	// Test valid GIF data
+	// Test valid GIF data - generated using Go's standard library
 	validGifData := []byte{
-		0x47, 0x49, 0x46, 0x38, 0x37, 0x61, // GIF87a header
-		0x01, 0x00, 0x01, 0x00, // 1x1 image
-		0x00, 0x00, 0x00, // Global color table
-		0x2C, 0x00, 0x00, 0x00, 0x00, // Image descriptor
-		0x01, 0x00, 0x01, 0x00, 0x00, // 1x1 image with no color table
-		0x02, 0x02, 0x04, 0x01, 0x00, 0x3B, // Image data and trailer
+		71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 0, 0, 0, 255, 255, 255, 44, 0, 0, 0, 0,
+		1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59,
 	}
 
 	if !embedding.IsValidGIF(validGifData) {
