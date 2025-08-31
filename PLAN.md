@@ -631,8 +631,8 @@ help-characters:
 ### Phase 1: Core Infrastructure (Week 1) ✅ COMPLETE
 1. ✅ **COMPLETED**: Create asset embedding script (`scripts/embed-character.go`)
 2. ✅ **COMPLETED**: Extend character package with embedded asset support
-3. Create build automation scripts
-4. Test local builds for single characters
+3. ✅ **COMPLETED**: Create build automation scripts (`scripts/build-characters.sh`)
+4. ✅ **COMPLETED**: Test local builds for multiple characters (default, flirty validated)
 
 ### Phase 2: CI/CD Pipeline (Week 2)
 1. Implement GitHub Actions workflow
