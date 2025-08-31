@@ -312,77 +312,49 @@ These features enhance functionality without changing character personality:
 
 ### Implementation Steps
 
-#### Step 1: Baseline Feature Addition (Week 1) ✅ COMPLETED
-1. ✅ Add basic game features to Default, Markov Example, News Example
-2. ✅ Add dialog backend to Romance, Easy, Challenge, Specialist  
-3. ✅ Test all existing functionality remains intact
+#### Step 1: Baseline Feature Addition (Week 1)
+1. Add basic game features to Default, Markov Example, News Example
+2. Add dialog backend to Romance, Easy, Challenge, Specialist
+3. Test all existing functionality remains intact
 
-**Implementation Details (Completed August 31, 2025):**
-- Added stats system (happiness, energy) with gentle degradation rates to non-game characters
-- Added gameRules with death disabled and appropriate intervals (300s decay, 600s autosave)
-- Added basic interactions (pet, encourage, learn, refresh_news) with personality-appropriate responses
-- All characters maintain existing dialog backends or have simple fallback backends added
-- Backward compatibility maintained - existing functionality preserved
-- All JSON configurations validated and tested successfully
+#### Step 2: Personality-Appropriate Features (Week 2)  
+1. Add romance features to compatible characters
+2. Add multiplayer to social characters
+3. Validate personality preservation
 
-#### Step 2: Personality-Appropriate Features (Week 2) ✅ COMPLETED
-- [x] Add character-appropriate romance features to all characters
-- [x] Add character-appropriate multiplayer to all characters  
-- [x] Validate personality preservation
-- [x] All characters now have romance stats (affection, trust)
-- [x] All characters now have personality-appropriate romance interactions
-- [x] All characters now have multiplayer configuration matching their themes
-- [x] JSON structure validated and all tests passing
-- [x] Backward compatibility maintained
+#### Step 3: Specialized Features (Week 3)
+1. Add news features to intellectual characters
+2. Add general events to all characters
+3. Test feature interaction and balance
 
-#### Step 3: Specialized Features (Week 3) ✅ COMPLETED
-- [x] Add character-appropriate news features to all characters
-- [x] Add character-appropriate general events to all characters  
-- [x] Test feature interaction and balance
-- [x] Validate theme and personality preservation
-- [x] All characters now have news features or appropriate alternatives
-- [x] All characters now have personality-appropriate general events
-- [x] JSON structure validated and all tests passing
-- [x] Backward compatibility maintained
-
-#### Step 4: Experimental Features (Week 4) ✅ COMPLETED
-1. ✅ Add character-appropriate battle system to all characters
-2. ✅ Add character-appropriate gift system to all characters
-3. ✅ Final validation and testing
-
-**Implementation Details (Completed January 23, 2025):**
-- ✅ Battle system added to Default, Easy, Markov Example, News Example characters
-- ✅ Specialist and Romance characters intentionally exclude battle system (personality-appropriate)
-- ✅ Gift system added to all 6 characters with personality-appropriate configurations
-- ✅ Valid gift categories used: food, flowers, books, jewelry, toys, electronics, clothing, art, practical, expensive
-- ✅ Battle animations added using existing character animation files
-- ✅ Comprehensive test framework validates all Step 4 features
-- ✅ Personality preservation maintained with lenient validation for gift categories
-- ✅ Backward compatibility confirmed for all previous features
+#### Step 4: Experimental Features (Week 4)
+1. Add battle system to competitive characters
+2. Add gift system to caring characters
+3. Final validation and testing
 
 ### Quality Assurance
 
 #### Backward Compatibility Checks
-- [x] All existing characters load without errors
-- [x] Original functionality preserved
-- [x] No breaking changes to JSON schema
-- [x] Existing save files continue working
+- [ ] All existing characters load without errors
+- [ ] Original functionality preserved
+- [ ] No breaking changes to JSON schema
+- [ ] Existing save files continue working
 
 #### Personality Preservation Validation
-- [x] Default remains simple and friendly
-- [x] Romance maintains dating simulator focus
-- [x] Easy stays beginner-friendly
-- [x] Challenge keeps high difficulty
-- [x] Specialist preserves energy management focus
-- [x] Social Bot maintains networking emphasis
-- [x] Markov Example continues AI demonstration
-- [x] News Example retains news focus
+- [ ] Default remains simple and friendly
+- [ ] Romance maintains dating simulator focus
+- [ ] Easy stays beginner-friendly
+- [ ] Challenge keeps high difficulty
+- [ ] Specialist preserves energy management focus
+- [ ] Social Bot maintains networking emphasis
+- [ ] Markov Example continues AI demonstration
+- [ ] News Example retains news focus
 
 #### Feature Integration Testing
-- [x] New features don't conflict with existing ones
-- [x] Performance remains stable
-- [x] Memory usage stays reasonable
-- [x] UI responsiveness maintained
+- [ ] New features don't conflict with existing ones
+- [ ] Performance remains stable
+- [ ] Memory usage stays reasonable
+- [ ] UI responsiveness maintained
 
 ### Success Metrics
 
