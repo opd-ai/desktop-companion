@@ -67,6 +67,24 @@
       "max": 100,
       "degradationRate": 3.5,
       "criticalThreshold": 50
+    },
+    "age": {
+      "initial": 0,
+      "max": 999999999,
+      "degradationRate": 0,
+      "criticalThreshold": 0
+    },
+    "affection": {
+      "initial": 0,
+      "max": 30,
+      "degradationRate": 0.03,
+      "criticalThreshold": 3
+    },
+    "trust": {
+      "initial": 8,
+      "max": 40,
+      "degradationRate": 0.015,
+      "criticalThreshold": 4
     }
   },
 
@@ -117,6 +135,32 @@
         "*sleepy contentment*"
       ],
       "cooldown": 12
+    },
+    "dreamy_cuddle": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 3, "happiness": 2, "trust": 1, "energy": 5},
+      "animations": ["happy"],
+      "responses": [
+        "*snuggle* This feels like a warm dream...",
+        "Your presence is so comforting and peaceful...",
+        "I could drift off to sleep in your arms...",
+        "*contented sigh* Perfect for napping together..."
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 12}}
+    },
+    "sleepy_bond": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"affection": 2, "trust": 2, "energy": 3},
+      "animations": ["talking"],
+      "responses": [
+        "*drowsy whisper* You understand my need for rest...",
+        "Being sleepy together is so intimate...",
+        "I love how you respect my energy levels...",
+        "*yawn* You make me feel so safe and understood..."
+      ],
+      "cooldown": 120,
+      "requirements": {"affection": {"min": 6}}
     }
   },
 
@@ -182,5 +226,28 @@
         }
       }
     ]
+  },
+  "personality": {
+    "traits": {
+      "sleepiness": 0.8,
+      "shyness": 0.7,
+      "romanticism": 0.2,
+      "dreaminess": 0.9,
+      "cuddliness": 0.6
+    }
+  },
+  "romanceStats": {
+    "affection": {
+      "initial": 0,
+      "max": 35,
+      "degradationRate": 0.02,
+      "criticalThreshold": 2
+    },
+    "trust": {
+      "initial": 8,
+      "max": 45,
+      "degradationRate": 0.01,
+      "criticalThreshold": 3
+    }
   }
 }

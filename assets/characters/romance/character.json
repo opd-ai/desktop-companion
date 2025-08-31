@@ -261,7 +261,7 @@
   "personality": {
     "traits": {
       "shyness": 0.6,
-      "romanticism": 0.8,
+      "romanticism": 0.9,
       "jealousy_prone": 0.3,
       "trust_difficulty": 0.4,
       "affection_responsiveness": 0.9,
@@ -484,5 +484,15 @@
         "memoryCount": {"total_min": 8}
       }
     }
-  ]
+  ],
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": false,
+    "networkID": "romance_companion_v1",
+    "maxPeers": 2,
+    "socialLevel": "intimate",
+    "shareableStats": ["affection", "trust", "happiness"],
+    "networkPersonality": "romantic",
+    "exclusiveMode": true
+  }
 }

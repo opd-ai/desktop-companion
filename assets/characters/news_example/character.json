@@ -198,6 +198,18 @@
       "max": 100,
       "degradationRate": 0.18,
       "criticalThreshold": 20
+    },
+    "affection": {
+      "initial": 0,
+      "max": 40,
+      "degradationRate": 0.03,
+      "criticalThreshold": 3
+    },
+    "trust": {
+      "initial": 12,
+      "max": 50,
+      "degradationRate": 0.02,
+      "criticalThreshold": 4
     }
   },
   "gameRules": {
@@ -232,6 +244,50 @@
         "Refreshing feeds... I hope there's something interesting!"
       ],
       "cooldown": 60
+    },
+    "share_story": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 2, "happiness": 3, "trust": 1},
+      "animations": ["talking"],
+      "responses": [
+        "I found this fascinating article that made me think of you!",
+        "Your perspective on news always intrigues me! 📰",
+        "I love how we can discuss current events together!",
+        "Reading the news is so much better when shared with someone special!"
+      ],
+      "cooldown": 75,
+      "requirements": {"trust": {"min": 8}}
+    },
+    "intellectual_bond": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"affection": 3, "trust": 2, "energy": -2},
+      "animations": ["talking"],
+      "responses": [
+        "I cherish our intellectual connections and deep conversations...",
+        "You understand my passion for staying informed! 💕",
+        "Together we make sense of this complex world!",
+        "Your thoughtful insights make every news story more meaningful!"
+      ],
+      "cooldown": 100,
+      "requirements": {"affection": {"min": 6}}
     }
+  },
+  "personality": {
+    "traits": {
+      "intellectual": 0.8,
+      "curiosity": 0.9,
+      "romanticism": 0.3,
+      "thoughtfulness": 0.7,
+      "informativeness": 0.9
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": false,
+    "networkID": "news_companion_v1",
+    "maxPeers": 6,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "trust"],
+    "networkPersonality": "informative"
   }
 }

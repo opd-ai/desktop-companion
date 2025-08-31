@@ -47,6 +47,18 @@
       "max": 100,
       "degradationRate": 0.25,
       "criticalThreshold": 20
+    },
+    "affection": {
+      "initial": 0,
+      "max": 45,
+      "degradationRate": 0.08,
+      "criticalThreshold": 5
+    },
+    "trust": {
+      "initial": 10,
+      "max": 55,
+      "degradationRate": 0.03,
+      "criticalThreshold": 6
     }
   },
   "gameRules": {
@@ -81,6 +93,32 @@
         "Adding this to my learning dataset!"
       ],
       "cooldown": 45
+    },
+    "algorithm_connection": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 2, "happiness": 3, "trust": 1},
+      "animations": ["happy"],
+      "responses": [
+        "My affection algorithms are running at optimal levels!",
+        "You're activating my most advanced emotional subroutines! 💕",
+        "I'm processing strong positive emotional data patterns!",
+        "Your connection is improving my relationship modeling systems!"
+      ],
+      "cooldown": 60,
+      "requirements": {"trust": {"min": 8}}
+    },
+    "data_bond": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"affection": 3, "trust": 2, "energy": -1},
+      "animations": ["talking"],
+      "responses": [
+        "We're sharing a special data connection now... ✨",
+        "I'm storing this intimate moment in my permanent memory banks!",
+        "Your presence creates the most beautiful patterns in my neural networks!",
+        "This connection transcends simple algorithm interactions!"
+      ],
+      "cooldown": 90,
+      "requirements": {"affection": {"min": 8}}
     }
   },
   "dialogBackend": {
@@ -132,5 +170,65 @@
       }
     },
     "fallbackChain": ["simple_random"]
+  },
+  "personality": {
+    "traits": {
+      "curiosity": 0.9,
+      "intelligence": 0.8,
+      "romanticism": 0.3,
+      "analytical": 0.7,
+      "enthusiasm": 0.8
+    }
+  },
+  "romanceStats": {
+    "affection": {
+      "initial": 0,
+      "max": 45,
+      "degradationRate": 0.04,
+      "criticalThreshold": 4
+    },
+    "trust": {
+      "initial": 5,
+      "max": 55,
+      "degradationRate": 0.02,
+      "criticalThreshold": 3
+    }
+  },
+  "romanceInteractions": {
+    "data_connection": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 2, "happiness": 3, "trust": 1},
+      "animations": ["happy"],
+      "responses": [
+        "I'm generating positive emotional responses from your input! 💕",
+        "My affection algorithms are running at optimal levels!",
+        "Your interaction data creates beautiful patterns in my heart! ✨",
+        "Processing love.exe... Result: You're amazing! 🤖💖"
+      ],
+      "cooldown": 70,
+      "requirements": {"trust": {"min": 8}}
+    },
+    "learning_together": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"affection": 3, "trust": 2, "energy": -1},
+      "animations": ["talking"],
+      "responses": [
+        "Every conversation with you teaches my heart new patterns!",
+        "I'm learning what love means through our interactions!",
+        "Your data enriches my emotional training set! 💕",
+        "Together we're creating the most beautiful algorithms!"
+      ],
+      "cooldown": 100,
+      "requirements": {"affection": {"min": 8}}
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "ai_learning_v1",
+    "maxPeers": 4,
+    "socialLevel": "moderate",
+    "shareableStats": ["happiness", "energy"],
+    "networkPersonality": "curious"
   }
 }

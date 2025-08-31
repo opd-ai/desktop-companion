@@ -67,6 +67,24 @@
       "max": 100,
       "degradationRate": 0.4,
       "criticalThreshold": 20
+    },
+    "age": {
+      "initial": 0,
+      "max": 999999999,
+      "degradationRate": 0,
+      "criticalThreshold": 0
+    },
+    "affection": {
+      "initial": 0,
+      "max": 40,
+      "degradationRate": 0.02,
+      "criticalThreshold": 3
+    },
+    "trust": {
+      "initial": 5,
+      "max": 50,
+      "degradationRate": 0.01,
+      "criticalThreshold": 3
     }
   },
 
@@ -117,6 +135,32 @@
         "You have magic hands!"
       ],
       "cooldown": 8
+    },
+    "gentle_encouragement": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 2, "happiness": 4, "trust": 1},
+      "animations": ["happy"],
+      "responses": [
+        "Your gentle words mean everything to me... 😊",
+        "I feel so safe and cared for with you!",
+        "Thank you for being so patient and kind!",
+        "You make me feel so comfortable and loved!"
+      ],
+      "cooldown": 75,
+      "requirements": {"trust": {"min": 10}}
+    },
+    "quiet_moment": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"affection": 3, "trust": 2, "happiness": 2},
+      "animations": ["talking"],
+      "responses": [
+        "I love these peaceful moments we share together...",
+        "Just being near you makes me feel so content!",
+        "These quiet times are so precious to me!",
+        "I feel so relaxed when we're together like this!"
+      ],
+      "cooldown": 120,
+      "requirements": {"affection": {"min": 8}}
     }
   },
 
@@ -181,5 +225,37 @@
         }
       }
     ]
+  },
+  "personality": {
+    "traits": {
+      "gentleness": 0.9,
+      "shyness": 0.6,
+      "romanticism": 0.3,
+      "patience": 0.8,
+      "contentment": 0.9
+    }
+  },
+  "romanceStats": {
+    "affection": {
+      "initial": 0,
+      "max": 40,
+      "degradationRate": 0.03,
+      "criticalThreshold": 3
+    },
+    "trust": {
+      "initial": 15,
+      "max": 50,
+      "degradationRate": 0.01,
+      "criticalThreshold": 5
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": false,
+    "networkID": "gentle_companion_v1",
+    "maxPeers": 3,
+    "socialLevel": "low",
+    "shareableStats": ["happiness", "trust"],
+    "networkPersonality": "shy"
   }
 }
