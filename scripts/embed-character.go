@@ -16,11 +16,11 @@ var (
 
 func main() {
 	flag.Parse()
-	
+
 	if *characterName == "" || *outputDir == "" {
 		log.Fatal("Both -character and -output flags are required")
 	}
-	
+
 	// Generate embedded character application
 	if err := embedding.GenerateEmbeddedCharacter(*characterName, *outputDir); err != nil {
 		log.Fatalf("Failed to generate embedded application: %v", err)

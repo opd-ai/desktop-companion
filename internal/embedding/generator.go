@@ -116,24 +116,24 @@ func GenerateEmbeddedCharacter(characterName, outputDir string) error {
 	if err != nil {
 		return fmt.Errorf("failed to read character card %s: %w", cardPath, err)
 	}
-	
+
 	// Parse character card to extract animation paths
 	var card map[string]interface{}
 	if err := json.Unmarshal(cardData, &card); err != nil {
 		return fmt.Errorf("failed to parse character card: %w", err)
 	}
-	
+
 	// Load and embed animations using standard library
 	animations, err := LoadAnimations(card, filepath.Dir(cardPath))
 	if err != nil {
 		return fmt.Errorf("failed to load animations: %w", err)
 	}
-	
+
 	// Generate standalone application
 	if err := generateEmbeddedApp(characterName, string(cardData), animations, outputDir); err != nil {
 		return fmt.Errorf("failed to generate embedded application: %w", err)
 	}
-	
+
 	fmt.Printf("✓ Generated embedded character application for %s in %s\n", characterName, outputDir)
 	return nil
 }
@@ -142,18 +142,18 @@ func GenerateEmbeddedCharacter(characterName, outputDir string) error {
 // Returns map of animation name to binary GIF data
 func LoadAnimations(card map[string]interface{}, characterDir string) (map[string][]byte, error) {
 	animations := make(map[string][]byte)
-	
+
 	// Extract animations section from character card
 	animsInterface, ok := card["animations"]
 	if !ok {
 		return animations, nil // No animations defined
 	}
-	
+
 	anims, ok := animsInterface.(map[string]interface{})
 	if !ok {
 		return nil, fmt.Errorf("animations field must be an object")
 	}
-	
+
 	// Load each animation file
 	for animName, animPathInterface := range anims {
 		animPath, ok := animPathInterface.(string)
@@ -161,28 +161,28 @@ func LoadAnimations(card map[string]interface{}, characterDir string) (map[strin
 			log.Printf("Warning: Animation %s path is not a string, skipping", animName)
 			continue
 		}
-		
+
 		fullPath := filepath.Join(characterDir, animPath)
 		animData, err := os.ReadFile(fullPath)
 		if err != nil {
 			log.Printf("Warning: Failed to read animation %s at %s: %v", animName, fullPath, err)
 			continue
 		}
-		
+
 		// Validate that it's a valid GIF
 		if !IsValidGIF(animData) {
 			log.Printf("Warning: File %s is not a valid GIF, skipping", fullPath)
 			continue
 		}
-		
+
 		animations[animName] = animData
 		fmt.Printf("  ✓ Embedded animation: %s (%d bytes)\n", animName, len(animData))
 	}
-	
+
 	if len(animations) == 0 {
 		return nil, fmt.Errorf("no valid animations found for character")
 	}
-	
+
 	return animations, nil
 }
 
@@ -200,30 +200,30 @@ func generateEmbeddedApp(characterName, characterJSON string, animations map[str
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
-	
+
 	// Prepare template data
 	data := TemplateData{
 		CharacterName: characterName,
 		CharacterJSON: characterJSON,
 		Animations:    animations,
 	}
-	
+
 	// Generate main.go file
 	tmpl := template.Must(template.New("main").Parse(mainTemplate))
-	
+
 	outputFile := filepath.Join(outputDir, "main.go")
 	file, err := os.Create(outputFile)
 	if err != nil {
 		return fmt.Errorf("failed to create output file: %w", err)
 	}
 	defer file.Close()
-	
+
 	if err := tmpl.Execute(file, data); err != nil {
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
-	
+
 	// Note: No go.mod needed - this will be built as part of the main project
 	fmt.Printf("  → To build: go build -o %s-companion %s/main.go\n", characterName, outputDir)
-	
+
 	return nil
 }

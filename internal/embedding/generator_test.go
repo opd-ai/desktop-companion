@@ -1,11 +1,9 @@
-package main
+package embedding
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
-
-	"desktop-companion/internal/embedding"
 )
 
 func TestLoadAnimations(t *testing.T) {
@@ -20,14 +18,20 @@ func TestLoadAnimations(t *testing.T) {
 		},
 	}
 
-	// Create test GIF file (minimal valid GIF)
+	// Create test GIF file (minimal valid GIF89a)
 	testGifData := []byte{
-		0x47, 0x49, 0x46, 0x38, 0x37, 0x61, // GIF87a header
-		0x01, 0x00, 0x01, 0x00, // 1x1 image
-		0x00, 0x00, 0x00, // Global color table
-		0x2C, 0x00, 0x00, 0x00, 0x00, // Image descriptor
-		0x01, 0x00, 0x01, 0x00, 0x00, // 1x1 image with no color table
-		0x02, 0x02, 0x04, 0x01, 0x00, 0x3B, // Image data and trailer
+		// GIF89a header
+		0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
+		// Logical screen descriptor (1x1, global color table)
+		0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
+		// Global color table (2 colors: black and white)
+		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
+		// Image descriptor
+		0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
+		// Image data
+		0x02, 0x02, 0x04, 0x01, 0x00,
+		// Trailer
+		0x3B,
 	}
 
 	animPath := filepath.Join(tempDir, "test.gif")
@@ -37,7 +41,7 @@ func TestLoadAnimations(t *testing.T) {
 	}
 
 	// Test LoadAnimations function
-	animations, err := embedding.LoadAnimations(testCard, tempDir)
+	animations, err := LoadAnimations(testCard, tempDir)
 	if err != nil {
 		t.Fatalf("LoadAnimations failed: %v", err)
 	}
@@ -76,7 +80,7 @@ func TestLoadAnimations_InvalidGIF(t *testing.T) {
 	}
 
 	// Test LoadAnimations function with invalid GIF
-	animations, err := embedding.LoadAnimations(testCard, tempDir)
+	animations, err := LoadAnimations(testCard, tempDir)
 	if err == nil {
 		t.Error("Expected error for invalid GIF, but got none")
 	}
@@ -99,7 +103,7 @@ func TestLoadAnimations_MissingFile(t *testing.T) {
 	}
 
 	// Test LoadAnimations function with missing file
-	animations, err := embedding.LoadAnimations(testCard, tempDir)
+	animations, err := LoadAnimations(testCard, tempDir)
 	if err == nil {
 		t.Error("Expected error for missing file, but got none")
 	}
@@ -116,7 +120,7 @@ func TestLoadAnimations_NoAnimations(t *testing.T) {
 	}
 
 	// Test LoadAnimations function with no animations
-	animations, err := embedding.LoadAnimations(testCard, "")
+	animations, err := LoadAnimations(testCard, "")
 	if err != nil {
 		t.Errorf("Unexpected error for no animations: %v", err)
 	}
@@ -127,56 +131,36 @@ func TestLoadAnimations_NoAnimations(t *testing.T) {
 }
 
 func TestIsValidGIF(t *testing.T) {
-	// Test valid GIF data
+	// Test valid GIF data (minimal valid GIF89a)
 	validGifData := []byte{
-		0x47, 0x49, 0x46, 0x38, 0x37, 0x61, // GIF87a header
-		0x01, 0x00, 0x01, 0x00, // 1x1 image
-		0x00, 0x00, 0x00, // Global color table
-		0x2C, 0x00, 0x00, 0x00, 0x00, // Image descriptor
-		0x01, 0x00, 0x01, 0x00, 0x00, // 1x1 image with no color table
-		0x02, 0x02, 0x04, 0x01, 0x00, 0x3B, // Image data and trailer
+		// GIF89a header
+		0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
+		// Logical screen descriptor (1x1, global color table)
+		0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
+		// Global color table (2 colors: black and white)
+		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
+		// Image descriptor
+		0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
+		// Image data
+		0x02, 0x02, 0x04, 0x01, 0x00,
+		// Trailer
+		0x3B,
 	}
 
-	if !embedding.IsValidGIF(validGifData) {
+	if !IsValidGIF(validGifData) {
 		t.Error("Expected valid GIF to be recognized as valid")
 	}
 
 	// Test invalid GIF data
 	invalidData := []byte{0x00, 0x01, 0x02, 0x03}
-	if embedding.IsValidGIF(invalidData) {
+	if IsValidGIF(invalidData) {
 		t.Error("Expected invalid data to be recognized as invalid")
 	}
 
 	// Test empty data
-	if embedding.IsValidGIF([]byte{}) {
+	if IsValidGIF([]byte{}) {
 		t.Error("Expected empty data to be recognized as invalid")
 	}
-}
-
-func TestGenerateEmbeddedCharacter_Integration(t *testing.T) {
-	// This would require actual character assets, so we'll skip for now
-	// In a real scenario, you'd test with a known character like "default"
-	t.Skip("Integration test requires actual character assets")
-}
-
-// Helper function to check if string contains substring (for compatibility with older Go versions)
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || indexOfSubstring(s, substr) >= 0)
-}
-
-func indexOfSubstring(s, substr string) int {
-	if len(substr) == 0 {
-		return 0
-	}
-	if len(substr) > len(s) {
-		return -1
-	}
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return i
-		}
-	}
-	return -1
 }
 
 func BenchmarkLoadAnimations(b *testing.B) {
@@ -203,7 +187,7 @@ func BenchmarkLoadAnimations(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := embedding.LoadAnimations(testCard, tempDir)
+		_, err := LoadAnimations(testCard, tempDir)
 		if err != nil {
 			b.Fatalf("LoadAnimations failed: %v", err)
 		}
@@ -211,19 +195,25 @@ func BenchmarkLoadAnimations(b *testing.B) {
 }
 
 func BenchmarkIsValidGIF(b *testing.B) {
-	// Create test data
+	// Create test data (minimal valid GIF89a)
 	validGifData := []byte{
-		0x47, 0x49, 0x46, 0x38, 0x37, 0x61, // GIF87a header
-		0x01, 0x00, 0x01, 0x00, // 1x1 image
-		0x00, 0x00, 0x00, // Global color table
-		0x2C, 0x00, 0x00, 0x00, 0x00, // Image descriptor
-		0x01, 0x00, 0x01, 0x00, 0x00, // 1x1 image with no color table
-		0x02, 0x02, 0x04, 0x01, 0x00, 0x3B, // Image data and trailer
+		// GIF89a header
+		0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
+		// Logical screen descriptor (1x1, global color table)
+		0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
+		// Global color table (2 colors: black and white)
+		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
+		// Image descriptor
+		0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
+		// Image data
+		0x02, 0x02, 0x04, 0x01, 0x00,
+		// Trailer
+		0x3B,
 	}
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		embedding.IsValidGIF(validGifData)
+		IsValidGIF(validGifData)
 	}
 }
