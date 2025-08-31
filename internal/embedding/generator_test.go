@@ -18,29 +18,18 @@ func TestLoadAnimations(t *testing.T) {
 		},
 	}
 
-	// Create test GIF file (minimal valid GIF89a)
-	testGifData := []byte{
-		// GIF89a header
-		0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
-		// Logical screen descriptor (1x1, global color table)
-		0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
-		// Global color table (2 colors: black and white)
-		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
-		// Image descriptor
-		0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
-		// Image data
-		0x02, 0x02, 0x04, 0x01, 0x00,
-		// Trailer
-		0x3B,
+	// Copy a real GIF file from the assets for testing
+	srcGifPath := "../../assets/characters/default/animations/idle.gif"
+	testGifData, err := os.ReadFile(srcGifPath)
+	if err != nil {
+		t.Skipf("Skipping test - no test GIF available: %v", err)
 	}
 
 	animPath := filepath.Join(tempDir, "test.gif")
-	err := os.WriteFile(animPath, testGifData, 0644)
+	err = os.WriteFile(animPath, testGifData, 0644)
 	if err != nil {
 		t.Fatalf("Failed to create test GIF: %v", err)
-	}
-
-	// Test LoadAnimations function
+	} // Test LoadAnimations function
 	animations, err := LoadAnimations(testCard, tempDir)
 	if err != nil {
 		t.Fatalf("LoadAnimations failed: %v", err)
@@ -131,27 +120,16 @@ func TestLoadAnimations_NoAnimations(t *testing.T) {
 }
 
 func TestIsValidGIF(t *testing.T) {
-	// Test valid GIF data (minimal valid GIF89a)
-	validGifData := []byte{
-		// GIF89a header
-		0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
-		// Logical screen descriptor (1x1, global color table)
-		0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
-		// Global color table (2 colors: black and white)
-		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
-		// Image descriptor
-		0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
-		// Image data
-		0x02, 0x02, 0x04, 0x01, 0x00,
-		// Trailer
-		0x3B,
+	// Test with real GIF data from assets
+	srcGifPath := "../../assets/characters/default/animations/idle.gif"
+	validGifData, err := os.ReadFile(srcGifPath)
+	if err != nil {
+		t.Skipf("Skipping test - no test GIF available: %v", err)
 	}
 
 	if !IsValidGIF(validGifData) {
 		t.Error("Expected valid GIF to be recognized as valid")
-	}
-
-	// Test invalid GIF data
+	} // Test invalid GIF data
 	invalidData := []byte{0x00, 0x01, 0x02, 0x03}
 	if IsValidGIF(invalidData) {
 		t.Error("Expected invalid data to be recognized as invalid")
@@ -195,20 +173,11 @@ func BenchmarkLoadAnimations(b *testing.B) {
 }
 
 func BenchmarkIsValidGIF(b *testing.B) {
-	// Create test data (minimal valid GIF89a)
-	validGifData := []byte{
-		// GIF89a header
-		0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
-		// Logical screen descriptor (1x1, global color table)
-		0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
-		// Global color table (2 colors: black and white)
-		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
-		// Image descriptor
-		0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
-		// Image data
-		0x02, 0x02, 0x04, 0x01, 0x00,
-		// Trailer
-		0x3B,
+	// Use real GIF data from assets
+	srcGifPath := "../../assets/characters/default/animations/idle.gif"
+	validGifData, err := os.ReadFile(srcGifPath)
+	if err != nil {
+		b.Skipf("Skipping benchmark - no test GIF available: %v", err)
 	}
 
 	b.ResetTimer()
