@@ -194,9 +194,9 @@ func TestSingleTapGesture(t *testing.T) {
 
 	var tapCalled bool
 	var mu sync.Mutex
-	handler.SetTapHandler(func() { 
+	handler.SetTapHandler(func() {
 		mu.Lock()
-		tapCalled = true 
+		tapCalled = true
 		mu.Unlock()
 	})
 
@@ -211,7 +211,7 @@ func TestSingleTapGesture(t *testing.T) {
 	mu.Lock()
 	called := tapCalled
 	mu.Unlock()
-	
+
 	if !called {
 		t.Error("Single tap callback was not called")
 	}
@@ -233,9 +233,9 @@ func TestLongPressGesture(t *testing.T) {
 
 	var longPressCalled bool
 	var mu sync.Mutex
-	handler.SetLongPressHandler(func() { 
+	handler.SetLongPressHandler(func() {
 		mu.Lock()
-		longPressCalled = true 
+		longPressCalled = true
 		mu.Unlock()
 	})
 
@@ -251,7 +251,7 @@ func TestLongPressGesture(t *testing.T) {
 	mu.Lock()
 	called := longPressCalled
 	mu.Unlock()
-	
+
 	if !called {
 		t.Error("Long press callback was not called")
 	}
@@ -273,9 +273,9 @@ func TestDoubleTapGesture(t *testing.T) {
 
 	var doubleTapCalled bool
 	var mu sync.Mutex
-	handler.SetDoubleTapHandler(func() { 
+	handler.SetDoubleTapHandler(func() {
 		mu.Lock()
-		doubleTapCalled = true 
+		doubleTapCalled = true
 		mu.Unlock()
 	})
 
@@ -297,7 +297,7 @@ func TestDoubleTapGesture(t *testing.T) {
 	mu.Lock()
 	called := doubleTapCalled
 	mu.Unlock()
-	
+
 	if !called {
 		t.Error("Double tap callback was not called")
 	}

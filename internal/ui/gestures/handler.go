@@ -139,7 +139,7 @@ func (gh *GestureHandler) HandleTouchEnd(pos fyne.Position) {
 	}
 
 	gh.mu.Lock()
-	
+
 	// Cancel long press timer if still active
 	if gh.longPressTimer != nil {
 		gh.longPressTimer.Stop()
@@ -235,7 +235,7 @@ func (gh *GestureHandler) handleLongPress() {
 
 	gh.longPressActive = true
 	onLongPress := gh.onLongPress
-	
+
 	// Call handler outside of lock to avoid potential deadlock
 	gh.mu.Unlock()
 	if onLongPress != nil {
