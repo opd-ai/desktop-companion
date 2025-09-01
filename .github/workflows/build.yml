@@ -104,7 +104,7 @@ jobs:
     
     - name: Build Windows binary
       run: |
-        mkdir -p build artifacts
+        mkdir build; mkdir artifacts
         go build -ldflags="-s -w" -o build/companion-windows-amd64.exe cmd/companion/main.go
         copy build\companion-windows-amd64.exe artifacts\
     
@@ -127,7 +127,14 @@ jobs:
     needs: test
     steps:
     - uses: actions/checkout@v4
-    
+
+    - name: Install Xcode command line tools
+      run: |
+        xcode-select --install || true
+
+    - name: Install OpenGL headers (macOS)
+      run: brew install --cask xquartz
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
