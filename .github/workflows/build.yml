@@ -133,7 +133,7 @@ jobs:
         xcode-select --install || true
 
     - name: Install OpenGL (macOS)
-      run: brew install --cask xquartz || true
+      run: brew install --cask xquartz glew glfw
     - name: Ensure OpenGL headers
       run: |
         if [ ! -d "/opt/X11/include/GL" ]; then
