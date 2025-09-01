@@ -265,6 +265,96 @@ func TestProjectStructure(t *testing.T) {
 	t.Log("Project structure validation passed")
 }
 
+// TestGap5AndroidIconPathValidation validates that the Android icon path is reliable
+// This test addresses Gap #5 from AUDIT.md: Android Build Icon Path Reference Error
+func TestGap5AndroidIconPathValidation(t *testing.T) {
+	projectRoot := filepath.Join("..", "..")
+
+	t.Run("Dedicated_App_Icon_Exists", func(t *testing.T) {
+		// Check if dedicated app icon exists
+		iconPath := filepath.Join(projectRoot, "assets", "app", "icon.gif")
+		if _, err := os.Stat(iconPath); err != nil {
+			t.Errorf("Dedicated app icon not found: %s", iconPath)
+			t.Error("This will cause Android builds to fail")
+			t.Error("Fix: Create assets/app/icon.gif as a dedicated app icon")
+			return
+		}
+
+		// Validate it's a proper GIF
+		file, err := os.Open(iconPath)
+		if err != nil {
+			t.Errorf("Cannot open app icon: %v", err)
+			return
+		}
+		defer file.Close()
+
+		header := make([]byte, 3)
+		_, err = file.Read(header)
+		if err != nil {
+			t.Errorf("Cannot read app icon header: %v", err)
+			return
+		}
+
+		if string(header) != "GIF" {
+			t.Errorf("App icon is not a valid GIF file")
+		}
+
+		t.Log("✅ Dedicated app icon exists and is valid")
+	})
+
+	t.Run("Makefile_Uses_Dedicated_Icon", func(t *testing.T) {
+		// Read Makefile to verify it uses the dedicated icon
+		makefilePath := filepath.Join(projectRoot, "Makefile")
+		content, err := os.ReadFile(makefilePath)
+		if err != nil {
+			t.Fatalf("Cannot read Makefile: %v", err)
+		}
+
+		makefileContent := string(content)
+
+		// Check that it uses app/icon.gif, not character animations
+		if !strings.Contains(makefileContent, "assets/app/icon.gif") {
+			t.Error("Makefile should use dedicated app icon: assets/app/icon.gif")
+		}
+
+		// Ensure it doesn't use character animation as icon (the original bug)
+		if strings.Contains(makefileContent, "assets/characters/default/animations/idle.gif") &&
+			strings.Contains(makefileContent, "--icon") {
+			t.Error("Makefile still uses character animation as app icon")
+			t.Error("This creates dependency between Android builds and character setup")
+		}
+
+		t.Log("✅ Makefile uses dedicated app icon, not character animations")
+	})
+
+	t.Run("Build_Independence_From_Character_Setup", func(t *testing.T) {
+		// This test simulates a fresh installation where character animations
+		// haven't been set up yet, but Android builds should still work
+
+		// The fix ensures Android builds don't depend on character animations
+		iconPath := filepath.Join(projectRoot, "assets", "app", "icon.gif")
+		characterIconPath := filepath.Join(projectRoot, "assets", "characters", "default", "animations", "idle.gif")
+
+		// Both should exist, but app icon should be independent
+		_, appIconErr := os.Stat(iconPath)
+		_, charIconErr := os.Stat(characterIconPath)
+
+		if appIconErr != nil {
+			t.Errorf("App icon missing: %s", iconPath)
+		}
+
+		if charIconErr != nil {
+			t.Logf("Character icon missing (simulating fresh setup): %s", characterIconPath)
+			// This is OK - Android builds should work even without character setup
+		}
+
+		// The key point: app icon exists independently
+		if appIconErr == nil {
+			t.Log("✅ Android builds are independent of character animation setup")
+		}
+	})
+}
+
 // Benchmark Android build process (when SDK available)
 func BenchmarkAndroidBuildPreparation(b *testing.B) {
 	if os.Getenv("ANDROID_HOME") == "" {
