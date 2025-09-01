@@ -129,8 +129,8 @@ func TestProgressionState_Update_AchievementTracking(t *testing.T) {
 	if len(achievements) != 1 {
 		t.Errorf("Expected 1 achievement (Happy Pet), got %d: %v", len(achievements), achievements)
 	}
-	if len(achievements) > 0 && achievements[0] != "Happy Pet" {
-		t.Errorf("Expected 'Happy Pet' achievement, got '%s'", achievements[0])
+	if len(achievements) > 0 && achievements[0].Name != "Happy Pet" {
+		t.Errorf("Expected 'Happy Pet' achievement, got '%s'", achievements[0].Name)
 	}
 
 	// Second update - should complete "Well Fed" after duration
@@ -138,8 +138,8 @@ func TestProgressionState_Update_AchievementTracking(t *testing.T) {
 	if len(achievements) != 1 {
 		t.Errorf("Expected 1 achievement (Well Fed), got %d: %v", len(achievements), achievements)
 	}
-	if len(achievements) > 0 && achievements[0] != "Well Fed" {
-		t.Errorf("Expected 'Well Fed' achievement, got '%s'", achievements[0])
+	if len(achievements) > 0 && achievements[0].Name != "Well Fed" {
+		t.Errorf("Expected 'Well Fed' achievement, got '%s'", achievements[0].Name)
 	}
 
 	// Verify both achievements are recorded

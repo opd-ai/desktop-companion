@@ -57,6 +57,15 @@ type AchievementReward struct {
 	Size       int                `json:"size,omitempty"`       // Size change
 }
 
+// AchievementDetails contains detailed information about a newly earned achievement
+// Used for displaying notifications with rich information about what was unlocked
+type AchievementDetails struct {
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	Timestamp   time.Time          `json:"timestamp"`
+	Reward      *AchievementReward `json:"reward,omitempty"`
+}
+
 // NewProgressionState creates a new progression state with configuration
 func NewProgressionState(config *ProgressionConfig) *ProgressionState {
 	ps := &ProgressionState{
@@ -84,8 +93,8 @@ func NewProgressionState(config *ProgressionConfig) *ProgressionState {
 }
 
 // Update progression state based on current game state and elapsed time
-// Returns true if level changed, list of newly earned achievements
-func (ps *ProgressionState) Update(gameState *GameState, elapsed time.Duration) (bool, []string) {
+// Returns true if level changed, list of newly earned achievement details
+func (ps *ProgressionState) Update(gameState *GameState, elapsed time.Duration) (bool, []AchievementDetails) {
 	if ps == nil || ps.Config == nil {
 		return false, nil
 	}
@@ -97,11 +106,69 @@ func (ps *ProgressionState) Update(gameState *GameState, elapsed time.Duration) 
 	ps.TotalCareTime += elapsed
 
 	levelChanged := ps.checkLevelProgression()
-	newAchievements := ps.checkAchievements(gameState, elapsed)
+	newAchievementNames := ps.checkAchievements(gameState, elapsed)
+
+	// Convert achievement names to detailed achievement information
+	newAchievementDetails := make([]AchievementDetails, 0, len(newAchievementNames))
+	for _, achievementName := range newAchievementNames {
+		details := ps.createAchievementDetails(achievementName)
+		newAchievementDetails = append(newAchievementDetails, details)
+	}
 
 	ps.LastLevelCheck = time.Now()
 
-	return levelChanged, newAchievements
+	return levelChanged, newAchievementDetails
+}
+
+// createAchievementDetails creates detailed achievement information from achievement name
+func (ps *ProgressionState) createAchievementDetails(achievementName string) AchievementDetails {
+	// Find the achievement config to get description and reward info
+	var achievementConfig *AchievementConfig
+	for _, config := range ps.Config.Achievements {
+		if config.Name == achievementName {
+			achievementConfig = &config
+			break
+		}
+	}
+
+	details := AchievementDetails{
+		Name:      achievementName,
+		Timestamp: time.Now(),
+	}
+
+	// Add description and reward if available
+	if achievementConfig != nil {
+		// For now, use the name as description. In a full implementation,
+		// the AchievementConfig could include a separate description field
+		details.Description = generateAchievementDescription(achievementConfig)
+		details.Reward = achievementConfig.Reward
+	}
+
+	return details
+}
+
+// generateAchievementDescription creates a user-friendly description from achievement config
+func generateAchievementDescription(config *AchievementConfig) string {
+	if config == nil {
+		return "Achievement unlocked!"
+	}
+
+	// Create a basic description based on requirements
+	// This follows the "lazy programmer" principle - simple but functional
+	switch {
+	case len(config.Requirement) == 0:
+		return "Achievement unlocked!"
+	case config.Requirement["happiness"] != nil:
+		return "Maintained excellent happiness level!"
+	case config.Requirement["hunger"] != nil:
+		return "Kept your companion well-fed!"
+	case config.Requirement["health"] != nil:
+		return "Maintained excellent health!"
+	case config.Requirement["energy"] != nil:
+		return "Kept your companion energized!"
+	default:
+		return "Special achievement unlocked!"
+	}
 }
 
 // checkLevelProgression evaluates if character should advance to next level

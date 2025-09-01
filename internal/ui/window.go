@@ -16,22 +16,23 @@ import (
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
-	window           fyne.Window
-	character        *character.Character
-	renderer         *CharacterRenderer
-	dialog           *DialogBubble
-	contextMenu      *ContextMenu
-	statsOverlay     *StatsOverlay
-	chatbotInterface *ChatbotInterface
-	networkOverlay   *NetworkOverlay
-	giftDialog       *GiftSelectionDialog
-	profiler         *monitoring.Profiler
-	debug            bool
-	gameMode         bool
-	showStats        bool
-	networkMode      bool
-	showNetwork      bool
-	eventsEnabled    bool
+	window                  fyne.Window
+	character               *character.Character
+	renderer                *CharacterRenderer
+	dialog                  *DialogBubble
+	contextMenu             *ContextMenu
+	statsOverlay            *StatsOverlay
+	chatbotInterface        *ChatbotInterface
+	networkOverlay          *NetworkOverlay
+	giftDialog              *GiftSelectionDialog
+	achievementNotification *AchievementNotification
+	profiler                *monitoring.Profiler
+	debug                   bool
+	gameMode                bool
+	showStats               bool
+	networkMode             bool
+	showNetwork             bool
+	eventsEnabled           bool
 }
 
 // NewDesktopWindow creates a new transparent desktop window
@@ -108,6 +109,9 @@ func initializeGameFeatures(dw *DesktopWindow, gameMode bool, showStats bool, ch
 		if showStats {
 			dw.statsOverlay.Show()
 		}
+
+		// Initialize achievement notifications for game mode
+		dw.achievementNotification = NewAchievementNotification()
 	}
 }
 
@@ -184,6 +188,11 @@ func (dw *DesktopWindow) setupContent() {
 	// Add network overlay if available
 	if dw.networkOverlay != nil {
 		objects = append(objects, dw.networkOverlay.GetContainer())
+	}
+
+	// Add achievement notification if available
+	if dw.achievementNotification != nil {
+		objects = append(objects, dw.achievementNotification)
 	}
 
 	// Create container with transparent background for overlay effect
@@ -630,6 +639,9 @@ func (dw *DesktopWindow) processFrameUpdates(hasChanges bool) {
 		dw.profiler.RecordFrame()
 	}
 
+	// Check for new achievements and display notifications
+	dw.checkForNewAchievements()
+
 	// Only refresh renderer when there are actual changes
 	if hasChanges {
 		dw.renderer.Refresh()
@@ -795,6 +807,34 @@ func (dw *DesktopWindow) ToggleNetworkOverlay() {
 				log.Println("Network overlay hidden")
 			}
 		}
+	}
+}
+
+// ShowAchievementNotification displays an achievement notification
+func (dw *DesktopWindow) ShowAchievementNotification(details character.AchievementDetails) {
+	if dw.achievementNotification != nil {
+		dw.achievementNotification.ShowAchievement(details)
+		if dw.debug {
+			log.Printf("Achievement notification shown: %s", details.Name)
+		}
+	}
+}
+
+// checkForNewAchievements checks if any new achievements were earned and displays notifications
+func (dw *DesktopWindow) checkForNewAchievements() {
+	if dw.character == nil || dw.achievementNotification == nil {
+		return
+	}
+
+	gameState := dw.character.GetGameState()
+	if gameState == nil {
+		return
+	}
+
+	// Get any recently earned achievements
+	recentAchievements := gameState.GetRecentAchievements()
+	for _, achievement := range recentAchievements {
+		dw.ShowAchievementNotification(achievement)
 	}
 }
 

@@ -48,6 +48,7 @@ type GameState struct {
 	RomanceMemories    []RomanceMemory        `json:"romanceMemories,omitempty"`
 	DialogMemories     []DialogMemory         `json:"dialogMemories,omitempty"`
 	GiftMemories       []GiftMemory           `json:"giftMemories,omitempty"`
+	recentAchievements []AchievementDetails   // Non-persistent field for UI notifications
 }
 
 // Stat represents a game statistic with boundaries and degradation rules
@@ -137,6 +138,9 @@ func (gs *GameState) Update(elapsed time.Duration) []string {
 	// Update progression if enabled
 	levelChanged, newAchievements := gs.updateProgression(elapsed)
 
+	// Store achievement details for UI retrieval
+	gs.recentAchievements = newAchievements
+
 	// Check if enough time has passed for degradation
 	decayInterval := gs.calculateDecayInterval()
 	if timeSinceLastDecay < decayInterval {
@@ -154,13 +158,28 @@ func (gs *GameState) Update(elapsed time.Duration) []string {
 }
 
 // updateProgression processes progression updates and returns whether level changed and new achievements
-func (gs *GameState) updateProgression(elapsed time.Duration) (bool, []string) {
+func (gs *GameState) updateProgression(elapsed time.Duration) (bool, []AchievementDetails) {
 	var levelChanged bool
-	var newAchievements []string
+	var newAchievements []AchievementDetails
 	if gs.Progression != nil {
 		levelChanged, newAchievements = gs.Progression.Update(gs, elapsed)
 	}
 	return levelChanged, newAchievements
+}
+
+// GetRecentAchievements returns and clears any recently earned achievements
+// This allows the UI to retrieve new achievements for notifications
+func (gs *GameState) GetRecentAchievements() []AchievementDetails {
+	if gs == nil {
+		return nil
+	}
+
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	achievements := gs.recentAchievements
+	gs.recentAchievements = nil // Clear after retrieval
+	return achievements
 }
 
 // calculateDecayInterval determines the time interval for stat degradation
@@ -173,13 +192,13 @@ func (gs *GameState) calculateDecayInterval() time.Duration {
 }
 
 // buildProgressionStates creates triggered states from progression events
-func (gs *GameState) buildProgressionStates(levelChanged bool, newAchievements []string) []string {
+func (gs *GameState) buildProgressionStates(levelChanged bool, newAchievements []AchievementDetails) []string {
 	triggeredStates := make([]string, 0)
 	if levelChanged {
 		triggeredStates = append(triggeredStates, "level_up")
 	}
 	for _, achievement := range newAchievements {
-		triggeredStates = append(triggeredStates, fmt.Sprintf("achievement_%s", achievement))
+		triggeredStates = append(triggeredStates, fmt.Sprintf("achievement_%s", achievement.Name))
 	}
 	return triggeredStates
 }
@@ -598,6 +617,24 @@ func (gs *GameState) GetOverallMood() float64 {
 	}
 
 	return totalPercentage / float64(len(gs.Stats))
+}
+
+// GetMoodCategory returns the mood category based on overall mood calculation
+// Used for mood-based animation preferences
+func (gs *GameState) GetMoodCategory() string {
+	mood := gs.GetOverallMood()
+	switch {
+	case mood >= 80:
+		return "happy"
+	case mood >= 60:
+		return "content"
+	case mood >= 40:
+		return "neutral"
+	case mood >= 20:
+		return "sad"
+	default:
+		return "depressed"
+	}
 }
 
 // GetProgression returns a reference to the progression state

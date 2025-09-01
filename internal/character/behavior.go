@@ -999,9 +999,12 @@ func (c *Character) setState(state string) {
 		return
 	}
 
+	// Use mood-appropriate animation if mood preferences are configured
+	moodState := c.selectMoodAppropriateAnimation(state)
+
 	// Only change state if the animation exists
-	if err := c.animationManager.SetCurrentAnimation(state); err == nil {
-		c.currentState = state
+	if err := c.animationManager.SetCurrentAnimation(moodState); err == nil {
+		c.currentState = moodState
 		c.lastStateChange = time.Now()
 	}
 }
@@ -1822,7 +1825,12 @@ func (c *Character) selectIdleAnimation() string {
 		return defaultIdle
 	}
 
-	// Get overall mood (0-100 scale)
+	// Use mood preferences if available
+	if c.card.Behavior.MoodAnimationPreferences != nil {
+		return c.selectMoodAppropriateAnimation(defaultIdle)
+	}
+
+	// Legacy mood selection (for backward compatibility)
 	mood := c.gameState.GetOverallMood()
 
 	// Select animation based on mood thresholds
@@ -1846,6 +1854,38 @@ func (c *Character) selectIdleAnimation() string {
 	}
 
 	return defaultIdle
+}
+
+// selectMoodAppropriateAnimation chooses animation based on mood category preferences
+// Returns the preferredState if no mood-appropriate animation is available
+func (c *Character) selectMoodAppropriateAnimation(preferredState string) string {
+	if c.gameState == nil {
+		return preferredState
+	}
+
+	// Check if character has mood preferences
+	if c.card.Behavior.MoodAnimationPreferences == nil {
+		return preferredState
+	}
+
+	moodCategory := c.gameState.GetMoodCategory()
+	moodAnimations := c.card.Behavior.MoodAnimationPreferences[moodCategory]
+
+	// Get list of loaded animations to check availability
+	loadedAnimations := c.animationManager.GetLoadedAnimations()
+	loadedSet := make(map[string]bool)
+	for _, anim := range loadedAnimations {
+		loadedSet[anim] = true
+	}
+
+	// Prefer mood-appropriate animations if available
+	for _, animation := range moodAnimations {
+		if loadedSet[animation] {
+			return animation
+		}
+	}
+
+	return preferredState // Fallback to original
 }
 
 // getAnimationForGameState maps game states to animation names

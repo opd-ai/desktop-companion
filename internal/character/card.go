@@ -81,9 +81,10 @@ type Dialog struct {
 
 // Behavior defines character behavior settings
 type Behavior struct {
-	IdleTimeout     int  `json:"idleTimeout"`     // Seconds before returning to idle
-	MovementEnabled bool `json:"movementEnabled"` // Allow dragging
-	DefaultSize     int  `json:"defaultSize"`     // Character size in pixels
+	IdleTimeout              int                 `json:"idleTimeout"`                        // Seconds before returning to idle
+	MovementEnabled          bool                `json:"movementEnabled"`                    // Allow dragging
+	DefaultSize              int                 `json:"defaultSize"`                        // Character size in pixels
+	MoodAnimationPreferences map[string][]string `json:"moodAnimationPreferences,omitempty"` // Mood-based animation preferences
 }
 
 // GameRulesConfig defines game-wide settings for Tamagotchi-style features
