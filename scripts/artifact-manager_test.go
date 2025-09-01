@@ -14,13 +14,16 @@ func TestArtifactManager(t *testing.T) {
 	// Create temporary directory for testing
 	tempDir := t.TempDir()
 
+	// Create artifacts directory separate from test file location
+	artifactsDir := filepath.Join(tempDir, "artifacts")
+
 	// Initialize artifact manager
-	manager, err := artifact.NewManager(tempDir)
+	manager, err := artifact.NewManager(artifactsDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
 	}
 
-	// Test storing an artifact
+	// Test storing an artifact - create test file outside artifacts directory
 	testBinary := filepath.Join(tempDir, "test_binary")
 	testContent := []byte("test binary content")
 	if err := os.WriteFile(testBinary, testContent, 0644); err != nil {
@@ -38,7 +41,7 @@ func TestArtifactManager(t *testing.T) {
 	}
 
 	// Test listing artifacts
-	artifacts, err := manager.ListArtifacts("", "", "")
+	artifacts, err := manager.ListArtifacts("test-char", "", "")
 	if err != nil {
 		t.Fatalf("Failed to list artifacts: %v", err)
 	}
@@ -48,13 +51,17 @@ func TestArtifactManager(t *testing.T) {
 	}
 
 	// Test getting statistics
-	stats := manager.GetStatistics()
-	if stats.TotalArtifacts != 1 {
-		t.Errorf("Expected 1 total artifact, got %d", stats.TotalArtifacts)
+	stats, err := manager.GetArtifactStats()
+	if err != nil {
+		t.Fatalf("Failed to get artifact statistics: %v", err)
 	}
 
-	if stats.TotalSize <= 0 {
-		t.Errorf("Expected positive total size, got %d", stats.TotalSize)
+	if stats["total_artifacts"].(int) != 1 {
+		t.Errorf("Expected 1 total artifact, got %d", stats["total_artifacts"].(int))
+	}
+
+	if stats["total_size"].(int64) <= 0 {
+		t.Errorf("Expected positive total size, got %d", stats["total_size"].(int64))
 	}
 }
 
@@ -73,35 +80,32 @@ func TestArtifactRetention(t *testing.T) {
 	}
 
 	// Store artifact with old timestamp
-	if err := manager.Store("old-char", "linux", "amd64", testBinary); err != nil {
+	_, err = manager.StoreArtifact(testBinary, "old-char", "linux", "amd64", nil)
+	if err != nil {
 		t.Fatalf("Failed to store artifact: %v", err)
 	}
 
 	// Manually set old timestamp for testing
-	oldTime := time.Now().Add(-30 * 24 * time.Hour) // 30 days ago
-	storedPath := filepath.Join(tempDir, "old-char", "linux", "amd64", "old_binary")
-	if err := os.Chtimes(storedPath, oldTime, oldTime); err != nil {
+	oldTime := time.Now().Add(-30 * 24 * time.Hour)                                 // 30 days ago
+	storedPath := filepath.Join(tempDir, "old-char", "linux_amd64", "old_binary_*") // Pattern match
+
+	// Find the actual stored file
+	matches, err := filepath.Glob(storedPath)
+	if err != nil || len(matches) == 0 {
+		t.Fatalf("Failed to find stored artifact: %v", err)
+	}
+	if err := os.Chtimes(matches[0], oldTime, oldTime); err != nil {
 		t.Fatalf("Failed to set old timestamp: %v", err)
 	}
 
-	// Test development retention policy (7 days)
-	policy := artifact.RetentionPolicy{
-		Name:        "development",
-		MaxAge:      7 * 24 * time.Hour,
-		Description: "Development builds retention",
-	}
-
-	cleaned, err := manager.ApplyRetentionPolicy(policy)
+	// Test development retention policy (7 days) - use existing policy
+	err = manager.CleanupArtifacts("development")
 	if err != nil {
-		t.Fatalf("Failed to apply retention policy: %v", err)
-	}
-
-	if cleaned != 1 {
-		t.Errorf("Expected 1 artifact to be cleaned, got %d", cleaned)
+		t.Fatalf("Failed to apply cleanup policy: %v", err)
 	}
 
 	// Verify artifact was removed
-	artifacts, err := manager.List("", "", "")
+	artifacts, err := manager.ListArtifacts("", "", "")
 	if err != nil {
 		t.Fatalf("Failed to list artifacts after cleanup: %v", err)
 	}
@@ -127,35 +131,25 @@ func TestArtifactCompression(t *testing.T) {
 	}
 
 	// Store the artifact
-	if err := manager.Store("large-char", "linux", "amd64", testBinary); err != nil {
+	_, err = manager.StoreArtifact(testBinary, "large-char", "linux", "amd64", nil)
+	if err != nil {
 		t.Fatalf("Failed to store artifact: %v", err)
 	}
 
 	// Get original size
-	originalStats, err := manager.GetStatistics()
+	originalStats, err := manager.GetArtifactStats()
 	if err != nil {
 		t.Fatalf("Failed to get original statistics: %v", err)
 	}
 
-	// Apply compression
-	policy := artifact.RetentionPolicy{
-		Name:           "production",
-		MaxAge:         90 * 24 * time.Hour,
-		EnableCompress: true,
-		Description:    "Production builds with compression",
-	}
-
-	compressed, err := manager.ApplyRetentionPolicy(policy)
+	// Apply compression using existing policy
+	err = manager.CompressOldArtifacts("production")
 	if err != nil {
 		t.Fatalf("Failed to apply compression policy: %v", err)
 	}
 
-	if compressed == 0 {
-		t.Log("Note: Compression may not always reduce size significantly")
-	}
-
 	// Verify artifact is still accessible after compression
-	artifacts, err := manager.List("large-char", "", "")
+	artifacts, err := manager.ListArtifacts("large-char", "", "")
 	if err != nil {
 		t.Fatalf("Failed to list artifacts after compression: %v", err)
 	}
@@ -165,13 +159,13 @@ func TestArtifactCompression(t *testing.T) {
 	}
 
 	// Check if compression actually occurred
-	newStats, err := manager.GetStatistics()
+	newStats, err := manager.GetArtifactStats()
 	if err != nil {
 		t.Fatalf("Failed to get statistics after compression: %v", err)
 	}
 
-	if newStats.TotalSize < originalStats.TotalSize {
-		t.Logf("Compression successful: %d -> %d bytes", originalStats.TotalSize, newStats.TotalSize)
+	if newStats["total_size"].(int64) < originalStats["total_size"].(int64) {
+		t.Logf("Compression successful: %d -> %d bytes", originalStats["total_size"].(int64), newStats["total_size"].(int64))
 	}
 }
 
@@ -207,7 +201,7 @@ func TestArtifactValidation(t *testing.T) {
 				t.Fatalf("Failed to create test binary: %v", err)
 			}
 
-			err := manager.Store(tc.character, tc.platform, tc.arch, testBinary)
+			_, err := manager.StoreArtifact(testBinary, tc.character, tc.platform, tc.arch, nil)
 
 			if tc.expectErr && err == nil {
 				t.Errorf("Expected error for case %s, but got none", tc.name)
@@ -239,12 +233,13 @@ func TestArtifactMetadata(t *testing.T) {
 	}
 
 	// Store artifact
-	if err := manager.Store("meta-char", "linux", "amd64", testBinary); err != nil {
+	_, err = manager.StoreArtifact(testBinary, "meta-char", "linux", "amd64", nil)
+	if err != nil {
 		t.Fatalf("Failed to store artifact: %v", err)
 	}
 
 	// Get artifact metadata
-	artifacts, err := manager.List("meta-char", "linux", "amd64")
+	artifacts, err := manager.ListArtifacts("meta-char", "linux", "amd64")
 	if err != nil {
 		t.Fatalf("Failed to list artifacts: %v", err)
 	}
@@ -296,7 +291,8 @@ func BenchmarkArtifactStore(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		character := fmt.Sprintf("bench-char-%d", i)
-		if err := manager.Store(character, "linux", "amd64", testBinary); err != nil {
+		_, err := manager.StoreArtifact(testBinary, character, "linux", "amd64", nil)
+		if err != nil {
 			b.Fatalf("Failed to store artifact: %v", err)
 		}
 	}
@@ -318,7 +314,8 @@ func BenchmarkArtifactList(b *testing.B) {
 
 	for i := 0; i < 100; i++ {
 		character := fmt.Sprintf("bench-char-%d", i)
-		if err := manager.Store(character, "linux", "amd64", testBinary); err != nil {
+		_, err := manager.StoreArtifact(testBinary, character, "linux", "amd64", nil)
+		if err != nil {
 			b.Fatalf("Failed to store artifact: %v", err)
 		}
 	}
@@ -326,7 +323,7 @@ func BenchmarkArtifactList(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := manager.List("", "", "")
+		_, err := manager.ListArtifacts("", "", "")
 		if err != nil {
 			b.Fatalf("Failed to list artifacts: %v", err)
 		}
