@@ -126,6 +126,12 @@ jobs:
             echo "Windows dependencies ready"
           fi
       
+      - name: Generate embedded character
+        run: |
+          go run scripts/embed-character.go \
+            -character ${{ matrix.character }} \
+            -output cmd/companion-${{ matrix.character }}
+      
       - name: Configure Android NDK toolchain
         if: matrix.goos == 'android'
         shell: bash
@@ -175,12 +181,6 @@ jobs:
           echo "Target Architecture: ${{ matrix.goarch }}"
           echo "C Compiler: $CC"
           echo "✅ Android NDK toolchain configured successfully"
-      
-      - name: Generate embedded character
-        run: |
-          go run scripts/embed-character.go \
-            -character ${{ matrix.character }} \
-            -output cmd/companion-${{ matrix.character }}
       
       - name: Build character binary
         env:
