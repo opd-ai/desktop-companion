@@ -1,6 +1,7 @@
 package gestures
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -191,8 +192,13 @@ func TestSingleTapGesture(t *testing.T) {
 		DragThreshold:     10.0,
 	})
 
-	tapCalled := false
-	handler.SetTapHandler(func() { tapCalled = true })
+	var tapCalled bool
+	var mu sync.Mutex
+	handler.SetTapHandler(func() { 
+		mu.Lock()
+		tapCalled = true 
+		mu.Unlock()
+	})
 
 	// Simulate single tap
 	pos := fyne.NewPos(100, 100)
@@ -202,7 +208,11 @@ func TestSingleTapGesture(t *testing.T) {
 	// Wait for double tap window to expire
 	time.Sleep(150 * time.Millisecond)
 
-	if !tapCalled {
+	mu.Lock()
+	called := tapCalled
+	mu.Unlock()
+	
+	if !called {
 		t.Error("Single tap callback was not called")
 	}
 }
@@ -221,8 +231,13 @@ func TestLongPressGesture(t *testing.T) {
 		DragThreshold:     10.0,
 	})
 
-	longPressCalled := false
-	handler.SetLongPressHandler(func() { longPressCalled = true })
+	var longPressCalled bool
+	var mu sync.Mutex
+	handler.SetLongPressHandler(func() { 
+		mu.Lock()
+		longPressCalled = true 
+		mu.Unlock()
+	})
 
 	// Simulate long press
 	pos := fyne.NewPos(100, 100)
@@ -233,7 +248,11 @@ func TestLongPressGesture(t *testing.T) {
 
 	handler.HandleTouchEnd(pos)
 
-	if !longPressCalled {
+	mu.Lock()
+	called := longPressCalled
+	mu.Unlock()
+	
+	if !called {
 		t.Error("Long press callback was not called")
 	}
 }
@@ -252,8 +271,13 @@ func TestDoubleTapGesture(t *testing.T) {
 		DragThreshold:     10.0,
 	})
 
-	doubleTapCalled := false
-	handler.SetDoubleTapHandler(func() { doubleTapCalled = true })
+	var doubleTapCalled bool
+	var mu sync.Mutex
+	handler.SetDoubleTapHandler(func() { 
+		mu.Lock()
+		doubleTapCalled = true 
+		mu.Unlock()
+	})
 
 	// Simulate double tap
 	pos := fyne.NewPos(100, 100)
@@ -270,7 +294,11 @@ func TestDoubleTapGesture(t *testing.T) {
 	// Wait for double tap window to expire
 	time.Sleep(250 * time.Millisecond)
 
-	if !doubleTapCalled {
+	mu.Lock()
+	called := doubleTapCalled
+	mu.Unlock()
+	
+	if !called {
 		t.Error("Double tap callback was not called")
 	}
 }

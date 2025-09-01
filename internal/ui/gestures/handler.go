@@ -4,6 +4,7 @@
 package gestures
 
 import (
+	"sync"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -23,7 +24,8 @@ type GestureHandler struct {
 	onDrag      func(*fyne.DragEvent) // Pan -> drag
 	onDragEnd   func()                // Pan end -> drag end
 
-	// Gesture detection state
+	// Gesture detection state - protected by mutex
+	mu              sync.RWMutex
 	lastTapTime     time.Time
 	tapCount        int
 	longPressTimer  *time.Timer
@@ -102,6 +104,9 @@ func (gh *GestureHandler) HandleTouchStart(pos fyne.Position) {
 		return // Desktop platforms use existing mouse handling
 	}
 
+	gh.mu.Lock()
+	defer gh.mu.Unlock()
+
 	now := time.Now()
 
 	// Cancel any existing long press timer
@@ -133,6 +138,8 @@ func (gh *GestureHandler) HandleTouchEnd(pos fyne.Position) {
 		return
 	}
 
+	gh.mu.Lock()
+	
 	// Cancel long press timer if still active
 	if gh.longPressTimer != nil {
 		gh.longPressTimer.Stop()
@@ -142,6 +149,7 @@ func (gh *GestureHandler) HandleTouchEnd(pos fyne.Position) {
 	// End drag if active
 	if gh.isDragging {
 		gh.isDragging = false
+		gh.mu.Unlock()
 		if gh.onDragEnd != nil {
 			gh.onDragEnd()
 		}
@@ -151,20 +159,29 @@ func (gh *GestureHandler) HandleTouchEnd(pos fyne.Position) {
 	// Don't trigger tap if long press was already handled
 	if gh.longPressActive {
 		gh.longPressActive = false
+		gh.mu.Unlock()
 		return
 	}
+
+	// Capture state for the delayed tap handler
+	tapCount := gh.tapCount
+	onTap := gh.onTap
+	onDoubleTap := gh.onDoubleTap
+	gh.mu.Unlock()
 
 	// Handle taps with a small delay to detect double taps
 	go func() {
 		time.Sleep(gh.config.DoubleTapWindow)
 
-		if gh.tapCount >= 2 && gh.onDoubleTap != nil {
-			gh.onDoubleTap()
-		} else if gh.tapCount == 1 && gh.onTap != nil {
-			gh.onTap()
+		if tapCount >= 2 && onDoubleTap != nil {
+			onDoubleTap()
+		} else if tapCount == 1 && onTap != nil {
+			onTap()
 		}
 
+		gh.mu.Lock()
 		gh.tapCount = 0
+		gh.mu.Unlock()
 	}()
 }
 
@@ -175,6 +192,9 @@ func (gh *GestureHandler) HandleTouchMove(event *fyne.DragEvent) {
 		return
 	}
 
+	gh.mu.Lock()
+	defer gh.mu.Unlock()
+
 	// Cancel long press if touch moves beyond threshold
 	if gh.longPressTimer != nil && !gh.isDragging {
 		if abs(event.Dragged.DX) > gh.config.DragThreshold || abs(event.Dragged.DY) > gh.config.DragThreshold {
@@ -183,29 +203,45 @@ func (gh *GestureHandler) HandleTouchMove(event *fyne.DragEvent) {
 
 			// Start drag operation
 			gh.isDragging = true
-			if gh.onDragStart != nil {
-				gh.onDragStart()
+			onDragStart := gh.onDragStart
+			gh.mu.Unlock()
+			if onDragStart != nil {
+				onDragStart()
 			}
+			gh.mu.Lock()
 		}
 	}
 
 	// Continue drag operation
-	if gh.isDragging && gh.onDrag != nil {
-		gh.onDrag(event)
+	if gh.isDragging {
+		onDrag := gh.onDrag
+		gh.mu.Unlock()
+		if onDrag != nil {
+			onDrag(event)
+		}
+		gh.mu.Lock()
 	}
 }
 
 // handleLongPress processes long press gesture detection.
 // This is called by the timer when long press duration is reached.
 func (gh *GestureHandler) handleLongPress() {
+	gh.mu.Lock()
+	defer gh.mu.Unlock()
+
 	if gh.isDragging {
 		return // Don't trigger long press during drag
 	}
 
 	gh.longPressActive = true
-	if gh.onLongPress != nil {
-		gh.onLongPress()
+	onLongPress := gh.onLongPress
+	
+	// Call handler outside of lock to avoid potential deadlock
+	gh.mu.Unlock()
+	if onLongPress != nil {
+		onLongPress()
 	}
+	gh.mu.Lock() // Reacquire for defer
 }
 
 // abs returns the absolute value of a float32.
