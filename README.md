@@ -197,6 +197,42 @@ make release-windows  # Windows binary (requires Windows or cross-compilation)
 make release-macos    # macOS binary (requires macOS)
 ```
 
+### Character-Specific Binary Generation
+
+DDS supports generating standalone, zero-configuration binaries for individual characters with embedded assets:
+
+```bash
+# List all available characters
+make list-characters
+
+# Build character for current platform
+make build-character CHAR=default
+make build-character CHAR=tsundere
+make build-character CHAR=romance_flirty
+
+# Build all characters for current platform
+make build-characters
+
+# Build character for specific platforms (including Android)
+PLATFORMS=linux/amd64,windows/amd64,darwin/amd64,android/arm64 ./scripts/build-characters.sh build default
+
+# Android-specific character builds (requires fyne CLI)
+go install fyne.io/tools/cmd/fyne@latest
+PLATFORMS=android/arm64 ./scripts/build-characters.sh build default
+PLATFORMS=android/arm ./scripts/build-characters.sh build tsundere
+```
+
+**Generated Output:**
+```
+build/
+├── default_linux_amd64           # Linux executable
+├── default_windows_amd64.exe     # Windows executable  
+├── default_darwin_amd64          # macOS executable
+├── default_android_arm64.apk     # Android APK (64-bit)
+├── tsundere_android_arm.apk      # Android APK (32-bit)
+└── romance_flirty_android_arm64.apk  # Character-specific APK
+```
+
 ## 🏗️ Architecture & Dependencies
 
 This project follows the "lazy programmer" philosophy, using mature libraries instead of custom implementations:

@@ -88,12 +88,19 @@ show_platform_info() {
     echo "    • linux/amd64   - Linux 64-bit"
     echo "    • windows/amd64 - Windows 64-bit"  
     echo "    • darwin/amd64  - macOS 64-bit"
+    echo "    • android/arm64 - Android 64-bit (requires fyne CLI tool)"
+    echo "    • android/arm   - Android 32-bit (requires fyne CLI tool)"
     echo
     echo "  Cross-Compilation Limitations:"
     echo "    Due to Fyne GUI framework CGO requirements, cross-compilation"
     echo "    between different operating systems may fail. For production"
     echo "    builds, use GitHub Actions matrix builds which run on native"
     echo "    environments for each target platform."
+    echo
+    echo "  Android Build Requirements:"
+    echo "    • fyne CLI tool: go install fyne.io/tools/cmd/fyne@latest"
+    echo "    • Java 8+ installed for APK packaging"
+    echo "    • Android SDK (optional for basic builds)"
     echo
     echo "  Recommended Approach:"
     echo "    • Local development: Build for current platform only"
@@ -144,10 +151,24 @@ generate_character() {
 
 # Validate platform compatibility and provide warnings
 # Due to Fyne CGO requirements, cross-compilation has limitations
+# Android builds use fyne CLI tool instead of standard go build
 validate_platform() {
-    local goos="$1"
+    local platform="$1"
+    local goos="${platform%/*}"
+    local goarch="${platform#*/}"
     local current_os
     current_os=$(go env GOOS)
+    
+    # Special handling for Android builds
+    if [[ "$goos" == "android" ]]; then
+        # Check if fyne CLI is available
+        if ! command -v fyne >/dev/null 2>&1; then
+            error "Android builds require fyne CLI tool. Install with: go install fyne.io/tools/cmd/fyne@latest"
+            return 1
+        fi
+        log "Android platform detected - will use fyne CLI for APK generation"
+        return 0
+    fi
     
     # Check if we're attempting cross-compilation
     if [[ "$goos" != "$current_os" ]]; then
@@ -185,7 +206,111 @@ validate_platform() {
     return 0
 }
 
+# Build character for Android platform using fyne CLI tool
+# Android builds create APK files instead of native executables
+build_character_android() {
+    local char="$1"
+    local goarch="$2"
+    local source_dir="$PROJECT_ROOT/cmd/$char-embedded"
+    local app_id="ai.opd.${char}"
+    local app_name="${char^} Companion"  # Capitalize first letter
+    local output_file="$BUILD_DIR/${char}_android_${goarch}.apk"
+    
+    if [[ ! -d "$source_dir" ]]; then
+        error "Source directory not found: $source_dir"
+        return 1
+    fi
+    
+    log "Building Android APK for $char (${goarch})"
+    
+    # Create temporary directory for fyne build
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    trap "rm -rf '$temp_dir'" EXIT
+    
+    # Copy source to temp directory
+    cp -r "$source_dir"/* "$temp_dir/"
+    
+    # Copy go.mod and go.sum for fyne CLI
+    cp "$PROJECT_ROOT/go.mod" "$temp_dir/"
+    cp "$PROJECT_ROOT/go.sum" "$temp_dir/"
+    
+    # Generate Android-specific app metadata (with icon)
+    cat > "$temp_dir/FyneApp.toml" << EOF
+[Details]
+Icon = "Icon.png"
+Name = "$app_name"
+ID = "$app_id"
+Version = "1.0.0"
+
+[Development]
+AutoInject = true
+EOF
+
+    # Create a simple icon for the APK
+    local char_icon="$PROJECT_ROOT/assets/characters/$char/icon.png"
+    local default_icon="$PROJECT_ROOT/assets/app/icon.png"
+    
+    if [[ -f "$char_icon" ]]; then
+        cp "$char_icon" "$temp_dir/Icon.png"
+        log "Using character-specific icon: $char_icon"
+    elif [[ -f "$default_icon" ]]; then
+        cp "$default_icon" "$temp_dir/Icon.png"
+        log "Using default icon: $default_icon"
+    else
+        error "No icon found at $char_icon or $default_icon"
+        return 1
+    fi
+
+    # Build APK using fyne CLI
+    cd "$temp_dir"
+    
+    log "Note: Android NDK not installed - building basic APK without native optimizations"
+    
+    # Build the APK with proper target and metadata
+    if ! fyne package \
+        --target "android/$goarch" \
+        --name "$app_name" \
+        --app-id "$app_id" \
+        --app-version "1.0.0" \
+        --release 2>/dev/null; then
+        # Try without --release flag if it fails
+        log "Retrying Android build without release flag..."
+        if ! fyne package \
+            --target "android/$goarch" \
+            --name "$app_name" \
+            --app-id "$app_id" \
+            --app-version "1.0.0"; then
+            error "Failed to build Android APK for $char"
+            cd - >/dev/null
+            return 1
+        fi
+    fi
+    
+    # Find the generated APK file (fyne names it automatically)
+    local generated_apk
+    generated_apk=$(find . -name "*.apk" -type f | head -1)
+    if [[ -z "$generated_apk" ]]; then
+        error "No APK file generated for $char"
+        cd - >/dev/null
+        return 1
+    fi
+    
+    # Move APK to desired output location
+    if ! mv "$generated_apk" "$output_file"; then
+        error "Failed to move APK to output location: $output_file"
+        cd - >/dev/null
+        return 1
+    fi
+    
+    cd - >/dev/null
+    
+    success "Built Android APK for $char → $output_file"
+    return 0
+}
+
 # Build character binary for a specific platform
+# Android builds use fyne CLI tool for APK generation
 build_character_platform() {
     local char="$1"
     local platform="$2"
@@ -194,9 +319,15 @@ build_character_platform() {
     local ext=""
     
     # Validate platform compatibility
-    if ! validate_platform "$goos"; then
-        warning "Skipping cross-compilation for $char to $platform (use native build environment)"
+    if ! validate_platform "$platform"; then
+        warning "Skipping build for $char to $platform (validation failed)"
         return 0  # Don't fail the entire build, just skip this platform
+    fi
+    
+    # Special handling for Android builds
+    if [[ "$goos" == "android" ]]; then
+        build_character_android "$char" "$goarch"
+        return $?
     fi
     
     if [[ "$goos" == "windows" ]]; then

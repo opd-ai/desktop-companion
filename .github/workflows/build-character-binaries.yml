@@ -47,6 +47,16 @@ jobs:
             goarch: arm64
             ext: ""
             target_suffix: "-arm64"
+          - os: ubuntu-latest
+            goos: android
+            goarch: arm64
+            ext: ".apk"
+            target_suffix: "-android"
+          - os: ubuntu-latest
+            goos: android
+            goarch: arm
+            ext: ".apk"
+            target_suffix: "-android32"
     
     runs-on: ${{ matrix.os }}
     
@@ -77,6 +87,19 @@ jobs:
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
             sudo apt-get update
             sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+            
+            # Install fyne CLI for Android builds
+            if [[ "${{ matrix.goos }}" == "android" ]]; then
+              echo "Installing fyne CLI for Android builds"
+              go install fyne.io/tools/cmd/fyne@latest
+              
+              # Verify fyne installation
+              if ! command -v fyne &> /dev/null; then
+                echo "fyne CLI not found in PATH, adding Go bin to PATH"
+                export PATH=$PATH:$(go env GOPATH)/bin
+                echo "PATH=$PATH:$(go env GOPATH)/bin" >> $GITHUB_ENV
+              fi
+            fi
           elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
             # macOS has necessary dependencies built-in
             echo "macOS dependencies ready"
@@ -99,17 +122,35 @@ jobs:
         shell: bash
         run: |
           mkdir -p build
-          binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
-          go build -ldflags="-s -w" \
-            -o "build/$binary_name" \
-            ./cmd/companion-${{ matrix.character }}
-          echo "Built binary: $binary_name"
+          
+          # Use build script for all platforms (it handles Android specially)
+          export PLATFORMS="${{ matrix.goos }}/${{ matrix.goarch }}"
+          export LDFLAGS="-s -w"
+          
+          # Build using the build script which handles Android builds
+          if ! ./scripts/build-characters.sh build ${{ matrix.character }}; then
+            echo "Build script failed, trying fallback method..."
+            
+            # Fallback to manual build for non-Android platforms
+            if [[ "${{ matrix.goos }}" != "android" ]]; then
+              binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+              go build -ldflags="-s -w" \
+                -o "build/$binary_name" \
+                ./cmd/companion-${{ matrix.character }}
+              echo "Built binary: $binary_name"
+            else
+              echo "Android build failed and no fallback available"
+              exit 1
+            fi
+          else
+            echo "Build script completed successfully"
+          fi
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.character }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.target_suffix || '' }}
-          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}
+          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}*
           retention-days: ${{ github.ref == 'refs/heads/main' && '30' || '7' }}
 
   # New job for artifact management and optimization
