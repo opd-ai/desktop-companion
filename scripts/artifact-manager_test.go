@@ -86,8 +86,9 @@ func TestArtifactRetention(t *testing.T) {
 	}
 
 	// Manually set old timestamp for testing
-	oldTime := time.Now().Add(-30 * 24 * time.Hour)                                 // 30 days ago
-	storedPath := filepath.Join(tempDir, "old-char", "linux_amd64", "old_binary_*") // Pattern match
+	oldTime := time.Now().Add(-30 * 24 * time.Hour) // 30 days ago
+	// Use correct pattern that matches artifact manager's filename generation: {character}_{platform}_{arch}_{timestamp}
+	storedPath := filepath.Join(tempDir, "old-char", "linux_amd64", "old-char_linux_amd64_*")
 
 	// Find the actual stored file
 	matches, err := filepath.Glob(storedPath)
