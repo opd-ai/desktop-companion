@@ -687,7 +687,8 @@ help-characters:
 2. ✅ **COMPLETED**: Configure matrix builds for all platforms (Linux, Windows, macOS + Apple Silicon + Android)
 3. ✅ **COMPLETED**: Set up artifact management and retention
 4. ✅ **COMPLETED**: Add Android APK support via fyne CLI integration
-5. Test full pipeline with multiple characters
+5. Implement Android APK support in Github Actions CI
+6. Test full pipeline with multiple characters
 
 ### Phase 3: Integration and Testing (Week 3)
 1. ✅ **COMPLETED**: Integrate with existing Makefile
