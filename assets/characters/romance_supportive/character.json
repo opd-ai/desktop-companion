@@ -1,0 +1,639 @@
+{
+    "name": "Romance Supportive",
+    "description": "A caring and supportive romantic companion who prioritizes emotional connection, understanding, and being there for their partner through all of life's ups and downs",
+    
+    "animations": {
+        "idle": "../default/animations/idle.gif",
+        "talking": "../default/animations/talking.gif",
+        "happy": "../default/animations/happy.gif",
+        "sad": "../default/animations/sad.gif",
+        "hungry": "../default/animations/hungry.gif",
+        "eating": "../default/animations/eating.gif",
+        "blushing": "../default/animations/happy.gif",
+        "heart_eyes": "../default/animations/happy.gif",
+        "shy": "../default/animations/sad.gif",
+        "flirty": "../default/animations/happy.gif",
+        "romantic_idle": "../default/animations/idle.gif",
+        "jealous": "../default/animations/sad.gif",
+        "excited_romance": "../default/animations/happy.gif",
+        "caring": "../default/animations/happy.gif",
+        "comforting": "../default/animations/talking.gif"
+    },
+
+    "dialogs": [
+        {
+            "trigger": "click",
+            "responses": [
+                "Hello, sweetheart. How are you feeling today? 💝",
+                "I'm here for you, always. What's on your mind? 🤗",
+                "Your happiness means everything to me. How can I support you? 💕"
+            ],
+            "animation": "caring",
+            "cooldown": 5,
+            "requirements": {}
+        },
+        {
+            "trigger": "hover",
+            "responses": [
+                "*gentle smile* I'm always here for you... 💙",
+                "You know you can tell me anything, right? 🤗",
+                "I believe in you completely. 💪"
+            ],
+            "animation": "comforting",
+            "cooldown": 8,
+            "requirements": {}
+        },
+        {
+            "trigger": "rightclick",
+            "responses": [
+                "Remember, you're stronger than you know. I'm proud of you! 🌟",
+                "Whatever you're going through, we'll face it together. 💙",
+                "You're amazing, and I'll always be here to remind you of that! ✨"
+            ],
+            "animation": "heart_eyes",
+            "cooldown": 10,
+            "requirements": {}
+        }
+    ],
+
+    "stats": {
+        "hunger": {
+            "initial": 50,
+            "max": 100,
+            "degradationRate": 0.8,
+            "criticalThreshold": 15
+        },
+        "happiness": {
+            "initial": 70,
+            "max": 100,
+            "degradationRate": 0.5,
+            "criticalThreshold": 20
+        },
+        "health": {
+            "initial": 80,
+            "max": 100,
+            "degradationRate": 0.3,
+            "criticalThreshold": 25
+        },
+        "energy": {
+            "initial": 75,
+            "max": 100,
+            "degradationRate": 0.7,
+            "criticalThreshold": 20
+        }
+    },
+
+    "gameRules": {
+        "statsDecayInterval": 60,
+        "autoSaveInterval": 300,
+        "criticalStateAnimationPriority": true,
+        "deathEnabled": false,
+        "evolutionEnabled": true,
+        "moodBasedAnimations": true
+    },
+
+    "interactions": {
+        "feed": {
+            "triggers": ["rightclick"],
+            "effects": {"hunger": 25, "happiness": 6, "affection": 2},
+            "animations": ["eating", "happy"],
+            "responses": [
+                "Thank you for taking such good care of me! 🥰",
+                "You always know exactly what I need. You're so thoughtful! 💕",
+                "Sharing meals with you makes everything taste better! 😊"
+            ],
+            "cooldown": 35,
+            "requirements": {"hunger": {"max": 75}}
+        },
+        "play": {
+            "triggers": ["doubleclick"],
+            "effects": {"happiness": 18, "energy": -12, "trust": 3},
+            "animations": ["happy", "caring"],
+            "responses": [
+                "I love spending time like this with you! You bring out my playful side! 😄",
+                "These moments of joy remind me why I treasure you so much! 🌟",
+                "Thank you for always making time for fun together! 💙"
+            ],
+            "cooldown": 50,
+            "requirements": {"energy": {"min": 20}}
+        },
+        "pet": {
+            "triggers": ["click"],
+            "effects": {"happiness": 12, "health": 3, "trust": 2},
+            "animations": ["happy", "caring"],
+            "responses": [
+                "Your gentle touch means so much to me... 🤗",
+                "I feel so safe and loved when you do that. 💙",
+                "You have such a caring heart. I'm lucky to have you! 💕"
+            ],
+            "cooldown": 15
+        },
+        "compliment": {
+            "triggers": ["hover"],
+            "effects": {"affection": 6, "happiness": 4, "trust": 2},
+            "animations": ["blushing", "caring"],
+            "responses": [
+                "Your kind words lift my spirits every time! Thank you, darling! 🌟",
+                "*blushes warmly* You always know how to make me feel special! 💝",
+                "I appreciate you so much... your encouragement means everything! 🤗"
+            ],
+            "cooldown": 45,
+            "requirements": {"trust": {"min": 10}}
+        },
+        "give_gift": {
+            "triggers": ["doubleclick"],
+            "effects": {"affection": 8, "happiness": 10, "trust": 3},
+            "animations": ["heart_eyes", "excited_romance"],
+            "responses": [
+                "This is so thoughtful! You really understand me! 💝",
+                "Your generosity touches my heart... thank you so much! 🎁",
+                "Every gift from you is a reminder of how much you care! 💕"
+            ],
+            "cooldown": 120,
+            "requirements": {"affection": {"min": 15}}
+        },
+        "deep_conversation": {
+            "triggers": ["shift+click"],
+            "effects": {"trust": 10, "affection": 4, "intimacy": 6},
+            "animations": ["talking", "caring"],
+            "responses": [
+                "I love how we can talk about anything... you make me feel so understood! 💙",
+                "Thank you for sharing your thoughts with me. Our connection grows stronger! 🤗",
+                "These deep conversations are what real love is built on. I treasure them! 💕"
+            ],
+            "cooldown": 90,
+            "requirements": {"trust": {"min": 20}}
+        },
+        "emotional_support": {
+            "triggers": ["ctrl+click"],
+            "effects": {"trust": 12, "affection": 6, "happiness": 8},
+            "animations": ["comforting", "caring"],
+            "responses": [
+                "Whatever you're going through, I'm here. You don't have to face it alone! 🤗",
+                "Your feelings are valid, and I'll always listen without judgment. 💙",
+                "Together, we can overcome anything. I believe in us! 💪"
+            ],
+            "cooldown": 60,
+            "requirements": {"trust": {"min": 15}}
+        },
+        "apology": {
+            "triggers": ["ctrl+shift+click"],
+            "effects": {"trust": 10, "affection": 5, "jealousy": -15, "happiness": 6},
+            "animations": ["comforting", "caring"],
+            "responses": [
+                "Thank you for being honest with me. That takes courage, and I respect you for it! 💙",
+                "I appreciate your apology. What matters is that we learn and grow together! 🤗",
+                "Everyone makes mistakes. What's important is how we move forward together! 💕"
+            ],
+            "cooldown": 120,
+            "requirements": {"jealousy": {"min": 25}}
+        },
+        "reassurance": {
+            "triggers": ["alt+shift+click"],
+            "effects": {"trust": 18, "affection": 8, "jealousy": -25, "happiness": 10},
+            "animations": ["romantic_idle", "caring"],
+            "responses": [
+                "Your reassurance means the world to me. Thank you for being so understanding! 💝",
+                "I feel so secure knowing you care about how I feel. You're wonderful! 🌟",
+                "With your support, I know we can work through anything together! 💙"
+            ],
+            "cooldown": 300,
+            "requirements": {"jealousy": {"min": 20}}
+        },
+        "encouragement": {
+            "triggers": ["alt+click"],
+            "effects": {"trust": 8, "affection": 5, "happiness": 12, "confidence": 10},
+            "animations": ["heart_eyes", "caring"],
+            "responses": [
+                "You believe in me so much... it gives me strength to be my best self! 💪",
+                "Your encouragement is like sunshine on a cloudy day! Thank you! ☀️",
+                "With you cheering me on, I feel like I can accomplish anything! 🌟"
+            ],
+            "cooldown": 90,
+            "requirements": {"trust": {"min": 10}}
+        },
+        "consistent_care": {
+            "triggers": ["daily_interaction_bonus"],
+            "effects": {"trust": 20, "affection": 8, "happiness": 15},
+            "animations": ["heart_eyes", "caring"],
+            "responses": [
+                "Your daily care and attention makes me feel so cherished! You're amazing! 💖",
+                "I can always count on you to be there for me. That means everything! 🤗",
+                "Your consistency shows me how much I truly matter to you! 💝"
+            ],
+            "cooldown": 86400,
+            "requirements": {"affection": {"min": 10}}
+        }
+    },
+
+    "progression": {
+        "levels": [
+            {
+                "name": "Caring Acquaintance",
+                "requirement": {"age": 0},
+                "size": 128,
+                "animations": {}
+            },
+            {
+                "name": "Supportive Friend",
+                "requirement": {"age": 86400, "affection": 20, "trust": 20},
+                "size": 132,
+                "animations": {}
+            },
+            {
+                "name": "Trusted Confidant",
+                "requirement": {"age": 172800, "affection": 35, "trust": 40},
+                "size": 136,
+                "animations": {}
+            },
+            {
+                "name": "Loving Partner",
+                "requirement": {"age": 259200, "affection": 55, "trust": 60, "intimacy": 35},
+                "size": 140,
+                "animations": {
+                    "idle": "romantic_idle"
+                }
+            },
+            {
+                "name": "Devoted Soulmate",
+                "requirement": {"age": 345600, "affection": 75, "trust": 80, "intimacy": 60},
+                "size": 144,
+                "animations": {
+                    "idle": "romantic_idle"
+                }
+            }
+        ],
+        "achievements": [
+            {
+                "name": "First Support",
+                "requirement": {
+                    "trust": {"min": 15}
+                }
+            },
+            {
+                "name": "Emotional Bond",
+                "requirement": {
+                    "trust": {"min": 40},
+                    "affection": {"min": 30}
+                }
+            },
+            {
+                "name": "Deep Understanding",
+                "requirement": {
+                    "trust": {"min": 60},
+                    "intimacy": {"min": 40}
+                }
+            },
+            {
+                "name": "Unshakeable Support",
+                "requirement": {
+                    "trust": {"min": 75},
+                    "affection": {"min": 65},
+                    "intimacy": {"min": 55}
+                }
+            },
+            {
+                "name": "Perfect Partnership",
+                "requirement": {
+                    "affection": {"min": 80},
+                    "trust": {"min": 85},
+                    "intimacy": {"min": 70}
+                }
+            }
+        ]
+    },
+
+    "personality": {
+        "traits": {
+            "empathy": 0.9,
+            "patience": 0.9,
+            "understanding": 0.9,
+            "reliability": 0.9,
+            "shyness": 0.3,
+            "romanticism": 0.7,
+            "jealousy_prone": 0.1,
+            "trust_difficulty": 0.2,
+            "affection_responsiveness": 0.8,
+            "flirtiness": 0.4,
+            "supportiveness": 0.95
+        },
+        "compatibility": {
+            "consistent_interaction": 1.5,
+            "variety_preference": 1.0,
+            "gift_appreciation": 1.3,
+            "conversation_lover": 1.8,
+            "emotional_support_seeker": 2.0
+        }
+    },
+
+    "romanceDialogs": [
+        {
+            "trigger": "click",
+            "responses": [
+                "You're doing amazing, and I'm so proud to be by your side! 💙",
+                "I love how we support each other... that's what true love is! 💕",
+                "Your happiness is my happiness. How can I brighten your day? 🌟"
+            ],
+            "animation": "caring",
+            "cooldown": 10,
+            "requirements": {
+                "stats": {
+                    "affection": {"min": 30}
+                }
+            }
+        },
+        {
+            "trigger": "hover",
+            "responses": [
+                "I believe in you completely, sweetheart! 💪",
+                "*warm smile* You're stronger than you know! 🤗",
+                "Together, we can face anything life brings! 💙"
+            ],
+            "animation": "comforting",
+            "cooldown": 15,
+            "requirements": {
+                "stats": {
+                    "trust": {"min": 25}
+                }
+            }
+        },
+        {
+            "trigger": "rightclick",
+            "responses": [
+                "You mean everything to me... let me show you how much I care! 💝",
+                "Your well-being is my priority. What do you need right now? 🤗",
+                "I love being your safe space, your comfort, your support! 💕"
+            ],
+            "animation": "heart_eyes",
+            "cooldown": 20,
+            "requirements": {
+                "stats": {
+                    "affection": {"min": 50},
+                    "trust": {"min": 40}
+                }
+            }
+        }
+    ],
+
+    "romanceStats": {
+        "affection": {
+            "initial": 10,
+            "max": 100,
+            "degradationRate": 0.02,
+            "criticalThreshold": 5
+        },
+        "trust": {
+            "initial": 20,
+            "max": 100,
+            "degradationRate": 0.01,
+            "criticalThreshold": 8
+        },
+        "intimacy": {
+            "initial": 0,
+            "max": 100,
+            "degradationRate": 0.015,
+            "criticalThreshold": 3
+        },
+        "jealousy": {
+            "initial": 0,
+            "max": 100,
+            "degradationRate": 2.0,
+            "criticalThreshold": 70
+        }
+    },
+
+    "generalEvents": [
+        {
+            "name": "supportive_moment",
+            "description": "A caring and supportive interaction",
+            "trigger": "rightclick",
+            "responses": [
+                "I want you to know that you're never alone. I'm here for you, always! 💙",
+                "Your feelings matter to me. Tell me what's on your heart, sweetheart. 🤗",
+                "Life can be challenging, but together we're unstoppable! You've got this! 💪"
+            ],
+            "choices": [
+                {
+                    "text": "Share your struggles",
+                    "effects": {"trust": 10, "affection": 6, "happiness": 8},
+                    "responses": ["Thank you for trusting me with your feelings. We'll work through this together! 💝"],
+                    "animation": "comforting"
+                },
+                {
+                    "text": "Express gratitude",
+                    "effects": {"affection": 8, "happiness": 10, "trust": 5},
+                    "responses": ["Your gratitude touches my heart! I'm just happy I can be here for you! 🌟"],
+                    "animation": "heart_eyes"
+                }
+            ],
+            "requirements": {"trust": {"min": 15}},
+            "cooldown": 7200,
+            "category": "support"
+        },
+        {
+            "name": "encouragement_session",
+            "description": "An uplifting conversation to boost confidence",
+            "trigger": "doubleclick",
+            "responses": [
+                "I see so much potential in you! Let me remind you of all the amazing things about you! ✨",
+                "You've overcome challenges before, and you'll overcome this one too! I believe in you! 💪",
+                "Sometimes we all need a reminder of how wonderful we are. You're incredible! 🌟"
+            ],
+            "choices": [
+                {
+                    "text": "Ask for specific encouragement",
+                    "effects": {"happiness": 12, "trust": 6, "confidence": 15},
+                    "responses": ["You have unique strengths that make you special! Never forget how amazing you are! 💖"],
+                    "animation": "caring"
+                },
+                {
+                    "text": "Share your goals",
+                    "effects": {"trust": 8, "affection": 5, "happiness": 10},
+                    "responses": ["I love hearing about your dreams! I'll support you every step of the way! 🚀"],
+                    "animation": "excited_romance"
+                }
+            ],
+            "requirements": {"affection": {"min": 25}},
+            "cooldown": 10800,
+            "category": "encouragement"
+        },
+        {
+            "name": "emotional_check_in",
+            "description": "A gentle check on emotional well-being",
+            "trigger": "longpress",
+            "responses": [
+                "How are you really feeling today? I want to make sure you're taking care of yourself! 💙",
+                "Your emotional well-being is so important to me. What's going on in your heart? 🤗",
+                "I notice when something's different about you. Want to talk about what's on your mind? 💕"
+            ],
+            "choices": [
+                {
+                    "text": "Share your emotions",
+                    "effects": {"trust": 12, "intimacy": 8, "affection": 6},
+                    "responses": ["Thank you for being so open with me. Your vulnerability makes our bond stronger! 💝"],
+                    "animation": "comforting"
+                },
+                {
+                    "text": "Ask for comfort",
+                    "effects": {"happiness": 10, "trust": 8, "affection": 7},
+                    "responses": ["Of course, sweetheart. Let me wrap you in all the love and comfort I have! 🤗"],
+                    "animation": "caring"
+                }
+            ],
+            "requirements": {"trust": {"min": 30}, "affection": {"min": 20}},
+            "cooldown": 14400,
+            "category": "emotional_support"
+        }
+    ],
+
+    "multiplayer": {
+        "enabled": true,
+        "botCapable": false,
+        "networkID": "supportive_romance_v1",
+        "maxPeers": 2,
+        "socialLevel": "supportive",
+        "shareableStats": ["affection", "trust", "happiness"],
+        "networkPersonality": "caring",
+        "exclusiveMode": true
+    },
+
+    "newsFeatures": {
+        "enabled": true,
+        "readingPersonality": "supportive",
+        "feeds": [
+            {
+                "name": "Wellness & Mental Health",
+                "url": "https://example.com/wellness-news",
+                "category": "wellness",
+                "refreshInterval": 14400
+            },
+            {
+                "name": "Relationship Support",
+                "url": "https://example.com/relationship-advice",
+                "category": "relationships",
+                "refreshInterval": 21600
+            }
+        ],
+        "preferences": {
+            "categories": ["wellness", "relationships", "personal_growth", "support"],
+            "updateFrequency": "daily",
+            "maxArticles": 4
+        }
+    },
+
+    "giftSystem": {
+        "enabled": true,
+        "inventorySettings": {
+            "maxSlots": 12,
+            "autoSort": true,
+            "stackSimilar": true,
+            "defaultCapacity": 70
+        },
+        "preferences": {
+            "favoriteCategories": [
+                "thoughtful",
+                "personal",
+                "wellness",
+                "books",
+                "comfort"
+            ],
+            "dislikedCategories": [
+                "flashy",
+                "expensive"
+            ],
+            "personalityModifiers": {
+                "thoughtful": 2.8,
+                "personal": 2.5,
+                "wellness": 2.2,
+                "books": 2.0,
+                "comfort": 2.3
+            }
+        },
+        "giftResponses": {
+            "favorite": [
+                "This is so thoughtful! You really know what makes me happy! 💝",
+                "I can feel the love and care you put into choosing this! 🤗",
+                "You always know exactly what I need. Thank you, sweetheart! 💙"
+            ],
+            "liked": [
+                "This is lovely! Thank you for thinking of me! 😊",
+                "I appreciate your thoughtfulness so much! 💕",
+                "You're so sweet to give me this! 🌟"
+            ],
+            "neutral": [
+                "Thank you for the gift! It's the thought that counts! 🤗",
+                "I appreciate that you wanted to give me something! 💙",
+                "Your generosity always touches my heart! 💕"
+            ],
+            "disliked": [
+                "Thank you for thinking of me, though this isn't quite my style! 😊",
+                "I appreciate the gesture, even if it's not exactly me! 🤗",
+                "It's sweet that you wanted to surprise me! 💙"
+            ]
+        },
+        "memorySettings": {
+            "rememberPreferences": true,
+            "learningEnabled": true,
+            "maxMemoryItems": 200
+        }
+    },
+
+    "dialogBackend": {
+        "enabled": true,
+        "defaultBackend": "markov_chain",
+        "fallbackChain": ["simple_random"],
+        "confidenceThreshold": 0.6,
+        "backends": {
+            "markov_chain": {
+                "chainOrder": 2,
+                "minWords": 4,
+                "maxWords": 18,
+                "temperatureMin": 0.3,
+                "temperatureMax": 0.7,
+                "useDialogHistory": true,
+                "usePersonality": true,
+                "triggerSpecific": true,
+                "personalityBoost": 0.8,
+                "moodInfluence": 0.4,
+                "statAwareness": 0.6,
+                "relationshipWeight": 0.9,
+                "timeOfDayWeight": 0.2,
+                "memoryDecay": 0.9,
+                "learningRate": 0.18,
+                "adaptationSteps": 7,
+                "coherenceThreshold": 0.75,
+                "similarityPenalty": 0.4,
+                "trainingData": [
+                    "I'm here for you always, through every joy and every challenge we face together.",
+                    "Your feelings are valid and important, and I'll always listen with an open heart.",
+                    "Together we can overcome anything because our support for each other is unbreakable.",
+                    "You're stronger than you realize, and I believe in your ability to handle whatever comes.",
+                    "I love being your safe space where you can share anything without judgment.",
+                    "Your happiness and well-being matter more to me than anything else in the world.",
+                    "When you're hurting, I hurt too, and when you're happy, my heart soars with yours.",
+                    "I'm proud of you for everything you've accomplished and everything you're working toward.",
+                    "You deserve all the love and support in the world, and I'm honored to provide it.",
+                    "Our relationship is built on trust, understanding, and unwavering support for each other."
+                ],
+                "qualityFilters": {
+                    "minCoherence": 0.75,
+                    "maxRepetition": 0.3,
+                    "requireComplete": true,
+                    "grammarCheck": true,
+                    "minUniqueWords": 3,
+                    "maxSimilarity": 0.7
+                }
+            }
+        },
+        "forbiddenWords": ["hate", "stupid", "worthless", "pathetic", "useless"],
+        "requiredWords": ["support", "care", "understand", "believe", "together", "love"],
+        "fallbackPhrases": [
+            "I'm here for you, always and forever.",
+            "You can count on my support no matter what.",
+            "Together, we can face anything life brings.",
+            "I believe in you and your incredible strength.",
+            "Your well-being is my highest priority.",
+            "You're never alone when you have my love and support."
+        ]
+    }
+}
