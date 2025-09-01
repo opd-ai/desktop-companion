@@ -140,7 +140,18 @@ jobs:
           echo "OpenGL headers missing. XQuartz installation failed.";
           exit 1;
         fi
-    
+
+    - name: Ensure OpenGL headers
+      run: |
+        if [ ! -d "/opt/X11/include/GL" ]; then
+          sudo mkdir -p /opt/X11/include
+          sudo ln -s /Applications/XQuartz.app/Contents/Resources/include/GL /opt/X11/include/GL || true
+        fi
+        if [ ! -d "/opt/X11/include/GL" ]; then
+          echo "OpenGL headers missing. XQuartz installation failed.";
+          exit 1;
+        fi        
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
