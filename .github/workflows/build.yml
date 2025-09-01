@@ -82,7 +82,7 @@ jobs:
         mv companion-linux-amd64.tar.gz ../artifacts/
     
     - name: Upload Linux artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: linux-build
         path: artifacts/
@@ -116,7 +116,7 @@ jobs:
         move companion-windows-amd64.zip ..\artifacts\
     
     - name: Upload Windows artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: windows-build
         path: artifacts/
@@ -156,7 +156,7 @@ jobs:
         mv companion-macos-*.tar.gz ../artifacts/
     
     - name: Upload macOS artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: macos-build
         path: artifacts/
@@ -213,7 +213,7 @@ jobs:
         fi
     
     - name: Upload Android artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success()
       with:
         name: android-build
@@ -229,7 +229,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
     
     - name: Prepare release files
       run: |

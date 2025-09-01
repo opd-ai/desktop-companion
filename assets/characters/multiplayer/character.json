@@ -1,0 +1,165 @@
+{
+  "name": "Multiplayer Bot",
+  "description": "A versatile multiplayer companion for network play",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hi there! Ready for multiplayer fun? 🎮",
+        "Want to connect with other players?",
+        "I'm here to help coordinate your multiplayer session!",
+        "Let's find some friends to play with! 😊",
+        "Multiplayer mode is so much more fun!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128,
+    "clickable": true,
+    "draggable": true
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "multiplayer_default_v1",
+    "maxPeers": 8,
+    "discoveryPort": 8080,
+    "botPersonality": {
+      "chattiness": 0.7,
+      "helpfulness": 0.9,
+      "playfulness": 0.6,
+      "patience": 0.8
+    },
+    "networkFeatures": {
+      "groupChat": true,
+      "characterSharing": true,
+      "eventCoordination": true,
+      "battleSystem": true
+    }
+  },
+  "features": {
+    "ai": {
+      "enabled": true,
+      "dialogBackend": {
+        "enabled": true,
+        "type": "markov",
+        "config": {
+          "order": 2,
+          "enableLearning": true,
+          "personalityWeight": 0.7,
+          "contextMemory": 10
+        }
+      }
+    },
+    "romance": {
+      "enabled": true,
+      "maxLevel": 3,
+      "personality": {
+        "openness": 0.7,
+        "friendliness": 0.9,
+        "loyalty": 0.8,
+        "patience": 0.7,
+        "playfulness": 0.6
+      },
+      "interactions": [
+        {
+          "type": "gift",
+          "unlockLevel": 1,
+          "cooldown": 60,
+          "affectionChange": 5
+        },
+        {
+          "type": "compliment", 
+          "unlockLevel": 1,
+          "cooldown": 30,
+          "affectionChange": 3
+        },
+        {
+          "type": "date",
+          "unlockLevel": 2,
+          "cooldown": 300,
+          "affectionChange": 10
+        }
+      ]
+    },
+    "game": {
+      "enabled": true,
+      "initialStats": {
+        "health": 100,
+        "happiness": 80,
+        "energy": 90,
+        "hunger": 70
+      },
+      "statDecayRates": {
+        "health": 0.1,
+        "happiness": 0.2,
+        "energy": 0.3,
+        "hunger": 0.4
+      },
+      "interactions": [
+        {
+          "name": "feed",
+          "animation": "happy",
+          "effects": {
+            "hunger": 20,
+            "happiness": 10
+          },
+          "cooldown": 30
+        },
+        {
+          "name": "play",
+          "animation": "happy", 
+          "effects": {
+            "happiness": 25,
+            "energy": -10
+          },
+          "cooldown": 60
+        },
+        {
+          "name": "rest",
+          "animation": "idle",
+          "effects": {
+            "energy": 30,
+            "health": 5
+          },
+          "cooldown": 120
+        }
+      ]
+    },
+    "events": {
+      "enabled": true,
+      "scenarios": [
+        {
+          "name": "Multiplayer Welcome",
+          "trigger": "startup",
+          "dialogs": [
+            "Welcome to multiplayer mode! Let's find some friends to play with!"
+          ],
+          "effects": {
+            "happiness": 10
+          }
+        },
+        {
+          "name": "New Player Joined",
+          "trigger": "player_join", 
+          "dialogs": [
+            "A new player joined! Let's make them feel welcome!",
+            "More friends means more fun! 🎉"
+          ],
+          "effects": {
+            "happiness": 5
+          }
+        }
+      ]
+    }
+  }
+}
