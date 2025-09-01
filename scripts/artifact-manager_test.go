@@ -13,7 +13,7 @@ import (
 func TestArtifactManager(t *testing.T) {
 	// Create temporary directory for testing
 	tempDir := t.TempDir()
-	
+
 	// Initialize artifact manager
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
@@ -60,7 +60,7 @@ func TestArtifactManager(t *testing.T) {
 
 func TestArtifactRetention(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
@@ -113,7 +113,7 @@ func TestArtifactRetention(t *testing.T) {
 
 func TestArtifactCompression(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
@@ -177,7 +177,7 @@ func TestArtifactCompression(t *testing.T) {
 
 func TestArtifactValidation(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
@@ -208,15 +208,15 @@ func TestArtifactValidation(t *testing.T) {
 			}
 
 			err := manager.Store(tc.character, tc.platform, tc.arch, testBinary)
-			
+
 			if tc.expectErr && err == nil {
 				t.Errorf("Expected error for case %s, but got none", tc.name)
 			}
-			
+
 			if !tc.expectErr && err != nil {
 				t.Errorf("Expected no error for case %s, but got: %v", tc.name, err)
 			}
-			
+
 			// Clean up
 			os.Remove(testBinary)
 		})
@@ -225,7 +225,7 @@ func TestArtifactValidation(t *testing.T) {
 
 func TestArtifactMetadata(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to create artifact manager: %v", err)
@@ -254,24 +254,24 @@ func TestArtifactMetadata(t *testing.T) {
 	}
 
 	artifact := artifacts[0]
-	
+
 	// Validate metadata
 	if artifact.Character != "meta-char" {
 		t.Errorf("Expected character 'meta-char', got '%s'", artifact.Character)
 	}
-	
+
 	if artifact.Platform != "linux" {
 		t.Errorf("Expected platform 'linux', got '%s'", artifact.Platform)
 	}
-	
+
 	if artifact.Architecture != "amd64" {
 		t.Errorf("Expected architecture 'amd64', got '%s'", artifact.Architecture)
 	}
-	
+
 	if artifact.Size != int64(len(testContent)) {
 		t.Errorf("Expected size %d, got %d", len(testContent), artifact.Size)
 	}
-	
+
 	if artifact.CreatedAt.IsZero() {
 		t.Error("Expected non-zero creation time")
 	}
@@ -279,7 +279,7 @@ func TestArtifactMetadata(t *testing.T) {
 
 func BenchmarkArtifactStore(b *testing.B) {
 	tempDir := b.TempDir()
-	
+
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
 		b.Fatalf("Failed to create artifact manager: %v", err)
@@ -293,7 +293,7 @@ func BenchmarkArtifactStore(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	
+
 	for i := 0; i < b.N; i++ {
 		character := fmt.Sprintf("bench-char-%d", i)
 		if err := manager.Store(character, "linux", "amd64", testBinary); err != nil {
@@ -304,7 +304,7 @@ func BenchmarkArtifactStore(b *testing.B) {
 
 func BenchmarkArtifactList(b *testing.B) {
 	tempDir := b.TempDir()
-	
+
 	manager, err := artifact.NewManager(tempDir)
 	if err != nil {
 		b.Fatalf("Failed to create artifact manager: %v", err)
@@ -324,7 +324,7 @@ func BenchmarkArtifactList(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	
+
 	for i := 0; i < b.N; i++ {
 		_, err := manager.List("", "", "")
 		if err != nil {

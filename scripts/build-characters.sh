@@ -262,28 +262,59 @@ EOF
         return 1
     fi
 
-    # Build APK using fyne CLI
+    # Build APK using fyne CLI with NDK support
     cd "$temp_dir"
     
-    log "Note: Android NDK not installed - building basic APK without native optimizations"
-    
-    # Build the APK with proper target and metadata
-    if ! fyne package \
-        --target "android/$goarch" \
-        --name "$app_name" \
-        --app-id "$app_id" \
-        --app-version "1.0.0" \
-        --release 2>/dev/null; then
-        # Try without --release flag if it fails
-        log "Retrying Android build without release flag..."
+    # Check for Android NDK and set up environment if available
+    if [[ -n "$ANDROID_NDK_ROOT" && -d "$ANDROID_NDK_ROOT" ]]; then
+        log "Android NDK found at $ANDROID_NDK_ROOT - building optimized APK"
+        
+        # Set up NDK compiler for the target architecture
+        if [[ "$goarch" == "arm64" ]]; then
+            export CC="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang"
+            export CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++"
+        elif [[ "$goarch" == "arm" ]]; then
+            export CC="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi33-clang"
+            export CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi33-clang++"
+        fi
+        
+        # Build optimized release APK
+        if fyne package \
+            --target "android/$goarch" \
+            --name "$app_name" \
+            --app-id "$app_id" \
+            --app-version "1.0.0" \
+            --release; then
+            log "Successfully built optimized release APK with NDK"
+        else
+            log "Release build failed, falling back to debug build"
+            fyne package \
+                --target "android/$goarch" \
+                --name "$app_name" \
+                --app-id "$app_id" \
+                --app-version "1.0.0"
+        fi
+    else
+        log "Android NDK not available - building basic APK without native optimizations"
+        
+        # Build the APK with basic configuration
         if ! fyne package \
             --target "android/$goarch" \
             --name "$app_name" \
             --app-id "$app_id" \
-            --app-version "1.0.0"; then
-            error "Failed to build Android APK for $char"
-            cd - >/dev/null
-            return 1
+            --app-version "1.0.0" \
+            --release 2>/dev/null; then
+            # Try without --release flag if it fails
+            log "Retrying Android build without release flag..."
+            if ! fyne package \
+                --target "android/$goarch" \
+                --name "$app_name" \
+                --app-id "$app_id" \
+                --app-version "1.0.0"; then
+                error "Failed to build Android APK for $char"
+                cd - >/dev/null
+                return 1
+            fi
         fi
     fi
     
@@ -296,6 +327,36 @@ EOF
         return 1
     fi
     
+    # Validate APK before moving
+    log "Validating generated APK..."
+    local apk_size
+    apk_size=$(stat -f%z "$generated_apk" 2>/dev/null || stat -c%s "$generated_apk")
+    local min_size=$((512 * 1024))  # 512KB minimum
+    local max_size=$((100 * 1024 * 1024))  # 100MB maximum
+    
+    if [[ $apk_size -lt $min_size ]]; then
+        error "Generated APK is too small ($apk_size bytes) - likely corrupted"
+        cd - >/dev/null
+        return 1
+    elif [[ $apk_size -gt $max_size ]]; then
+        warning "Generated APK is quite large ($apk_size bytes)"
+    else
+        log "APK size validation passed: $apk_size bytes"
+    fi
+    
+    # Validate APK structure
+    if command -v unzip >/dev/null 2>&1; then
+        local required_files=("AndroidManifest.xml" "classes.dex")
+        for required in "${required_files[@]}"; do
+            if ! unzip -l "$generated_apk" | grep -q "$required"; then
+                error "APK missing required component: $required"
+                cd - >/dev/null
+                return 1
+            fi
+        done
+        log "APK structure validation passed"
+    fi
+
     # Move APK to desired output location
     if ! mv "$generated_apk" "$output_file"; then
         error "Failed to move APK to output location: $output_file"

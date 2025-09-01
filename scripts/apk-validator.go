@@ -99,7 +99,7 @@ func (v *APKValidator) validateAPKComponents() error {
 	}
 
 	foundFiles := make(map[string]bool)
-	
+
 	for _, file := range reader.File {
 		for _, required := range requiredFiles {
 			if strings.HasPrefix(file.Name, required) {
@@ -193,13 +193,13 @@ func (v *APKValidator) GetAPKInfo() (*APKInfo, error) {
 
 // APKInfo contains information about an APK file
 type APKInfo struct {
-	FilePath       string
-	SizeBytes      int64
-	FileCount      int
-	HasAssets      bool
-	HasResources   bool
-	HasNativeLibs  bool
-	DexFiles       int
+	FilePath      string
+	SizeBytes     int64
+	FileCount     int
+	HasAssets     bool
+	HasResources  bool
+	HasNativeLibs bool
+	DexFiles      int
 }
 
 // String returns a human-readable representation of APK info
@@ -218,7 +218,7 @@ func (info *APKInfo) String() string {
 // ValidateCharacterAPK validates a character-specific APK file
 func ValidateCharacterAPK(apkPath, expectedCharacter string) error {
 	validator := NewAPKValidator(apkPath)
-	
+
 	// Basic APK validation
 	if err := validator.ValidateAPK(); err != nil {
 		return fmt.Errorf("APK validation failed: %w", err)
@@ -231,13 +231,13 @@ func ValidateCharacterAPK(apkPath, expectedCharacter string) error {
 	}
 
 	// Validate file size (should be reasonable)
-	minSize := int64(1024 * 1024)     // 1MB minimum
+	minSize := int64(1024 * 1024)      // 1MB minimum
 	maxSize := int64(50 * 1024 * 1024) // 50MB maximum
-	
+
 	if info.SizeBytes < minSize {
 		return fmt.Errorf("APK file too small (%d bytes), minimum %d bytes", info.SizeBytes, minSize)
 	}
-	
+
 	if info.SizeBytes > maxSize {
 		return fmt.Errorf("APK file too large (%d bytes), maximum %d bytes", info.SizeBytes, maxSize)
 	}

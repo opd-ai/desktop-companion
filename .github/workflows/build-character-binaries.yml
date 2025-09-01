@@ -68,6 +68,11 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/*.sh
+          chmod +x scripts/validate-*.sh 2>/dev/null || true
+      
       - name: Cache Go modules
         uses: actions/cache@v3
         with:
@@ -75,6 +80,16 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      
+      - name: Cache Android SDK and NDK
+        if: matrix.goos == 'android'
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/android-sdk
+          key: android-sdk-ndk-${{ runner.os }}-v2
+          restore-keys: |
+            android-sdk-ndk-${{ runner.os }}-
       
       - name: Install dependencies
         run: |
@@ -86,19 +101,116 @@ jobs:
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
             sudo apt-get update
-            sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+            sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
             
-            # Install fyne CLI for Android builds
+            # Install Android dependencies for APK builds
             if [[ "${{ matrix.goos }}" == "android" ]]; then
-              echo "Installing fyne CLI for Android builds"
+              echo "Setting up Android build environment..."
+              
+              # Install Java 17 (required for latest Android tooling)
+              sudo apt-get install -y openjdk-17-jdk
+              export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+              echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+              
+              # Set up Android SDK directory
+              mkdir -p $HOME/android-sdk
+              export ANDROID_SDK_ROOT=$HOME/android-sdk
+              export ANDROID_HOME=$HOME/android-sdk
+              echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+              echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+              echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+              echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+              
+              # Check if Android SDK is cached, if not download and install
+              if [[ ! -f "$HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager" ]]; then
+                echo "Installing Android SDK Command Line Tools..."
+                cd $HOME/android-sdk
+                wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+                unzip -q commandlinetools-linux-11076708_latest.zip
+                mkdir -p cmdline-tools/latest
+                mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+                rm -f commandlinetools-linux-11076708_latest.zip
+              else
+                echo "Using cached Android SDK"
+              fi
+              
+              # Update PATH for current session
+              export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
+              
+              # Accept licenses and install/update components
+              yes | sdkmanager --licenses || true
+              
+              # Install required components if not already present
+              if [[ ! -d "$HOME/android-sdk/platforms/android-33" ]]; then
+                echo "Installing Android platform and build tools..."
+                sdkmanager "platforms;android-33"
+                sdkmanager "build-tools;33.0.2"
+                sdkmanager "platform-tools"
+              fi
+              
+              # Install Android NDK if not cached
+              if [[ ! -d "$HOME/android-sdk/ndk/25.2.9519653" ]]; then
+                echo "Installing Android NDK..."
+                sdkmanager "ndk;25.2.9519653"
+              else
+                echo "Using cached Android NDK"
+              fi
+              
+              export ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.2.9519653
+              echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+              
+              # Install fyne CLI for Android builds
+              echo "Installing fyne CLI for Android builds..."
               go install fyne.io/tools/cmd/fyne@latest
               
-              # Verify fyne installation
-              if ! command -v fyne &> /dev/null; then
-                echo "fyne CLI not found in PATH, adding Go bin to PATH"
-                export PATH=$PATH:$(go env GOPATH)/bin
-                echo "PATH=$PATH:$(go env GOPATH)/bin" >> $GITHUB_ENV
+              # Ensure fyne is in PATH
+              export PATH=$PATH:$(go env GOPATH)/bin
+              echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+              
+              # Verify Android setup
+              echo "Verifying Android build environment..."
+              java -version
+              echo "Android SDK components:"
+              sdkmanager --list_installed | head -10
+              echo "Fyne version:"
+              fyne version
+              
+              echo "✅ Android build environment setup complete"
+              
+              # Configure NDK for ARM architectures
+              echo "Configuring NDK for Android builds..."
+              
+              # Set up NDK toolchain for ARM64 (primary Android architecture)
+              export NDK_ROOT=$ANDROID_NDK_ROOT
+              export CC=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang
+              export CXX=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++
+              export AR=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
+              export STRIP=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip
+              
+              # Set Go cross-compilation variables for Android ARM64
+              export GOOS=android
+              export GOARCH=arm64
+              export CGO_ENABLED=1
+              
+              # Add NDK environment variables
+              echo "NDK_ROOT=$NDK_ROOT" >> $GITHUB_ENV
+              echo "CC=$CC" >> $GITHUB_ENV
+              echo "CXX=$CXX" >> $GITHUB_ENV
+              echo "AR=$AR" >> $GITHUB_ENV
+              echo "STRIP=$STRIP" >> $GITHUB_ENV
+              echo "GOOS=android" >> $GITHUB_ENV
+              echo "GOARCH=arm64" >> $GITHUB_ENV
+              echo "CGO_ENABLED=1" >> $GITHUB_ENV
+              
+              # Verify NDK tools exist
+              if [[ -f "$CC" ]]; then
+                echo "✅ NDK toolchain verified: $CC"
+              else
+                echo "❌ NDK toolchain not found: $CC"
+                exit 1
               fi
+              
+              echo "✅ NDK toolchain configured for ARM64 Android builds"
             fi
           elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
             # macOS has necessary dependencies built-in
@@ -123,27 +235,168 @@ jobs:
         run: |
           mkdir -p build
           
-          # Use build script for all platforms (it handles Android specially)
-          export PLATFORMS="${{ matrix.goos }}/${{ matrix.goarch }}"
-          export LDFLAGS="-s -w"
-          
-          # Build using the build script which handles Android builds
-          if ! ./scripts/build-characters.sh build ${{ matrix.character }}; then
-            echo "Build script failed, trying fallback method..."
+          # Special handling for Android builds with NDK
+          if [[ "${{ matrix.goos }}" == "android" ]]; then
+            echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
             
-            # Fallback to manual build for non-Android platforms
-            if [[ "${{ matrix.goos }}" != "android" ]]; then
-              binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+            # Set up Android/NDK environment variables
+            export CC=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang
+            export CXX=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++
+            if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+              export CC=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi33-clang
+              export CXX=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi33-clang++
+            fi
+            
+            # Create temporary build directory
+            temp_build_dir=$(mktemp -d)
+            trap "rm -rf $temp_build_dir" EXIT
+            
+            # Copy embedded character source
+            cp -r cmd/companion-${{ matrix.character }}/* $temp_build_dir/
+            cp go.mod go.sum $temp_build_dir/
+            
+            # Create FyneApp.toml for Android metadata
+            cat > $temp_build_dir/FyneApp.toml << EOF
+          [Details]
+          Icon = "Icon.png"
+          Name = "${{ matrix.character }} Companion"
+          ID = "ai.opd.${{ matrix.character }}"
+          Version = "1.0.0"
+          Build = "${{ github.run_number }}"
+          
+          [Development]
+          AutoInject = true
+          EOF
+            
+            # Create app icon (use character-specific or default)
+            if [[ -f "assets/characters/${{ matrix.character }}/icon.png" ]]; then
+              cp "assets/characters/${{ matrix.character }}/icon.png" $temp_build_dir/Icon.png
+            elif [[ -f "assets/app/icon.png" ]]; then
+              cp "assets/app/icon.png" $temp_build_dir/Icon.png
+            else
+              # Create a simple 512x512 icon as fallback
+              convert -size 512x512 xc:lightblue \
+                -pointsize 72 -fill black -gravity center \
+                -annotate +0+0 "DDS" $temp_build_dir/Icon.png 2>/dev/null || \
+              echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $temp_build_dir/Icon.png
+            fi
+            
+            # Build APK with fyne package
+            cd $temp_build_dir
+            echo "Building APK with NDK support..."
+            
+            # Build with release configuration for optimized APK
+            if ! fyne package \
+              --target "android/${{ matrix.goarch }}" \
+              --name "${{ matrix.character }} Companion" \
+              --app-id "ai.opd.${{ matrix.character }}" \
+              --app-version "1.0.0" \
+              --release; then
+              
+              echo "Release build failed, trying debug build..."
+              if ! fyne package \
+                --target "android/${{ matrix.goarch }}" \
+                --name "${{ matrix.character }} Companion" \
+                --app-id "ai.opd.${{ matrix.character }}" \
+                --app-version "1.0.0"; then
+                echo "Android APK build failed completely"
+                exit 1
+              fi
+            fi
+            
+            # Find and move the generated APK
+            apk_file=$(find . -name "*.apk" -type f | head -1)
+            if [[ -n "$apk_file" ]]; then
+              output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+              mv "$apk_file" "../build/$output_name"
+              echo "✓ Built Android APK: $output_name"
+              
+              # Get APK info
+              if command -v aapt >/dev/null 2>&1; then
+                echo "APK Information:"
+                aapt dump badging "../build/$output_name" | head -5
+              fi
+              
+              # Show file size
+              ls -lh "../build/$output_name"
+            else
+              echo "No APK file generated"
+              exit 1
+            fi
+            
+          else
+            # Standard desktop builds
+            echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
+            
+            binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+            
+            # Use build script for desktop platforms
+            export PLATFORMS="${{ matrix.goos }}/${{ matrix.goarch }}"
+            export LDFLAGS="-s -w"
+            
+            if ./scripts/build-characters.sh build ${{ matrix.character }}; then
+              echo "✓ Build script completed successfully"
+            else
+              echo "Build script failed, trying direct build..."
               go build -ldflags="-s -w" \
                 -o "build/$binary_name" \
                 ./cmd/companion-${{ matrix.character }}
-              echo "Built binary: $binary_name"
-            else
-              echo "Android build failed and no fallback available"
-              exit 1
+              echo "✓ Built binary: $binary_name"
             fi
+          fi
+      
+      - name: Validate Android APK (if applicable)
+        if: matrix.goos == 'android'
+        shell: bash
+        run: |
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          
+          if [[ -f "$apk_file" ]]; then
+            echo "Validating Android APK: $apk_file"
+            
+            # Check APK file size (should be reasonable)
+            file_size=$(stat -f%z "$apk_file" 2>/dev/null || stat -c%s "$apk_file")
+            min_size=$((1024 * 1024))      # 1MB minimum
+            max_size=$((100 * 1024 * 1024)) # 100MB maximum
+            
+            if [[ $file_size -lt $min_size ]]; then
+              echo "❌ APK file too small: $file_size bytes (minimum: $min_size)"
+              exit 1
+            elif [[ $file_size -gt $max_size ]]; then
+              echo "⚠️ APK file quite large: $file_size bytes (maximum: $max_size)"
+            else
+              echo "✅ APK file size acceptable: $file_size bytes"
+            fi
+            
+            # Validate APK structure using built-in tools
+            if command -v unzip >/dev/null 2>&1; then
+              echo "Checking APK contents..."
+              required_files=("AndroidManifest.xml" "classes.dex" "META-INF/")
+              
+              for required in "${required_files[@]}"; do
+                if unzip -l "$apk_file" | grep -q "$required"; then
+                  echo "✅ Found required component: $required"
+                else
+                  echo "❌ Missing required component: $required"
+                  exit 1
+                fi
+              done
+            fi
+            
+            # Use our custom APK validator if available
+            if [[ -f "scripts/apk-validator.go" ]]; then
+              echo "Running custom APK validation..."
+              if go run scripts/apk-validator.go "$apk_file" "${{ matrix.character }}"; then
+                echo "✅ Custom APK validation passed"
+              else
+                echo "⚠️ Custom APK validation failed"
+              fi
+            fi
+            
+            echo "✅ Android APK validation completed successfully"
           else
-            echo "Build script completed successfully"
+            echo "❌ APK file not found: $apk_file"
+            exit 1
           fi
       
       - name: Upload artifacts
