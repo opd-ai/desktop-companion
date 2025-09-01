@@ -172,6 +172,7 @@ jobs:
         mkdir -p build artifacts
         export CGO_CFLAGS="-I/opt/X11/include"
         export CGO_LDFLAGS="-L/opt/X11/lib"
+        export CGO_ENABLED=1
         # Intel
         GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o build/companion-macos-amd64 cmd/companion/main.go
         # Apple Silicon
