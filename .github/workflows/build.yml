@@ -132,9 +132,15 @@ jobs:
       run: |
         xcode-select --install || true
 
-    - name: Install OpenGL headers (macOS)
-      run: brew install --cask xquartz
-
+    - name: Install OpenGL (macOS)
+      run: brew install --cask xquartz || true
+    - name: Ensure OpenGL headers
+      run: |
+        if [ ! -d "/opt/X11/include/GL" ]; then
+          echo "OpenGL headers missing. XQuartz installation failed.";
+          exit 1;
+        fi
+    
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
