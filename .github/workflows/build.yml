@@ -133,7 +133,9 @@ jobs:
         xcode-select --install || true
 
     - name: Install OpenGL (macOS)
-      run: brew install --cask xquartz || true
+      run: |
+        brew install --cask xquartz
+        brew install glfw glew
     - name: Ensure OpenGL headers
       run: |
         if [ ! -d "/opt/X11/include/GL" ]; then
@@ -144,6 +146,7 @@ jobs:
     - name: Ensure XQuartz OpenGL headers
       run: |
         brew install --cask xquartz
+        brew install glew glfw
         sleep 10  # Give XQuartz time to finish post-install scripts
         sudo mkdir -p /opt/X11/include
         # Try both possible header locations
@@ -169,6 +172,7 @@ jobs:
         mkdir -p build artifacts
         export CGO_CFLAGS="-I/opt/X11/include"
         export CGO_LDFLAGS="-L/opt/X11/lib"
+        export CGO_ENABLED=1
         # Intel
         GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o build/companion-macos-amd64 cmd/companion/main.go
         # Apple Silicon

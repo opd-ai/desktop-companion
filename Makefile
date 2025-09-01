@@ -166,10 +166,15 @@ help-characters:
 	@echo "  build-character    - Build single character (specify CHAR=name)"
 	@echo "  clean-characters   - Remove character build artifacts"
 	@echo ""
-	@echo "Examples:"
+	@echo "Platform-specific examples:"
 	@echo "  make build-character CHAR=default"
 	@echo "  make build-character CHAR=tsundere"
 	@echo "  make build-character CHAR=romance_flirty"
+	@echo ""
+	@echo "Android character builds:"
+	@echo "  PLATFORMS=android/arm64 make build-character CHAR=default"
+	@echo "  PLATFORMS=android/arm make build-character CHAR=tsundere"
+	@echo "  PLATFORMS=android/arm64,linux/amd64 make build-character CHAR=romance_flirty"
 
 # Help target
 help:

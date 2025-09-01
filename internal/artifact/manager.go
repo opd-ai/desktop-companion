@@ -85,8 +85,30 @@ func (m *Manager) SetRetentionPolicy(name string, policy RetentionPolicy) {
 	m.policies[name] = policy
 }
 
+// validateParameters validates artifact storage parameters
+func (m *Manager) validateParameters(character, platform, arch string) error {
+	if character == "" {
+		return fmt.Errorf("character name cannot be empty")
+	}
+	if platform == "" {
+		return fmt.Errorf("platform cannot be empty")
+	}
+	if arch == "" {
+		return fmt.Errorf("architecture cannot be empty")
+	}
+	if strings.Contains(character, " ") {
+		return fmt.Errorf("character name cannot contain spaces")
+	}
+	return nil
+}
+
 // StoreArtifact stores a build artifact with metadata
 func (m *Manager) StoreArtifact(srcPath, character, platform, arch string, metadata map[string]string) (*ArtifactInfo, error) {
+	// Validate input parameters
+	if err := m.validateParameters(character, platform, arch); err != nil {
+		return nil, err
+	}
+
 	// Generate artifact info
 	info, err := m.generateArtifactInfo(srcPath, character, platform, arch, metadata)
 	if err != nil {
