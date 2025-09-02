@@ -55,6 +55,23 @@ func (rem *RandomEventManager) Update(elapsed time.Duration, gameState *GameStat
 	return rem.processEventTriggers(gameState)
 }
 
+// UpdateWithFrequency checks for and triggers random events with frequency multiplier
+// Feature 6: Random Event Frequency Tuning - allows users to adjust event frequency
+func (rem *RandomEventManager) UpdateWithFrequency(elapsed time.Duration, gameState *GameState, frequencyMultiplier float64) *TriggeredEvent {
+	if !rem.shouldProcessEvents(gameState) {
+		return nil
+	}
+
+	rem.mu.Lock()
+	defer rem.mu.Unlock()
+
+	if !rem.isCheckIntervalReached() {
+		return nil
+	}
+
+	return rem.processEventTriggersWithFrequency(gameState, frequencyMultiplier)
+}
+
 // shouldProcessEvents checks if event processing should proceed
 func (rem *RandomEventManager) shouldProcessEvents(gameState *GameState) bool {
 	rem.mu.RLock()
@@ -84,6 +101,22 @@ func (rem *RandomEventManager) processEventTriggers(gameState *GameState) *Trigg
 	return nil
 }
 
+// processEventTriggersWithFrequency iterates through events with frequency multiplier
+// Feature 6: Random Event Frequency Tuning - supports frequency adjustments
+func (rem *RandomEventManager) processEventTriggersWithFrequency(gameState *GameState, frequencyMultiplier float64) *TriggeredEvent {
+	now := time.Now()
+
+	for _, event := range rem.events {
+		if triggeredEvent := rem.attemptEventTriggerWithFrequency(event, now, gameState, frequencyMultiplier); triggeredEvent != nil {
+			rem.lastCheck = now
+			return triggeredEvent
+		}
+	}
+
+	rem.lastCheck = now
+	return nil
+}
+
 // attemptEventTrigger tries to trigger a single event and returns result
 func (rem *RandomEventManager) attemptEventTrigger(event RandomEventConfig, now time.Time, gameState *GameState) *TriggeredEvent {
 	if !rem.canTriggerEvent(event, now, gameState) {
@@ -91,6 +124,26 @@ func (rem *RandomEventManager) attemptEventTrigger(event RandomEventConfig, now 
 	}
 
 	if !rem.rollEventProbability(event.Probability) {
+		return nil
+	}
+
+	return rem.createTriggeredEvent(event, now)
+}
+
+// attemptEventTriggerWithFrequency tries to trigger an event with frequency multiplier
+// Feature 6: Random Event Frequency Tuning - supports probability adjustment
+func (rem *RandomEventManager) attemptEventTriggerWithFrequency(event RandomEventConfig, now time.Time, gameState *GameState, frequencyMultiplier float64) *TriggeredEvent {
+	if !rem.canTriggerEvent(event, now, gameState) {
+		return nil
+	}
+
+	// Apply frequency multiplier to probability and cap at 1.0
+	adjustedProbability := event.Probability * frequencyMultiplier
+	if adjustedProbability > 1.0 {
+		adjustedProbability = 1.0
+	}
+
+	if !rem.rollEventProbability(adjustedProbability) {
 		return nil
 	}
 

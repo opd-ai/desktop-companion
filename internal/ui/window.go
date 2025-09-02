@@ -306,6 +306,45 @@ func (dw *DesktopWindow) showDialog(text string) {
 	}()
 }
 
+// showEventFrequencySettings displays the random event frequency settings dialog
+// Feature 6: Random Event Frequency Tuning - allows users to adjust event frequency
+func (dw *DesktopWindow) showEventFrequencySettings() {
+	currentMultiplier := dw.character.GetEventFrequencyMultiplier()
+
+	// Create frequency options with user-friendly labels
+	options := []struct {
+		label      string
+		multiplier float64
+	}{
+		{"Very Rare (0.5x)", 0.5},
+		{"Normal (1.0x)", 1.0},
+		{"Frequent (1.5x)", 1.5},
+		{"Very Frequent (2.0x)", 2.0},
+		{"Maximum (3.0x)", 3.0},
+	}
+
+	settingsText := fmt.Sprintf("Current Event Frequency: %.1fx\n\nChoose new frequency:\n\n", currentMultiplier)
+
+	// Build options text and find current selection
+	var selectedOption string
+	for _, option := range options {
+		prefix := "  "
+		if option.multiplier == currentMultiplier {
+			prefix = "→ "
+			selectedOption = option.label
+		}
+		settingsText += fmt.Sprintf("%s%s\n", prefix, option.label)
+	}
+
+	if selectedOption != "" {
+		settingsText += fmt.Sprintf("\nCurrent: %s", selectedOption)
+	}
+
+	// For now, show a simple dialog with the current state
+	// In a full implementation, this would use a selection dialog
+	dw.showDialog(settingsText + "\n\nUse keyboard shortcuts to adjust:\n  Ctrl+1 = Very Rare\n  Ctrl+2 = Normal\n  Ctrl+3 = Frequent\n  Ctrl+4 = Very Frequent\n  Ctrl+5 = Maximum")
+}
+
 // showContextMenu displays the right-click context menu
 // Creates dynamic menu items based on character capabilities and game mode
 func (dw *DesktopWindow) showContextMenu() {
@@ -324,7 +363,7 @@ func (dw *DesktopWindow) showContextMenu() {
 
 // buildBasicMenuItems creates the basic interaction menu items
 func (dw *DesktopWindow) buildBasicMenuItems() []ContextMenuItem {
-	return []ContextMenuItem{
+	menuItems := []ContextMenuItem{
 		{
 			Text: "Talk",
 			Callback: func() {
@@ -335,6 +374,18 @@ func (dw *DesktopWindow) buildBasicMenuItems() []ContextMenuItem {
 			},
 		},
 	}
+
+	// Feature 6: Random Event Frequency Tuning - add event settings if character has random events
+	if dw.character.HasRandomEvents() {
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "Event Settings",
+			Callback: func() {
+				dw.showEventFrequencySettings()
+			},
+		})
+	}
+
+	return menuItems
 }
 
 // buildGameModeMenuItems creates game-specific menu items when game mode is enabled
@@ -1013,6 +1064,11 @@ func (dw *DesktopWindow) setupConditionalShortcuts(canvas fyne.Canvas) {
 	if dw.character.GetCard().HasNewsFeatures() {
 		dw.setupNewsShortcuts(canvas)
 	}
+
+	// Feature 6: Random Event Frequency Tuning - add frequency shortcuts if character has random events
+	if dw.character.HasRandomEvents() {
+		dw.setupEventFrequencyShortcuts(canvas)
+	}
 }
 
 // logAvailableShortcuts outputs debugging information about configured shortcuts
@@ -1045,6 +1101,14 @@ func (dw *DesktopWindow) logConditionalShortcuts() {
 	if dw.character.GetCard().HasNewsFeatures() {
 		log.Println("  'Ctrl+L' - Read latest news")
 		log.Println("  'Ctrl+U' - Update news feeds")
+	}
+	// Feature 6: Random Event Frequency Tuning
+	if dw.character.HasRandomEvents() {
+		log.Println("  'Ctrl+1' - Very Rare events (0.5x)")
+		log.Println("  'Ctrl+2' - Normal events (1.0x)")
+		log.Println("  'Ctrl+3' - Frequent events (1.5x)")
+		log.Println("  'Ctrl+4' - Very Frequent events (2.0x)")
+		log.Println("  'Ctrl+5' - Maximum events (3.0x)")
 	}
 }
 
@@ -1125,6 +1189,66 @@ func (dw *DesktopWindow) setupNewsShortcuts(canvas fyne.Canvas) {
 		}
 		dw.HandleFeedUpdate()
 	})
+}
+
+// setupEventFrequencyShortcuts configures random event frequency adjustment shortcuts
+// Feature 6: Random Event Frequency Tuning - only called if character has random events
+func (dw *DesktopWindow) setupEventFrequencyShortcuts(canvas fyne.Canvas) {
+	// Ctrl+1: Set Very Rare frequency (0.5x)
+	ctrl1 := &desktop.CustomShortcut{
+		KeyName:  fyne.Key1,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrl1, func(shortcut fyne.Shortcut) {
+		dw.setEventFrequency(0.5, "Very Rare")
+	})
+
+	// Ctrl+2: Set Normal frequency (1.0x)
+	ctrl2 := &desktop.CustomShortcut{
+		KeyName:  fyne.Key2,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrl2, func(shortcut fyne.Shortcut) {
+		dw.setEventFrequency(1.0, "Normal")
+	})
+
+	// Ctrl+3: Set Frequent frequency (1.5x)
+	ctrl3 := &desktop.CustomShortcut{
+		KeyName:  fyne.Key3,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrl3, func(shortcut fyne.Shortcut) {
+		dw.setEventFrequency(1.5, "Frequent")
+	})
+
+	// Ctrl+4: Set Very Frequent frequency (2.0x)
+	ctrl4 := &desktop.CustomShortcut{
+		KeyName:  fyne.Key4,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrl4, func(shortcut fyne.Shortcut) {
+		dw.setEventFrequency(2.0, "Very Frequent")
+	})
+
+	// Ctrl+5: Set Maximum frequency (3.0x)
+	ctrl5 := &desktop.CustomShortcut{
+		KeyName:  fyne.Key5,
+		Modifier: fyne.KeyModifierControl,
+	}
+	canvas.AddShortcut(ctrl5, func(shortcut fyne.Shortcut) {
+		dw.setEventFrequency(3.0, "Maximum")
+	})
+}
+
+// setEventFrequency sets the event frequency multiplier and shows confirmation
+// Feature 6: Random Event Frequency Tuning
+func (dw *DesktopWindow) setEventFrequency(multiplier float64, label string) {
+	if dw.debug {
+		log.Printf("Setting event frequency to %.1fx (%s)", multiplier, label)
+	}
+
+	dw.character.SetEventFrequencyMultiplier(multiplier)
+	dw.showDialog(fmt.Sprintf("Event frequency set to %s (%.1fx)", label, multiplier))
 }
 
 // General Events System Implementation - implements keyboard shortcuts functionality

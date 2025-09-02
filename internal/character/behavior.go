@@ -48,6 +48,9 @@ type Character struct {
 	lastRomanceEventCheck    time.Time            // Last time romance events were checked
 	romanceEventCooldowns    map[string]time.Time // Romance event cooldown tracking
 
+	// Feature 6: Random Event Frequency Tuning (ROADMAP item 6)
+	eventFrequencyMultiplier float64 // Multiplier for random event probability (0.1 to 3.0)
+
 	// Advanced features (added for Phase 3 Task 3)
 	jealousyManager       *JealousyManager       // Jealousy mechanics and consequences
 	compatibilityAnalyzer *CompatibilityAnalyzer // Advanced compatibility algorithms
@@ -153,6 +156,9 @@ func createCharacterInstanceWithPlatform(card *CharacterCard, basePath string, p
 		idleTimeout:     time.Duration(card.Behavior.IdleTimeout) * time.Second,
 		movementEnabled: behaviorConfig.MovementEnabled,
 		size:            optimalSize,
+
+		// Feature 6: Random Event Frequency Tuning - default multiplier
+		eventFrequencyMultiplier: 1.0, // Default to normal frequency
 
 		// Platform behavior adapter
 		platformAdapter: platformAdapter,
@@ -562,7 +568,8 @@ func (c *Character) processRandomEvents(elapsed time.Duration) bool {
 
 	// Process regular random events
 	if c.randomEventManager != nil {
-		triggeredEvent := c.randomEventManager.Update(elapsed, c.gameState)
+		frequencyMultiplier := c.GetEventFrequencyMultiplier()
+		triggeredEvent := c.randomEventManager.UpdateWithFrequency(elapsed, c.gameState, frequencyMultiplier)
 		if triggeredEvent != nil {
 			stateChanged = c.handleTriggeredEvent(triggeredEvent) || stateChanged
 		}
@@ -1494,6 +1501,38 @@ func (c *Character) GetGameState() *GameState {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.gameState
+}
+
+// GetEventFrequencyMultiplier returns the current random event frequency multiplier
+// Feature 6: Random Event Frequency Tuning
+func (c *Character) GetEventFrequencyMultiplier() float64 {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.eventFrequencyMultiplier
+}
+
+// SetEventFrequencyMultiplier sets the random event frequency multiplier (0.1 to 3.0)
+// Feature 6: Random Event Frequency Tuning
+func (c *Character) SetEventFrequencyMultiplier(multiplier float64) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// Clamp between 0.1 and 3.0 for reasonable event frequencies
+	if multiplier < 0.1 {
+		multiplier = 0.1
+	} else if multiplier > 3.0 {
+		multiplier = 3.0
+	}
+
+	c.eventFrequencyMultiplier = multiplier
+}
+
+// HasRandomEvents returns true if the character has random events configured
+// Feature 6: Random Event Frequency Tuning - used for UI visibility
+func (c *Character) HasRandomEvents() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.randomEventManager != nil
 }
 
 // GetRecentDialogMemories returns recent dialog memories for AI chat integration
