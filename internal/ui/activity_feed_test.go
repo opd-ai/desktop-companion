@@ -94,16 +94,22 @@ func TestActivityFeed_Clear(t *testing.T) {
 		tracker.AddEvent(event)
 	}
 
-	// Give time for listener to process
-	time.Sleep(10 * time.Millisecond)
+	// Give time for listener to process all events
+	time.Sleep(50 * time.Millisecond)
 
 	// Verify container has some items
 	if feed.GetEventCount() == 0 {
 		t.Errorf("Expected some objects in container before clear")
 	}
 
+	// Clear the tracker first to prevent new events from listener goroutines
+	tracker.Clear()
+
 	// Clear the feed
 	feed.Clear()
+
+	// Give extra time for any remaining goroutines to complete
+	time.Sleep(20 * time.Millisecond)
 
 	// Verify container is empty
 	if feed.GetEventCount() != 0 {

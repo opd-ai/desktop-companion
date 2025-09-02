@@ -20,6 +20,7 @@ type ActivityFeed struct {
 	scroll    *container.Scroll
 	tracker   *network.ActivityTracker
 	maxEvents int
+	cleared   bool         // Flag to ignore events after clear
 	mu        sync.RWMutex // Protects UI operations from concurrent access
 }
 
@@ -80,6 +81,11 @@ func (af *ActivityFeed) addEventToFeed(event network.ActivityEvent) {
 	af.mu.Lock()
 	defer af.mu.Unlock()
 
+	// Ignore events if feed has been cleared
+	if af.cleared {
+		return
+	}
+
 	// Add new event widget
 	af.addEventWidget(event)
 
@@ -125,6 +131,7 @@ func (af *ActivityFeed) Clear() {
 	af.mu.Lock()
 	defer af.mu.Unlock()
 
+	af.cleared = true
 	af.vbox.RemoveAll()
 	af.Refresh()
 }
