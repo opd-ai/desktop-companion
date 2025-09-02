@@ -203,7 +203,7 @@ func (d *BattleActionDialog) Show() {
 	d.mu.Lock()
 	d.visible = true
 	d.mu.Unlock()
-	
+
 	d.content.Show()
 
 	// Start timer if configured
@@ -219,7 +219,7 @@ func (d *BattleActionDialog) Hide() {
 	d.mu.Lock()
 	d.visible = false
 	d.mu.Unlock()
-	
+
 	d.content.Hide()
 	d.stopTimer()
 	d.Refresh()
@@ -229,7 +229,7 @@ func (d *BattleActionDialog) Hide() {
 func (d *BattleActionDialog) startTimer() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	
+
 	if d.timerRunning {
 		return
 	}

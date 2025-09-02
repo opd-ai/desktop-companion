@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -52,9 +53,9 @@ func TestCooldownTimer_StartCooldown(t *testing.T) {
 func TestCooldownTimer_SetOnComplete(t *testing.T) {
 	timer := NewCooldownTimer()
 
-	callbackCalled := false
+	var callbackCalled atomic.Bool
 	timer.SetOnComplete(func() {
-		callbackCalled = true
+		callbackCalled.Store(true)
 	})
 
 	// Start a very short cooldown
@@ -63,7 +64,7 @@ func TestCooldownTimer_SetOnComplete(t *testing.T) {
 	// Wait for cooldown to complete with generous margin
 	time.Sleep(200 * time.Millisecond)
 
-	if callbackCalled != true {
+	if !callbackCalled.Load() {
 		t.Error("Completion callback should have been called")
 	}
 
