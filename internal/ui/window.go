@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -1277,12 +1278,12 @@ func (dw *DesktopWindow) shouldShowBattleOptions() bool {
 func (dw *DesktopWindow) shouldShowRomanceHistory() bool {
 	card := dw.character.GetCard()
 	gameState := dw.character.GetGameState()
-	
+
 	// Check if character has romance features and game state
 	if card == nil || !card.HasRomanceFeatures() || gameState == nil {
 		return false
 	}
-	
+
 	// Only show if there are romance memories to display
 	romanceMemories := gameState.GetRomanceMemories()
 	return len(romanceMemories) > 0
@@ -1413,4 +1414,102 @@ func (dw *DesktopWindow) HandleFeedUpdate() {
 		// Show completion message
 		dw.showDialog("News feeds updated successfully!")
 	}()
+}
+
+// showRomanceHistory displays a formatted list of romance interactions and milestones
+// Uses existing showDialog pattern but with enhanced formatting for romance memories
+func (dw *DesktopWindow) showRomanceHistory() {
+	gameState := dw.character.GetGameState()
+	if gameState == nil {
+		dw.showDialog("No romance history available.")
+		return
+	}
+
+	romanceMemories := gameState.GetRomanceMemories()
+	if len(romanceMemories) == 0 {
+		dw.showDialog("No romance interactions recorded yet.")
+		return
+	}
+
+	// Format romance memories into readable text
+	historyText := dw.formatRomanceHistory(romanceMemories)
+	dw.showDialog(historyText)
+}
+
+// formatRomanceHistory formats romance memories into a readable string
+// Shows recent interactions with timestamps and stat changes
+func (dw *DesktopWindow) formatRomanceHistory(memories []character.RomanceMemory) string {
+	// Show last 10 memories to keep dialog manageable
+	maxMemories := 10
+	startIndex := 0
+	if len(memories) > maxMemories {
+		startIndex = len(memories) - maxMemories
+	}
+
+	recentMemories := memories[startIndex:]
+
+	var builder strings.Builder
+	builder.WriteString("💕 Romance History\n\n")
+
+	for i := len(recentMemories) - 1; i >= 0; i-- {
+		memory := recentMemories[i]
+
+		// Format timestamp
+		timeStr := memory.Timestamp.Format("Jan 2, 15:04")
+
+		// Format interaction
+		builder.WriteString(fmt.Sprintf("🕐 %s\n", timeStr))
+		builder.WriteString(fmt.Sprintf("💫 %s\n", memory.InteractionType))
+		builder.WriteString(fmt.Sprintf("💬 %s\n", memory.Response))
+
+		// Format stat changes
+		statChanges := dw.formatStatChanges(memory.StatsBefore, memory.StatsAfter)
+		if statChanges != "" {
+			builder.WriteString(fmt.Sprintf("📊 %s\n", statChanges))
+		}
+
+		builder.WriteString("\n")
+	}
+
+	// Add summary
+	if len(memories) > maxMemories {
+		builder.WriteString(fmt.Sprintf("💡 Showing last %d of %d total memories", maxMemories, len(memories)))
+	} else {
+		builder.WriteString(fmt.Sprintf("💡 Total memories: %d", len(memories)))
+	}
+
+	return builder.String()
+}
+
+// formatStatChanges formats the before/after stat changes into a readable string
+// Shows meaningful stat increases/decreases with appropriate symbols
+func (dw *DesktopWindow) formatStatChanges(before, after map[string]float64) string {
+	if before == nil || after == nil {
+		return ""
+	}
+
+	var changes []string
+	romanceStats := []string{"affection", "trust", "intimacy", "jealousy"}
+
+	for _, stat := range romanceStats {
+		beforeVal, hasBefore := before[stat]
+		afterVal, hasAfter := after[stat]
+
+		if hasBefore && hasAfter {
+			change := afterVal - beforeVal
+			if change != 0 {
+				symbol := "📈"
+				if change < 0 {
+					symbol = "📉"
+				}
+				changes = append(changes, fmt.Sprintf("%s %s %+.1f", symbol, stat, change))
+			}
+		}
+	}
+
+	if len(changes) == 0 {
+		return ""
+	}
+
+	return strings.Join(changes, ", ")
 }
