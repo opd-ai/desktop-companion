@@ -29,6 +29,7 @@ type GiftProperties struct {
 	Consumable         bool                   `json:"consumable"`
 	Stackable          bool                   `json:"stackable"`
 	MaxStack           int                    `json:"maxStack"`
+	CooldownSeconds    int                    `json:"cooldownSeconds,omitempty"` // Cooldown time in seconds (0 = no cooldown)
 	UnlockRequirements map[string]interface{} `json:"unlockRequirements"`
 }
 

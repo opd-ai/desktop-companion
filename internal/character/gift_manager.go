@@ -93,6 +93,13 @@ func (gm *GiftManager) canGiveGift(gift *GiftDefinition) bool {
 		}
 	}
 
+	// Check cooldown if gift has cooldown properties
+	if gift.Properties.CooldownSeconds > 0 {
+		if gm.IsGiftOnCooldown(gift.ID) {
+			return false
+		}
+	}
+
 	return true
 }
 
@@ -417,4 +424,55 @@ func (gm *GiftManager) GetGiftPreferences() *GiftPreferences {
 		return nil
 	}
 	return &gm.character.GiftSystem.Preferences
+}
+
+// GetGiftCooldownRemaining returns the remaining cooldown time for a specific gift type
+// Thread-safe method that checks gift memories for the last usage timestamp
+func (gm *GiftManager) GetGiftCooldownRemaining(giftID string) time.Duration {
+	if gm.gameState == nil {
+		return 0 // No game state means no cooldown tracking
+	}
+
+	gm.gameState.mu.RLock()
+	defer gm.gameState.mu.RUnlock()
+
+	// Get the gift definition to check cooldown settings
+	gm.mu.RLock()
+	gift, exists := gm.giftCatalog[giftID]
+	gm.mu.RUnlock()
+
+	if !exists || gift.Properties.CooldownSeconds <= 0 {
+		return 0 // No gift found or no cooldown configured
+	}
+
+	// Find the most recent use of this gift
+	var lastUsed time.Time
+	for i := len(gm.gameState.GiftMemories) - 1; i >= 0; i-- {
+		memory := gm.gameState.GiftMemories[i]
+		if memory.GiftID == giftID {
+			lastUsed = memory.Timestamp
+			break
+		}
+	}
+
+	if lastUsed.IsZero() {
+		return 0 // Gift never used, no cooldown
+	}
+
+	// Calculate remaining cooldown time
+	cooldownDuration := time.Duration(gift.Properties.CooldownSeconds) * time.Second
+	elapsed := time.Since(lastUsed)
+	remaining := cooldownDuration - elapsed
+
+	if remaining > 0 {
+		return remaining
+	}
+
+	return 0 // Cooldown expired
+}
+
+// IsGiftOnCooldown checks if a gift is currently on cooldown
+// Returns true if the gift cannot be given due to cooldown restrictions
+func (gm *GiftManager) IsGiftOnCooldown(giftID string) bool {
+	return gm.GetGiftCooldownRemaining(giftID) > 0
 }

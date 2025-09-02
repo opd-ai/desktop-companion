@@ -23,11 +23,12 @@ import (
 // - Integrates seamlessly with existing interaction system
 //
 // Usage:
-//   dialog := NewGiftSelectionDialog(giftManager)
-//   dialog.SetOnGiftGiven(func(response *character.GiftResponse) {
-//       // Handle gift giving result
-//   })
-//   dialog.Show()
+//
+//	dialog := NewGiftSelectionDialog(giftManager)
+//	dialog.SetOnGiftGiven(func(response *character.GiftResponse) {
+//	    // Handle gift giving result
+//	})
+//	dialog.Show()
 type GiftSelectionDialog struct {
 	widget.BaseWidget
 	giftManager    *character.GiftManager
@@ -41,14 +42,16 @@ type GiftSelectionDialog struct {
 	selectedGift   *character.GiftDefinition
 	onGiftGiven    func(*character.GiftResponse)
 	onCancel       func()
+	cooldownTimers map[string]*CooldownTimer // Track cooldown timers by gift ID
 }
 
 // NewGiftSelectionDialog creates a new gift selection dialog
 // Returns a fully initialized dialog that integrates with the existing gift system
 func NewGiftSelectionDialog(giftManager *character.GiftManager) *GiftSelectionDialog {
 	dialog := &GiftSelectionDialog{
-		giftManager: giftManager,
-		visible:     false,
+		giftManager:    giftManager,
+		visible:        false,
+		cooldownTimers: make(map[string]*CooldownTimer),
 	}
 
 	// Create background with dialog styling similar to DialogBubble
@@ -79,21 +82,26 @@ func (gsd *GiftSelectionDialog) createGiftList() {
 			// Create template list item with icon and text
 			icon := widget.NewIcon(nil)
 			icon.SetResource(nil) // Will be set per item
-			
+
 			nameLabel := widget.NewLabel("Gift Name")
 			nameLabel.TextStyle = fyne.TextStyle{Bold: true}
-			
+
 			descLabel := widget.NewLabel("Description")
 			descLabel.TextStyle = fyne.TextStyle{Italic: true}
-			
+
 			rarityLabel := widget.NewLabel("Rarity")
-			
+
+			// Create a cooldown timer placeholder (will be shown/hidden as needed)
+			cooldownTimer := NewCooldownTimer()
+			cooldownTimer.Hide() // Hidden by default
+
 			itemContainer := container.NewVBox(
 				container.NewHBox(icon, nameLabel),
 				descLabel,
 				rarityLabel,
+				cooldownTimer, // Add cooldown timer to list item
 			)
-			
+
 			return itemContainer
 		},
 		func(id widget.ListItemID, obj fyne.CanvasObject) {
@@ -102,15 +110,15 @@ func (gsd *GiftSelectionDialog) createGiftList() {
 			if id >= len(gifts) {
 				return
 			}
-			
+
 			gift := gifts[id]
 			itemContainer := obj.(*fyne.Container)
-			
+
 			// Update name label
 			nameContainer := itemContainer.Objects[0].(*fyne.Container)
 			nameLabel := nameContainer.Objects[1].(*widget.Label)
 			nameLabel.SetText(gift.Name)
-			
+
 			// Update description
 			descLabel := itemContainer.Objects[1].(*widget.Label)
 			desc := gift.Description
@@ -118,13 +126,29 @@ func (gsd *GiftSelectionDialog) createGiftList() {
 				desc = desc[:47] + "..."
 			}
 			descLabel.SetText(desc)
-			
+
 			// Update rarity with simple text (keep it simple - color coding can be added later)
 			rarityLabel := itemContainer.Objects[2].(*widget.Label)
 			rarityLabel.SetText(fmt.Sprintf("Rarity: %s", strings.Title(gift.Rarity)))
+
+			// Handle cooldown display
+			cooldownTimer := itemContainer.Objects[3].(*CooldownTimer)
+			if gsd.giftManager.IsGiftOnCooldown(gift.ID) {
+				remaining := gsd.giftManager.GetGiftCooldownRemaining(gift.ID)
+				cooldownTimer.StartCooldown(remaining)
+				cooldownTimer.Show()
+
+				// Set completion callback to refresh the list when cooldown expires
+				cooldownTimer.SetOnComplete(func() {
+					cooldownTimer.Hide()
+					gsd.giftList.Refresh()
+				})
+			} else {
+				cooldownTimer.Hide()
+			}
 		},
 	)
-	
+
 	// Handle gift selection
 	gsd.giftList.OnSelected = func(id widget.ListItemID) {
 		gifts := gsd.getAvailableGifts()
@@ -133,7 +157,7 @@ func (gsd *GiftSelectionDialog) createGiftList() {
 			gsd.updateGiveButtonState()
 		}
 	}
-	
+
 	// Set initial size for the list
 	gsd.giftList.Resize(fyne.NewSize(300, 200))
 }
@@ -144,10 +168,10 @@ func (gsd *GiftSelectionDialog) createNotesEntry() {
 	gsd.notesEntry = widget.NewMultiLineEntry()
 	gsd.notesEntry.SetPlaceHolder("Add a personal message with your gift...")
 	gsd.notesEntry.Wrapping = fyne.TextWrapWord
-	
+
 	// Set size constraints
 	gsd.notesEntry.Resize(fyne.NewSize(300, 80))
-	
+
 	// Update give button state when notes change
 	gsd.notesEntry.OnChanged = func(string) {
 		gsd.updateGiveButtonState()
@@ -163,7 +187,7 @@ func (gsd *GiftSelectionDialog) createButtons() {
 	})
 	gsd.giveButton.Importance = widget.HighImportance
 	gsd.giveButton.Disable() // Initially disabled until gift selected
-	
+
 	// Cancel button - secondary action
 	gsd.cancelButton = widget.NewButton("Cancel", func() {
 		gsd.Hide()
@@ -181,18 +205,18 @@ func (gsd *GiftSelectionDialog) createLayout() {
 	titleLabel := widget.NewLabel("Select a Gift")
 	titleLabel.TextStyle = fyne.TextStyle{Bold: true}
 	titleLabel.Alignment = fyne.TextAlignCenter
-	
+
 	// Instructions
 	instructionLabel := widget.NewLabel("Choose a gift to give and add a personal note:")
 	instructionLabel.Wrapping = fyne.TextWrapWord
-	
+
 	// Button container
 	buttonContainer := container.NewHBox(
 		gsd.cancelButton,
 		widget.NewSeparator(), // Visual separator
 		gsd.giveButton,
 	)
-	
+
 	// Main content layout
 	contentContainer := container.NewVBox(
 		titleLabel,
@@ -204,17 +228,17 @@ func (gsd *GiftSelectionDialog) createLayout() {
 		widget.NewSeparator(),
 		buttonContainer,
 	)
-	
+
 	// Add padding around content
 	paddedContent := container.NewPadded(contentContainer)
-	
+
 	// Create final layout with background
 	gsd.content = container.NewBorder(
 		nil, nil, nil, nil,
 		gsd.background,
 		paddedContent,
 	)
-	
+
 	// Set initial size
 	gsd.content.Resize(fyne.NewSize(350, 450))
 }
@@ -225,10 +249,10 @@ func (gsd *GiftSelectionDialog) getAvailableGifts() []*character.GiftDefinition 
 	if gsd.giftManager == nil {
 		return []*character.GiftDefinition{}
 	}
-	
+
 	// Get available gifts from manager
 	gifts := gsd.giftManager.GetAvailableGifts()
-	
+
 	// Sort by rarity and name for consistent ordering
 	sort.Slice(gifts, func(i, j int) bool {
 		// Sort by rarity first (common to legendary)
@@ -239,24 +263,24 @@ func (gsd *GiftSelectionDialog) getAvailableGifts() []*character.GiftDefinition 
 			"epic":      4,
 			"legendary": 5,
 		}
-		
+
 		iRarity := rarityOrder[gifts[i].Rarity]
 		jRarity := rarityOrder[gifts[j].Rarity]
-		
+
 		if iRarity != jRarity {
 			return iRarity < jRarity
 		}
-		
+
 		// Then sort by name
 		return gifts[i].Name < gifts[j].Name
 	})
-	
+
 	return gifts
 }
 
 // updateGiveButtonState enables/disables the give button based on selection
 func (gsd *GiftSelectionDialog) updateGiveButtonState() {
-	if gsd.selectedGift != nil {
+	if gsd.selectedGift != nil && !gsd.giftManager.IsGiftOnCooldown(gsd.selectedGift.ID) {
 		gsd.giveButton.Enable()
 	} else {
 		gsd.giveButton.Disable()
@@ -269,10 +293,16 @@ func (gsd *GiftSelectionDialog) handleGiveGift() {
 	if gsd.selectedGift == nil {
 		return
 	}
-	
+
+	// Check cooldown before proceeding (double-check for safety)
+	if gsd.giftManager.IsGiftOnCooldown(gsd.selectedGift.ID) {
+		// This shouldn't happen if UI is working correctly, but add safety check
+		return
+	}
+
 	// Get notes text (may be empty)
 	notes := strings.TrimSpace(gsd.notesEntry.Text)
-	
+
 	// Validate notes length if gift has restrictions
 	if gsd.selectedGift.Notes.Enabled && gsd.selectedGift.Notes.MaxLength > 0 {
 		if len(notes) > gsd.selectedGift.Notes.MaxLength {
@@ -280,13 +310,13 @@ func (gsd *GiftSelectionDialog) handleGiveGift() {
 			notes = notes[:gsd.selectedGift.Notes.MaxLength]
 		}
 	}
-	
+
 	// Give the gift using existing gift manager
 	response, err := gsd.giftManager.GiveGift(gsd.selectedGift.ID, notes)
-	
+
 	// Hide dialog first
 	gsd.Hide()
-	
+
 	// Handle result
 	if err != nil {
 		// Create error response for consistent handling
@@ -298,7 +328,7 @@ func (gsd *GiftSelectionDialog) handleGiveGift() {
 		}
 		return
 	}
-	
+
 	// Success - notify callback with response
 	if gsd.onGiftGiven != nil {
 		gsd.onGiftGiven(response)
@@ -309,16 +339,16 @@ func (gsd *GiftSelectionDialog) handleGiveGift() {
 // Refreshes available gifts and resets selection state
 func (gsd *GiftSelectionDialog) Show() {
 	gsd.visible = true
-	
+
 	// Reset selection state
 	gsd.selectedGift = nil
 	gsd.notesEntry.SetText("")
 	gsd.giftList.UnselectAll()
 	gsd.updateGiveButtonState()
-	
+
 	// Refresh gift list data
 	gsd.giftList.Refresh()
-	
+
 	// Show the dialog
 	gsd.content.Show()
 	gsd.Refresh()
@@ -365,7 +395,7 @@ func (r *giftDialogRenderer) Layout(size fyne.Size) {
 	if r.dialog.visible && r.content != nil {
 		// Center the dialog on the screen
 		r.content.Resize(r.content.Size())
-		
+
 		// Position dialog in center of available space
 		dialogSize := r.content.Size()
 		x := (size.Width - dialogSize.Width) / 2
