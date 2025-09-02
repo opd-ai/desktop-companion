@@ -343,6 +343,7 @@ go run cmd/companion/main.go -network -character assets/characters/multiplayer/s
 
 **Multiplayer Interactions** (network mode):
 - **Network overlay**: Shows local (🏠) vs network (🌐) characters with activity status
+- **Activity feed**: Real-time scrollable log of all network peer actions and events
 - **Peer chat**: Send messages to other players through the network overlay
 - **Character visibility**: See all characters connected to the network session
 - **Real-time sync**: Character actions and status updates shared across peers

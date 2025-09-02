@@ -66,6 +66,10 @@ type NetworkOverlay struct {
 	compatibilityCalculator *character.CompatibilityCalculator
 	compatibilityScores     map[string]float64 // peer ID -> compatibility score
 	compatibilityMutex      sync.RWMutex       // Protects compatibility data
+
+	// Feature 9: Network Peer Activity Feed
+	activityTracker *network.ActivityTracker
+	activityFeed    *ActivityFeed
 }
 
 // NewNetworkOverlay creates a new network overlay widget
@@ -80,6 +84,10 @@ func NewNetworkOverlay(nm NetworkManagerInterface) *NetworkOverlay {
 		localCharName:       "Local Character", // Default name, can be updated
 		compatibilityScores: make(map[string]float64),
 	}
+
+	// Feature 9: Initialize activity tracker and feed
+	no.activityTracker = network.NewActivityTracker(100) // Store up to 100 events
+	no.activityFeed = NewActivityFeed(no.activityTracker)
 
 	no.ExtendBaseWidget(no)
 	no.createNetworkWidgets()
@@ -228,6 +236,13 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 		no.chatLog,
 	)
 
+	// Activity feed section (Feature 9)
+	activitySection := container.NewBorder(
+		widget.NewLabel("Recent Activity:"),
+		nil, nil, nil,
+		no.activityFeed.GetContainer(),
+	)
+
 	// Main container with all network UI elements - character section added
 	no.container = container.NewVBox(
 		headerContainer,
@@ -235,6 +250,8 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 		characterSection, // Show characters first as this is most important for users
 		widget.NewSeparator(),
 		peerSection,
+		widget.NewSeparator(),
+		activitySection, // Activity feed before chat for better UX
 		widget.NewSeparator(),
 		chatSection,
 	)
@@ -248,8 +265,8 @@ func (no *NetworkOverlay) styleNetworkWidgets() {
 	// Set background color for better visibility over character
 	// backgroundColor := color.RGBA{R: 0, G: 0, B: 0, A: 180} // Semi-transparent black
 
-	// Style the main container - increased height to accommodate character list
-	no.container.Resize(fyne.NewSize(220, 380))
+	// Style the main container - increased height to accommodate activity feed
+	no.container.Resize(fyne.NewSize(220, 480))
 
 	// Style status label with appropriate colors
 	if no.networkManager != nil && no.networkManager.GetPeerCount() > 0 {
@@ -282,6 +299,9 @@ func (no *NetworkOverlay) sendChatMessage(message string) {
 
 	// Add to local chat log
 	no.addChatMessage("You", message)
+
+	// Track chat activity
+	no.TrackChatMessage("local", no.localCharName, message)
 }
 
 // addChatMessage adds a message to the chat log display
@@ -597,4 +617,66 @@ func (no *NetworkOverlay) Move(pos fyne.Position) {
 // Resize changes the overlay size
 func (no *NetworkOverlay) Resize(size fyne.Size) {
 	no.container.Resize(size)
+}
+
+// Feature 9: Activity Tracking Methods
+
+// TrackPeerJoined records when a peer joins the network
+func (no *NetworkOverlay) TrackPeerJoined(peerID, characterName string) {
+	if no.activityTracker == nil {
+		return
+	}
+
+	event := network.CreatePeerJoinedEvent(peerID, characterName)
+	no.activityTracker.AddEvent(event)
+}
+
+// TrackPeerLeft records when a peer leaves the network
+func (no *NetworkOverlay) TrackPeerLeft(peerID, characterName string) {
+	if no.activityTracker == nil {
+		return
+	}
+
+	event := network.CreatePeerLeftEvent(peerID, characterName)
+	no.activityTracker.AddEvent(event)
+}
+
+// TrackCharacterAction records character interactions
+func (no *NetworkOverlay) TrackCharacterAction(peerID, characterName, action string, details interface{}) {
+	if no.activityTracker == nil {
+		return
+	}
+
+	event := network.CreateCharacterActionEvent(peerID, characterName, action, details)
+	no.activityTracker.AddEvent(event)
+}
+
+// TrackChatMessage records chat messages
+func (no *NetworkOverlay) TrackChatMessage(peerID, characterName, message string) {
+	if no.activityTracker == nil {
+		return
+	}
+
+	event := network.CreateChatEvent(peerID, characterName, message)
+	no.activityTracker.AddEvent(event)
+}
+
+// TrackBattleAction records battle-related activities
+func (no *NetworkOverlay) TrackBattleAction(peerID, characterName, battleAction string) {
+	if no.activityTracker == nil {
+		return
+	}
+
+	event := network.CreateBattleEvent(peerID, characterName, battleAction)
+	no.activityTracker.AddEvent(event)
+}
+
+// GetActivityTracker returns the activity tracker for external use
+func (no *NetworkOverlay) GetActivityTracker() *network.ActivityTracker {
+	return no.activityTracker
+}
+
+// GetActivityFeed returns the activity feed widget for external use
+func (no *NetworkOverlay) GetActivityFeed() *ActivityFeed {
+	return no.activityFeed
 }
