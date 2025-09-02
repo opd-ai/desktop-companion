@@ -568,7 +568,7 @@ func (c *Character) processRandomEvents(elapsed time.Duration) bool {
 
 	// Process regular random events
 	if c.randomEventManager != nil {
-		frequencyMultiplier := c.GetEventFrequencyMultiplier()
+		frequencyMultiplier := c.eventFrequencyMultiplier // Direct access within locked context
 		triggeredEvent := c.randomEventManager.UpdateWithFrequency(elapsed, c.gameState, frequencyMultiplier)
 		if triggeredEvent != nil {
 			stateChanged = c.handleTriggeredEvent(triggeredEvent) || stateChanged
