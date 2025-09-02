@@ -131,16 +131,42 @@ func (af *ActivityFeed) Clear() {
 
 // SetMaxEvents updates the maximum number of events to display
 func (af *ActivityFeed) SetMaxEvents(max int) {
+	af.mu.Lock()
+	defer af.mu.Unlock()
+	
 	if max <= 0 {
 		max = 50
 	}
 	af.maxEvents = max
-	af.refreshEvents()
+	af.refreshEventsUnsafe() // Call internal method that doesn't take mutex
+}
+
+// refreshEventsUnsafe reloads all events from the tracker (must be called with mutex held)
+func (af *ActivityFeed) refreshEventsUnsafe() {
+	if af.tracker == nil {
+		return
+	}
+
+	events := af.tracker.GetRecentEvents(af.maxEvents)
+	af.vbox.RemoveAll()
+
+	for _, event := range events {
+		af.addEventWidget(event)
+	}
+
+	af.Refresh()
 }
 
 // GetContainer returns the main container for layout purposes
 func (af *ActivityFeed) GetContainer() *fyne.Container {
 	return container.NewWithoutLayout(af.scroll)
+}
+
+// GetEventCount returns the current number of events in the feed (thread-safe)
+func (af *ActivityFeed) GetEventCount() int {
+	af.mu.RLock()
+	defer af.mu.RUnlock()
+	return len(af.vbox.Objects)
 }
 
 // AddTestEvent adds a test event for UI testing purposes

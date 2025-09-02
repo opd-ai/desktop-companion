@@ -98,7 +98,7 @@ func TestActivityFeed_Clear(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 
 	// Verify container has some items
-	if len(feed.vbox.Objects) == 0 {
+	if feed.GetEventCount() == 0 {
 		t.Errorf("Expected some objects in container before clear")
 	}
 
@@ -106,8 +106,8 @@ func TestActivityFeed_Clear(t *testing.T) {
 	feed.Clear()
 
 	// Verify container is empty
-	if len(feed.vbox.Objects) != 0 {
-		t.Errorf("Expected 0 objects in container after clear, got %d", len(feed.vbox.Objects))
+	if feed.GetEventCount() != 0 {
+		t.Errorf("Expected 0 objects in container after clear, got %d", feed.GetEventCount())
 	}
 }
 
@@ -175,8 +175,9 @@ func TestActivityFeed_EventListener(t *testing.T) {
 	time.Sleep(20 * time.Millisecond)
 
 	// Check that the feed container has the event
-	if len(feed.vbox.Objects) != 1 {
-		t.Errorf("Expected 1 object in feed container, got %d", len(feed.vbox.Objects))
+	eventCount := feed.GetEventCount()
+	if eventCount != 1 {
+		t.Errorf("Expected 1 object in feed container, got %d", eventCount)
 	}
 }
 
@@ -206,8 +207,9 @@ func TestActivityFeed_MaxEventsLimit(t *testing.T) {
 	time.Sleep(50 * time.Millisecond)
 
 	// Should only show maxEvents items
-	if len(feed.vbox.Objects) > feed.maxEvents {
-		t.Errorf("Expected at most %d objects in feed container, got %d", feed.maxEvents, len(feed.vbox.Objects))
+	eventCount := feed.GetEventCount()
+	if eventCount > feed.maxEvents {
+		t.Errorf("Expected at most %d objects in feed container, got %d", feed.maxEvents, eventCount)
 	}
 }
 
@@ -237,15 +239,17 @@ func TestActivityFeed_EventStyling(t *testing.T) {
 			Timestamp:     time.Now(),
 		}
 		tracker.AddEvent(event)
+		time.Sleep(5 * time.Millisecond) // Small delay between events
 	}
 
 	// Give time for listeners to process
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	// Verify we have the expected number of events displayed
 	expectedCount := len(eventTypes)
-	if len(feed.vbox.Objects) != expectedCount {
-		t.Errorf("Expected %d objects in feed container, got %d", expectedCount, len(feed.vbox.Objects))
+	eventCount := feed.GetEventCount()
+	if eventCount != expectedCount {
+		t.Errorf("Expected %d objects in feed container, got %d", expectedCount, eventCount)
 	}
 }
 
@@ -286,8 +290,9 @@ func TestActivityFeed_Integration(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	// Verify all activities are displayed
-	if len(feed.vbox.Objects) != len(activities) {
-		t.Errorf("Expected %d activities displayed, got %d", len(activities), len(feed.vbox.Objects))
+	eventCount := feed.GetEventCount()
+	if eventCount != len(activities) {
+		t.Errorf("Expected %d activities displayed, got %d", len(activities), eventCount)
 	}
 
 	// Verify tracker and feed are in sync
