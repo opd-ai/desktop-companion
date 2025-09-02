@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -19,6 +20,7 @@ type ActivityFeed struct {
 	scroll    *container.Scroll
 	tracker   *network.ActivityTracker
 	maxEvents int
+	mu        sync.RWMutex // Protects UI operations from concurrent access
 }
 
 // NewActivityFeed creates a new activity feed widget with the given tracker
@@ -55,6 +57,9 @@ func (af *ActivityFeed) CreateRenderer() fyne.WidgetRenderer {
 
 // refreshEvents reloads all events from the tracker
 func (af *ActivityFeed) refreshEvents() {
+	af.mu.Lock()
+	defer af.mu.Unlock()
+	
 	if af.tracker == nil {
 		return
 	}
@@ -70,7 +75,11 @@ func (af *ActivityFeed) refreshEvents() {
 }
 
 // addEventToFeed adds a new event to the feed (called by listener)
+// Uses mutex protection for thread-safe UI operations
 func (af *ActivityFeed) addEventToFeed(event network.ActivityEvent) {
+	af.mu.Lock()
+	defer af.mu.Unlock()
+	
 	// Add new event widget
 	af.addEventWidget(event)
 
@@ -85,6 +94,7 @@ func (af *ActivityFeed) addEventToFeed(event network.ActivityEvent) {
 }
 
 // addEventWidget creates and adds a single event widget to the container
+// Must be called with mutex held
 func (af *ActivityFeed) addEventWidget(event network.ActivityEvent) {
 	timeStr := event.Timestamp.Format("15:04")
 	eventText := fmt.Sprintf("[%s] %s", timeStr, event.Description)
@@ -112,6 +122,9 @@ func (af *ActivityFeed) addEventWidget(event network.ActivityEvent) {
 
 // Clear removes all events from the display
 func (af *ActivityFeed) Clear() {
+	af.mu.Lock()
+	defer af.mu.Unlock()
+	
 	af.vbox.RemoveAll()
 	af.Refresh()
 }
@@ -127,7 +140,7 @@ func (af *ActivityFeed) SetMaxEvents(max int) {
 
 // GetContainer returns the main container for layout purposes
 func (af *ActivityFeed) GetContainer() *fyne.Container {
-	return fyne.NewContainer(af.scroll)
+	return container.NewWithoutLayout(af.scroll)
 }
 
 // AddTestEvent adds a test event for UI testing purposes
