@@ -155,22 +155,23 @@ func TestBattleActionDialogVisibility(t *testing.T) {
 func TestBattleActionDialogTimer(t *testing.T) {
 	t.Run("timer_functionality", func(t *testing.T) {
 		dialog := NewBattleActionDialog(100 * time.Millisecond) // Very short timeout for testing
-		timeoutCalled := false
+		timeoutChan := make(chan bool, 1)
 
 		dialog.SetOnCancel(func() {
-			timeoutCalled = true
+			timeoutChan <- true
 		})
 
 		dialog.Show()
 
-		if !dialog.timerRunning {
+		if !dialog.IsTimerRunning() {
 			t.Error("Timer should be running after Show()")
 		}
 
 		// Wait for timeout
-		time.Sleep(150 * time.Millisecond)
-
-		if !timeoutCalled {
+		select {
+		case <-timeoutChan:
+			// Good, timeout occurred
+		case <-time.After(200 * time.Millisecond):
 			t.Error("Timeout callback should have been called")
 		}
 

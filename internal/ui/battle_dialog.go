@@ -5,6 +5,7 @@ package ui
 import (
 	"fmt"
 	"image/color"
+	"sync"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -53,6 +54,7 @@ type BattleActionDialog struct {
 	timeRemaining  time.Duration
 	timerRunning   bool
 	timerStop      chan bool
+	mu             sync.Mutex // Protects all timer-related state from concurrent access
 }
 
 // NewBattleActionDialog creates a new battle action selection dialog
@@ -198,7 +200,10 @@ func (d *BattleActionDialog) SetOnCancel(callback func()) {
 
 // Show displays the battle action dialog and starts the timer if configured
 func (d *BattleActionDialog) Show() {
+	d.mu.Lock()
 	d.visible = true
+	d.mu.Unlock()
+	
 	d.content.Show()
 
 	// Start timer if configured
@@ -211,7 +216,10 @@ func (d *BattleActionDialog) Show() {
 
 // Hide hides the battle action dialog and stops the timer
 func (d *BattleActionDialog) Hide() {
+	d.mu.Lock()
 	d.visible = false
+	d.mu.Unlock()
+	
 	d.content.Hide()
 	d.stopTimer()
 	d.Refresh()
@@ -219,16 +227,20 @@ func (d *BattleActionDialog) Hide() {
 
 // startTimer begins the turn countdown timer
 func (d *BattleActionDialog) startTimer() {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	
 	if d.timerRunning {
 		return
 	}
 
-	d.initializeTimerState()
+	d.initializeTimerStateUnsafe()
 	go d.runTimerLoop()
 }
 
-// initializeTimerState sets up the initial timer state before starting the countdown
-func (d *BattleActionDialog) initializeTimerState() {
+// initializeTimerStateUnsafe sets up the initial timer state before starting the countdown
+// Must be called with mutex held
+func (d *BattleActionDialog) initializeTimerStateUnsafe() {
 	d.timerRunning = true
 	d.timeRemaining = d.turnTimeout
 }
@@ -252,31 +264,41 @@ func (d *BattleActionDialog) runTimerLoop() {
 
 // processTimerTick handles a single timer tick and returns true if timer should stop
 func (d *BattleActionDialog) processTimerTick() bool {
+	d.mu.Lock()
 	d.timeRemaining -= 100 * time.Millisecond
+	shouldStop := d.timeRemaining <= 0
+	if shouldStop {
+		d.timerRunning = false
+	} else {
+		d.updateTimerDisplayUnsafe()
+	}
+	onCancel := d.onCancel
+	d.mu.Unlock()
 
-	if d.timeRemaining <= 0 {
-		d.handleTimerExpiration()
+	if shouldStop {
+		d.Hide()
+		if onCancel != nil {
+			onCancel() // Treat timeout as cancellation
+		}
 		return true
 	}
 
-	d.updateTimerDisplay()
 	return false
 }
 
-// handleTimerExpiration processes timer expiration and triggers timeout actions
-func (d *BattleActionDialog) handleTimerExpiration() {
-	d.timerRunning = false
-	d.Hide()
-	if d.onCancel != nil {
-		d.onCancel() // Treat timeout as cancellation
-	}
-}
-
-// updateTimerDisplay refreshes the timer label with the current remaining time
-func (d *BattleActionDialog) updateTimerDisplay() {
+// updateTimerDisplayUnsafe refreshes the timer label with the current remaining time
+// Must be called with mutex held
+func (d *BattleActionDialog) updateTimerDisplayUnsafe() {
 	if d.timerLabel != nil {
 		d.timerLabel.SetText(fmt.Sprintf("Time: %.1fs", d.timeRemaining.Seconds()))
 	}
+}
+
+// IsTimerRunning returns whether the timer is currently running (thread-safe)
+func (d *BattleActionDialog) IsTimerRunning() bool {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.timerRunning
 }
 
 // stopTimer stops the turn countdown timer
@@ -290,8 +312,10 @@ func (d *BattleActionDialog) stopTimer() {
 	}
 }
 
-// IsVisible returns whether the dialog is currently visible
+// IsVisible returns whether the dialog is currently visible (thread-safe)
 func (d *BattleActionDialog) IsVisible() bool {
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	return d.visible
 }
 
