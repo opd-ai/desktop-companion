@@ -28,6 +28,7 @@ type DesktopWindow struct {
 	networkOverlay          *NetworkOverlay
 	giftDialog              *GiftSelectionDialog
 	achievementNotification *AchievementNotification
+	saveStatusIndicator     *SaveStatusIndicator
 	profiler                *monitoring.Profiler
 	debug                   bool
 	gameMode                bool
@@ -102,6 +103,9 @@ func initializeBasicComponents(dw *DesktopWindow, char *character.Character, deb
 
 	// Create context menu (initially hidden)
 	dw.contextMenu = NewContextMenu()
+
+	// Create save status indicator (small, positioned in corner)
+	dw.saveStatusIndicator = NewSaveStatusIndicator()
 }
 
 // initializeGameFeatures sets up game-related features like stats overlay
@@ -182,6 +186,14 @@ func (dw *DesktopWindow) setupContent() {
 		dw.contextMenu,
 	}
 
+	// Add save status indicator (positioned in corner)
+	if dw.saveStatusIndicator != nil {
+		// Position save status indicator in top-right corner
+		dw.saveStatusIndicator.Resize(fyne.NewSize(16, 16))
+		dw.saveStatusIndicator.Move(fyne.NewPos(float32(dw.character.GetSize()-20), 4))
+		objects = append(objects, dw.saveStatusIndicator)
+	}
+
 	// Add stats overlay if available
 	if dw.statsOverlay != nil {
 		objects = append(objects, dw.statsOverlay.GetContainer())
@@ -245,6 +257,13 @@ func (dw *DesktopWindow) setupInteractions() {
 		clickable,
 		dw.dialog,
 		dw.contextMenu,
+	}
+
+	// Add save status indicator if available (positioned in corner)
+	if dw.saveStatusIndicator != nil {
+		dw.saveStatusIndicator.Resize(fyne.NewSize(16, 16))
+		dw.saveStatusIndicator.Move(fyne.NewPos(float32(dw.character.GetSize()-20), 4))
+		objects = append(objects, dw.saveStatusIndicator)
 	}
 
 	// Add stats overlay if available
@@ -1652,4 +1671,54 @@ func (dw *DesktopWindow) formatStatChanges(before, after map[string]float64) str
 	}
 
 	return strings.Join(changes, ", ")
+}
+
+// onSaveStarted updates the save status indicator when a save operation begins
+func (dw *DesktopWindow) onSaveStarted() {
+	if dw.saveStatusIndicator != nil {
+		dw.saveStatusIndicator.SetStatus(SaveStatusSaving, "")
+	}
+}
+
+// onSaveCompleted updates the save status indicator when a save operation completes successfully
+// Automatically returns to idle state after 2 seconds
+func (dw *DesktopWindow) onSaveCompleted() {
+	if dw.saveStatusIndicator != nil {
+		dw.saveStatusIndicator.SetStatus(SaveStatusSaved, "")
+
+		// Return to idle after 2 seconds
+		go func() {
+			time.Sleep(2 * time.Second)
+			if dw.saveStatusIndicator != nil {
+				dw.saveStatusIndicator.SetStatus(SaveStatusIdle, "")
+			}
+		}()
+	}
+}
+
+// onSaveError updates the save status indicator when a save operation fails
+func (dw *DesktopWindow) onSaveError(err error) {
+	if dw.saveStatusIndicator != nil {
+		dw.saveStatusIndicator.SetStatus(SaveStatusError, err.Error())
+	}
+}
+
+// SetSaveStatusCallback configures the save status callback for the window
+// This method should be called to connect the window's save status indicator
+// to a SaveManager's status notifications
+func (dw *DesktopWindow) SetSaveStatusCallback() func(SaveStatus, string) {
+	return func(status SaveStatus, message string) {
+		switch status {
+		case SaveStatusSaving:
+			dw.onSaveStarted()
+		case SaveStatusSaved:
+			dw.onSaveCompleted()
+		case SaveStatusError:
+			dw.onSaveError(fmt.Errorf(message))
+		case SaveStatusIdle:
+			if dw.saveStatusIndicator != nil {
+				dw.saveStatusIndicator.SetStatus(SaveStatusIdle, "")
+			}
+		}
+	}
 }

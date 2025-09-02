@@ -10,6 +10,21 @@ import (
 	"time"
 )
 
+// SaveStatus represents the current state of save operations
+// Used by UI components to display save status indicators
+type SaveStatus int
+
+const (
+	// SaveStatusIdle indicates no save operations in progress
+	SaveStatusIdle SaveStatus = iota
+	// SaveStatusSaving indicates a save operation is currently in progress
+	SaveStatusSaving
+	// SaveStatusSaved indicates the last save operation completed successfully
+	SaveStatusSaved
+	// SaveStatusError indicates the last save operation failed with an error
+	SaveStatusError
+)
+
 // SaveManager handles game state persistence using JSON files
 // Follows the "lazy programmer" approach using only Go standard library
 // Provides atomic writes and safe concurrent access to save operations
@@ -22,6 +37,7 @@ type SaveManager struct {
 	autoSaveTicker *time.Ticker
 	ctx            context.Context
 	cancel         context.CancelFunc
+	statusCallback func(SaveStatus, string) // Callback for status updates
 }
 
 // GameSaveData represents the complete save state for a character
@@ -59,7 +75,7 @@ type SaveMetadata struct {
 }
 
 // NewSaveManager creates a new save manager instance
-// savePath should be the directory where save files will be stored
+// savePath should be the directory where save file will be stored
 func NewSaveManager(savePath string) *SaveManager {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &SaveManager{
@@ -69,6 +85,28 @@ func NewSaveManager(savePath string) *SaveManager {
 		stopChan: make(chan struct{}, 1), // Buffered channel to prevent blocking
 		ctx:      ctx,
 		cancel:   cancel,
+	}
+}
+
+// SetStatusCallback sets the callback function for save status updates
+// The callback will be called with status and message parameters during save operations
+// Pass nil to disable status callbacks
+func (sm *SaveManager) SetStatusCallback(callback func(SaveStatus, string)) {
+	sm.mu.Lock()
+	defer sm.mu.Unlock()
+	sm.statusCallback = callback
+}
+
+// notifyStatus calls the status callback if one is set
+// Thread-safe method that can be called from any goroutine
+func (sm *SaveManager) notifyStatus(status SaveStatus, message string) {
+	sm.mu.RLock()
+	callback := sm.statusCallback
+	sm.mu.RUnlock()
+
+	if callback != nil {
+		// Call callback without holding the lock to prevent deadlocks
+		callback(status, message)
 	}
 }
 
@@ -181,6 +219,7 @@ func (sm *SaveManager) disableAutoSaveUnsafe() {
 
 // SaveGameState saves game state to a JSON file
 // Uses atomic write operation to prevent corruption
+// Notifies status callback of save progress if callback is set
 func (sm *SaveManager) SaveGameState(characterName string, data *GameSaveData) error {
 	if data == nil {
 		return fmt.Errorf("save data cannot be nil")
@@ -190,12 +229,26 @@ func (sm *SaveManager) SaveGameState(characterName string, data *GameSaveData) e
 		return fmt.Errorf("character name cannot be empty")
 	}
 
+	// Notify start of save operation
+	sm.notifyStatus(SaveStatusSaving, "")
+
 	sm.mu.Lock()
-	defer sm.mu.Unlock()
+
+	var saveError error
+	defer func() {
+		sm.mu.Unlock()
+		if saveError != nil {
+			sm.notifyStatus(SaveStatusError, saveError.Error())
+		} else {
+			sm.notifyStatus(SaveStatusSaved, "")
+		}
+	}()
 
 	// Ensure save directory exists
 	if err := sm.ensureSaveDirectory(); err != nil {
-		return fmt.Errorf("failed to create save directory: %w", err)
+		errMsg := fmt.Sprintf("failed to create save directory: %v", err)
+		saveError = fmt.Errorf(errMsg)
+		return saveError
 	}
 
 	// Generate save file path
@@ -211,7 +264,13 @@ func (sm *SaveManager) SaveGameState(characterName string, data *GameSaveData) e
 	data.SaveVersion = "1.0"
 
 	// Perform atomic write
-	return sm.atomicWriteJSON(savePath, data)
+	if err := sm.atomicWriteJSON(savePath, data); err != nil {
+		saveError = err
+		return err
+	}
+
+	// Success - no error, defer will handle notification
+	return nil
 }
 
 // LoadGameState loads game state from a JSON file
