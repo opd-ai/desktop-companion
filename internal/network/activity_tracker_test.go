@@ -2,6 +2,7 @@ package network
 
 import (
 	"fmt"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -174,11 +175,11 @@ func TestActivityTracker_GetRecentEvents(t *testing.T) {
 
 func TestActivityTracker_AddListener(t *testing.T) {
 	tracker := NewActivityTracker(10)
-	called := false
+	var called int32 // Use atomic operations for race-free access
 
 	// Add listener
 	tracker.AddListener(func(event ActivityEvent) {
-		called = true
+		atomic.StoreInt32(&called, 1)
 		if event.Type != ActivityBattle {
 			t.Errorf("Expected ActivityBattle, got %v", event.Type)
 		}
@@ -197,7 +198,7 @@ func TestActivityTracker_AddListener(t *testing.T) {
 	// Give goroutine time to execute
 	time.Sleep(10 * time.Millisecond)
 
-	if !called {
+	if atomic.LoadInt32(&called) == 0 {
 		t.Errorf("Expected listener to be called")
 	}
 }

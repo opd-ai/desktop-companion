@@ -59,7 +59,7 @@ func (af *ActivityFeed) CreateRenderer() fyne.WidgetRenderer {
 func (af *ActivityFeed) refreshEvents() {
 	af.mu.Lock()
 	defer af.mu.Unlock()
-	
+
 	if af.tracker == nil {
 		return
 	}
@@ -79,7 +79,7 @@ func (af *ActivityFeed) refreshEvents() {
 func (af *ActivityFeed) addEventToFeed(event network.ActivityEvent) {
 	af.mu.Lock()
 	defer af.mu.Unlock()
-	
+
 	// Add new event widget
 	af.addEventWidget(event)
 
@@ -124,7 +124,7 @@ func (af *ActivityFeed) addEventWidget(event network.ActivityEvent) {
 func (af *ActivityFeed) Clear() {
 	af.mu.Lock()
 	defer af.mu.Unlock()
-	
+
 	af.vbox.RemoveAll()
 	af.Refresh()
 }
@@ -133,7 +133,7 @@ func (af *ActivityFeed) Clear() {
 func (af *ActivityFeed) SetMaxEvents(max int) {
 	af.mu.Lock()
 	defer af.mu.Unlock()
-	
+
 	if max <= 0 {
 		max = 50
 	}
