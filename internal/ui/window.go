@@ -1276,6 +1276,10 @@ func (dw *DesktopWindow) shouldShowBattleOptions() bool {
 // shouldShowRomanceHistory determines if "View Romance History" should appear in the context menu
 // Shows for characters with game state and romance memories
 func (dw *DesktopWindow) shouldShowRomanceHistory() bool {
+	if dw.character == nil {
+		return false
+	}
+
 	card := dw.character.GetCard()
 	gameState := dw.character.GetGameState()
 
@@ -1419,6 +1423,11 @@ func (dw *DesktopWindow) HandleFeedUpdate() {
 // showRomanceHistory displays a formatted list of romance interactions and milestones
 // Uses existing showDialog pattern but with enhanced formatting for romance memories
 func (dw *DesktopWindow) showRomanceHistory() {
+	if dw.character == nil {
+		dw.showDialog("No character available.")
+		return
+	}
+
 	gameState := dw.character.GetGameState()
 	if gameState == nil {
 		dw.showDialog("No romance history available.")
