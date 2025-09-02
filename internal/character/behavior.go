@@ -995,17 +995,26 @@ func (c *Character) GetCard() *CharacterCard {
 
 // setState changes the character's animation state (internal method)
 func (c *Character) setState(state string) {
-	if c.currentState == state {
-		return
-	}
-
 	// Use mood-appropriate animation if mood preferences are configured
 	moodState := c.selectMoodAppropriateAnimation(state)
+
+	// Skip if we're already in the intended mood state
+	if c.currentState == moodState {
+		return
+	}
 
 	// Only change state if the animation exists
 	if err := c.animationManager.SetCurrentAnimation(moodState); err == nil {
 		c.currentState = moodState
 		c.lastStateChange = time.Now()
+	} else {
+		// Try original state if mood state failed
+		if c.currentState != state {
+			if err := c.animationManager.SetCurrentAnimation(state); err == nil {
+				c.currentState = state
+				c.lastStateChange = time.Now()
+			}
+		}
 	}
 }
 
