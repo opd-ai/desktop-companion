@@ -155,15 +155,33 @@ Characters prefer specific animations based on their calculated mood from game s
 
 ---
 
-## Feature 3: Quick Stats Peek (1.2 hours)
+## ✅ Feature 3: Quick Stats Peek - **COMPLETED** (1.2 hours)
 
 ### Overview
-Show stat tooltips when hovering over character for 2+ seconds.
+Show stat tooltips when hovering over character for 2+ seconds using existing StatsOverlay patterns.
 
-### Files to Modify
-- `internal/ui/draggable_character.go` - Add hover detection
-- `internal/ui/stats_tooltip.go` - New tooltip widget
-- `internal/ui/window.go` - Integrate tooltip display
+### ✅ Implementation Summary
+**Status**: ✅ **COMPLETED** with hover detection and lightweight tooltip system.
+
+**Files Modified**:
+- ✅ `internal/ui/draggable.go` - Added hover detection with 2+ second delay and tooltip integration
+- ✅ `internal/ui/stats_tooltip.go` - Created lightweight tooltip widget leveraging StatsOverlay patterns
+- ✅ `internal/ui/window.go` - Integrated tooltip display with ShowStatsTooltip/HideStatsTooltip methods
+- ✅ `internal/ui/stats_tooltip_integration_test.go` - Comprehensive test suite for tooltip functionality
+
+**Key Features Implemented**:
+- 🎯 **Hover Detection**: 2-second hover timeout with mouse in/out event handling
+- 💫 **Lightweight Tooltip**: Compact stat display following existing UI patterns
+- 🔄 **Seamless Integration**: Works alongside existing stats overlay without conflicts
+- 📊 **Dynamic Content**: Updates stats in real-time when tooltip is shown
+- 🔒 **Game Mode Only**: Only available for characters with game state (follows existing pattern)
+- 🧪 **Comprehensive Testing**: 4 integration tests covering all functionality paths
+
+**Test Results**: ✅ All tests passing with proper UI integration validation
+
+---
+
+## Feature 4: Romance Memory Highlights (1.4 hours)
 
 ### Implementation Steps
 
@@ -262,14 +280,22 @@ Show stat tooltips when hovering over character for 2+ seconds.
 
 ---
 
-## Feature 4: Romance Memory Highlights (1.4 hours)
+## Feature 4: Romance Memory Highlights (1.4 hours) - 🚀 READY TO IMPLEMENT
 
 ### Overview
-Add context menu option to view romance interaction history and relationship milestones.
+Add context menu option to view recent romance interactions and relationship milestones.
 
 ### Files to Modify
-- `internal/ui/window.go` - Add romance history menu item
-- `internal/ui/romance_history_dialog.go` - New history display widget
+- `internal/ui/menu.go` - Add "View Romance History" to context menu
+- `internal/ui/romance_history_dialog.go` - New formatted romance memory display
+- `internal/ui/window.go` - Add romance history dialog functionality
+
+### Technical Approach
+- Use existing `GameState.GetRomanceMemories()` and `GetRecentDialogMemories()`
+- Add "View Romance History" context menu option using existing patterns
+- Create formatted display dialog using existing `showDialog()` pattern
+- Display recent interactions and relationship milestones with timestamps
+- Only show for characters with game state and romance memories
 
 ### Implementation Steps
 

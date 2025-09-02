@@ -22,6 +22,7 @@ type DesktopWindow struct {
 	dialog                  *DialogBubble
 	contextMenu             *ContextMenu
 	statsOverlay            *StatsOverlay
+	statsTooltip            *StatsTooltip
 	chatbotInterface        *ChatbotInterface
 	networkOverlay          *NetworkOverlay
 	giftDialog              *GiftSelectionDialog
@@ -110,6 +111,9 @@ func initializeGameFeatures(dw *DesktopWindow, gameMode bool, showStats bool, ch
 			dw.statsOverlay.Show()
 		}
 
+		// Initialize stats tooltip for hover functionality
+		dw.statsTooltip = NewStatsTooltip(char)
+
 		// Initialize achievement notifications for game mode
 		dw.achievementNotification = NewAchievementNotification()
 	}
@@ -175,6 +179,11 @@ func (dw *DesktopWindow) setupContent() {
 		objects = append(objects, dw.statsOverlay.GetContainer())
 	}
 
+	// Add stats tooltip if available
+	if dw.statsTooltip != nil {
+		objects = append(objects, dw.statsTooltip.GetContainer())
+	}
+
 	// Add chatbot interface if available
 	if dw.chatbotInterface != nil {
 		objects = append(objects, dw.chatbotInterface)
@@ -233,6 +242,11 @@ func (dw *DesktopWindow) setupInteractions() {
 	// Add stats overlay if available
 	if dw.statsOverlay != nil {
 		objects = append(objects, dw.statsOverlay.GetContainer())
+	}
+
+	// Add stats tooltip if available
+	if dw.statsTooltip != nil {
+		objects = append(objects, dw.statsTooltip.GetContainer())
 	}
 
 	// Add chatbot interface if available
@@ -452,6 +466,16 @@ func (dw *DesktopWindow) buildChatMenuItems() []ContextMenuItem {
 		})
 	}
 
+	// Add romance history menu item if available
+	if dw.shouldShowRomanceHistory() {
+		menuItems = append(menuItems, ContextMenuItem{
+			Text: "View Romance History",
+			Callback: func() {
+				dw.showRomanceHistory()
+			},
+		})
+	}
+
 	return menuItems
 }
 
@@ -666,6 +690,11 @@ func (dw *DesktopWindow) setupDragging() {
 		objects = append(objects, dw.statsOverlay.GetContainer())
 	}
 
+	// Add stats tooltip if available
+	if dw.statsTooltip != nil {
+		objects = append(objects, dw.statsTooltip.GetContainer())
+	}
+
 	// Update window content to use draggable character instead of separate clickable overlay
 	content := container.NewWithoutLayout(objects...)
 
@@ -758,6 +787,30 @@ func (dw *DesktopWindow) ToggleStatsOverlay() {
 			} else {
 				log.Println("Stats overlay hidden")
 			}
+		}
+	}
+}
+
+// ShowStatsTooltip displays the stats tooltip for quick peek
+func (dw *DesktopWindow) ShowStatsTooltip() {
+	if dw.statsTooltip != nil {
+		// Update content before showing
+		dw.statsTooltip.UpdateContent()
+		dw.statsTooltip.Show()
+		dw.setupContent()
+		if dw.debug {
+			log.Println("Stats tooltip shown")
+		}
+	}
+}
+
+// HideStatsTooltip hides the stats tooltip
+func (dw *DesktopWindow) HideStatsTooltip() {
+	if dw.statsTooltip != nil {
+		dw.statsTooltip.Hide()
+		dw.setupContent()
+		if dw.debug {
+			log.Println("Stats tooltip hidden")
 		}
 	}
 }
@@ -1217,6 +1270,22 @@ func (dw *DesktopWindow) shouldShowBattleOptions() bool {
 
 	// Show battle options if character has battle system enabled
 	return card.HasBattleSystem()
+}
+
+// shouldShowRomanceHistory determines if "View Romance History" should appear in the context menu
+// Shows for characters with game state and romance memories
+func (dw *DesktopWindow) shouldShowRomanceHistory() bool {
+	card := dw.character.GetCard()
+	gameState := dw.character.GetGameState()
+	
+	// Check if character has romance features and game state
+	if card == nil || !card.HasRomanceFeatures() || gameState == nil {
+		return false
+	}
+	
+	// Only show if there are romance memories to display
+	romanceMemories := gameState.GetRomanceMemories()
+	return len(romanceMemories) > 0
 }
 
 // handleBattleInitiation handles when user clicks "Initiate Battle" in context menu

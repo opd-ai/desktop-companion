@@ -2,6 +2,7 @@ package ui
 
 import (
 	"log"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -23,6 +24,10 @@ type DraggableCharacter struct {
 	dragStartY float32
 	startPosX  float32
 	startPosY  float32
+
+	// Hover state for tooltip
+	hoverStartTime time.Time
+	isHovering     bool
 }
 
 // NewDraggableCharacter creates a new draggable character widget
@@ -120,6 +125,13 @@ func (dc *DraggableCharacter) moveWindow(x, y float32) {
 
 // MouseIn handles mouse enter events
 func (dc *DraggableCharacter) MouseIn(event *fyne.PointEvent) {
+	// Start hover timing for tooltip
+	dc.isHovering = true
+	dc.hoverStartTime = time.Now()
+
+	// Start a goroutine to check if hover exceeds 2 seconds
+	go dc.checkHoverTimeout()
+
 	// Trigger hover interaction when mouse enters character area
 	response := dc.character.HandleHover()
 
@@ -134,6 +146,14 @@ func (dc *DraggableCharacter) MouseIn(event *fyne.PointEvent) {
 
 // MouseOut handles mouse exit events
 func (dc *DraggableCharacter) MouseOut() {
+	// Reset hover state
+	dc.isHovering = false
+
+	// Hide tooltip if it was showing
+	if dc.window != nil {
+		dc.window.HideStatsTooltip()
+	}
+
 	if dc.debug {
 		log.Println("Mouse left character area")
 	}
@@ -162,6 +182,26 @@ func (dc *DraggableCharacter) TappedSecondary(event *fyne.PointEvent) {
 
 	if dc.debug {
 		log.Printf("Character right-clicked at (%.1f, %.1f)", event.Position.X, event.Position.Y)
+	}
+}
+
+// checkHoverTimeout checks if hover duration exceeds 2 seconds and shows tooltip
+func (dc *DraggableCharacter) checkHoverTimeout() {
+	// Wait for 2 seconds
+	time.Sleep(2 * time.Second)
+
+	// Check if still hovering
+	if dc.isHovering && dc.window != nil {
+		// Calculate elapsed time since hover started
+		elapsed := time.Since(dc.hoverStartTime)
+		if elapsed >= 2*time.Second {
+			// Show stats tooltip
+			dc.window.ShowStatsTooltip()
+
+			if dc.debug {
+				log.Println("Hover timeout reached - showing stats tooltip")
+			}
+		}
 	}
 }
 
