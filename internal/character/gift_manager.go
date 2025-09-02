@@ -476,3 +476,11 @@ func (gm *GiftManager) GetGiftCooldownRemaining(giftID string) time.Duration {
 func (gm *GiftManager) IsGiftOnCooldown(giftID string) bool {
 	return gm.GetGiftCooldownRemaining(giftID) > 0
 }
+
+// AddGiftToTestCatalog adds a gift definition to the catalog for testing purposes
+// This method is intended for use in unit tests only
+func (gm *GiftManager) AddGiftToTestCatalog(gift *GiftDefinition) {
+	gm.mu.Lock()
+	defer gm.mu.Unlock()
+	gm.giftCatalog[gift.ID] = gift
+}
