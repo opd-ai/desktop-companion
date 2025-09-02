@@ -148,7 +148,10 @@ func TestFeature4_showRomanceHistory(t *testing.T) {
 	})
 
 	t.Run("NilCharacterHandling", func(t *testing.T) {
-		window := &DesktopWindow{character: nil}
+		window := &DesktopWindow{
+			character: nil,
+			dialog:    NewDialogBubble(), // Need dialog to prevent nil pointer
+		}
 		window.showRomanceHistory()
 
 		// Test passes if no panic occurs
@@ -242,14 +245,14 @@ func TestFeature4_formatStatChanges(t *testing.T) {
 		window := createTestDesktopWindow(t, char, app)
 
 		before := map[string]float64{
-			"happiness": 70.0,
-			"energy":    80.0,
-			"health":    85.0,
+			"affection": 40.0,
+			"trust":     50.0,
+			"intimacy":  20.0,
 		}
 		after := map[string]float64{
-			"happiness": 85.0,
-			"energy":    90.0,
-			"health":    90.0,
+			"affection": 55.0,
+			"trust":     60.0,
+			"intimacy":  25.0,
 		}
 
 		result := window.formatStatChanges(before, after)
@@ -269,12 +272,12 @@ func TestFeature4_formatStatChanges(t *testing.T) {
 		window := createTestDesktopWindow(t, char, app)
 
 		before := map[string]float64{
-			"happiness": 80.0,
-			"energy":    90.0,
+			"affection": 80.0,
+			"trust":     90.0,
 		}
 		after := map[string]float64{
-			"happiness": 70.0,
-			"energy":    75.0,
+			"affection": 70.0,
+			"trust":     75.0,
 		}
 
 		result := window.formatStatChanges(before, after)
@@ -294,14 +297,14 @@ func TestFeature4_formatStatChanges(t *testing.T) {
 		window := createTestDesktopWindow(t, char, app)
 
 		before := map[string]float64{
-			"happiness": 70.0,
-			"energy":    90.0,
-			"health":    80.0,
+			"affection": 70.0,
+			"trust":     90.0,
+			"intimacy":  80.0,
 		}
 		after := map[string]float64{
-			"happiness": 80.0,
-			"energy":    85.0,
-			"health":    80.0,
+			"affection": 80.0,
+			"trust":     85.0,
+			"intimacy":  80.0,
 		}
 
 		result := window.formatStatChanges(before, after)
@@ -335,12 +338,12 @@ func TestFeature4_formatStatChanges(t *testing.T) {
 		window := createTestDesktopWindow(t, char, app)
 
 		before := map[string]float64{
-			"happiness": 80.0,
-			"energy":    90.0,
+			"affection": 80.0,
+			"trust":     90.0,
 		}
 		after := map[string]float64{
-			"happiness": 80.0,
-			"energy":    90.0,
+			"affection": 80.0,
+			"trust":     90.0,
 		}
 
 		result := window.formatStatChanges(before, after)
@@ -472,12 +475,12 @@ func TestFeature4_EdgeCases(t *testing.T) {
 		window := createTestDesktopWindow(t, char, app)
 
 		before := map[string]float64{
-			"happiness": 0.0,
-			"energy":    100.0,
+			"affection": 0.0,
+			"trust":     100.0,
 		}
 		after := map[string]float64{
-			"happiness": 100.0,
-			"energy":    0.0,
+			"affection": 100.0,
+			"trust":     0.0,
 		}
 
 		result := window.formatStatChanges(before, after)
