@@ -11,6 +11,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
+	"desktop-companion/internal/character"
 	"desktop-companion/internal/network"
 )
 
@@ -25,11 +26,13 @@ type NetworkManagerInterface interface {
 
 // CharacterInfo represents a character's location and status for UI display
 type CharacterInfo struct {
-	Name     string
-	Location string // "Local" or peer ID
-	IsLocal  bool
-	IsActive bool
-	CharType string // Character archetype/type
+	Name        string
+	Location    string // "Local" or peer ID
+	IsLocal     bool
+	IsActive    bool
+	CharType    string                       // Character archetype/type
+	PeerID      string                       // Network peer identifier for compatibility tracking
+	Personality *character.PersonalityConfig // For compatibility calculations
 }
 
 // NetworkOverlay displays multiplayer network status as an optional UI overlay
@@ -58,18 +61,24 @@ type NetworkOverlay struct {
 	characters     []CharacterInfo
 	characterMutex sync.RWMutex
 	localCharName  string // Name of the local character
+
+	// Feature 5: Friendship Compatibility Scoring
+	compatibilityCalculator *character.CompatibilityCalculator
+	compatibilityScores     map[string]float64 // peer ID -> compatibility score
+	compatibilityMutex      sync.RWMutex       // Protects compatibility data
 }
 
 // NewNetworkOverlay creates a new network overlay widget
 // Only creates UI elements when network manager is provided
 func NewNetworkOverlay(nm NetworkManagerInterface) *NetworkOverlay {
 	no := &NetworkOverlay{
-		networkManager: nm,
-		visible:        false,
-		stopUpdate:     make(chan bool, 1),
-		peers:          make([]network.Peer, 0),
-		characters:     make([]CharacterInfo, 0),
-		localCharName:  "Local Character", // Default name, can be updated
+		networkManager:      nm,
+		visible:             false,
+		stopUpdate:          make(chan bool, 1),
+		peers:               make([]network.Peer, 0),
+		characters:          make([]CharacterInfo, 0),
+		localCharName:       "Local Character", // Default name, can be updated
+		compatibilityScores: make(map[string]float64),
 	}
 
 	no.ExtendBaseWidget(no)
@@ -138,11 +147,32 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 				char := no.characters[id]
 
 				// Visual indicators for character type and status
-				var locationIcon, statusIcon string
+				var locationIcon, statusIcon, compatibilityText string
 				if char.IsLocal {
 					locationIcon = "🏠" // House icon for local
 				} else {
 					locationIcon = "🌐" // Globe icon for network/remote
+
+					// Feature 5: Show compatibility score for network characters
+					if char.PeerID != "" {
+						score := no.GetCompatibilityScore(char.PeerID)
+						category := no.GetCompatibilityCategory(char.PeerID)
+
+						// Color-coded compatibility indicator
+						var compatIcon string
+						switch {
+						case score >= 0.8:
+							compatIcon = "💚" // Green heart - high compatibility
+						case score >= 0.6:
+							compatIcon = "💛" // Yellow heart - good compatibility
+						case score >= 0.4:
+							compatIcon = "🧡" // Orange heart - fair compatibility
+						default:
+							compatIcon = "❤️" // Red heart - low compatibility
+						}
+
+						compatibilityText = fmt.Sprintf(" %s %s", compatIcon, category)
+					}
 				}
 
 				if char.IsActive {
@@ -151,8 +181,8 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 					statusIcon = "💤" // Idle
 				}
 
-				displayText := fmt.Sprintf("%s %s %s (%s)",
-					locationIcon, statusIcon, char.Name, char.Location)
+				displayText := fmt.Sprintf("%s %s %s (%s)%s",
+					locationIcon, statusIcon, char.Name, char.Location, compatibilityText)
 				obj.(*widget.Label).SetText(displayText)
 			}
 		},
@@ -402,11 +432,13 @@ func (no *NetworkOverlay) updateCharacterList() {
 
 	// Always add local character first
 	localChar := CharacterInfo{
-		Name:     no.localCharName,
-		Location: "Local",
-		IsLocal:  true,
-		IsActive: true, // Assume local character is always active
-		CharType: "Local",
+		Name:        no.localCharName,
+		Location:    "Local",
+		IsLocal:     true,
+		IsActive:    true, // Assume local character is always active
+		CharType:    "Local",
+		PeerID:      "",  // No peer ID for local character
+		Personality: nil, // Local personality managed by compatibility calculator
 	}
 	no.characters = append(no.characters, localChar)
 
@@ -417,16 +449,21 @@ func (no *NetworkOverlay) updateCharacterList() {
 			// Each peer may have one or more characters
 			// For now, assume one character per peer
 			networkChar := CharacterInfo{
-				Name:     fmt.Sprintf("%s's Character", peer.ID),
-				Location: peer.ID,
-				IsLocal:  false,
-				IsActive: peer.Conn != nil, // Active if connected
-				CharType: "Network",
+				Name:        fmt.Sprintf("%s's Character", peer.ID),
+				Location:    peer.ID,
+				IsLocal:     false,
+				IsActive:    peer.Conn != nil, // Active if connected
+				CharType:    "Network",
+				PeerID:      peer.ID,
+				Personality: nil, // TODO: Get personality from peer data when available
 			}
 			no.characters = append(no.characters, networkChar)
 		}
 	}
 	no.characterMutex.Unlock()
+
+	// Update compatibility scores after character list changes
+	no.UpdateCompatibilityScores()
 
 	// Refresh the character list widget AFTER releasing the mutex
 	// This prevents deadlock when Fyne calls back into list functions
@@ -472,6 +509,79 @@ func (no *NetworkOverlay) GetCharacterList() []CharacterInfo {
 	characters := make([]CharacterInfo, len(no.characters))
 	copy(characters, no.characters)
 	return characters
+}
+
+// SetCompatibilityCalculator sets the compatibility calculator for personality-based scoring
+// Feature 5: Friendship Compatibility Scoring implementation
+func (no *NetworkOverlay) SetCompatibilityCalculator(calculator *character.CompatibilityCalculator) {
+	no.compatibilityMutex.Lock()
+	defer no.compatibilityMutex.Unlock()
+	no.compatibilityCalculator = calculator
+}
+
+// UpdateCompatibilityScores calculates compatibility scores for all network characters
+// Uses the personality-based compatibility calculator to determine relationship potential
+func (no *NetworkOverlay) UpdateCompatibilityScores() {
+	no.compatibilityMutex.Lock()
+	calculator := no.compatibilityCalculator
+	no.compatibilityMutex.Unlock()
+
+	if calculator == nil {
+		return
+	}
+
+	// Get current characters and calculate compatibility
+	no.characterMutex.RLock()
+	characters := make([]CharacterInfo, len(no.characters))
+	copy(characters, no.characters)
+	no.characterMutex.RUnlock()
+
+	no.compatibilityMutex.Lock()
+	defer no.compatibilityMutex.Unlock()
+
+	for _, char := range characters {
+		if !char.IsLocal && char.Personality != nil {
+			score := calculator.CalculateCompatibility(char.Personality)
+			no.compatibilityScores[char.PeerID] = score
+		}
+	}
+}
+
+// GetCompatibilityScore returns the compatibility score for a specific peer
+// Returns 0.5 (neutral) if no score is available
+func (no *NetworkOverlay) GetCompatibilityScore(peerID string) float64 {
+	no.compatibilityMutex.RLock()
+	defer no.compatibilityMutex.RUnlock()
+
+	if score, exists := no.compatibilityScores[peerID]; exists {
+		return score
+	}
+	return 0.5 // Neutral compatibility
+}
+
+// GetCompatibilityCategory returns a human-readable compatibility category
+func (no *NetworkOverlay) GetCompatibilityCategory(peerID string) string {
+	score := no.GetCompatibilityScore(peerID)
+
+	no.compatibilityMutex.RLock()
+	calculator := no.compatibilityCalculator
+	no.compatibilityMutex.RUnlock()
+
+	if calculator != nil {
+		return calculator.GetCompatibilityCategory(score)
+	}
+
+	// Fallback categorization
+	switch {
+	case score >= 0.8:
+		return "Very Good"
+	case score >= 0.6:
+		return "Good"
+	case score >= 0.4:
+		return "Fair"
+	default:
+		return "Poor"
+	}
 }
 
 // CreateObject implements fyne.Widget interface - required but not used

@@ -160,6 +160,13 @@ func initializeNetworkFeatures(dw *DesktopWindow, networkMode bool, networkManag
 			dw.networkOverlay.SetLocalCharacterName(char.GetCard().Name)
 		}
 
+		// Feature 5: Initialize compatibility calculator for personality-based scoring
+		// Only enable for characters with personality configurations
+		if char != nil && char.GetCard() != nil && char.GetCard().Personality != nil {
+			compatibilityCalculator := character.NewCompatibilityCalculator(char)
+			dw.networkOverlay.SetCompatibilityCalculator(compatibilityCalculator)
+		}
+
 		if showNetwork {
 			dw.networkOverlay.Show()
 		}

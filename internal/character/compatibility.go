@@ -429,3 +429,99 @@ func (ca *CompatibilityAnalyzer) ForceAnalysis(gameState *GameState) []Compatibi
 	// Call Update which will now proceed with analysis
 	return ca.Update(gameState)
 }
+
+// CompatibilityCalculator computes compatibility scores between characters based on personality traits.
+// Simple implementation for network multiplayer compatibility display (Feature 5).
+type CompatibilityCalculator struct {
+	mu               sync.RWMutex
+	localPersonality *PersonalityConfig
+}
+
+// NewCompatibilityCalculator creates a new compatibility calculator for the given character.
+// Uses the character's personality configuration as the baseline for comparisons.
+func NewCompatibilityCalculator(localChar *Character) *CompatibilityCalculator {
+	if localChar == nil {
+		return &CompatibilityCalculator{}
+	}
+
+	card := localChar.GetCard()
+	if card == nil || card.Personality == nil {
+		return &CompatibilityCalculator{}
+	}
+
+	return &CompatibilityCalculator{
+		localPersonality: card.Personality,
+	}
+}
+
+// CalculateCompatibility computes a compatibility score (0.0-1.0) between the local character
+// and a peer character based on personality trait differences.
+//
+// Returns:
+//   - 1.0: Perfect compatibility (identical traits)
+//   - 0.5: Neutral compatibility (no matching traits or nil personalities)
+//   - 0.0: Complete incompatibility (opposite traits)
+//
+// The calculation uses trait difference averaging - closer trait values indicate higher compatibility.
+func (cc *CompatibilityCalculator) CalculateCompatibility(peerPersonality *PersonalityConfig) float64 {
+	cc.mu.RLock()
+	defer cc.mu.RUnlock()
+
+	// Return neutral compatibility for missing personality data
+	if cc.localPersonality == nil || peerPersonality == nil {
+		return 0.5
+	}
+
+	if cc.localPersonality.Traits == nil || peerPersonality.Traits == nil {
+		return 0.5
+	}
+
+	// Calculate compatibility based on personality trait differences
+	totalScore := 0.0
+	traitCount := 0
+
+	// Iterate through local character's traits and compare with peer
+	for trait, localValue := range cc.localPersonality.Traits {
+		if peerValue, exists := peerPersonality.Traits[trait]; exists {
+			// Calculate compatibility score for this trait
+			// Lower difference = higher compatibility
+			difference := math.Abs(localValue - peerValue)
+			score := 1.0 - difference // Convert difference to compatibility score
+
+			// Ensure score stays within bounds [0.0, 1.0]
+			if score < 0.0 {
+				score = 0.0
+			}
+
+			totalScore += score
+			traitCount++
+		}
+	}
+
+	// No matching traits found - return neutral compatibility
+	if traitCount == 0 {
+		return 0.5
+	}
+
+	// Return average compatibility across all matching traits
+	return totalScore / float64(traitCount)
+}
+
+// GetCompatibilityCategory returns a human-readable category for the compatibility score.
+// Useful for UI display and user understanding of compatibility levels.
+func (cc *CompatibilityCalculator) GetCompatibilityCategory(score float64) string {
+	switch {
+	case score >= 0.9:
+		return "Excellent"
+	case score >= 0.8:
+		return "Very Good"
+	case score >= 0.6:
+		return "Good"
+	case score >= 0.4:
+		return "Fair"
+	case score >= 0.2:
+		return "Poor"
+	default:
+		return "Very Poor"
+	}
+}
