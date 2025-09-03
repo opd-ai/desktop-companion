@@ -159,10 +159,12 @@ func (p *Profiler) validateProfilerState() error {
 
 // shutdownProfiler performs core profiler shutdown operations
 func (p *Profiler) shutdownProfiler() {
+	p.mu.Lock()
 	p.enabled = false
 	if p.cancel != nil {
 		p.cancel()
 	}
+	p.mu.Unlock()
 }
 
 // stopCPUProfilingIfActive stops CPU profiling if currently active
@@ -301,7 +303,11 @@ func (p *Profiler) calculateFrameRate(lastFrameCount uint64, debug bool) {
 
 // RecordFrame should be called each time a frame is rendered
 func (p *Profiler) RecordFrame() {
-	if !p.enabled {
+	p.mu.RLock()
+	enabled := p.enabled
+	p.mu.RUnlock()
+	
+	if !enabled {
 		return
 	}
 
