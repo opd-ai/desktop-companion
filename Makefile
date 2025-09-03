@@ -137,7 +137,7 @@ package-all: package-native
 	@echo "Packaging complete. Note: Android APK must be built separately using 'make android-apk'"
 
 # Character-specific binary generation
-.PHONY: build-characters list-characters clean-characters build-character help-characters
+.PHONY: build-characters list-characters clean-characters build-character help-characters validate-characters benchmark-characters
 
 # List available characters
 list-characters:
@@ -153,6 +153,16 @@ build-character: $(BUILD_DIR)
 	@if [ -z "$(CHAR)" ]; then echo "Usage: make build-character CHAR=character_name"; exit 1; fi
 	@./scripts/build-characters.sh build $(CHAR)
 
+# Validate all character binaries
+validate-characters:
+	@echo "Validating character binaries..."
+	@./scripts/validate-character-binaries.sh validate
+
+# Benchmark character binary performance
+benchmark-characters:
+	@echo "Benchmarking character binaries..."
+	@./scripts/validate-character-binaries.sh benchmark
+
 # Clean character build artifacts
 clean-characters:
 	@./scripts/build-characters.sh clean
@@ -161,15 +171,21 @@ clean-characters:
 # Help for character builds
 help-characters:
 	@echo "Character-specific build targets:"
-	@echo "  list-characters    - List all available character archetypes"
-	@echo "  build-characters   - Build all characters for current platform"
-	@echo "  build-character    - Build single character (specify CHAR=name)"
-	@echo "  clean-characters   - Remove character build artifacts"
+	@echo "  list-characters      - List all available character archetypes"
+	@echo "  build-characters     - Build all characters for current platform"
+	@echo "  build-character      - Build single character (specify CHAR=name)"
+	@echo "  validate-characters  - Validate all character binaries"
+	@echo "  benchmark-characters - Benchmark character binary performance"
+	@echo "  clean-characters     - Remove character build artifacts"
 	@echo ""
 	@echo "Platform-specific examples:"
 	@echo "  make build-character CHAR=default"
 	@echo "  make build-character CHAR=tsundere"
 	@echo "  make build-character CHAR=romance_flirty"
+	@echo ""
+	@echo "Validation examples:"
+	@echo "  make validate-characters               # Validate all binaries"
+	@echo "  make benchmark-characters             # Performance benchmarks"
 	@echo ""
 	@echo "Android character builds:"
 	@echo "  PLATFORMS=android/arm64 make build-character CHAR=default"
@@ -189,11 +205,13 @@ help:
 	@echo "  package-native     - Create release package for current platform"
 	@echo ""
 	@echo "Character-specific builds:"
-	@echo "  list-characters    - List all available character archetypes"
-	@echo "  build-characters   - Build all characters for current platform"
-	@echo "  build-character    - Build single character (specify CHAR=name)"
-	@echo "  clean-characters   - Remove character build artifacts"
-	@echo "  help-characters    - Show detailed character build help"
+	@echo "  list-characters      - List all available character archetypes"
+	@echo "  build-characters     - Build all characters for current platform"
+	@echo "  build-character      - Build single character (specify CHAR=name)"
+	@echo "  validate-characters  - Validate all character binaries"
+	@echo "  benchmark-characters - Benchmark character binary performance"
+	@echo "  clean-characters     - Remove character build artifacts"
+	@echo "  help-characters      - Show detailed character build help"
 	@echo ""
 	@echo "Android builds:"
 	@echo "  android-setup      - Show Android build requirements"

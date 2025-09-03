@@ -213,6 +213,15 @@ make build-character CHAR=romance_flirty
 # Build all characters for current platform
 make build-characters
 
+# Validate all character binaries
+make validate-characters
+
+# Benchmark character binary performance
+make benchmark-characters
+
+# Clean character build artifacts
+make clean-characters
+
 # Build character for specific platforms (including Android)
 PLATFORMS=linux/amd64,windows/amd64,darwin/amd64,android/arm64 ./scripts/build-characters.sh build default
 
@@ -220,6 +229,23 @@ PLATFORMS=linux/amd64,windows/amd64,darwin/amd64,android/arm64 ./scripts/build-c
 go install fyne.io/tools/cmd/fyne@latest
 PLATFORMS=android/arm64 ./scripts/build-characters.sh build default
 PLATFORMS=android/arm ./scripts/build-characters.sh build tsundere
+```
+
+**Binary Validation and Testing:**
+```bash
+# Comprehensive binary validation
+make validate-characters                    # Validate all built binaries
+
+# Performance benchmarking
+make benchmark-characters                   # Generate performance reports
+
+# Custom validation options
+./scripts/validate-character-binaries.sh --timeout 60 validate
+./scripts/validate-character-binaries.sh benchmark
+
+# Integration testing
+go test scripts/pipeline_integration_test.go -v    # Full pipeline tests
+go test scripts/validate-character-binaries_test.go -v    # Validation tests
 ```
 
 **Generated Output:**
@@ -231,6 +257,11 @@ build/
 ├── default_android_arm64.apk     # Android APK (64-bit)
 ├── tsundere_android_arm.apk      # Android APK (32-bit)
 └── romance_flirty_android_arm64.apk  # Character-specific APK
+
+test_output/
+├── validation_default.log        # Individual validation logs
+├── benchmark_results.log         # Performance benchmark data
+└── ...                          # Additional test artifacts
 ```
 
 ## 🏗️ Architecture & Dependencies
