@@ -427,37 +427,82 @@ func (m *MarkovChainBackend) scoreResponse(text string, context DialogContext, b
 
 // applyFavoriteBoost increases score for responses marked as favorites
 func (m *MarkovChainBackend) applyFavoriteBoost(text string, currentScore float64, context DialogContext) float64 {
-	// Check if we have access to dialog memories (via context data)
-	if memories, ok := context.TopicContext["dialogMemories"]; ok {
-		if memorySlice, isSlice := memories.([]interface{}); isSlice {
-			// Look for similar or exact matches to favorite responses
-			for _, memInterface := range memorySlice {
-				if memMap, isMap := memInterface.(map[string]interface{}); isMap {
-					if response, hasResponse := memMap["response"].(string); hasResponse {
-						if isFavorite, hasFavorite := memMap["isFavorite"].(bool); hasFavorite && isFavorite {
-							// Calculate similarity between current text and favorite response
-							similarity := m.calculateTextSimilarity(text, response)
+	memories := m.extractDialogMemories(context)
+	if memories == nil {
+		return currentScore
+	}
 
-							// Apply favorite boost based on similarity
-							if similarity > 0.8 { // High similarity
-								favoriteBoost := 1.5 // 50% boost for favorites
-								if rating, hasRating := memMap["favoriteRating"].(float64); hasRating {
-									// Scale boost by rating (1-5 stars)
-									favoriteBoost = 1.0 + (rating/5.0)*0.6 // Up to 60% boost for 5-star favorites
-								}
-								currentScore *= favoriteBoost
-								break // Only apply one favorite boost
-							} else if similarity > 0.6 { // Moderate similarity
-								currentScore *= 1.2 // 20% boost for similar to favorites
-							}
-						}
-					}
-				}
-			}
+	return m.processMemoriesForFavoriteBoost(text, currentScore, memories)
+}
+
+// extractDialogMemories retrieves dialog memories from context if available
+func (m *MarkovChainBackend) extractDialogMemories(context DialogContext) []interface{} {
+	memories, ok := context.TopicContext["dialogMemories"]
+	if !ok {
+		return nil
+	}
+
+	memorySlice, isSlice := memories.([]interface{})
+	if !isSlice {
+		return nil
+	}
+
+	return memorySlice
+}
+
+// processMemoriesForFavoriteBoost processes memories to apply favorite-based score boosts
+func (m *MarkovChainBackend) processMemoriesForFavoriteBoost(text string, currentScore float64, memories []interface{}) float64 {
+	for _, memInterface := range memories {
+		memMap, isMap := memInterface.(map[string]interface{})
+		if !isMap {
+			continue
+		}
+
+		if boost := m.calculateFavoriteBoost(text, memMap); boost > 1.0 {
+			return currentScore * boost
 		}
 	}
 
 	return currentScore
+}
+
+// calculateFavoriteBoost calculates the boost factor for a favorite response
+func (m *MarkovChainBackend) calculateFavoriteBoost(text string, memMap map[string]interface{}) float64 {
+	response, hasResponse := memMap["response"].(string)
+	if !hasResponse {
+		return 1.0
+	}
+
+	isFavorite, hasFavorite := memMap["isFavorite"].(bool)
+	if !hasFavorite || !isFavorite {
+		return 1.0
+	}
+
+	similarity := m.calculateTextSimilarity(text, response)
+	return m.applySimilarityBasedBoost(similarity, memMap)
+}
+
+// applySimilarityBasedBoost applies boost based on text similarity and rating
+func (m *MarkovChainBackend) applySimilarityBasedBoost(similarity float64, memMap map[string]interface{}) float64 {
+	if similarity > 0.8 {
+		return m.calculateHighSimilarityBoost(memMap)
+	} else if similarity > 0.6 {
+		return 1.2 // 20% boost for moderate similarity to favorites
+	}
+
+	return 1.0
+}
+
+// calculateHighSimilarityBoost calculates boost for high similarity matches
+func (m *MarkovChainBackend) calculateHighSimilarityBoost(memMap map[string]interface{}) float64 {
+	favoriteBoost := 1.5 // 50% boost for favorites by default
+
+	if rating, hasRating := memMap["favoriteRating"].(float64); hasRating {
+		// Scale boost by rating (1-5 stars)
+		favoriteBoost = 1.0 + (rating/5.0)*0.6 // Up to 60% boost for 5-star favorites
+	}
+
+	return favoriteBoost
 }
 
 // calculateTextSimilarity calculates similarity between two text strings
