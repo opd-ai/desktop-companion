@@ -93,7 +93,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 
 ### Prerequisites
 
-- Go 1.21 or higher
+- Go 1.21+ or higher
 - C compiler (gcc/clang) for CGO dependencies
 - Platform-specific requirements:
   - **Linux**: X11 or Wayland display environment
