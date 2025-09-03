@@ -137,7 +137,7 @@ package-all: package-native
 	@echo "Packaging complete. Note: Android APK must be built separately using 'make android-apk'"
 
 # Character-specific binary generation
-.PHONY: build-characters list-characters clean-characters build-character help-characters validate-characters benchmark-characters
+.PHONY: build-characters list-characters clean-characters build-character help-characters validate-characters benchmark-characters test-pipeline
 
 # List available characters
 list-characters:
@@ -168,6 +168,11 @@ clean-characters:
 	@./scripts/build-characters.sh clean
 	@rm -rf cmd/companion-* cmd/*-embedded
 
+# Test complete multi-character pipeline
+test-pipeline:
+	@echo "Running complete multi-character pipeline test..."
+	@go test scripts/pipeline_integration_test.go -v -run TestMultipleCharactersPipeline
+
 # Help for character builds
 help-characters:
 	@echo "Character-specific build targets:"
@@ -177,6 +182,7 @@ help-characters:
 	@echo "  validate-characters  - Validate all character binaries"
 	@echo "  benchmark-characters - Benchmark character binary performance"
 	@echo "  clean-characters     - Remove character build artifacts"
+	@echo "  test-pipeline        - Test complete multi-character pipeline"
 	@echo ""
 	@echo "Platform-specific examples:"
 	@echo "  make build-character CHAR=default"
