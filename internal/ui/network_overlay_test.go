@@ -12,9 +12,9 @@ import (
 
 // MockNetworkManager implements a minimal NetworkManager interface for testing
 type MockNetworkManager struct {
-	peers       []network.Peer
-	peerCount   int
-	networkID   string
+	peers        []network.Peer
+	peerCount    int
+	networkID    string
 	messagesSent []MockMessage
 }
 
@@ -26,8 +26,8 @@ type MockMessage struct {
 
 func NewMockNetworkManager() *MockNetworkManager {
 	return &MockNetworkManager{
-		peers:       make([]network.Peer, 0),
-		networkID:   "test-network",
+		peers:        make([]network.Peer, 0),
+		networkID:    "test-network",
 		messagesSent: make([]MockMessage, 0),
 	}
 }
@@ -229,6 +229,9 @@ func TestNetworkOverlay_SendChatMessage(t *testing.T) {
 }
 
 func TestNetworkOverlay_SendEmptyMessage(t *testing.T) {
+	// Add small delay to ensure previous test cleanup completes
+	time.Sleep(10 * time.Millisecond)
+
 	app := test.NewApp()
 	defer app.Quit()
 
@@ -258,11 +261,11 @@ func TestNetworkOverlay_UpdateCharacterList(t *testing.T) {
 	if len(chars) != 1 {
 		t.Errorf("Initial character list length = %d, want 1", len(chars))
 	}
-	
+
 	if !chars[0].IsLocal {
 		t.Error("First character should be local")
 	}
-	
+
 	if chars[0].Name != "Local Character" {
 		t.Errorf("Local character name = %q, want %q", chars[0].Name, "Local Character")
 	}
@@ -293,7 +296,7 @@ func TestNetworkOverlay_UpdateCharacterList(t *testing.T) {
 			networkCharCount++
 		}
 	}
-	
+
 	if networkCharCount != 2 {
 		t.Errorf("Network character count = %d, want 2", networkCharCount)
 	}
@@ -330,7 +333,7 @@ func TestNetworkOverlay_CharacterVisualDistinction(t *testing.T) {
 	// Add peers to test network character distinction
 	mockNM.AddPeer("active-peer", true)
 	mockNM.AddPeer("inactive-peer", false)
-	
+
 	overlay.updateCharacterList()
 	chars := overlay.GetCharacterList()
 
@@ -398,10 +401,10 @@ func TestNetworkOverlay_AddChatMessage(t *testing.T) {
 	// Test adding a chat message
 	sender := "TestUser"
 	message := "Test message"
-	
+
 	initialText := overlay.chatLog.String()
 	overlay.addChatMessage(sender, message)
-	
+
 	// Verify message was added to chat log
 	finalText := overlay.chatLog.String()
 	if len(finalText) <= len(initialText) {
@@ -456,7 +459,7 @@ func BenchmarkNetworkOverlay_UpdateNetworkStatus(b *testing.B) {
 	mockNM := NewMockNetworkManager()
 	mockNM.AddPeer("peer1", true)
 	mockNM.AddPeer("peer2", true)
-	
+
 	overlay := NewNetworkOverlay(mockNM)
 
 	b.ResetTimer()
