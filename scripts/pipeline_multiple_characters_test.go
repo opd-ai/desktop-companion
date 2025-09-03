@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-// TestMultipleCharactersPipeline tests the complete pipeline with multiple characters
+// TestMultipleCharactersPipelineDetailed tests the complete pipeline with multiple characters
 // This implements Phase 2, Task 4: "Test full pipeline with multiple characters"
-func TestMultipleCharactersPipeline(t *testing.T) {
+func TestMultipleCharactersPipelineDetailed(t *testing.T) {
 	// Find project root
 	projectRoot, err := findProjectRoot()
 	if err != nil {
@@ -226,7 +226,7 @@ func getExpectedBinaryPath(character string) string {
 }
 
 // findProjectRoot finds the project root directory by looking for go.mod
-func findProjectRoot() (string, error) {
+func findProjectRoot2() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
 		return "", err
