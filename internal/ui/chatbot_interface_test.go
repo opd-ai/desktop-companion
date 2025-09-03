@@ -53,8 +53,8 @@ func TestChatbotInterfaceWithDialogBackend(t *testing.T) {
 		t.Error("Send button should be initialized for available chatbot")
 	}
 
-	if chatbot.available && chatbot.conversationHistory == nil {
-		t.Error("Conversation history should be initialized for available chatbot")
+	if chatbot.available && chatbot.conversationContainer == nil {
+		t.Error("Conversation container should be initialized for available chatbot")
 	}
 }
 

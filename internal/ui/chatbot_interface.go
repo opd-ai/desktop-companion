@@ -45,14 +45,15 @@ type ChatbotInterface struct {
 	available  bool
 
 	// UI components
-	conversationHistory *widget.RichText
-	messageInput        *widget.Entry
-	sendButton          *widget.Button
-	toggleButton        *widget.Button
-	historyScroll       *container.Scroll
+	conversationContainer *fyne.Container
+	messageInput          *widget.Entry
+	sendButton            *widget.Button
+	toggleButton          *widget.Button
+	historyScroll         *container.Scroll
 
 	// State management
 	conversationLog  []ChatMessage
+	messageWidgets   []*ChatMessageWidget
 	maxHistoryLength int
 	lastMessageTime  time.Time
 	inputPlaceholder string
@@ -60,10 +61,12 @@ type ChatbotInterface struct {
 
 // ChatMessage represents a single message in the conversation
 type ChatMessage struct {
-	IsUser    bool      `json:"isUser"`    // true for user messages, false for character responses
-	Text      string    `json:"text"`      // Message content
-	Timestamp time.Time `json:"timestamp"` // When the message was sent/received
-	Animation string    `json:"animation"` // Animation triggered with character response (if any)
+	IsUser     bool      `json:"isUser"`     // true for user messages, false for character responses
+	Text       string    `json:"text"`       // Message content
+	Timestamp  time.Time `json:"timestamp"`  // When the message was sent/received
+	Animation  string    `json:"animation"`  // Animation triggered with character response (if any)
+	IsFavorite bool      `json:"isFavorite"` // Whether this response is marked as favorite
+	Rating     float64   `json:"rating"`     // User rating for this response (1-5 stars)
 }
 
 // NewChatbotInterface creates a new chatbot interface widget.
@@ -104,13 +107,15 @@ func (c *ChatbotInterface) initializeComponents() {
 	c.background.StrokeColor = color.RGBA{R: 150, G: 150, B: 150, A: 255}
 	c.background.StrokeWidth = 1
 
-	// Create conversation history display
-	c.conversationHistory = widget.NewRichText()
-	c.conversationHistory.Wrapping = fyne.TextWrapWord
+	// Create conversation container for message widgets
+	c.conversationContainer = container.NewVBox()
+	c.messageWidgets = make([]*ChatMessageWidget, 0)
+
+	// Add initial empty state
 	c.updateConversationDisplay()
 
 	// Create scrollable container for conversation history
-	c.historyScroll = container.NewScroll(c.conversationHistory)
+	c.historyScroll = container.NewScroll(c.conversationContainer)
 	c.historyScroll.SetMinSize(fyne.NewSize(300, 150))
 
 	// Create message input field
@@ -184,12 +189,20 @@ func (c *ChatbotInterface) sendMessage() {
 	// Get character response
 	response := c.character.HandleChatMessage(message)
 	if response != "" {
+		// Check if this response is already marked as favorite
+		isFavorite, rating := false, float64(0)
+		if gameState := c.character.GetGameState(); gameState != nil {
+			isFavorite, rating = gameState.IsDialogResponseFavorite(response)
+		}
+
 		// Add character response to conversation
 		characterMessage := ChatMessage{
-			IsUser:    false,
-			Text:      response,
-			Timestamp: time.Now(),
-			Animation: c.character.GetCurrentState(), // Capture animation used
+			IsUser:     false,
+			Text:       response,
+			Timestamp:  time.Now(),
+			Animation:  c.character.GetCurrentState(), // Capture animation used
+			IsFavorite: isFavorite,
+			Rating:     rating,
 		}
 		c.addMessage(characterMessage)
 
@@ -212,41 +225,67 @@ func (c *ChatbotInterface) addMessage(message ChatMessage) {
 		// Remove oldest messages, keeping the most recent ones
 		c.conversationLog = c.conversationLog[len(c.conversationLog)-c.maxHistoryLength:]
 	}
+
+	// Create and add message widget
+	messageWidget := NewChatMessageWidget(c.character, message, func(rating float64) {
+		c.onMessageRated(message.Text, rating)
+	})
+	c.messageWidgets = append(c.messageWidgets, messageWidget)
+	c.conversationContainer.Add(messageWidget)
+
+	// Trim widget history to match conversation log
+	if len(c.messageWidgets) > c.maxHistoryLength {
+		// Remove oldest widgets
+		removeCount := len(c.messageWidgets) - c.maxHistoryLength
+		for i := 0; i < removeCount; i++ {
+			c.conversationContainer.Remove(c.messageWidgets[i])
+		}
+		c.messageWidgets = c.messageWidgets[removeCount:]
+	}
+
+	c.conversationContainer.Refresh()
 }
 
 // updateConversationDisplay refreshes the conversation history display
 func (c *ChatbotInterface) updateConversationDisplay() {
 	if len(c.conversationLog) == 0 {
-		c.conversationHistory.ParseMarkdown("*Start a conversation...*")
+		// Show empty state
+		emptyLabel := widget.NewLabel("Start a conversation...")
+		emptyLabel.TextStyle.Italic = true
+		c.conversationContainer.RemoveAll()
+		c.conversationContainer.Add(emptyLabel)
 		return
 	}
 
-	// Build conversation text with styling
-	var content strings.Builder
+	// Clear existing widgets
+	c.conversationContainer.RemoveAll()
+	c.messageWidgets = make([]*ChatMessageWidget, 0)
 
-	for i, message := range c.conversationLog {
-		// Add timestamp for readability
-		timeStr := message.Timestamp.Format("15:04")
+	// Create widgets for all messages
+	for _, message := range c.conversationLog {
+		messageWidget := NewChatMessageWidget(c.character, message, func(rating float64) {
+			c.onMessageRated(message.Text, rating)
+		})
+		c.messageWidgets = append(c.messageWidgets, messageWidget)
+		c.conversationContainer.Add(messageWidget)
+	}
 
-		if message.IsUser {
-			// User messages in blue
-			content.WriteString(fmt.Sprintf("**You** (%s): %s\n\n", timeStr, message.Text))
-		} else {
-			// Character messages in default color
-			characterName := c.character.GetName()
-			content.WriteString(fmt.Sprintf("**%s** (%s): %s\n\n", characterName, timeStr, message.Text))
-		}
+	c.conversationContainer.Refresh()
+}
 
-		// Add separator between conversation sessions
-		if i < len(c.conversationLog)-1 {
-			nextMessage := c.conversationLog[i+1]
-			if nextMessage.Timestamp.Sub(message.Timestamp) > 5*time.Minute {
-				content.WriteString("---\n\n")
-			}
+// onMessageRated handles when a user rates a message
+func (c *ChatbotInterface) onMessageRated(messageText string, rating float64) {
+	// Update the conversation log with the new rating
+	for i := range c.conversationLog {
+		if c.conversationLog[i].Text == messageText {
+			c.conversationLog[i].IsFavorite = rating > 0
+			c.conversationLog[i].Rating = rating
+			break
 		}
 	}
 
-	c.conversationHistory.ParseMarkdown(content.String())
+	// The rating is automatically saved to character memory by the ChatMessageWidget
+	// No additional action needed here
 }
 
 // scrollToBottom scrolls conversation history to show the latest messages

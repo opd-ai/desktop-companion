@@ -419,11 +419,83 @@ func (m *MarkovChainBackend) scoreResponse(text string, context DialogContext, b
 		score *= 1.0 + (float64(requiredFound)/float64(len(m.config.RequiredWords)))*0.2
 	}
 
-	// Penalty for similarity to recent responses
-	similarity := m.calculateSimilarityToRecent(text, context)
-	score *= 1.0 - (similarity * m.config.SimilarityPenalty)
+	// Apply favorite response boosting
+	score = m.applyFavoriteBoost(text, score, context)
 
 	return score
+}
+
+// applyFavoriteBoost increases score for responses marked as favorites
+func (m *MarkovChainBackend) applyFavoriteBoost(text string, currentScore float64, context DialogContext) float64 {
+	// Check if we have access to dialog memories (via context data)
+	if memories, ok := context.TopicContext["dialogMemories"]; ok {
+		if memorySlice, isSlice := memories.([]interface{}); isSlice {
+			// Look for similar or exact matches to favorite responses
+			for _, memInterface := range memorySlice {
+				if memMap, isMap := memInterface.(map[string]interface{}); isMap {
+					if response, hasResponse := memMap["response"].(string); hasResponse {
+						if isFavorite, hasFavorite := memMap["isFavorite"].(bool); hasFavorite && isFavorite {
+							// Calculate similarity between current text and favorite response
+							similarity := m.calculateTextSimilarity(text, response)
+
+							// Apply favorite boost based on similarity
+							if similarity > 0.8 { // High similarity
+								favoriteBoost := 1.5 // 50% boost for favorites
+								if rating, hasRating := memMap["favoriteRating"].(float64); hasRating {
+									// Scale boost by rating (1-5 stars)
+									favoriteBoost = 1.0 + (rating/5.0)*0.6 // Up to 60% boost for 5-star favorites
+								}
+								currentScore *= favoriteBoost
+								break // Only apply one favorite boost
+							} else if similarity > 0.6 { // Moderate similarity
+								currentScore *= 1.2 // 20% boost for similar to favorites
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return currentScore
+}
+
+// calculateTextSimilarity calculates similarity between two text strings
+func (m *MarkovChainBackend) calculateTextSimilarity(text1, text2 string) float64 {
+	// Simple word-based similarity calculation
+	words1 := strings.Fields(strings.ToLower(text1))
+	words2 := strings.Fields(strings.ToLower(text2))
+
+	if len(words1) == 0 || len(words2) == 0 {
+		return 0.0
+	}
+
+	// Count common words
+	commonWords := 0
+	word1Set := make(map[string]bool)
+	for _, word := range words1 {
+		word1Set[word] = true
+	}
+
+	for _, word := range words2 {
+		if word1Set[word] {
+			commonWords++
+		}
+	}
+
+	// Calculate Jaccard similarity coefficient
+	totalUniqueWords := len(word1Set)
+	for _, word := range words2 {
+		if !word1Set[word] {
+			totalUniqueWords++
+		}
+	}
+
+	if totalUniqueWords == 0 {
+		return 0.0
+	}
+
+	return float64(commonWords) / float64(totalUniqueWords)
 }
 
 // calculateSimilarityToRecent checks how similar the response is to recent interactions

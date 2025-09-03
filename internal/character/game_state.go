@@ -30,6 +30,8 @@ type DialogMemory struct {
 	BackendUsed      string               `json:"backendUsed"`
 	Confidence       float64              `json:"confidence"`
 	UserFeedback     *dialog.UserFeedback `json:"userFeedback,omitempty"`
+	IsFavorite       bool                 `json:"isFavorite,omitempty"`     // Whether user marked this response as favorite
+	FavoriteRating   float64              `json:"favoriteRating,omitempty"` // User rating for this response (1-5 stars)
 }
 
 // GameState manages Tamagotchi-style stats and progression for a character
@@ -1059,4 +1061,103 @@ func (gs *GameState) GetHighImportanceDialogMemories(minImportance float64) []Di
 	}
 
 	return important
+}
+
+// MarkDialogResponseFavorite marks a dialog response as favorite and sets rating
+func (gs *GameState) MarkDialogResponseFavorite(response string, rating float64) bool {
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	if gs.DialogMemories == nil {
+		return false
+	}
+
+	// Find the most recent matching response and mark as favorite
+	for i := len(gs.DialogMemories) - 1; i >= 0; i-- {
+		if gs.DialogMemories[i].Response == response {
+			gs.DialogMemories[i].IsFavorite = true
+			gs.DialogMemories[i].FavoriteRating = rating
+			return true
+		}
+	}
+
+	return false
+}
+
+// UnmarkDialogResponseFavorite removes favorite status from a dialog response
+func (gs *GameState) UnmarkDialogResponseFavorite(response string) bool {
+	gs.mu.Lock()
+	defer gs.mu.Unlock()
+
+	if gs.DialogMemories == nil {
+		return false
+	}
+
+	// Find the most recent matching response and unmark as favorite
+	for i := len(gs.DialogMemories) - 1; i >= 0; i-- {
+		if gs.DialogMemories[i].Response == response {
+			gs.DialogMemories[i].IsFavorite = false
+			gs.DialogMemories[i].FavoriteRating = 0
+			return true
+		}
+	}
+
+	return false
+}
+
+// GetFavoriteDialogResponses returns all dialog memories marked as favorites
+func (gs *GameState) GetFavoriteDialogResponses() []DialogMemory {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil {
+		return []DialogMemory{}
+	}
+
+	var favorites []DialogMemory
+	for _, memory := range gs.DialogMemories {
+		if memory.IsFavorite {
+			favorites = append(favorites, memory)
+		}
+	}
+
+	return favorites
+}
+
+// IsDialogResponseFavorite checks if a specific response is marked as favorite
+func (gs *GameState) IsDialogResponseFavorite(response string) (bool, float64) {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil {
+		return false, 0
+	}
+
+	// Find the most recent matching response
+	for i := len(gs.DialogMemories) - 1; i >= 0; i-- {
+		if gs.DialogMemories[i].Response == response {
+			return gs.DialogMemories[i].IsFavorite, gs.DialogMemories[i].FavoriteRating
+		}
+	}
+
+	return false, 0
+}
+
+// GetFavoriteResponsesByRating returns favorite responses filtered by minimum rating
+func (gs *GameState) GetFavoriteResponsesByRating(minRating float64) []DialogMemory {
+	gs.mu.RLock()
+	defer gs.mu.RUnlock()
+
+	if gs.DialogMemories == nil {
+		return []DialogMemory{}
+	}
+
+	var favorites []DialogMemory
+	for _, memory := range gs.DialogMemories {
+		if memory.IsFavorite && memory.FavoriteRating >= minRating {
+			favorites = append(favorites, memory)
+		}
+	}
+
+	return favorites
 }

@@ -2051,6 +2051,31 @@ func (c *Character) buildDialogContext(trigger string) dialog.DialogContext {
 	context.FallbackResponses = c.getFallbackResponses(trigger)
 	context.FallbackAnimation = c.getFallbackAnimation(trigger)
 
+	// Add dialog memories to topic context for favorite-based response weighting
+	if c.gameState != nil {
+		dialogMemories := c.gameState.GetDialogMemories()
+		if len(dialogMemories) > 0 {
+			if context.TopicContext == nil {
+				context.TopicContext = make(map[string]interface{})
+			}
+
+			// Convert dialog memories to interface{} slice for JSON serialization
+			memoryInterfaces := make([]interface{}, len(dialogMemories))
+			for i, memory := range dialogMemories {
+				memoryMap := map[string]interface{}{
+					"response":       memory.Response,
+					"isFavorite":     memory.IsFavorite,
+					"favoriteRating": memory.FavoriteRating,
+					"timestamp":      memory.Timestamp,
+					"trigger":        memory.Trigger,
+					"confidence":     memory.Confidence,
+				}
+				memoryInterfaces[i] = memoryMap
+			}
+			context.TopicContext["dialogMemories"] = memoryInterfaces
+		}
+	}
+
 	return context
 }
 
