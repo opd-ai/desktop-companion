@@ -4,13 +4,15 @@ import (
 	"testing"
 	"time"
 
-	"fyne.io/fyne/v2/test"
-
 	"desktop-companion/internal/network"
 )
 
 // TestFeature9_NetworkPeerActivityFeed tests the complete Feature 9 implementation
 func TestFeature9_NetworkPeerActivityFeed(t *testing.T) {
+	// Create shared Fyne test app once to avoid race conditions
+	testApp := SafeNewTestApp()
+	defer testApp.Quit()
+
 	t.Run("Activity tracker integration", func(t *testing.T) {
 		// Create network overlay with activity tracking
 		nm := &mockNetworkManager{
@@ -130,10 +132,6 @@ func TestFeature9_NetworkPeerActivityFeed(t *testing.T) {
 		// Simulate sending a chat message (which should track activity)
 		initialCount := tracker.GetEventCount()
 
-		// Create test app for UI operations
-		testApp := test.NewApp()
-		defer testApp.Quit()
-
 		// Note: sendChatMessage is private, so we test the tracking method directly
 		overlay.TrackChatMessage("local", overlay.localCharName, "Test message")
 
@@ -165,10 +163,6 @@ func TestFeature9_NetworkPeerActivityFeed(t *testing.T) {
 
 		overlay := NewNetworkOverlay(nm)
 		feed := overlay.GetActivityFeed()
-
-		// Create test app
-		testApp := test.NewApp()
-		defer testApp.Quit()
 
 		// Add activity and verify feed updates
 		overlay.TrackPeerJoined("peer1", "Player1")
