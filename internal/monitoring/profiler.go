@@ -159,12 +159,14 @@ func (p *Profiler) validateProfilerState() error {
 
 // shutdownProfiler performs core profiler shutdown operations
 func (p *Profiler) shutdownProfiler() {
-	p.mu.Lock()
-	p.enabled = false
+	// Cancel context first to stop monitoring goroutines
 	if p.cancel != nil {
 		p.cancel()
 	}
-	p.mu.Unlock()
+
+	// Set enabled to false without locking since context cancellation
+	// provides the primary shutdown signal
+	p.enabled = false
 }
 
 // stopCPUProfilingIfActive stops CPU profiling if currently active
@@ -303,10 +305,19 @@ func (p *Profiler) calculateFrameRate(lastFrameCount uint64, debug bool) {
 
 // RecordFrame should be called each time a frame is rendered
 func (p *Profiler) RecordFrame() {
+	// Use a non-blocking check to avoid deadlocks during shutdown
+	select {
+	case <-p.ctx.Done():
+		// Context is cancelled, profiler is shutting down
+		return
+	default:
+		// Context still active, continue
+	}
+
 	p.mu.RLock()
 	enabled := p.enabled
 	p.mu.RUnlock()
-	
+
 	if !enabled {
 		return
 	}
