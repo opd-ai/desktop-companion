@@ -92,7 +92,7 @@ func TestDialogResponseFavoritesIntegration(t *testing.T) {
 	if char.GetCard().HasDialogBackend() {
 		// Send another message to potentially trigger favorite-influenced response
 		secondResponse := char.HandleChatMessage("Tell me something nice")
-		
+
 		// We can't easily test the exact response boosting without complex mocking,
 		// but we can verify the system doesn't crash and generates responses
 		if secondResponse == "" {
@@ -116,8 +116,8 @@ func TestDialogResponseFavoritesUIFlow(t *testing.T) {
 	}
 
 	// Simulate sending a message through the interface
-	chatbot.sendMessage()  // This will use empty string and return early
-	
+	chatbot.sendMessage() // This will use empty string and return early
+
 	// Add a message manually to test the flow
 	userMessage := ChatMessage{
 		IsUser:    true,
@@ -166,18 +166,18 @@ func TestDialogResponseFavoritesUIFlow(t *testing.T) {
 func TestMarkovBackendFavoriteBoost(t *testing.T) {
 	// Create Markov backend
 	backend := dialog.NewMarkovChainBackend()
-	
+
 	// Initialize with minimal config
 	config := map[string]interface{}{
-		"chainOrder":         2,
-		"minWords":          3,
-		"maxWords":          10,
-		"temperatureMin":    0.3,
-		"temperatureMax":    0.8,
-		"trainingData":      []string{"Hello there", "How are you", "Nice to meet you"},
-		"useDialogHistory":  true,
+		"chainOrder":       2,
+		"minWords":         3,
+		"maxWords":         10,
+		"temperatureMin":   0.3,
+		"temperatureMax":   0.8,
+		"trainingData":     []string{"Hello there", "How are you", "Nice to meet you"},
+		"useDialogHistory": true,
 	}
-	
+
 	configJSON, _ := json.Marshal(config)
 	err := backend.Initialize(configJSON)
 	if err != nil {
@@ -186,27 +186,27 @@ func TestMarkovBackendFavoriteBoost(t *testing.T) {
 
 	// Create context with favorite dialog memories
 	favoriteMemory := map[string]interface{}{
-		"response":      "Hello there",
-		"isFavorite":    true,
+		"response":       "Hello there",
+		"isFavorite":     true,
 		"favoriteRating": 5.0,
-		"timestamp":     time.Now(),
-		"trigger":       "chat",
-		"confidence":    0.9,
+		"timestamp":      time.Now(),
+		"trigger":        "chat",
+		"confidence":     0.9,
 	}
 
 	regularMemory := map[string]interface{}{
-		"response":      "How are you",
-		"isFavorite":    false,
+		"response":       "How are you",
+		"isFavorite":     false,
 		"favoriteRating": 0.0,
-		"timestamp":     time.Now(),
-		"trigger":       "chat",
-		"confidence":    0.7,
+		"timestamp":      time.Now(),
+		"trigger":        "chat",
+		"confidence":     0.7,
 	}
 
 	context := dialog.DialogContext{
-		Trigger:       "chat",
-		Timestamp:     time.Now(),
-		CurrentStats:  map[string]float64{"happiness": 80},
+		Trigger:      "chat",
+		Timestamp:    time.Now(),
+		CurrentStats: map[string]float64{"happiness": 80},
 		TopicContext: map[string]interface{}{
 			"dialogMemories": []interface{}{favoriteMemory, regularMemory},
 		},
@@ -240,7 +240,7 @@ func TestDialogFavoritesBackwardCompatibility(t *testing.T) {
 
 	// Create chatbot interface with non-AI character
 	chatbot := NewChatbotInterface(char)
-	
+
 	// Should not be available for non-AI characters
 	if chatbot.IsAvailable() {
 		t.Error("Chatbot should not be available for character without dialog backend")
@@ -265,10 +265,10 @@ func TestDialogFavoritesBackwardCompatibility(t *testing.T) {
 			Confidence:       0.8,
 			// IsFavorite and FavoriteRating should default to false/0
 		}
-		
+
 		gameState.RecordDialogMemory(memory)
 		memories := gameState.GetDialogMemories()
-		
+
 		if len(memories) != 1 {
 			t.Errorf("Expected 1 dialog memory, got %d", len(memories))
 		}
