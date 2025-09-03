@@ -3,7 +3,7 @@ package character
 import (
 	"testing"
 
-	"desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/dialog"
 )
 
 // TestBug4HasDialogBackendLogic tests the strict logic in HasDialogBackend method

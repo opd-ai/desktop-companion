@@ -8,7 +8,7 @@ import (
 
 	"fyne.io/fyne/v2"
 
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // Layout provides responsive design calculations for UI components.

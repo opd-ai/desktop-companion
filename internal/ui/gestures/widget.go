@@ -4,7 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // TouchAwareWidget extends the functionality of a standard widget to support

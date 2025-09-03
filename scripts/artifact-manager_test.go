@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"desktop-companion/internal/artifact"
+	"github.com/opd-ai/desktop-companion/internal/artifact"
 )
 
 func TestArtifactManager(t *testing.T) {

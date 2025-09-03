@@ -9,8 +9,8 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
-	"desktop-companion/internal/platform"
-	"desktop-companion/internal/ui/responsive"
+	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/ui/responsive"
 )
 
 // ResponsiveDemo demonstrates the responsive layout system

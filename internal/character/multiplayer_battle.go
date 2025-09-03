@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"time"
 
-	"desktop-companion/internal/battle"
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/battle"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // BattleManager interface to avoid circular imports

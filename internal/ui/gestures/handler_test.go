@@ -7,7 +7,7 @@ import (
 
 	"fyne.io/fyne/v2"
 
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // TestGestureHandlerCreation verifies basic gesture handler creation and configuration

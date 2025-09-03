@@ -5,7 +5,7 @@ import (
 
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
 )
 
 // TestBug3EventsFlagFix validates that the -events flag now functionally controls the events system

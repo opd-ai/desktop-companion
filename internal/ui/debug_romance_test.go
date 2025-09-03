@@ -3,7 +3,7 @@ package ui
 import (
 	"testing"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestFeature4DebugRomanceHistory is a simple test to debug the romance history feature

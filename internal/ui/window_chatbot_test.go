@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
 )
 
 func TestDesktopWindow_ChatbotIntegration(t *testing.T) {

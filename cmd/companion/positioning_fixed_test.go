@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestBug3WindowPositioningFixed validates the fix for window positioning

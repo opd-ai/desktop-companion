@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // TestNewLayout verifies layout creation with different platform types

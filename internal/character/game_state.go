@@ -1,7 +1,7 @@
 package character
 
 import (
-	"desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/dialog"
 	"encoding/json"
 	"fmt"
 	"math"

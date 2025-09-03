@@ -9,9 +9,9 @@ import (
 
 	"fyne.io/fyne/v2/app"
 	
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/monitoring"
-	"desktop-companion/internal/ui"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/ui"
 )
 
 // Embedded character data - JSON configuration

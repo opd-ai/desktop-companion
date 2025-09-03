@@ -8,7 +8,7 @@ import (
 
 	"fyne.io/fyne/v2"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestNewStatsOverlay tests the creation of a new stats overlay

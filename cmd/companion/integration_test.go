@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
 )
 
 // TestMainIntegration tests the complete application integration

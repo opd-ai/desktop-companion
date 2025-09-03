@@ -3,7 +3,7 @@
 package character
 
 import (
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 	"fmt"
 )
 

@@ -5,7 +5,7 @@ import (
 
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
 )
 
 // TestStatsOverlayKeyboardToggle tests the missing keyboard shortcut feature

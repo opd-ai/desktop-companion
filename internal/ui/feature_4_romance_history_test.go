@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/test"

@@ -7,7 +7,7 @@ import (
 
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // MockNetworkManager implements a minimal NetworkManager interface for testing

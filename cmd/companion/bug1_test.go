@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestBug1MoodBasedAnimationIntegration reproduces the bug where mood-based

@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2/test"
 	"fyne.io/fyne/v2/widget"
 
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // TestNewMobileWindowManager verifies mobile window manager creation

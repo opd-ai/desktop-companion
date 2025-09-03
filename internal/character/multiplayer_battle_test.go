@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"desktop-companion/internal/battle"
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/battle"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // mockBattleNetworkManager implements NetworkManager for testing

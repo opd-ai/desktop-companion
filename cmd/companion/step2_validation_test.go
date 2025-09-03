@@ -1,7 +1,7 @@
 package main
 
 import (
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 	"path/filepath"
 	"testing"
 )

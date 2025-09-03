@@ -1,10 +1,10 @@
 package testing
 
 import (
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/config"
-	"desktop-companion/internal/monitoring"
-	"desktop-companion/internal/persistence"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/config"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/persistence"
 	"fmt"
 	"os"
 	"path/filepath"

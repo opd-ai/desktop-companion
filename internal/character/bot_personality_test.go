@@ -1,7 +1,7 @@
 package character
 
 import (
-	"desktop-companion/internal/bot"
+	"github.com/opd-ai/desktop-companion/internal/bot"
 	"testing"
 )
 

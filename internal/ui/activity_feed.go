@@ -9,7 +9,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // ActivityFeed displays a scrollable log of network peer activities

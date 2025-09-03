@@ -5,7 +5,7 @@ import (
 
 	"fyne.io/fyne/v2"
 
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // TestTouchAwareWidgetCreation verifies basic widget creation and configuration

@@ -6,7 +6,7 @@ import (
 	"flag"
 	"log"
 
-	"desktop-companion/internal/embedding"
+	"github.com/opd-ai/desktop-companion/internal/embedding"
 )
 
 var (

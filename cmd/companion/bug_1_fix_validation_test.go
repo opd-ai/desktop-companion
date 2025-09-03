@@ -4,7 +4,7 @@ import (
 	"flag"
 	"testing"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestBug1FixValidation tests that Bug #1 from AUDIT.md is completely resolved

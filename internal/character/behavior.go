@@ -1,9 +1,9 @@
 package character
 
 import (
-	"desktop-companion/internal/dialog"
-	"desktop-companion/internal/news"
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/news"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 	"fmt"
 	"image"
 	"strings"

@@ -10,8 +10,8 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
 )
 
 // DesktopWindow represents the transparent overlay window containing the character

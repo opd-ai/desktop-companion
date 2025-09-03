@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestAIChatImprovements tests the enhanced AI chat features

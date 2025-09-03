@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 	"fmt"
 	"image/color"
 	"time"

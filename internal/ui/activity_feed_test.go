@@ -6,7 +6,7 @@ import (
 
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 func TestNewActivityFeed(t *testing.T) {

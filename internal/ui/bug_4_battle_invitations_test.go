@@ -5,8 +5,8 @@ import (
 
 	"fyne.io/fyne/v2/test"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/monitoring"
 )
 
 // TestBug4BattleInvitationsValidation validates the current gap in battle context menu functionality

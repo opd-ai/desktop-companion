@@ -3,8 +3,8 @@ package ui
 import (
 	"testing"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/dialog"
 )
 
 // TestBug3MissingChatContextMenu tests that "Open Chat" context menu is missing for some AI characters

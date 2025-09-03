@@ -3,7 +3,7 @@ package ui
 import (
 	"testing"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // TestBug2NetworkContextMenuFix validates the fix for missing network overlay context menu access

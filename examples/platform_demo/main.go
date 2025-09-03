@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"log"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 func main() {

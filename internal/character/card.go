@@ -1,9 +1,9 @@
 package character
 
 import (
-	"desktop-companion/internal/bot"
-	"desktop-companion/internal/dialog"
-	"desktop-companion/internal/news"
+	"github.com/opd-ai/desktop-companion/internal/bot"
+	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/news"
 	"encoding/json"
 	"fmt"
 	"os"

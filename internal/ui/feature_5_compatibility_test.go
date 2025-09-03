@@ -3,8 +3,8 @@ package ui
 import (
 	"testing"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // MockNetworkManagerForCompatibility provides a mock network manager for compatibility testing

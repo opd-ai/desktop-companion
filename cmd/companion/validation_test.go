@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/character"
 )
 
 // test_animation_file_validation_missing reproduces the bug where LoadCard doesn't verify animation files exist

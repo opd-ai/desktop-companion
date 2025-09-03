@@ -11,8 +11,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
-	"desktop-companion/internal/character"
-	"desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // NetworkManagerInterface defines the interface needed by NetworkOverlay

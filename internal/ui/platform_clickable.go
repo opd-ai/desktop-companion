@@ -5,8 +5,8 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 
-	"desktop-companion/internal/platform"
-	"desktop-companion/internal/ui/gestures"
+	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/internal/ui/gestures"
 )
 
 // PlatformAwareClickableWidget extends ClickableWidget with touch gesture support.
