@@ -279,54 +279,86 @@ func (m *Manager) loadMetadata(metadataPath string) (*ArtifactInfo, error) {
 
 // CleanupArtifacts removes expired artifacts based on retention policies
 func (m *Manager) CleanupArtifacts(policyName string) error {
-	policy, exists := m.policies[policyName]
-	if !exists {
-		return fmt.Errorf("retention policy %q not found", policyName)
+	policy, err := m.validateRetentionPolicy(policyName)
+	if err != nil {
+		return err
 	}
 
 	cutoffTime := time.Now().Add(-policy.RetentionPeriod)
+	filesToRemove, metadataToRemove, err := m.collectExpiredFiles(cutoffTime)
+	if err != nil {
+		return err
+	}
+
+	return m.removeCollectedFiles(filesToRemove, metadataToRemove)
+}
+
+// validateRetentionPolicy validates and retrieves the specified retention policy
+func (m *Manager) validateRetentionPolicy(policyName string) (RetentionPolicy, error) {
+	policy, exists := m.policies[policyName]
+	if !exists {
+		return RetentionPolicy{}, fmt.Errorf("retention policy %q not found", policyName)
+	}
+	return policy, nil
+}
+
+// collectExpiredFiles walks the artifacts directory and collects expired files and their metadata
+func (m *Manager) collectExpiredFiles(cutoffTime time.Time) ([]string, []string, error) {
 	var filesToRemove []string
 	var metadataToRemove []string
 
-	// First pass: collect files to remove
 	err := filepath.Walk(m.artifactsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Skip directories
-		if info.IsDir() {
+		if m.shouldSkipFile(info, path) {
 			return nil
 		}
 
-		// Skip metadata files in the first pass
-		if strings.HasSuffix(path, ".json") {
-			return nil
-		}
-
-		// Check if artifact is expired
 		if info.ModTime().Before(cutoffTime) {
-			filesToRemove = append(filesToRemove, path)
-			// Calculate corresponding metadata file
-			metadataPath := strings.TrimSuffix(path, filepath.Ext(path)) + ".json"
-			metadataToRemove = append(metadataToRemove, metadataPath)
+			m.addFileForRemoval(path, &filesToRemove, &metadataToRemove)
 		}
 
 		return nil
 	})
 
-	if err != nil {
-		return err
+	return filesToRemove, metadataToRemove, err
+}
+
+// shouldSkipFile determines if a file should be skipped during collection
+func (m *Manager) shouldSkipFile(info os.FileInfo, path string) bool {
+	// Skip directories
+	if info.IsDir() {
+		return true
 	}
 
-	// Second pass: remove collected files
+	// Skip metadata files in the first pass
+	if strings.HasSuffix(path, ".json") {
+		return true
+	}
+
+	return false
+}
+
+// addFileForRemoval adds a file and its corresponding metadata to removal lists
+func (m *Manager) addFileForRemoval(path string, filesToRemove *[]string, metadataToRemove *[]string) {
+	*filesToRemove = append(*filesToRemove, path)
+	// Calculate corresponding metadata file
+	metadataPath := strings.TrimSuffix(path, filepath.Ext(path)) + ".json"
+	*metadataToRemove = append(*metadataToRemove, metadataPath)
+}
+
+// removeCollectedFiles removes the collected artifact files and their metadata
+func (m *Manager) removeCollectedFiles(filesToRemove []string, metadataToRemove []string) error {
+	// Remove artifact files
 	for _, path := range filesToRemove {
 		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("failed to remove expired artifact %s: %w", path, err)
 		}
 	}
 
-	// Third pass: remove metadata files
+	// Remove metadata files
 	for _, metadataPath := range metadataToRemove {
 		if err := os.Remove(metadataPath); err != nil && !os.IsNotExist(err) {
 			// Log warning but don't fail - metadata might not exist
