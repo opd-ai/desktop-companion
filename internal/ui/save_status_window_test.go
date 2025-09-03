@@ -11,6 +11,9 @@ import (
 )
 
 func TestDesktopWindow_SaveStatusIndicatorIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping test in short mode to avoid Fyne font cache race condition")
+	}
 	app := test.NewApp()
 	defer app.Quit()
 
