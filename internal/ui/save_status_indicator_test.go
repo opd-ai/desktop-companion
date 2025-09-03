@@ -221,6 +221,9 @@ func TestSaveStatusIndicator_TimeTracking(t *testing.T) {
 }
 
 func TestSaveStatusIndicator_WidgetIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping test in short mode to avoid Fyne font cache race condition")
+	}
 	// Test widget integration with Fyne test framework
 	app := test.NewApp()
 	defer app.Quit()

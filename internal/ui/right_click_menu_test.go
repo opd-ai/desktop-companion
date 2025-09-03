@@ -3,13 +3,17 @@ package ui
 import (
 	"testing"
 
-	"fyne.io/fyne/v2/test"
 	"desktop-companion/internal/character"
 	"desktop-companion/internal/monitoring"
+
+	"fyne.io/fyne/v2/test"
 )
 
 // TestRightClickBehavior confirms right-click triggers direct feed action with dialog response
 func TestRightClickBehavior(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping test in short mode to avoid Fyne font cache race condition")
+	}
 	// Create a test character card with game features
 	testCard := &character.CharacterCard{
 		Name:        "Test Character",
