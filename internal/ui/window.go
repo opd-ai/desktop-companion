@@ -3,11 +3,13 @@ package ui
 import (
 	"encoding/json"
 	"fmt"
+	"image/color"
 	"log"
 	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
 
@@ -247,7 +249,13 @@ func (dw *DesktopWindow) setupContent() {
 	}
 
 	// Create container with transparent background for overlay effect
-	content := container.NewWithoutLayout(objects...)
+	transparentBg := canvas.NewRectangle(color.Transparent)
+	
+	// Add transparent background as the first object for desktop overlay
+	allObjects := []fyne.CanvasObject{transparentBg}
+	allObjects = append(allObjects, objects...)
+	
+	content := container.NewWithoutLayout(allObjects...)
 
 	dw.window.SetContent(content)
 
@@ -1027,7 +1035,7 @@ func configureTransparency(window fyne.Window, debug bool) {
 
 	if debug {
 		log.Println("Window transparency configuration applied using available Fyne capabilities")
-		log.Println("Note: True transparency requires transparent window backgrounds and content")
+		log.Println("Note: Transparent background configured for desktop overlay")
 		log.Println("Character should appear with minimal window decoration for overlay effect")
 	}
 }
