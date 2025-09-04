@@ -1604,7 +1604,35 @@ func (dw *DesktopWindow) handleBattleRequest() {
 	// - Rules and constraints
 	// - Time limits
 	// - Spectator settings
-	dw.showDialog(fmt.Sprintf("Battle request system ready! %d player(s) available for formal battle requests.", len(peers)))
+	// For now, send formal battle request to first available peer
+	if len(peers) > 0 {
+		targetPeer := peers[0]
+		
+		// Create formal battle request (using same payload structure)
+		battleID := fmt.Sprintf("formal_req_%d", time.Now().UnixNano())
+		payload := network.BattleInvitePayload{
+			FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
+			ToCharacterID:   targetPeer.ID,
+			BattleID:        battleID,
+			Timestamp:       time.Now(),
+		}
+		
+		// Send formal battle request through network manager
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			dw.showDialog(fmt.Sprintf("Failed to create formal battle request: %v", err))
+			return
+		}
+		
+		if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
+			dw.showDialog(fmt.Sprintf("Failed to send formal battle request: %v", err))
+			return
+		}
+		
+		dw.showDialog(fmt.Sprintf("Formal battle request sent to %s with standard rules. Negotiation may begin.", targetPeer.ID))
+	} else {
+		dw.showDialog("No players available for formal battle requests.")
+	}
 }
 
 // HandleNewsReading handles when user clicks "📰 Read News" in context menu
