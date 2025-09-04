@@ -475,7 +475,7 @@ func (no *NetworkOverlay) updateCharacterList() {
 				IsActive:    peer.Conn != nil, // Active if connected
 				CharType:    "Network",
 				PeerID:      peer.ID,
-				Personality: nil, // TODO: Get personality from peer data when available
+				Personality: no.getPersonalityFromPeer(peer), // Get personality from peer data when available
 			}
 			no.characters = append(no.characters, networkChar)
 		}
@@ -679,4 +679,16 @@ func (no *NetworkOverlay) GetActivityTracker() *network.ActivityTracker {
 // GetActivityFeed returns the activity feed widget for external use
 func (no *NetworkOverlay) GetActivityFeed() *ActivityFeed {
 	return no.activityFeed
+}
+
+// getPersonalityFromPeer retrieves personality data from peer information
+// Currently returns nil as personality exchange is not yet implemented in the network protocol
+// TODO: Implement personality exchange during peer discovery and return actual personality data
+func (no *NetworkOverlay) getPersonalityFromPeer(peer network.Peer) *character.PersonalityConfig {
+	// For now, return nil until personality exchange is implemented in the network protocol
+	// In future versions, this would:
+	// 1. Check if peer has sent personality data during discovery
+	// 2. Parse personality traits from peer metadata
+	// 3. Return structured PersonalityConfig for chat behavior customization
+	return nil
 }
