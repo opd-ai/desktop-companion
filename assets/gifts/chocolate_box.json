@@ -44,6 +44,20 @@
   "notes": {
     "enabled": true,
     "maxLength": 180,
-    "placeholder": "Share why you chose these chocolates for them..."
+    "placeholder": "Share why you chose these chocolates for them...",
+    "personalityPlaceholders": {
+      "shy": "Tell them gently why these chocolates reminded you of them...",
+      "romantic": "Express how sweet your feelings are for them...", 
+      "tsundere": "Maybe mention these looked good... or something...",
+      "flirty": "Share what makes these as sweet as they are...",
+      "supportive": "Let them know you thought they deserved something special..."
+    },
+    "relationshipPlaceholders": {
+      "Stranger": "Share a friendly thought about the gift...",
+      "Friend": "Tell them why you thought they'd enjoy these...",
+      "Close Friend": "Share a personal memory or feeling...",
+      "Romantic Interest": "Express your growing feelings...",
+      "Partner": "Share an intimate thought or memory..."
+    }
   }
 }

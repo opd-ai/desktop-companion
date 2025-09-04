@@ -42,6 +42,20 @@
   "notes": {
     "enabled": true,
     "maxLength": 150,
-    "placeholder": "Express what this single rose means to you..."
+    "placeholder": "Express what this single rose means to you...",
+    "personalityPlaceholders": {
+      "shy": "Share your quiet feelings about this gesture...",
+      "romantic": "Express the romance behind this beautiful flower...",
+      "tsundere": "Maybe say it's just a nice flower... nothing more...",
+      "flirty": "Tell them how this rose matches their beauty...",
+      "supportive": "Let them know they deserve something beautiful..."
+    },
+    "relationshipPlaceholders": {
+      "Stranger": "Share a kind thought about this gesture...",
+      "Friend": "Tell them what made you think of them...",
+      "Close Friend": "Express your growing appreciation...",
+      "Romantic Interest": "Share your romantic intentions...",
+      "Partner": "Express your deep love and devotion..."
+    }
   }
 }
