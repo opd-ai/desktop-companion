@@ -2,7 +2,7 @@
 
 ## Summary
 - Total findings: 12
-- Critical priority: 1
+- Critical priority: 0 (1 resolved)
 - High priority: 4
 - Medium priority: 1 (3 resolved)
 - Low priority: 0 (3 resolved)
@@ -18,7 +18,7 @@
 ### Finding #1
 **Location:** `internal/character/multiplayer_battle.go:69`
 **Component:** `MultiplayerCharacter.HandleBattleInvite()`
-**Status:** Hardcoded user acceptance logic - missing UI integration
+**Status:** Resolved - 2025-09-04 - commit:c9dfca0 - Replaced hardcoded acceptance with UI dialog system
 **Marker Type:** TODO comment
 **Code Snippet:**
 ```go

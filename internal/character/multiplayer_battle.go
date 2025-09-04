@@ -179,10 +179,7 @@ func (mc *MultiplayerCharacter) handleBattleActionMessage(msg NetworkMessage, pe
 		return fmt.Errorf("failed to unmarshal battle action payload: %w", err)
 	}
 
-	// TODO: Forward to battle manager for processing
-	// This would require integration with the local battle state
-
-	// Forward action to battle manager for processing (Finding #4 fix)
+	// Forward action to battle manager for processing (Finding #2 fix)
 	if mc.battleManager != nil {
 		// Validate payload before forwarding
 		if payload.BattleID == "" || payload.ActorID == "" {
