@@ -34,6 +34,7 @@ type DesktopWindow struct {
 	networkOverlay          *NetworkOverlay
 	giftDialog              *GiftSelectionDialog
 	battleInvitationDialog  *BattleInvitationDialog
+	peerSelectionDialog     *PeerSelectionDialog
 	achievementNotification *AchievementNotification
 	saveStatusIndicator     *SaveStatusIndicator
 	profiler                *monitoring.Profiler
@@ -113,6 +114,9 @@ func initializeBasicComponents(dw *DesktopWindow, char *character.Character, deb
 
 	// Create battle invitation dialog (initially hidden)
 	dw.battleInvitationDialog = NewBattleInvitationDialog()
+
+	// Create peer selection dialog (initially hidden)
+	dw.peerSelectionDialog = NewPeerSelectionDialog()
 
 	// Create save status indicator (small, positioned in corner)
 	dw.saveStatusIndicator = NewSaveStatusIndicator()
@@ -276,6 +280,7 @@ func (dw *DesktopWindow) setupInteractions() {
 		dw.dialog,
 		dw.contextMenu,
 		dw.battleInvitationDialog.GetContainer(),
+		dw.peerSelectionDialog.GetContainer(),
 	}
 
 	// Add save status indicator if available (positioned in corner)
@@ -1478,16 +1483,31 @@ func (dw *DesktopWindow) handleBattleInitiation() {
 		return
 	}
 
-	// For now, initiate battle with first available peer
-	// TODO: Add peer selection dialog for multiple peers
-	targetPeer := peers[0]
-
 	// Check if character is available
 	if dw.character == nil {
 		dw.showDialog("No character loaded for battle.")
 		return
 	}
 
+	// Show peer selection dialog for multiple peers (Fix for Finding #5)
+	if len(peers) == 1 {
+		// If only one peer, skip dialog and select directly
+		dw.initiateBattleWithPeer(peers[0])
+	} else {
+		// Show peer selection dialog for multiple peers
+		dw.peerSelectionDialog.Show(peers,
+			func(selectedPeer network.Peer) {
+				dw.initiateBattleWithPeer(selectedPeer)
+			},
+			func() {
+				// User cancelled peer selection
+			},
+		)
+	}
+}
+
+// initiateBattleWithPeer initiates a battle with the specified peer
+func (dw *DesktopWindow) initiateBattleWithPeer(targetPeer network.Peer) {
 	// Create battle invitation payload
 	battleID := fmt.Sprintf("battle_%d", time.Now().UnixNano())
 	payload := network.BattleInvitePayload{
