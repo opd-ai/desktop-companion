@@ -3,7 +3,7 @@
 ## Summary
 - Total findings: 12
 - Critical priority: 0 (1 resolved)
-- High priority: 1 (3 resolved)
+- High priority: 0 (4 resolved)
 - Medium priority: 1 (3 resolved)
 - Low priority: 0 (3 resolved)
 
@@ -138,7 +138,7 @@
 ### Finding #5
 **Location:** `internal/ui/window.go:1465`
 **Component:** `DesktopWindow.handleBattleInitiation()`
-**Status:** Missing peer selection dialog - uses first available peer
+**Status:** Resolved - 2025-09-04 - commit:add6f3b - Added peer selection dialog with automatic single-peer handling
 **Marker Type:** TODO comment
 **Code Snippet:**
 ```go

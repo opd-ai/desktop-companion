@@ -1545,36 +1545,45 @@ func (dw *DesktopWindow) handleBattleInvitation() {
 		return
 	}
 
-	// TODO: Show peer selection dialog and send battle invitation using the network protocol
-	// For now, send invitation to first available peer
-	if len(peers) > 0 {
-		targetPeer := peers[0]
-
-		// Create battle invitation payload
-		battleID := fmt.Sprintf("battle_inv_%d", time.Now().UnixNano())
-		payload := network.BattleInvitePayload{
-			FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
-			ToCharacterID:   targetPeer.ID,
-			BattleID:        battleID,
-			Timestamp:       time.Now(),
-		}
-
-		// Send battle invitation through network manager
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			dw.showDialog(fmt.Sprintf("Failed to create battle invitation: %v", err))
-			return
-		}
-
-		if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
-			dw.showDialog(fmt.Sprintf("Failed to send battle invitation: %v", err))
-			return
-		}
-
-		dw.showDialog(fmt.Sprintf("Battle invitation sent to %s! They can accept or decline.", targetPeer.ID))
+	// Use peer selection dialog for battle invitations (Fix for Finding #6)
+	if len(peers) == 1 {
+		dw.sendBattleInvitation(peers[0], "invitation")
 	} else {
-		dw.showDialog("No players available for battle invitations.")
+		dw.peerSelectionDialog.Show(peers,
+			func(selectedPeer network.Peer) {
+				dw.sendBattleInvitation(selectedPeer, "invitation")
+			},
+			func() {
+				// User cancelled peer selection
+			},
+		)
 	}
+}
+
+// sendBattleInvitation sends a battle invitation to the specified peer
+func (dw *DesktopWindow) sendBattleInvitation(targetPeer network.Peer, invitationType string) {
+	// Create battle invitation payload
+	battleID := fmt.Sprintf("battle_%s_%d", invitationType, time.Now().UnixNano())
+	payload := network.BattleInvitePayload{
+		FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
+		ToCharacterID:   targetPeer.ID,
+		BattleID:        battleID,
+		Timestamp:       time.Now(),
+	}
+
+	// Send battle invitation through network manager
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		dw.showDialog(fmt.Sprintf("Failed to create battle %s: %v", invitationType, err))
+		return
+	}
+
+	if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
+		dw.showDialog(fmt.Sprintf("Failed to send battle %s: %v", invitationType, err))
+		return
+	}
+
+	dw.showDialog(fmt.Sprintf("Battle %s sent to %s! They can accept or decline.", invitationType, targetPeer.ID))
 }
 
 // handleBattleChallenge handles challenging specific players to battle
@@ -1590,36 +1599,18 @@ func (dw *DesktopWindow) handleBattleChallenge() {
 		return
 	}
 
-	// TODO: Show peer selection dialog with challenge options
-	// This could include different types of battles (ranked, casual, tournament, etc.)
-	// For now, send challenge to first available peer
-	if len(peers) > 0 {
-		targetPeer := peers[0]
-
-		// Create battle challenge invitation (using same payload structure)
-		battleID := fmt.Sprintf("challenge_%d", time.Now().UnixNano())
-		payload := network.BattleInvitePayload{
-			FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
-			ToCharacterID:   targetPeer.ID,
-			BattleID:        battleID,
-			Timestamp:       time.Now(),
-		}
-
-		// Send challenge through network manager
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			dw.showDialog(fmt.Sprintf("Failed to create battle challenge: %v", err))
-			return
-		}
-
-		if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
-			dw.showDialog(fmt.Sprintf("Failed to send battle challenge: %v", err))
-			return
-		}
-
-		dw.showDialog(fmt.Sprintf("Challenge sent to %s! This will be recorded for ranking.", targetPeer.ID))
+	// Use peer selection dialog for battle challenges (Fix for Finding #6)
+	if len(peers) == 1 {
+		dw.sendBattleInvitation(peers[0], "challenge")
 	} else {
-		dw.showDialog("No players available to challenge.")
+		dw.peerSelectionDialog.Show(peers,
+			func(selectedPeer network.Peer) {
+				dw.sendBattleInvitation(selectedPeer, "challenge")
+			},
+			func() {
+				// User cancelled peer selection
+			},
+		)
 	}
 }
 
@@ -1636,39 +1627,18 @@ func (dw *DesktopWindow) handleBattleRequest() {
 		return
 	}
 
-	// TODO: Show detailed battle request dialog with options for:
-	// - Battle type (casual, ranked, tournament)
-	// - Rules and constraints
-	// - Time limits
-	// - Spectator settings
-	// For now, send formal battle request to first available peer
-	if len(peers) > 0 {
-		targetPeer := peers[0]
-
-		// Create formal battle request (using same payload structure)
-		battleID := fmt.Sprintf("formal_req_%d", time.Now().UnixNano())
-		payload := network.BattleInvitePayload{
-			FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
-			ToCharacterID:   targetPeer.ID,
-			BattleID:        battleID,
-			Timestamp:       time.Now(),
-		}
-
-		// Send formal battle request through network manager
-		payloadBytes, err := json.Marshal(payload)
-		if err != nil {
-			dw.showDialog(fmt.Sprintf("Failed to create formal battle request: %v", err))
-			return
-		}
-
-		if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
-			dw.showDialog(fmt.Sprintf("Failed to send formal battle request: %v", err))
-			return
-		}
-
-		dw.showDialog(fmt.Sprintf("Formal battle request sent to %s with standard rules. Negotiation may begin.", targetPeer.ID))
+	// Use peer selection dialog for battle requests (Fix for Finding #6)
+	if len(peers) == 1 {
+		dw.sendBattleInvitation(peers[0], "formal_request")
 	} else {
-		dw.showDialog("No players available for formal battle requests.")
+		dw.peerSelectionDialog.Show(peers,
+			func(selectedPeer network.Peer) {
+				dw.sendBattleInvitation(selectedPeer, "formal_request")
+			},
+			func() {
+				// User cancelled peer selection
+			},
+		)
 	}
 }
 
