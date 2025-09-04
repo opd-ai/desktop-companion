@@ -117,16 +117,17 @@ func detectInputMethods(goos string) []string {
 }
 
 // detectAndroidMajorVersion attempts to detect Android major version.
-// Currently returns "unknown" as we avoid system probing for privacy.
-// Future implementation could use build tags or minimal system calls.
+// Uses environment variables for privacy-conscious version detection.
 func detectAndroidMajorVersion() string {
 	// Privacy-conscious implementation with minimal version detection
-	// Use build tags or environment variables when available
-	if version := os.Getenv("ANDROID_VERSION"); version != "" {
-		// Extract major version from ANDROID_VERSION if set
-		parts := strings.Split(version, ".")
-		if len(parts) > 0 && parts[0] != "" {
-			return parts[0]
+	// Check multiple standard environment variable patterns
+	for _, envVar := range []string{"ANDROID_VERSION", "ANDROID_API_LEVEL", "API_LEVEL"} {
+		if version := os.Getenv(envVar); version != "" {
+			// Extract major version from version string if set
+			parts := strings.Split(version, ".")
+			if len(parts) > 0 && parts[0] != "" {
+				return parts[0]
+			}
 		}
 	}
 
@@ -135,15 +136,17 @@ func detectAndroidMajorVersion() string {
 }
 
 // detectIOSMajorVersion attempts to detect iOS major version.
-// Currently returns "unknown" for privacy-conscious behavior.
+// Uses environment variables for privacy-conscious version detection.
 func detectIOSMajorVersion() string {
 	// Privacy-conscious implementation with minimal version detection
-	// Use build tags or environment variables when available
-	if version := os.Getenv("IOS_VERSION"); version != "" {
-		// Extract major version from IOS_VERSION if set
-		parts := strings.Split(version, ".")
-		if len(parts) > 0 && parts[0] != "" {
-			return parts[0]
+	// Check multiple standard environment variable patterns
+	for _, envVar := range []string{"IOS_VERSION", "IPHONEOS_DEPLOYMENT_TARGET", "IOS_DEPLOYMENT_TARGET"} {
+		if version := os.Getenv(envVar); version != "" {
+			// Extract major version from version string if set
+			parts := strings.Split(version, ".")
+			if len(parts) > 0 && parts[0] != "" {
+				return parts[0]
+			}
 		}
 	}
 
@@ -152,32 +155,34 @@ func detectIOSMajorVersion() string {
 }
 
 // detectDesktopMajorVersion attempts to detect desktop OS major version.
-// Currently returns "unknown" to maintain privacy and simplicity.
-// Future enhancement could use minimal system calls for compatibility checks.
+// Uses environment variables for privacy-conscious minimal version detection.
 func detectDesktopMajorVersion(goos string) string {
 	// Privacy-conscious implementation with minimal version detection
 	// Use environment variables when available for compatibility
 	switch goos {
 	case "windows":
-		// Check for Windows version in environment variables
-		if version := os.Getenv("WINDOWS_VERSION"); version != "" {
-			return version
+		// Check for Windows version in multiple environment variable patterns
+		for _, envVar := range []string{"WINDOWS_VERSION", "OS_VERSION", "WINVER"} {
+			if version := os.Getenv(envVar); version != "" {
+				return version
+			}
 		}
-		// Fallback based on known patterns
 		return "unknown"
 	case "darwin":
-		// Check for macOS version in environment variables
-		if version := os.Getenv("MACOS_VERSION"); version != "" {
-			return version
+		// Check for macOS version in multiple environment variable patterns
+		for _, envVar := range []string{"MACOS_VERSION", "OSX_VERSION", "DARWIN_VERSION"} {
+			if version := os.Getenv(envVar); version != "" {
+				return version
+			}
 		}
-		// Fallback for macOS
 		return "unknown"
 	case "linux":
-		// Check for Linux distribution version
-		if version := os.Getenv("LINUX_VERSION"); version != "" {
-			return version
+		// Check for Linux distribution version in multiple environment patterns
+		for _, envVar := range []string{"LINUX_VERSION", "DISTRIB_RELEASE", "VERSION_ID"} {
+			if version := os.Getenv(envVar); version != "" {
+				return version
+			}
 		}
-		// Linux distribution detection is complex, use unknown
 		return "unknown"
 	default:
 		return "unknown"
