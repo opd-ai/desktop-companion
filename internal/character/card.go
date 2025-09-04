@@ -1,15 +1,16 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/bot"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
-	"github.com/opd-ai/desktop-companion/internal/news"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/internal/bot"
+	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/news"
 )
 
 // Battle animation constants based on JRPG Battle System plan
@@ -227,20 +228,45 @@ type MobileControlsConfig struct {
 // LoadCard loads and validates a character card from a JSON file
 // Uses standard library encoding/json - no external dependencies needed
 func LoadCard(path string) (*CharacterCard, error) {
-	data, err := os.ReadFile(path)
+	// Resolve path if it's the default relative path (Finding #22 fix)
+	resolvedPath := path
+	if path == "assets/characters/default/character.json" && !filepath.IsAbs(path) {
+		// Find project root by looking for go.mod
+		wd, err := os.Getwd()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get working directory: %w", err)
+		}
+
+		projectRoot := wd
+		for {
+			if _, err := os.Stat(filepath.Join(projectRoot, "go.mod")); err == nil {
+				// Found go.mod, use this as project root
+				resolvedPath = filepath.Join(projectRoot, path)
+				break
+			}
+			parent := filepath.Dir(projectRoot)
+			if parent == projectRoot {
+				// Reached filesystem root without finding go.mod, use path as-is
+				break
+			}
+			projectRoot = parent
+		}
+	}
+
+	data, err := os.ReadFile(resolvedPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read character card %s: %w", path, err)
+		return nil, fmt.Errorf("failed to read character card %s: %w", resolvedPath, err)
 	}
 
 	var card CharacterCard
 	if err := json.Unmarshal(data, &card); err != nil {
-		return nil, fmt.Errorf("failed to parse character card %s: %w", path, err)
+		return nil, fmt.Errorf("failed to parse character card %s: %w", resolvedPath, err)
 	}
 
 	// Get character directory for animation file validation
-	characterDir := filepath.Dir(path)
+	characterDir := filepath.Dir(resolvedPath)
 	if err := card.ValidateWithBasePath(characterDir); err != nil {
-		return nil, fmt.Errorf("invalid character card %s: %w", path, err)
+		return nil, fmt.Errorf("invalid character card %s: %w", resolvedPath, err)
 	}
 
 	return &card, nil

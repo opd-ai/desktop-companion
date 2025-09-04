@@ -84,17 +84,17 @@ func (fv *FairnessValidator) validateItemEffects(itemID string, actionType Battl
 	if itemID == "" {
 		return nil // No item used
 	}
-	
+
 	// Validate item ID format (basic safety check)
 	if len(itemID) > 50 {
 		return errors.New("item ID too long")
 	}
-	
+
 	// Prevent obviously invalid item IDs
 	if strings.ContainsAny(itemID, "<>\"'&") {
 		return errors.New("item ID contains invalid characters")
 	}
-	
+
 	// Validate item usage makes sense for action type
 	switch actionType {
 	case ACTION_ATTACK, ACTION_STUN, ACTION_COUNTER, ACTION_DRAIN, ACTION_CHARGE, ACTION_TAUNT:
@@ -110,7 +110,7 @@ func (fv *FairnessValidator) validateItemEffects(itemID string, actionType Battl
 	case ACTION_HEAL, ACTION_BOOST:
 		// Support items allowed - no restrictions
 	}
-	
+
 	// Basic item effect caps (placeholder until full item system)
 	// This prevents obvious abuse while maintaining functionality
 	return nil

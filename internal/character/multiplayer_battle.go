@@ -179,7 +179,7 @@ func (mc *MultiplayerCharacter) handleBattleEndMessage(msg NetworkMessage, peer 
 
 	// TODO: Clean up battle state and notify user
 	// This would end the battle and return to normal character state
-	
+
 	// Clear battle ID when battle ends (Finding #3 fix)
 	mc.mu.Lock()
 	mc.currentBattleID = ""
@@ -197,7 +197,7 @@ func generateBattleID() string {
 func (mc *MultiplayerCharacter) getCurrentBattleID() (string, error) {
 	mc.mu.RLock()
 	defer mc.mu.RUnlock()
-	
+
 	if mc.currentBattleID == "" {
 		return "", fmt.Errorf("no active battle")
 	}

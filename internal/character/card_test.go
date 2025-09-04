@@ -585,8 +585,8 @@ func TestCharacterCardRandomEventsWithStats(t *testing.T) {
 func TestBug1_EmptyAnimationValidation(t *testing.T) {
 	// Create animations map that contains an empty key (this simulates the vulnerability)
 	animations := map[string]string{
-		"":       "empty.gif", // This empty key creates the vulnerability
-		"idle":   "idle.gif",
+		"":        "empty.gif", // This empty key creates the vulnerability
+		"idle":    "idle.gif",
 		"talking": "talking.gif",
 	}
 

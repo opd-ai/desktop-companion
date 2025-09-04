@@ -1,14 +1,15 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/dialog"
-	"github.com/opd-ai/desktop-companion/internal/news"
-	"github.com/opd-ai/desktop-companion/internal/platform"
 	"fmt"
 	"image"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/internal/news"
+	"github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // animationLoadResult represents the result of loading a single animation
@@ -666,11 +667,11 @@ func (c *Character) applyCompatibilityModifiers(modifiers []CompatibilityModifie
 func (c *Character) setInCrisisMode(inCrisis bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	// Only update if state actually changed
 	if c.inCrisis != inCrisis {
 		c.inCrisis = inCrisis
-		
+
 		// Crisis mode affects behavior - characters become less responsive
 		// and may show different animations or dialog patterns
 		if inCrisis {
