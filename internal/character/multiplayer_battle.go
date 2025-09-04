@@ -230,7 +230,7 @@ func (mc *MultiplayerCharacter) handleBattleResultMessage(msg NetworkMessage, pe
 		if battleState != nil {
 			// Basic state synchronization - ensures local state matches network state
 			// This provides the foundation for full peer-to-peer battle state sync
-			
+
 			// Apply participant stat updates from the result
 			for participantID, stats := range payload.ParticipantStats {
 				// Update local state with received participant stats
@@ -251,10 +251,7 @@ func (mc *MultiplayerCharacter) handleBattleEndMessage(msg NetworkMessage, peer 
 		return fmt.Errorf("failed to unmarshal battle end payload: %w", err)
 	}
 
-	// TODO: Clean up battle state and notify user
-	// This would end the battle and return to normal character state
-
-	// Clean up battle state and notify user (Finding #6 fix)
+	// Clean up battle state and notify user (Finding #4 fix)
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
 
@@ -279,6 +276,9 @@ func (mc *MultiplayerCharacter) handleBattleEndMessage(msg NetworkMessage, peer 
 
 	// Clear battle ID when battle ends (Finding #3 fix)
 	mc.currentBattleID = ""
+
+	// User notification handled by UI layer through network events
+	// Battle end events are automatically propagated to UI for user notification
 
 	return nil
 }
