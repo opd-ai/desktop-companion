@@ -3,6 +3,7 @@
 package platform
 
 import (
+	"os"
 	"runtime"
 	"strings"
 )
@@ -119,8 +120,17 @@ func detectInputMethods(goos string) []string {
 // Currently returns "unknown" as we avoid system probing for privacy.
 // Future implementation could use build tags or minimal system calls.
 func detectAndroidMajorVersion() string {
-	// Privacy-conscious implementation - avoid detailed system probing
-	// Could be enhanced with build tags for specific Android API levels
+	// Privacy-conscious implementation with minimal version detection
+	// Use build tags or environment variables when available
+	if version := os.Getenv("ANDROID_VERSION"); version != "" {
+		// Extract major version from ANDROID_VERSION if set
+		parts := strings.Split(version, ".")
+		if len(parts) > 0 && parts[0] != "" {
+			return parts[0]
+		}
+	}
+	
+	// Fallback to unknown for privacy compliance
 	return "unknown"
 }
 
