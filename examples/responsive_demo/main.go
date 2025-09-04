@@ -46,12 +46,12 @@ func main() {
 	// Use a circle for better visual appeal and show adaptive sizing
 	characterCircle := canvas.NewCircle(color.RGBA{100, 150, 255, 255}) // Blue character
 	characterCircle.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
-	
+
 	// Add visual indicators of responsive behavior
 	sizeIndicator := canvas.NewText(fmt.Sprintf("%dpx", characterSize), color.RGBA{255, 255, 255, 255})
 	sizeIndicator.Alignment = fyne.TextAlignCenter
 	sizeIndicator.TextSize = float32(characterSize) / 8 // Scale text with character
-	
+
 	// Create animated demo character container with multiple layers
 	character := container.NewMax(characterCircle, sizeIndicator)
 	character.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
@@ -61,7 +61,7 @@ func main() {
 	tapButton := widget.NewButton("", func() {
 		interactionCount++
 		log.Printf("Character tapped! Interaction #%d - Demonstrating responsive behavior", interactionCount)
-		
+
 		// Demonstrate adaptive response based on platform
 		if platformInfo.IsMobile() {
 			// Mobile: Show vibrant colors and larger visual feedback
@@ -72,16 +72,16 @@ func main() {
 			characterCircle.FillColor = color.RGBA{150, 255, 150, 255} // Light green
 			sizeIndicator.Text = "CLICK"
 		}
-		
+
 		// Adaptive timing based on platform capabilities
 		resetDelay := time.Millisecond * 500
 		if platformInfo.IsMobile() {
 			resetDelay = time.Millisecond * 800 // Longer feedback on mobile
 		}
-		
+
 		characterCircle.Refresh()
 		sizeIndicator.Refresh()
-		
+
 		// Reset after platform-appropriate delay
 		time.AfterFunc(resetDelay, func() {
 			characterCircle.FillColor = color.RGBA{100, 150, 255, 255}

@@ -113,7 +113,7 @@ func (fv *FairnessValidator) validateItemEffects(itemID string, actionType Battl
 
 	// Basic item effect caps with specific limits to prevent abuse
 	// This provides functional item validation while full item system is developed
-	
+
 	// Check for excessive healing effects using item naming patterns
 	if strings.Contains(itemID, "heal") || strings.Contains(itemID, "potion") {
 		// Future implementation would check actual item stats
@@ -122,14 +122,14 @@ func (fv *FairnessValidator) validateItemEffects(itemID string, actionType Battl
 			return fmt.Errorf("overpowered healing item '%s' exceeds balance limits", itemID)
 		}
 	}
-	
+
 	// Check for excessive damage effects
 	if strings.Contains(itemID, "damage") || strings.Contains(itemID, "power") || strings.Contains(itemID, "strength") {
 		if strings.Contains(strings.ToLower(itemID), "mega") || strings.Contains(strings.ToLower(itemID), "ultimate") {
 			return fmt.Errorf("overpowered damage item '%s' exceeds balance limits", itemID)
 		}
 	}
-	
+
 	// Check for excessive defensive effects
 	if strings.Contains(itemID, "shield") || strings.Contains(itemID, "armor") || strings.Contains(itemID, "protection") {
 		if strings.Contains(strings.ToLower(itemID), "mega") || strings.Contains(strings.ToLower(itemID), "ultimate") {
