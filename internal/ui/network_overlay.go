@@ -46,6 +46,7 @@ type NetworkOverlay struct {
 	characterList  *widget.List // New: shows local vs network characters
 	peerCount      *widget.Label
 	chatLog        *widget.RichText
+	chatScroll     *container.Scroll  // Auto-scroll container for chat
 	chatInput      *widget.Entry
 	sendButton     *widget.Button
 	visible        bool
@@ -197,10 +198,11 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 	)
 	no.characterList.Resize(fyne.NewSize(200, 80))
 
-	// Chat log display
+	// Chat log display with auto-scroll container
 	no.chatLog = widget.NewRichText()
 	no.chatLog.Resize(fyne.NewSize(200, 80))
-	no.chatLog.Scroll = container.ScrollVerticalOnly
+	no.chatScroll = container.NewScroll(no.chatLog)
+	no.chatScroll.Resize(fyne.NewSize(200, 80))
 
 	// Chat input controls
 	no.chatInput = widget.NewEntry()
@@ -233,7 +235,7 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 	chatSection := container.NewBorder(
 		widget.NewLabel("Network Chat:"),
 		chatControls, nil, nil,
-		no.chatLog,
+		no.chatScroll,
 	)
 
 	// Activity feed section (Feature 9)
@@ -314,7 +316,11 @@ func (no *NetworkOverlay) addChatMessage(sender, message string) {
 	newText := fmt.Sprintf("%s%s", currentText, formattedMessage)
 	no.chatLog.ParseMarkdown(newText)
 
-	// Note: Auto-scroll functionality would need custom implementation in Fyne
+	// Auto-scroll to bottom when new message arrives
+	if no.chatScroll != nil {
+		// Scroll to bottom after content update
+		no.chatScroll.ScrollToBottom()
+	}
 }
 
 // Show makes the network overlay visible
