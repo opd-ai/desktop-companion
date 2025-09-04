@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
@@ -36,12 +38,26 @@ func main() {
 	window.Resize(config.WindowSize)
 	window.SetFixedSize(!config.Resizable)
 
-	// Create character placeholder
+	// Create demo character with responsive behavior
 	characterSize := layout.GetCharacterSize(128)
-	character := widget.NewButton("🐱", func() {
-		log.Println("Character tapped!")
-	})
+
+	// Create a simple demo character using colored rectangle
+	characterRect := canvas.NewRectangle(color.RGBA{100, 150, 255, 255}) // Blue character
+	characterRect.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
+
+	// Create tappable character container
+	character := container.NewMax(characterRect)
 	character.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
+
+	// Add tap behavior using a transparent button overlay
+	tapButton := widget.NewButton("", func() {
+		log.Println("Character tapped! Demonstrating responsive interaction")
+		// Change color to show interaction
+		characterRect.FillColor = color.RGBA{255, 100, 100, 255} // Change to red
+		characterRect.Refresh()
+	})
+	tapButton.Importance = widget.LowImportance
+	character.Add(tapButton)
 
 	// Create info display
 	infoText := widget.NewRichTextFromMarkdown(`
