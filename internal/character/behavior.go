@@ -56,6 +56,9 @@ type Character struct {
 	compatibilityAnalyzer *CompatibilityAnalyzer // Advanced compatibility algorithms
 	crisisRecoveryManager *CrisisRecoveryManager // Relationship crisis and recovery systems
 
+	// Crisis state tracking (bug fix for Finding #13)
+	inCrisis bool // Tracks if character is currently in crisis mode
+
 	// Dialog backend integration (Phase 1)
 	dialogManager      *dialog.DialogManager // Advanced dialog system manager
 	useAdvancedDialogs bool                  // Whether to use advanced dialog system
@@ -661,13 +664,30 @@ func (c *Character) applyCompatibilityModifiers(modifiers []CompatibilityModifie
 // setInCrisisMode updates character state to reflect crisis mode
 // Can be used by other systems to adjust behavior during crises
 func (c *Character) setInCrisisMode(inCrisis bool) {
-	// For now, this is just a placeholder for crisis state management
-	// In a more complex system, this could affect dialogue selection,
-	// animation priorities, interaction availability, etc.
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	
+	// Only update if state actually changed
+	if c.inCrisis != inCrisis {
+		c.inCrisis = inCrisis
+		
+		// Crisis mode affects behavior - characters become less responsive
+		// and may show different animations or dialog patterns
+		if inCrisis {
+			// In crisis, extend dialog cooldowns to reflect character distress
+			for dialogType, cooldown := range c.dialogCooldowns {
+				c.dialogCooldowns[dialogType] = cooldown.Add(time.Minute * 2)
+			}
+		}
+		// Note: Recovery behavior is handled by the crisis manager's ongoing effects
+	}
+}
 
-	// The crisis state is already being handled by the crisis manager's
-	// ongoing effects and event generation
-	_ = inCrisis // Placeholder to prevent unused variable warning
+// IsInCrisis returns whether the character is currently in crisis mode
+func (c *Character) IsInCrisis() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.inCrisis
 }
 
 // processRomanceEvents handles romance-specific random events with memory-based triggering
