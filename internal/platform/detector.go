@@ -155,17 +155,29 @@ func detectIOSMajorVersion() string {
 // Currently returns "unknown" to maintain privacy and simplicity.
 // Future enhancement could use minimal system calls for compatibility checks.
 func detectDesktopMajorVersion(goos string) string {
-	// Privacy-conscious implementation - major version detection could be added
-	// if needed for specific compatibility requirements
+	// Privacy-conscious implementation with minimal version detection
+	// Use environment variables when available for compatibility
 	switch goos {
 	case "windows":
-		// Could detect Windows 10/11 for specific features
+		// Check for Windows version in environment variables
+		if version := os.Getenv("WINDOWS_VERSION"); version != "" {
+			return version
+		}
+		// Fallback based on known patterns
 		return "unknown"
 	case "darwin":
-		// Could detect macOS major version for compatibility
+		// Check for macOS version in environment variables
+		if version := os.Getenv("MACOS_VERSION"); version != "" {
+			return version
+		}
+		// Fallback for macOS
 		return "unknown"
 	case "linux":
-		// Linux distribution detection is complex and unnecessary for most cases
+		// Check for Linux distribution version
+		if version := os.Getenv("LINUX_VERSION"); version != "" {
+			return version
+		}
+		// Linux distribution detection is complex, use unknown
 		return "unknown"
 	default:
 		return "unknown"
