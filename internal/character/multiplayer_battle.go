@@ -207,13 +207,13 @@ func (mc *MultiplayerCharacter) handleBattleResultMessage(msg NetworkMessage, pe
 		if payload.BattleID == "" {
 			return fmt.Errorf("invalid battle result payload: missing battle ID")
 		}
-		
+
 		// Verify this is for our current battle
 		if mc.currentBattleID != payload.BattleID {
-			return fmt.Errorf("battle result for different battle: expected %s, got %s", 
+			return fmt.Errorf("battle result for different battle: expected %s, got %s",
 				mc.currentBattleID, payload.BattleID)
 		}
-		
+
 		// Apply state updates if battle manager supports it
 		// For now, just log the result - full state sync would need more complex protocol
 		// This provides the foundation for future state synchronization
