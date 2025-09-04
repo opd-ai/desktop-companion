@@ -46,7 +46,7 @@ type NetworkOverlay struct {
 	characterList  *widget.List // New: shows local vs network characters
 	peerCount      *widget.Label
 	chatLog        *widget.RichText
-	chatScroll     *container.Scroll  // Auto-scroll container for chat
+	chatScroll     *container.Scroll // Auto-scroll container for chat
 	chatInput      *widget.Entry
 	sendButton     *widget.Button
 	visible        bool
