@@ -573,6 +573,9 @@ func (d *Dialog) validateResponses() error {
 
 // validateAnimationReference checks if the referenced animation exists
 func (d *Dialog) validateAnimationReference(animations map[string]string) error {
+	if d.Animation == "" {
+		return fmt.Errorf("animation field cannot be empty")
+	}
 	if _, exists := animations[d.Animation]; !exists {
 		return fmt.Errorf("animation '%s' not found in animations map", d.Animation)
 	}

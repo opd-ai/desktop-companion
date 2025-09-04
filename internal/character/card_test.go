@@ -579,3 +579,47 @@ func TestCharacterCardRandomEventsWithStats(t *testing.T) {
 		})
 	}
 }
+
+// TestBug1_EmptyAnimationValidation tests the animation validation vulnerability
+// where empty animation strings are not properly validated (Regression test for AUDIT.md Gap #1)
+func TestBug1_EmptyAnimationValidation(t *testing.T) {
+	// Create animations map that contains an empty key (this simulates the vulnerability)
+	animations := map[string]string{
+		"":       "empty.gif", // This empty key creates the vulnerability
+		"idle":   "idle.gif",
+		"talking": "talking.gif",
+	}
+
+	// Test case 1: Empty animation field should fail validation
+	dialog := Dialog{
+		Trigger:   "click",
+		Responses: []string{"Test response"},
+		Animation: "", // Empty animation should fail validation
+		Cooldown:  5,
+	}
+
+	err := dialog.validateAnimationReference(animations)
+	if err == nil {
+		t.Error("Expected validation error for empty animation field, but got none")
+	}
+	if err != nil && !containsSubstring(err.Error(), "animation field cannot be empty") {
+		t.Errorf("Expected error message about empty field, got: %v", err)
+	}
+
+	// Test case 2: Valid animation should pass validation
+	dialog.Animation = "talking"
+	err = dialog.validateAnimationReference(animations)
+	if err != nil {
+		t.Errorf("Expected no error for valid animation, got: %v", err)
+	}
+
+	// Test case 3: Non-existent animation should fail validation
+	dialog.Animation = "nonexistent"
+	err = dialog.validateAnimationReference(animations)
+	if err == nil {
+		t.Error("Expected validation error for non-existent animation, but got none")
+	}
+	if err != nil && !containsSubstring(err.Error(), "not found in animations map") {
+		t.Errorf("Expected error message about animation not found, got: %v", err)
+	}
+}
