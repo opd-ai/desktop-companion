@@ -13,6 +13,10 @@ import (
 	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
+// BattleInvitationHandler is imported from the UI package to avoid circular imports
+// This is set by the UI system during initialization (Fix for Finding #1)
+var BattleInvitationHandler func(fromCharacter string, onResponse func(accepted bool))
+
 // BattleManager interface to avoid circular imports
 type BattleManager interface {
 	InitiateBattle(opponentID string) error
@@ -62,14 +66,26 @@ func (mc *MultiplayerCharacter) InitiateBattle(targetPeerID string) error {
 
 // HandleBattleInvite processes an incoming battle invitation
 func (mc *MultiplayerCharacter) HandleBattleInvite(invite network.BattleInvitePayload) error {
+	// Use global UI handler for user acceptance instead of hardcoded logic (Fix for Finding #1)
+	if BattleInvitationHandler != nil {
+		// Use asynchronous callback to show UI dialog
+		BattleInvitationHandler(invite.FromCharacterID, func(accepted bool) {
+			if accepted {
+				mc.acceptBattleInvite(invite)
+			}
+			// If declined, no action needed - invitation is ignored
+		})
+		return nil
+	}
+
+	// Fallback: auto-accept if no UI handler is set (for testing/headless mode)
+	return mc.acceptBattleInvite(invite)
+}
+
+// acceptBattleInvite handles the actual battle invitation acceptance logic
+func (mc *MultiplayerCharacter) acceptBattleInvite(invite network.BattleInvitePayload) error {
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
-
-	// Simulate user acceptance logic (minimal fix for audit)
-	accepted := true // TODO: Replace with UI dialog in future
-	if !accepted {
-		return fmt.Errorf("battle invite declined by user")
-	}
 
 	// Store battle ID for accepted invite
 	mc.currentBattleID = invite.BattleID

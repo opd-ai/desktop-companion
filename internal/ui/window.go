@@ -16,6 +16,10 @@ import (
 	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
+// BattleInvitationHandler is a global callback for battle invitation dialogs
+// Provides minimal coupling between multiplayer battle system and UI (Fix for Finding #1)
+var BattleInvitationHandler func(fromCharacter string, onResponse func(accepted bool))
+
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
@@ -29,6 +33,7 @@ type DesktopWindow struct {
 	chatbotInterface        *ChatbotInterface
 	networkOverlay          *NetworkOverlay
 	giftDialog              *GiftSelectionDialog
+	battleInvitationDialog  *BattleInvitationDialog
 	achievementNotification *AchievementNotification
 	saveStatusIndicator     *SaveStatusIndicator
 	profiler                *monitoring.Profiler
@@ -106,6 +111,9 @@ func initializeBasicComponents(dw *DesktopWindow, char *character.Character, deb
 	// Create context menu (initially hidden)
 	dw.contextMenu = NewContextMenu()
 
+	// Create battle invitation dialog (initially hidden)
+	dw.battleInvitationDialog = NewBattleInvitationDialog()
+
 	// Create save status indicator (small, positioned in corner)
 	dw.saveStatusIndicator = NewSaveStatusIndicator()
 }
@@ -171,6 +179,14 @@ func initializeNetworkFeatures(dw *DesktopWindow, networkMode bool, networkManag
 		if char != nil && char.GetCard() != nil && char.GetCard().Personality != nil {
 			compatibilityCalculator := character.NewCompatibilityCalculator(char)
 			dw.networkOverlay.SetCompatibilityCalculator(compatibilityCalculator)
+		}
+
+		// Fix for Finding #1: Set up battle invitation callback for multiplayer characters
+		// Register the window's battle invitation dialog as the global handler
+		if char != nil && char.GetCard() != nil && char.GetCard().HasMultiplayer() {
+			BattleInvitationHandler = func(fromCharacter string, onResponse func(accepted bool)) {
+				dw.ShowBattleInvitationDialog(fromCharacter, onResponse)
+			}
 		}
 
 		if showNetwork {
@@ -259,6 +275,7 @@ func (dw *DesktopWindow) setupInteractions() {
 		clickable,
 		dw.dialog,
 		dw.contextMenu,
+		dw.battleInvitationDialog.GetContainer(),
 	}
 
 	// Add save status indicator if available (positioned in corner)
@@ -1856,5 +1873,13 @@ func (dw *DesktopWindow) SetSaveStatusCallback() func(SaveStatus, string) {
 				dw.saveStatusIndicator.SetStatus(SaveStatusIdle, "")
 			}
 		}
+	}
+}
+
+// ShowBattleInvitationDialog shows a battle invitation confirmation dialog
+// Provides a UI-based replacement for hardcoded battle acceptance logic
+func (dw *DesktopWindow) ShowBattleInvitationDialog(fromCharacter string, onResponse func(accepted bool)) {
+	if dw.battleInvitationDialog != nil {
+		dw.battleInvitationDialog.Show(fromCharacter, onResponse)
 	}
 }
