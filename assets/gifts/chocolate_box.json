@@ -44,6 +44,6 @@
   "notes": {
     "enabled": true,
     "maxLength": 180,
-    "placeholder": "Add a note about the chocolates..."
+    "placeholder": "Share why you chose these chocolates for them..."
   }
 }
