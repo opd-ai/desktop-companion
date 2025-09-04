@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -41,20 +42,53 @@ func main() {
 	// Create demo character with responsive behavior
 	characterSize := layout.GetCharacterSize(128)
 
-	// Create a simple demo character using colored rectangle
-	characterRect := canvas.NewRectangle(color.RGBA{100, 150, 255, 255}) // Blue character
-	characterRect.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
-
-	// Create tappable character container
-	character := container.NewMax(characterRect)
+	// Create a comprehensive demo character showing responsive features
+	// Use a circle for better visual appeal and show adaptive sizing
+	characterCircle := canvas.NewCircle(color.RGBA{100, 150, 255, 255}) // Blue character
+	characterCircle.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
+	
+	// Add visual indicators of responsive behavior
+	sizeIndicator := canvas.NewText(fmt.Sprintf("%dpx", characterSize), color.RGBA{255, 255, 255, 255})
+	sizeIndicator.Alignment = fyne.TextAlignCenter
+	sizeIndicator.TextSize = float32(characterSize) / 8 // Scale text with character
+	
+	// Create animated demo character container with multiple layers
+	character := container.NewMax(characterCircle, sizeIndicator)
 	character.Resize(fyne.NewSize(float32(characterSize), float32(characterSize)))
 
-	// Add tap behavior using a transparent button overlay
+	// Add comprehensive tap behavior showcasing responsive interaction
+	interactionCount := 0
 	tapButton := widget.NewButton("", func() {
-		log.Println("Character tapped! Demonstrating responsive interaction")
-		// Change color to show interaction
-		characterRect.FillColor = color.RGBA{255, 100, 100, 255} // Change to red
-		characterRect.Refresh()
+		interactionCount++
+		log.Printf("Character tapped! Interaction #%d - Demonstrating responsive behavior", interactionCount)
+		
+		// Demonstrate adaptive response based on platform
+		if platformInfo.IsMobile() {
+			// Mobile: Show vibrant colors and larger visual feedback
+			characterCircle.FillColor = color.RGBA{255, 100, 100, 255} // Bright red
+			sizeIndicator.Text = "TAP!"
+		} else {
+			// Desktop: Show subtle color change with precision feedback
+			characterCircle.FillColor = color.RGBA{150, 255, 150, 255} // Light green
+			sizeIndicator.Text = "CLICK"
+		}
+		
+		// Adaptive timing based on platform capabilities
+		resetDelay := time.Millisecond * 500
+		if platformInfo.IsMobile() {
+			resetDelay = time.Millisecond * 800 // Longer feedback on mobile
+		}
+		
+		characterCircle.Refresh()
+		sizeIndicator.Refresh()
+		
+		// Reset after platform-appropriate delay
+		time.AfterFunc(resetDelay, func() {
+			characterCircle.FillColor = color.RGBA{100, 150, 255, 255}
+			sizeIndicator.Text = fmt.Sprintf("%dpx", characterSize)
+			characterCircle.Refresh()
+			sizeIndicator.Refresh()
+		})
 	})
 	tapButton.Importance = widget.LowImportance
 	character.Add(tapButton)
