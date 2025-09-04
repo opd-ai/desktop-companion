@@ -1509,8 +1509,35 @@ func (dw *DesktopWindow) handleBattleInvitation() {
 	}
 
 	// TODO: Show peer selection dialog and send battle invitation using the network protocol
-	// For now, show available peers and simulate invitation
-	dw.showDialog(fmt.Sprintf("Battle invitation ready! %d player(s) available for battle challenges.", len(peers)))
+	// For now, send invitation to first available peer
+	if len(peers) > 0 {
+		targetPeer := peers[0]
+
+		// Create battle invitation payload
+		battleID := fmt.Sprintf("battle_inv_%d", time.Now().UnixNano())
+		payload := network.BattleInvitePayload{
+			FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
+			ToCharacterID:   targetPeer.ID,
+			BattleID:        battleID,
+			Timestamp:       time.Now(),
+		}
+
+		// Send battle invitation through network manager
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			dw.showDialog(fmt.Sprintf("Failed to create battle invitation: %v", err))
+			return
+		}
+
+		if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
+			dw.showDialog(fmt.Sprintf("Failed to send battle invitation: %v", err))
+			return
+		}
+
+		dw.showDialog(fmt.Sprintf("Battle invitation sent to %s! They can accept or decline.", targetPeer.ID))
+	} else {
+		dw.showDialog("No players available for battle invitations.")
+	}
 }
 
 // handleBattleChallenge handles challenging specific players to battle
