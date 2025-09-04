@@ -62,21 +62,29 @@ func (mc *MultiplayerCharacter) InitiateBattle(targetPeerID string) error {
 
 // HandleBattleInvite processes an incoming battle invitation
 func (mc *MultiplayerCharacter) HandleBattleInvite(invite network.BattleInvitePayload) error {
-       mc.mu.Lock()
-       defer mc.mu.Unlock()
+	mc.mu.Lock()
+	defer mc.mu.Unlock()
 
-       // Simulate user acceptance logic (minimal fix for audit)
-       accepted := true // TODO: Replace with UI dialog in future
-       if !accepted {
-	       return fmt.Errorf("battle invite declined by user")
-       }
+	// Simulate user acceptance logic (minimal fix for audit)
+	accepted := true // TODO: Replace with UI dialog in future
+	if !accepted {
+		return fmt.Errorf("battle invite declined by user")
+	}
 
-       // Store battle ID for accepted invite
-       mc.currentBattleID = invite.BattleID
+	// Store battle ID for accepted invite
+	mc.currentBattleID = invite.BattleID
 
-       // TODO: Initialize battle manager with participants (Finding #2)
+	// Initialize battle manager with participants (Finding #2 fix)
+	if mc.battleManager != nil {
+		// Initialize battle with participant data
+		err := mc.battleManager.InitiateBattle(invite.FromCharacterID)
+		if err != nil {
+			mc.currentBattleID = "" // Clear on failure
+			return fmt.Errorf("failed to initialize battle manager: %w", err)
+		}
+	}
 
-       return nil
+	return nil
 }
 
 // PerformBattleAction sends a battle action to the network
