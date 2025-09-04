@@ -129,7 +129,7 @@ func detectAndroidMajorVersion() string {
 			return parts[0]
 		}
 	}
-	
+
 	// Fallback to unknown for privacy compliance
 	return "unknown"
 }
@@ -137,7 +137,17 @@ func detectAndroidMajorVersion() string {
 // detectIOSMajorVersion attempts to detect iOS major version.
 // Currently returns "unknown" for privacy-conscious behavior.
 func detectIOSMajorVersion() string {
-	// Privacy-conscious implementation - avoid detailed system probing
+	// Privacy-conscious implementation with minimal version detection
+	// Use build tags or environment variables when available
+	if version := os.Getenv("IOS_VERSION"); version != "" {
+		// Extract major version from IOS_VERSION if set
+		parts := strings.Split(version, ".")
+		if len(parts) > 0 && parts[0] != "" {
+			return parts[0]
+		}
+	}
+
+	// Fallback to unknown for privacy compliance
 	return "unknown"
 }
 
