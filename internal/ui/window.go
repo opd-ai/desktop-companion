@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/opd-ai/desktop-companion/internal/character"
 	"github.com/opd-ai/desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/internal/network"
 )
 
 // DesktopWindow represents the transparent overlay window containing the character
@@ -1446,9 +1448,51 @@ func (dw *DesktopWindow) shouldShowRomanceHistory() bool {
 // handleBattleInitiation handles when user clicks "Initiate Battle" in context menu
 // Shows the battle action dialog for selecting battle actions
 func (dw *DesktopWindow) handleBattleInitiation() {
-	// For now, show a placeholder dialog - this will be integrated with the actual battle system
-	// TODO: Replace with actual battle system integration when multiplayer battle is implemented
-	dw.showDialog("Battle system ready! Battle initiation will be available when connected to other players.")
+	// Check if networking is enabled
+	if dw.networkOverlay == nil || dw.networkOverlay.GetNetworkManager() == nil {
+		dw.showDialog("Battle system requires networking. Start with -network flag to enable multiplayer battles.")
+		return
+	}
+
+	// Get available peers for battle
+	peers := dw.networkOverlay.GetNetworkManager().GetPeers()
+	if len(peers) == 0 {
+		dw.showDialog("No other players available for battle. Make sure other DDS instances are running on the network.")
+		return
+	}
+
+	// For now, initiate battle with first available peer
+	// TODO: Add peer selection dialog for multiple peers
+	targetPeer := peers[0]
+
+	// Check if character is available
+	if dw.character == nil {
+		dw.showDialog("No character loaded for battle.")
+		return
+	}
+
+	// Create battle invitation payload
+	battleID := fmt.Sprintf("battle_%d", time.Now().UnixNano())
+	payload := network.BattleInvitePayload{
+		FromCharacterID: dw.networkOverlay.GetNetworkManager().GetNetworkID(),
+		ToCharacterID:   targetPeer.ID,
+		BattleID:        battleID,
+		Timestamp:       time.Now(),
+	}
+
+	// Send battle invitation through network manager
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		dw.showDialog(fmt.Sprintf("Failed to create battle invitation: %v", err))
+		return
+	}
+
+	if err := dw.networkOverlay.GetNetworkManager().SendMessage(network.MessageTypeBattleInvite, payloadBytes, targetPeer.ID); err != nil {
+		dw.showDialog(fmt.Sprintf("Failed to send battle invitation: %v", err))
+		return
+	}
+
+	dw.showDialog(fmt.Sprintf("Battle invitation sent to %s! Waiting for response...", targetPeer.ID))
 }
 
 // handleBattleInvitation handles sending battle invitations to other players in network mode
