@@ -32,12 +32,16 @@ func (mc *MultiplayerCharacter) InitiateBattle(targetPeerID string) error {
 	}
 
 	// Create battle invite payload
+	battleID := generateBattleID()
 	payload := network.BattleInvitePayload{
 		FromCharacterID: mc.characterID,
 		ToCharacterID:   targetPeerID,
-		BattleID:        generateBattleID(),
+		BattleID:        battleID,
 		Timestamp:       time.Now(),
 	}
+
+	// Store battle ID for tracking (Finding #3 fix)
+	mc.currentBattleID = battleID
 
 	// Create and send battle invite message
 	payloadBytes, err := json.Marshal(payload)
@@ -62,7 +66,8 @@ func (mc *MultiplayerCharacter) HandleBattleInvite(invite network.BattleInvitePa
 	defer mc.mu.Unlock()
 
 	// TODO: Add user acceptance logic here
-	// For now, auto-accept for testing purposes
+	// For now, auto-accept for testing purposes and store battle ID (Finding #3 fix)
+	mc.currentBattleID = invite.BattleID
 
 	// TODO: Initialize battle manager with participants
 	// This would need to be stored as part of MultiplayerCharacter state
@@ -79,9 +84,15 @@ func (mc *MultiplayerCharacter) PerformBattleAction(action battle.BattleAction) 
 		return fmt.Errorf("network not enabled")
 	}
 
+	// Get current battle ID (Finding #3 fix)
+	battleID, err := mc.getCurrentBattleID()
+	if err != nil {
+		return fmt.Errorf("cannot perform battle action: %w", err)
+	}
+
 	// Create battle action payload
 	payload := network.BattleActionPayload{
-		BattleID:   "current_battle", // TODO: Get from battle state
+		BattleID:   battleID,
 		ActionType: string(action.Type),
 		ActorID:    action.ActorID,
 		TargetID:   action.TargetID,
@@ -168,6 +179,11 @@ func (mc *MultiplayerCharacter) handleBattleEndMessage(msg NetworkMessage, peer 
 
 	// TODO: Clean up battle state and notify user
 	// This would end the battle and return to normal character state
+	
+	// Clear battle ID when battle ends (Finding #3 fix)
+	mc.mu.Lock()
+	mc.currentBattleID = ""
+	mc.mu.Unlock()
 
 	return nil
 }
@@ -175,4 +191,15 @@ func (mc *MultiplayerCharacter) handleBattleEndMessage(msg NetworkMessage, peer 
 // generateBattleID creates a unique battle ID
 func generateBattleID() string {
 	return fmt.Sprintf("battle_%d", time.Now().UnixNano())
+}
+
+// getCurrentBattleID returns the current battle ID or error if no active battle
+func (mc *MultiplayerCharacter) getCurrentBattleID() (string, error) {
+	mc.mu.RLock()
+	defer mc.mu.RUnlock()
+	
+	if mc.currentBattleID == "" {
+		return "", fmt.Errorf("no active battle")
+	}
+	return mc.currentBattleID, nil
 }
