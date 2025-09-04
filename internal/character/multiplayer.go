@@ -65,8 +65,8 @@ type MultiplayerCharacter struct {
 	mu               sync.RWMutex
 	networkEnabled   bool
 	broadcastActions bool
-	enableStateSync  bool   // Renamed to avoid conflict
-	currentBattleID  string // Track active battle ID (Finding #3 fix)
+	enableStateSync  bool          // Renamed to avoid conflict
+	currentBattleID  string        // Track active battle ID (Finding #3 fix)
 	battleManager    BattleManager // Battle system integration (Finding #2 fix)
 }
 

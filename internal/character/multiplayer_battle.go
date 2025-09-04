@@ -235,18 +235,18 @@ func (mc *MultiplayerCharacter) handleBattleEndMessage(msg NetworkMessage, peer 
 	// Clean up battle state and notify user (Finding #6 fix)
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
-	
+
 	// Validate payload
 	if payload.BattleID == "" {
 		return fmt.Errorf("invalid battle end payload: missing battle ID")
 	}
-	
+
 	// Verify this is for our current battle
 	if mc.currentBattleID != payload.BattleID {
-		return fmt.Errorf("battle end for different battle: expected %s, got %s", 
+		return fmt.Errorf("battle end for different battle: expected %s, got %s",
 			mc.currentBattleID, payload.BattleID)
 	}
-	
+
 	// End battle through battle manager if available
 	if mc.battleManager != nil {
 		if err := mc.battleManager.EndBattle(); err != nil {
