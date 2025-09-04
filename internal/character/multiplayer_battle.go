@@ -166,6 +166,28 @@ func (mc *MultiplayerCharacter) handleBattleActionMessage(msg NetworkMessage, pe
 	// TODO: Forward to battle manager for processing
 	// This would require integration with the local battle state
 
+	// Forward action to battle manager for processing (Finding #4 fix)
+	if mc.battleManager != nil {
+		// Validate payload before forwarding
+		if payload.BattleID == "" || payload.ActorID == "" {
+			return fmt.Errorf("invalid battle action payload: missing required fields")
+		}
+		
+		// Create BattleAction from payload
+		action := battle.BattleAction{
+			Type:     battle.BattleActionType(payload.ActionType),
+			ActorID:  payload.ActorID,
+			TargetID: payload.TargetID,
+			ItemUsed: payload.ItemUsed,
+		}
+		
+		// Forward to battle manager
+		_, err := mc.battleManager.PerformAction(action, payload.TargetID)
+		if err != nil {
+			return fmt.Errorf("battle manager action failed: %w", err)
+		}
+	}
+
 	return nil
 }
 
