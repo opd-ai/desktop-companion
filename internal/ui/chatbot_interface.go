@@ -206,7 +206,7 @@ func (c *ChatbotInterface) sendMessage() {
 		}
 		c.addMessage(characterMessage)
 
-		// ENHANCEMENT: Record this chat interaction in character memory
+		// Record this chat interaction in character memory
 		c.character.RecordChatMemory(message, response)
 	}
 
