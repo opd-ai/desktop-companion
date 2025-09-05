@@ -2,6 +2,7 @@ package ui
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"image/color"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/widget"
 
 	"github.com/opd-ai/desktop-companion/internal/character"
 	"github.com/opd-ai/desktop-companion/internal/monitoring"
@@ -250,11 +252,11 @@ func (dw *DesktopWindow) setupContent() {
 
 	// Create container with transparent background for overlay effect
 	transparentBg := canvas.NewRectangle(color.Transparent)
-	
+
 	// Add transparent background as the first object for desktop overlay
 	allObjects := []fyne.CanvasObject{transparentBg}
 	allObjects = append(allObjects, objects...)
-	
+
 	content := container.NewWithoutLayout(allObjects...)
 
 	dw.window.SetContent(content)
@@ -374,26 +376,78 @@ func (dw *DesktopWindow) showEventFrequencySettings() {
 		{"Maximum (3.0x)", 3.0},
 	}
 
-	settingsText := fmt.Sprintf("Current Event Frequency: %.1fx\n\nChoose new frequency:\n\n", currentMultiplier)
-
-	// Build options text and find current selection
-	var selectedOption string
-	for _, option := range options {
-		prefix := "  "
+	// Create option labels for the select widget
+	optionLabels := make([]string, len(options))
+	var selectedIndex int
+	for i, option := range options {
+		optionLabels[i] = option.label
 		if option.multiplier == currentMultiplier {
-			prefix = "→ "
-			selectedOption = option.label
+			selectedIndex = i
 		}
-		settingsText += fmt.Sprintf("%s%s\n", prefix, option.label)
 	}
 
-	if selectedOption != "" {
-		settingsText += fmt.Sprintf("\nCurrent: %s", selectedOption)
+	// Create select widget with proper selection handling
+	selectWidget := widget.NewSelect(optionLabels, func(selected string) {
+		// Find the selected option and update frequency
+		for _, option := range options {
+			if option.label == selected {
+				dw.setEventFrequency(option.multiplier, option.label)
+				dw.showDialog(fmt.Sprintf("Event frequency set to: %s", option.label))
+				break
+			}
+		}
+	})
+
+	// Set current selection
+	if selectedIndex < len(optionLabels) {
+		selectWidget.SetSelectedIndex(selectedIndex)
 	}
 
-	// For now, show a simple dialog with the current state
-	// In a full implementation, this would use a selection dialog
-	dw.showDialog(settingsText + "\n\nUse keyboard shortcuts to adjust:\n  Ctrl+1 = Very Rare\n  Ctrl+2 = Normal\n  Ctrl+3 = Frequent\n  Ctrl+4 = Very Frequent\n  Ctrl+5 = Maximum")
+	// Create modal content
+	titleLabel := widget.NewLabel("Random Event Frequency Settings")
+	titleLabel.Alignment = fyne.TextAlignCenter
+	
+	descLabel := widget.NewLabel(fmt.Sprintf("Current: %.1fx\nSelect new frequency:", currentMultiplier))
+	
+	// Create container for the modal dialog
+	content := container.NewVBox(
+		titleLabel,
+		descLabel,
+		selectWidget,
+	)
+
+	// Show as a temporary overlay dialog
+	content.Resize(fyne.NewSize(300, 150))
+	dw.showModalContent(content)
+}
+
+// showModalContent displays content as a temporary modal overlay
+func (dw *DesktopWindow) showModalContent(content *fyne.Container) {
+	// Position the modal content in the center of the character window
+	charSize := float32(dw.character.GetSize())
+	modalX := (charSize - content.Size().Width) / 2
+	modalY := (charSize - content.Size().Height) / 2
+	
+	content.Move(fyne.NewPos(modalX, modalY))
+	
+	// Add to window temporarily
+	currentContent := dw.window.Content().(*fyne.Container)
+	currentContent.Add(content)
+	content.Show()
+	
+	// Auto-hide after 10 seconds
+	go func() {
+		time.Sleep(10 * time.Second)
+		if currentContent.Objects != nil {
+			for i, obj := range currentContent.Objects {
+				if obj == content {
+					currentContent.Objects = append(currentContent.Objects[:i], currentContent.Objects[i+1:]...)
+					currentContent.Refresh()
+					break
+				}
+			}
+		}
+	}()
 }
 
 // showContextMenu displays the right-click context menu
@@ -1865,7 +1919,7 @@ func (dw *DesktopWindow) SetSaveStatusCallback() func(SaveStatus, string) {
 		case SaveStatusSaved:
 			dw.onSaveCompleted()
 		case SaveStatusError:
-			dw.onSaveError(fmt.Errorf(message))
+			dw.onSaveError(errors.New(message))
 		case SaveStatusIdle:
 			if dw.saveStatusIndicator != nil {
 				dw.saveStatusIndicator.SetStatus(SaveStatusIdle, "")
