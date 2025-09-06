@@ -33,7 +33,7 @@ func (fv *FairnessValidator) ValidateAction(action BattleAction, participant *Ba
 		return ErrIllegalAction
 	}
 
-	// Validate item effects don't exceed caps (placeholder for item integration)
+	// Validate item effects don't exceed caps using basic item validation
 	if action.ItemUsed != "" {
 		if err := fv.validateItemEffects(action.ItemUsed, action.Type); err != nil {
 			return err
