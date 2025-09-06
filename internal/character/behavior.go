@@ -3,10 +3,12 @@ package character
 import (
 	"fmt"
 	"image"
+	"log"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/jdkato/prose/v2"
 	"github.com/opd-ai/desktop-companion/internal/dialog"
 	"github.com/opd-ai/desktop-companion/internal/news"
 	"github.com/opd-ai/desktop-companion/internal/platform"
@@ -2503,12 +2505,105 @@ func (c *Character) combinePromptParts(promptParts []string) string {
 	return ""
 }
 
-// extractTopicsFromMessage performs simple topic extraction from user message
-// This is a basic implementation - could be enhanced with NLP libraries
+// extractTopicsFromMessage performs NLP-enhanced topic extraction from user message
+// Enhanced with prose library for sentiment analysis and named entity recognition
 func (c *Character) extractTopicsFromMessage(message string) map[string]interface{} {
 	topics := make(map[string]interface{})
 
-	// Simple keyword-based topic detection
+	// Use prose NLP library for advanced analysis
+	doc, err := prose.NewDocument(message)
+	if err != nil {
+		// Fallback to basic keyword detection on NLP error
+		if c.debug {
+			log.Printf("NLP processing failed, using basic extraction: %v", err)
+		}
+		return c.extractTopicsBasic(message)
+	}
+
+	// Extract named entities for topic classification
+	entities := doc.Entities()
+	for _, entity := range entities {
+		switch entity.Label {
+		case "PERSON":
+			topics["person_mentioned"] = true
+		case "DATE", "TIME":
+			topics["temporal"] = true
+		case "GPE": // Geopolitical entity (countries, cities)
+			topics["location"] = true
+		case "ORG": // Organizations
+			topics["organization"] = true
+		case "MONEY":
+			topics["financial"] = true
+		}
+	}
+
+	// Extract tokens for advanced keyword analysis
+	tokens := doc.Tokens()
+	for _, token := range tokens {
+		tag := token.Tag
+		text := strings.ToLower(token.Text)
+		
+		// Use part-of-speech tags for better classification
+		switch {
+		case tag == "VB" || tag == "VBD" || tag == "VBG": // Verbs
+			switch text {
+			case "love", "like", "enjoy":
+				topics["romance"] = true
+			case "work", "working":
+				topics["professional"] = true
+			case "play", "playing":
+				topics["entertainment"] = true
+			}
+		case strings.Contains(tag, "NN"): // Nouns
+			switch text {
+			case "weather", "rain", "sun":
+				topics["weather"] = true
+			case "food", "meal", "lunch", "dinner":
+				topics["food"] = true
+			case "family", "friend", "relationship":
+				topics["relationships"] = true
+			}
+		case strings.Contains(tag, "JJ"): // Adjectives
+			switch text {
+			case "happy", "sad", "excited", "tired":
+				topics["emotional_state"] = text
+			case "beautiful", "nice", "amazing":
+				topics["appreciation"] = true
+			}
+		}
+	}
+
+	// Add confidence scoring based on number of detected features
+	featureCount := len(entities) + len(tokens)/5 // Weight tokens less
+	if featureCount > 10 {
+		topics["confidence"] = "high"
+	} else if featureCount > 5 {
+		topics["confidence"] = "medium"  
+	} else {
+		topics["confidence"] = "low"
+	}
+
+	// Fallback keyword detection for uncovered cases
+	basicTopics := c.extractTopicsBasic(message)
+	for key, value := range basicTopics {
+		if _, exists := topics[key]; !exists {
+			topics[key] = value
+		}
+	}
+
+	// Add message metadata
+	topics["message_length"] = len(message)
+	topics["word_count"] = len(tokens)
+
+	return topics
+}
+
+// extractTopicsBasic provides fallback basic keyword-based topic detection
+// Used when NLP processing fails or as supplementary detection
+func (c *Character) extractTopicsBasic(message string) map[string]interface{} {
+	topics := make(map[string]interface{})
+
+	// Simple keyword-based topic detection (original implementation)
 	messageWords := strings.Fields(strings.ToLower(message))
 
 	// Check for common topic keywords

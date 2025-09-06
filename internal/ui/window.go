@@ -406,9 +406,9 @@ func (dw *DesktopWindow) showEventFrequencySettings() {
 	// Create modal content
 	titleLabel := widget.NewLabel("Random Event Frequency Settings")
 	titleLabel.Alignment = fyne.TextAlignCenter
-	
+
 	descLabel := widget.NewLabel(fmt.Sprintf("Current: %.1fx\nSelect new frequency:", currentMultiplier))
-	
+
 	// Create container for the modal dialog
 	content := container.NewVBox(
 		titleLabel,
@@ -427,14 +427,14 @@ func (dw *DesktopWindow) showModalContent(content *fyne.Container) {
 	charSize := float32(dw.character.GetSize())
 	modalX := (charSize - content.Size().Width) / 2
 	modalY := (charSize - content.Size().Height) / 2
-	
+
 	content.Move(fyne.NewPos(modalX, modalY))
-	
+
 	// Add to window temporarily
 	currentContent := dw.window.Content().(*fyne.Container)
 	currentContent.Add(content)
 	content.Show()
-	
+
 	// Auto-hide after 10 seconds
 	go func() {
 		time.Sleep(10 * time.Second)
