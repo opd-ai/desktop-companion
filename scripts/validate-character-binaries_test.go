@@ -79,28 +79,40 @@ func TestBinaryValidationLogic(t *testing.T) {
 	tempDir := t.TempDir()
 	testBinary := filepath.Join(tempDir, "test_binary")
 
-	// Create a simple test binary (just copy the test executable)
+	// Create a simple test binary with appropriate extension
 	if runtime.GOOS == "windows" {
-		testBinary += ".exe"
+		testBinary += ".bat"
 	}
 
 	// Create a mock binary that can respond to -version
-	mockBinaryContent := `#!/bin/bash
+	var mockBinaryContent []byte
+	var fileMode os.FileMode
+
+	if runtime.GOOS == "windows" {
+		// Create a Windows batch file that responds to -version
+		mockBinaryContent = []byte(`@echo off
+if "%1"=="-version" (
+    echo Test Binary v1.0.0
+    exit /b 0
+)
+exit /b 1
+`)
+		fileMode = 0644
+	} else {
+		// Create a Unix shell script
+		mockBinaryContent = []byte(`#!/bin/bash
 if [[ "$1" == "-version" ]]; then
     echo "Test Binary v1.0.0"
     exit 0
 fi
 exit 1
-`
+`)
+		fileMode = 0755
+	}
 
-	if runtime.GOOS != "windows" {
-		err := os.WriteFile(testBinary, []byte(mockBinaryContent), 0755)
-		if err != nil {
-			t.Fatalf("Failed to create test binary: %v", err)
-		}
-	} else {
-		// For Windows, create a simple executable
-		t.Skip("Windows binary creation not implemented in test")
+	err := os.WriteFile(testBinary, mockBinaryContent, fileMode)
+	if err != nil {
+		t.Fatalf("Failed to create test binary: %v", err)
 	}
 
 	tests := []struct {
