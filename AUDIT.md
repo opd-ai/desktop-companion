@@ -72,7 +72,7 @@ dw.showDialog(settingsText + "\n\nUse keyboard shortcuts to adjust:\n  Ctrl+1 = 
 ### Finding #3
 **Location:** `internal/network/group_events.go:533`
 **Component:** `handleInvitation()`
-**Status:** Only logs invitations, no UI notification system
+**Status:** RESOLVED - 2025-09-06 - commit:5cd081e
 **Marker Type:** "In a full implementation" comment
 **Code Snippet:**
 ```go
@@ -87,13 +87,16 @@ return nil
 ```
 **Priority:** High
 **Complexity:** Moderate
-**Completion Steps:**
-1. Design notification UI component for group event invitations
-2. Create invitation acceptance/rejection workflow
-3. Integrate with existing network overlay UI system
-4. Add invitation timeout and auto-decline logic
-5. Implement sound or visual notification alerts
-6. Store pending invitations for later review
+**Fix Applied:**
+- Created GroupEventNotification UI component with accept/decline buttons
+- Implemented blue-themed notification widget following achievement notification pattern  
+- Added 30-second auto-decline timeout with proper cleanup
+- Integrated notification system into DesktopWindow content overlay
+- Added GroupEventInvitationHandler global callback to avoid circular imports
+- Modified handleInvitation to trigger UI notifications with user response handling
+- Added proper event joining via existing JoinGroupEvent method
+- Included user feedback messages for both acceptance and decline actions
+- Maintained backward compatibility with fallback logging when UI unavailable
 **Dependencies:** 
 - UI notification system
 - Network overlay components
