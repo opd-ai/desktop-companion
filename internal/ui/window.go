@@ -24,6 +24,10 @@ import (
 // Provides minimal coupling between multiplayer battle system and UI (Fix for Finding #1)
 var BattleInvitationHandler func(fromCharacter string, onResponse func(accepted bool))
 
+// GroupEventInvitationHandler is a global callback for group event invitation notifications
+// Provides minimal coupling between network group events and UI (Fix for Finding #3)
+var GroupEventInvitationHandler func(invitation network.GroupEventInvitation, onResponse func(accepted bool))
+
 // DesktopWindow represents the transparent overlay window containing the character
 // Uses Fyne for cross-platform window management - avoiding custom windowing code
 type DesktopWindow struct {
@@ -40,6 +44,7 @@ type DesktopWindow struct {
 	battleInvitationDialog  *BattleInvitationDialog
 	peerSelectionDialog     *PeerSelectionDialog
 	achievementNotification *AchievementNotification
+	groupEventNotification  *GroupEventNotification
 	saveStatusIndicator     *SaveStatusIndicator
 	profiler                *monitoring.Profiler
 	debug                   bool
@@ -197,6 +202,15 @@ func initializeNetworkFeatures(dw *DesktopWindow, networkMode bool, networkManag
 			}
 		}
 
+		// Initialize group event notification system for multiplayer networking
+		dw.groupEventNotification = NewGroupEventNotification()
+
+		// Set up group event invitation callback (Fix for Finding #3)
+		// This connects the network group events to the UI notification system
+		GroupEventInvitationHandler = func(invitation network.GroupEventInvitation, onResponse func(accepted bool)) {
+			dw.ShowGroupEventInvitation(invitation, onResponse)
+		}
+
 		if showNetwork {
 			dw.networkOverlay.Show()
 		}
@@ -248,6 +262,11 @@ func (dw *DesktopWindow) setupContent() {
 	// Add achievement notification if available
 	if dw.achievementNotification != nil {
 		objects = append(objects, dw.achievementNotification)
+	}
+
+	// Add group event notification if available
+	if dw.groupEventNotification != nil {
+		objects = append(objects, dw.groupEventNotification)
 	}
 
 	// Create container with transparent background for overlay effect
@@ -1033,6 +1052,17 @@ func (dw *DesktopWindow) ShowAchievementNotification(details character.Achieveme
 		dw.achievementNotification.ShowAchievement(details)
 		if dw.debug {
 			log.Printf("Achievement notification shown: %s", details.Name)
+		}
+	}
+}
+
+// ShowGroupEventInvitation displays a group event invitation notification
+// Fix for Finding #3: Implements UI notification system for group event invitations
+func (dw *DesktopWindow) ShowGroupEventInvitation(invitation network.GroupEventInvitation, onResponse func(accepted bool)) {
+	if dw.groupEventNotification != nil {
+		dw.groupEventNotification.ShowInvitation(invitation, onResponse)
+		if dw.debug {
+			log.Printf("Group event invitation shown: %s from %s", invitation.TemplateName, invitation.SenderID)
 		}
 	}
 }

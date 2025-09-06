@@ -527,12 +527,51 @@ func (gem *GroupEventManager) handleGroupEventMessage(data []byte, senderID stri
 	}
 }
 
+// GroupEventInvitationHandler is a callback for UI notifications (set by UI package)
+// Avoids circular imports while enabling UI integration
+var GroupEventInvitationHandler func(invitation GroupEventInvitation, onResponse func(accepted bool))
+
+// GroupEventInvitation represents invitation data for UI notifications
+type GroupEventInvitation struct {
+	SenderID     string
+	EventType    string
+	TemplateName string
+	Message      string
+}
+
 // handleInvitation processes group event invitations
 func (gem *GroupEventManager) handleInvitation(message GroupEventMessage, senderID string) error {
-	// For now, just log the invitation
-	// In a full implementation, this would trigger UI notifications
 	templateName, _ := message.Data["templateName"].(string)
-	fmt.Printf("Received group event invitation: %s from %s\n", templateName, senderID)
+
+	// Create invitation data
+	invitation := GroupEventInvitation{
+		SenderID:     senderID,
+		EventType:    "group_event",
+		TemplateName: templateName,
+		Message:      fmt.Sprintf("Join %s event?", templateName),
+	}
+
+	// Use UI notification system if available (Fix for Finding #3)
+	if GroupEventInvitationHandler != nil {
+		GroupEventInvitationHandler(invitation, func(accepted bool) {
+			if accepted {
+				// Handle acceptance - join the event using existing method
+				err := gem.JoinGroupEvent(message.SessionID, senderID)
+				if err != nil {
+					fmt.Printf("Failed to join group event: %v\n", err)
+				} else {
+					fmt.Printf("Accepted group event invitation: %s from %s\n", templateName, senderID)
+				}
+			} else {
+				// Handle decline
+				fmt.Printf("Declined group event invitation: %s from %s\n", templateName, senderID)
+			}
+		})
+	} else {
+		// Fallback: just log the invitation (original behavior)
+		fmt.Printf("Received group event invitation: %s from %s\n", templateName, senderID)
+	}
+
 	return nil
 }
 

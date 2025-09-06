@@ -2542,7 +2542,7 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 	for _, token := range tokens {
 		tag := token.Tag
 		text := strings.ToLower(token.Text)
-		
+
 		// Use part-of-speech tags for better classification
 		switch {
 		case tag == "VB" || tag == "VBD" || tag == "VBG": // Verbs
@@ -2578,7 +2578,7 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 	if featureCount > 10 {
 		topics["confidence"] = "high"
 	} else if featureCount > 5 {
-		topics["confidence"] = "medium"  
+		topics["confidence"] = "medium"
 	} else {
 		topics["confidence"] = "low"
 	}
