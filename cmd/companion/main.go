@@ -34,12 +34,15 @@ var (
 const appVersion = "1.0.0"
 
 // validateFlagDependencies checks that flag combinations are valid
-func validateFlagDependencies(gameMode, showStats, networkMode, showNetwork bool) error {
+func validateFlagDependencies(gameMode, showStats, networkMode, showNetwork, events bool, triggerEvent string) error {
 	if showStats && !gameMode {
 		return fmt.Errorf("-stats flag requires -game flag to be enabled")
 	}
 	if showNetwork && !networkMode {
 		return fmt.Errorf("-network-ui flag requires -network flag to be enabled")
+	}
+	if triggerEvent != "" && !events {
+		return fmt.Errorf("-trigger-event flag requires -events flag to be enabled")
 	}
 	return nil
 }
@@ -48,7 +51,7 @@ func main() {
 	flag.Parse()
 
 	// Validate flag dependencies
-	if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork); err != nil {
+	if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork, *events, *triggerEvent); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Use -help for usage information\n")
 		os.Exit(1)
