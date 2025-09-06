@@ -19,6 +19,9 @@ deps:
 
 # Run tests
 test:
+	@echo "Running animation validation..."
+	@bash scripts/validate-animations.sh
+	@echo "Running Go tests..."
 	go test ./... -v -cover
 
 # Clean build artifacts
