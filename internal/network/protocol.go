@@ -490,3 +490,118 @@ func (pm *ProtocolManager) CreateBattleEndMessage(fromPeerID, toPeerID string, p
 
 	return pm.SignMessage(msg)
 }
+
+// SendPersonalityRequest creates and signs a personality request message
+func (pm *ProtocolManager) SendPersonalityRequest(toPeerID string, trustLevel float64, shareInReturn bool) (*SignedMessage, error) {
+	requestID := fmt.Sprintf("pr_%d_%x", time.Now().Unix(), make([]byte, 4))
+
+	payload := PersonalityRequestPayload{
+		RequestID:     requestID,
+		TrustLevel:    trustLevel,
+		ShareInReturn: shareInReturn,
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal personality request payload: %w", err)
+	}
+
+	msg := Message{
+		Type:      MessageTypePersonalityRequest,
+		From:      string(pm.publicKey), // Use public key as peer ID
+		To:        toPeerID,
+		Payload:   payloadBytes,
+		Timestamp: time.Now(),
+	}
+
+	return pm.SignMessage(msg)
+}
+
+// SendPersonalityResponse creates and signs a personality response message
+func (pm *ProtocolManager) SendPersonalityResponse(toPeerID, requestID string, personalityData *PersonalityData) (*SignedMessage, error) {
+	if personalityData == nil {
+		// Send empty response if personality sharing is declined
+		personalityData = &PersonalityData{
+			ShareLevel: "none",
+			Version:    1,
+		}
+	}
+
+	// Generate checksum for personality data integrity
+	dataBytes, err := json.Marshal(personalityData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal personality data for checksum: %w", err)
+	}
+	checksum := pm.generateChecksum(StateSyncPayload{Checksum: string(dataBytes)})
+
+	payload := PersonalityResponsePayload{
+		RequestID:   requestID,
+		PeerID:      string(pm.publicKey),
+		Personality: personalityData,
+		Timestamp:   time.Now(),
+		Checksum:    checksum,
+		Shared:      personalityData.ShareLevel != "none",
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal personality response payload: %w", err)
+	}
+
+	msg := Message{
+		Type:      MessageTypePersonalityResponse,
+		From:      string(pm.publicKey),
+		To:        toPeerID,
+		Payload:   payloadBytes,
+		Timestamp: time.Now(),
+	}
+
+	return pm.SignMessage(msg)
+}
+
+// ParsePersonalityRequest extracts and validates a personality request payload
+func (pm *ProtocolManager) ParsePersonalityRequest(msg Message) (PersonalityRequestPayload, error) {
+	var payload PersonalityRequestPayload
+
+	if msg.Type != MessageTypePersonalityRequest {
+		return payload, fmt.Errorf("invalid message type: expected %s, got %s", MessageTypePersonalityRequest, msg.Type)
+	}
+
+	if err := json.Unmarshal(msg.Payload, &payload); err != nil {
+		return payload, fmt.Errorf("failed to unmarshal personality request payload: %w", err)
+	}
+
+	// Validate trust level range
+	if payload.TrustLevel < 0 || payload.TrustLevel > 1 {
+		return payload, fmt.Errorf("invalid trust level: %f (must be 0-1)", payload.TrustLevel)
+	}
+
+	return payload, nil
+}
+
+// ParsePersonalityResponse extracts and validates a personality response payload
+func (pm *ProtocolManager) ParsePersonalityResponse(msg Message) (PersonalityResponsePayload, error) {
+	var payload PersonalityResponsePayload
+
+	if msg.Type != MessageTypePersonalityResponse {
+		return payload, fmt.Errorf("invalid message type: expected %s, got %s", MessageTypePersonalityResponse, msg.Type)
+	}
+
+	if err := json.Unmarshal(msg.Payload, &payload); err != nil {
+		return payload, fmt.Errorf("failed to unmarshal personality response payload: %w", err)
+	}
+
+	// Validate checksum if personality data is shared
+	if payload.Shared && payload.Personality != nil {
+		dataBytes, err := json.Marshal(payload.Personality)
+		if err != nil {
+			return payload, fmt.Errorf("failed to marshal personality data for checksum verification: %w", err)
+		}
+		expectedChecksum := pm.generateChecksum(StateSyncPayload{Checksum: string(dataBytes)})
+		if payload.Checksum != expectedChecksum {
+			return payload, fmt.Errorf("personality data integrity check failed")
+		}
+	}
+
+	return payload, nil
+}

@@ -58,10 +58,13 @@ const (
 	MessageTypeStateSync       MessageType = "state_sync"
 	MessageTypePeerList        MessageType = "peer_list"
 	// Battle system message types (Phase 2)
-	MessageTypeBattleInvite    MessageType = "battle_invite"
-	MessageTypeBattleAction    MessageType = "battle_action"
-	MessageTypeBattleResult    MessageType = "battle_result"
-	MessageTypeBattleEnd       MessageType = "battle_end"
+	MessageTypeBattleInvite MessageType = "battle_invite"
+	MessageTypeBattleAction MessageType = "battle_action"
+	MessageTypeBattleResult MessageType = "battle_result"
+	MessageTypeBattleEnd    MessageType = "battle_end"
+	// Personality exchange system (Finding #8)
+	MessageTypePersonalityRequest  MessageType = "personality_request"
+	MessageTypePersonalityResponse MessageType = "personality_response"
 )
 
 // Message represents a network message between peers
@@ -81,6 +84,31 @@ type DiscoveryPayload struct {
 	NetworkID string `json:"networkId"`
 	PeerID    string `json:"peerId"`
 	TCPPort   int    `json:"tcpPort"`
+}
+
+// PersonalityRequestPayload requests personality data from a peer
+type PersonalityRequestPayload struct {
+	RequestID     string  `json:"requestId"`     // Unique request identifier
+	TrustLevel    float64 `json:"trustLevel"`    // Requesting peer's trust level (0-1)
+	ShareInReturn bool    `json:"shareInReturn"` // Whether to share own personality in response
+}
+
+// PersonalityResponsePayload contains personality data shared between peers
+type PersonalityResponsePayload struct {
+	RequestID   string           `json:"requestId"`   // Matching request ID
+	PeerID      string           `json:"peerId"`      // Responding peer ID
+	Personality *PersonalityData `json:"personality"` // Personality data (may be filtered)
+	Timestamp   time.Time        `json:"timestamp"`   // When data was generated
+	Checksum    string           `json:"checksum"`    // SHA-256 integrity check
+	Shared      bool             `json:"shared"`      // Whether personality was successfully shared
+}
+
+// PersonalityData represents sanitized personality information for network sharing
+type PersonalityData struct {
+	Traits        map[string]float64 `json:"traits"`        // Personality traits (may be filtered)
+	Compatibility map[string]float64 `json:"compatibility"` // Compatibility preferences
+	ShareLevel    string             `json:"shareLevel"`    // "full", "partial", "basic"
+	Version       int                `json:"version"`       // Data format version
 }
 
 // NetworkManagerConfig contains configuration for the NetworkManager
