@@ -33,3 +33,6 @@ go.work.sum
 /build
 /companion
 /main
+/*_demo
+/demo
+/test_*
