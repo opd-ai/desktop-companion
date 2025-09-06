@@ -3,6 +3,8 @@ package network
 import (
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -364,8 +366,8 @@ func (pm *ProtocolManager) GetVerifiedPeers() []string {
 	return peers
 }
 
-// generateChecksum creates a simple checksum for state sync data integrity
-// This is a basic implementation - in production, consider using a stronger hash
+// generateChecksum creates a SHA-256 hash for state sync data integrity
+// Replaced basic checksum with cryptographic hash for production security
 func (pm *ProtocolManager) generateChecksum(payload StateSyncPayload) string {
 	// Create a copy without the checksum field to avoid circular dependency
 	temp := payload
@@ -376,12 +378,9 @@ func (pm *ProtocolManager) generateChecksum(payload StateSyncPayload) string {
 		return "" // Return empty string on error
 	}
 
-	// Simple checksum: sum of bytes modulo a large prime
-	var sum uint64
-	for _, b := range data {
-		sum += uint64(b)
-	}
-	return fmt.Sprintf("%x", sum%982451653) // Large prime for distribution
+	// Use SHA-256 for cryptographic integrity verification
+	hash := sha256.Sum256(data)
+	return hex.EncodeToString(hash[:])
 }
 
 // ValidateMessageAge checks if a message is within acceptable time bounds
