@@ -2,13 +2,14 @@ package news
 
 import (
 	"context"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
 	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/internal/dialog"
 )
 
 // NewsBlogBackend implements the DialogBackend interface for news summarization
@@ -37,6 +38,10 @@ type NewsBlogBackend struct {
 
 	// Integration with character personality
 	personalityInfluence bool
+
+	// Simple learning system for user preferences
+	categoryPreferences map[string]float64 // category -> preference score (0.0 to 1.0)
+	learningEnabled     bool               // whether to learn from user feedback
 }
 
 // NewsBackendConfig defines configuration for the news backend
@@ -49,38 +54,42 @@ type NewsBackendConfig struct {
 	MaxNewsPerResponse   int      `json:"maxNewsPerResponse"`   // Maximum news items per response
 	DebugMode            bool     `json:"debugMode"`            // Enable debug logging
 	PreferredCategories  []string `json:"preferredCategories"`  // Preferred news categories
-	
+
 	// Phase 4: New configuration options
-	BackgroundUpdates    bool     `json:"backgroundUpdates"`    // Enable background feed updating
-	SmartScheduling      bool     `json:"smartScheduling"`      // Enable intelligent update scheduling
-	ErrorRecovery        bool     `json:"errorRecovery"`        // Enable comprehensive error handling
-	MaxCacheItems        int      `json:"maxCacheItems"`        // Maximum items in cache
-	BandwidthConscious   bool     `json:"bandwidthConscious"`   // Enable bandwidth-conscious policies
+	BackgroundUpdates  bool `json:"backgroundUpdates"`  // Enable background feed updating
+	SmartScheduling    bool `json:"smartScheduling"`    // Enable intelligent update scheduling
+	ErrorRecovery      bool `json:"errorRecovery"`      // Enable comprehensive error handling
+	MaxCacheItems      int  `json:"maxCacheItems"`      // Maximum items in cache
+	BandwidthConscious bool `json:"bandwidthConscious"` // Enable bandwidth-conscious policies
 }
 
 // NewNewsBlogBackend creates a new news blog backend with Phase 4 enhancements
 func NewNewsBlogBackend() *NewsBlogBackend {
 	// Create context for background operations
 	ctx, cancel := context.WithCancel(context.Background())
-	
+
 	// Phase 4: Create production-ready feed manager
 	feedManager := NewFeedManager()
-	
+
 	backend := &NewsBlogBackend{
-		enabled:              false,
-		confidence:           0.7, // Default confidence level
-		feedManager:          feedManager,
-		ctx:                  ctx,
-		cancel:               cancel,
-		
+		enabled:     false,
+		confidence:  0.7, // Default confidence level
+		feedManager: feedManager,
+		ctx:         ctx,
+		cancel:      cancel,
+
 		// Legacy components for backward compatibility
 		fetcher:              NewFeedFetcher(30 * time.Second),
 		cache:                NewNewsCache(100), // Default: store up to 100 news items
 		feeds:                []RSSFeed{},
 		personalityInfluence: true,
 		debug:                false,
+
+		// Initialize learning system
+		categoryPreferences: make(map[string]float64),
+		learningEnabled:     true,
 	}
-	
+
 	return backend
 }
 
@@ -117,7 +126,7 @@ func (nb *NewsBlogBackend) Initialize(config json.RawMessage) error {
 		if err := nb.feedManager.Start(nb.ctx); err != nil {
 			return fmt.Errorf("failed to start feed manager: %w", err)
 		}
-		
+
 		if nb.debug {
 			fmt.Printf("[DEBUG] News backend: background updates enabled\n")
 		}
@@ -221,13 +230,75 @@ func (nb *NewsBlogBackend) CanHandle(context dialog.DialogContext) bool {
 
 // UpdateMemory allows the backend to record interaction outcomes for learning
 func (nb *NewsBlogBackend) UpdateMemory(context dialog.DialogContext, response dialog.DialogResponse, userFeedback *dialog.UserFeedback) error {
-	// For now, we don't implement learning, but this could be extended
-	// to track which news categories users prefer based on engagement
-	if nb.debug && userFeedback != nil {
-		fmt.Printf("[DEBUG] News backend received feedback: positive=%v, engagement=%.2f\n",
-			userFeedback.Positive, userFeedback.Engagement)
+	if !nb.learningEnabled || userFeedback == nil {
+		return nil
 	}
+
+	nb.mu.Lock()
+	defer nb.mu.Unlock()
+
+	// Extract news categories from the response context
+	categories := nb.extractCategoriesFromResponse(response)
+
+	// Update category preferences based on user feedback
+	for _, category := range categories {
+		current := nb.categoryPreferences[category]
+
+		// Simple learning algorithm: adjust preference based on feedback
+		if userFeedback.Positive {
+			// Positive feedback increases preference (max 1.0)
+			nb.categoryPreferences[category] = min(1.0, current+0.1)
+		} else {
+			// Negative feedback decreases preference (min 0.0)
+			nb.categoryPreferences[category] = max(0.0, current-0.1)
+		}
+	}
+
+	if nb.debug {
+		fmt.Printf("[DEBUG] News backend learned from feedback: positive=%v, engagement=%.2f\n",
+			userFeedback.Positive, userFeedback.Engagement)
+		fmt.Printf("[DEBUG] Updated preferences: %v\n", nb.categoryPreferences)
+	}
+
 	return nil
+}
+
+// extractCategoriesFromResponse extracts news categories from a dialog response
+func (nb *NewsBlogBackend) extractCategoriesFromResponse(response dialog.DialogResponse) []string {
+	// Simple implementation: extract from response text or metadata
+	categories := []string{}
+
+	// Look for common news categories in the response text
+	text := strings.ToLower(response.Text)
+	commonCategories := []string{"technology", "politics", "sports", "business", "entertainment", "science", "health"}
+
+	for _, category := range commonCategories {
+		if strings.Contains(text, category) {
+			categories = append(categories, category)
+		}
+	}
+
+	// Default to "general" if no specific category found
+	if len(categories) == 0 {
+		categories = append(categories, "general")
+	}
+
+	return categories
+}
+
+// Helper functions for learning algorithm
+func min(a, b float64) float64 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b float64) float64 {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 // AddFeed adds a new RSS feed to the backend with Phase 4 enhancements
@@ -245,7 +316,7 @@ func (nb *NewsBlogBackend) AddFeed(feed RSSFeed) error {
 		if err := nb.feedManager.AddFeed(feed); err != nil {
 			return fmt.Errorf("failed to register feed with manager: %w", err)
 		}
-		
+
 		if nb.debug {
 			fmt.Printf("[DEBUG] Registered feed with background manager: %s\n", feed.Name)
 		}
@@ -324,7 +395,7 @@ func (nb *NewsBlogBackend) getRelevantNews(category string, maxItems int) []*New
 			return items
 		}
 	}
-	
+
 	// Fallback to legacy cache for backward compatibility
 	if category == "headlines" || category == "recent" {
 		return nb.cache.GetRecentItems(maxItems)
