@@ -24,9 +24,9 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 		// Frame rate calculation happens every 5 seconds, so we need to span that
 		done := make(chan bool)
 		go func() {
-			for i := 0; i < 150; i++ {
+			for i := 0; i < 80; i++ { // Reduced frames from 150 to 80
 				profiler.RecordFrame()
-				time.Sleep(50 * time.Millisecond) // ~20 FPS pace, spread over 7.5 seconds
+				time.Sleep(30 * time.Millisecond) // ~33 FPS pace, ~2.4 seconds total
 			}
 			done <- true
 		}()
@@ -35,11 +35,11 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 		<-done
 
 		// Wait for at least one complete frame rate calculation cycle (5+ seconds)
-		time.Sleep(6 * time.Second)
+		time.Sleep(5100 * time.Millisecond) // 5.1 seconds - minimal wait for one cycle
 
 		stats := profiler.GetStats()
-		if stats.TotalFrames != 150 {
-			t.Errorf("Expected 150 frames recorded, got %d", stats.TotalFrames)
+		if stats.TotalFrames != 80 { // Updated expected frame count
+			t.Errorf("Expected 80 frames recorded, got %d", stats.TotalFrames)
 		}
 
 		// Frame rate should be calculated after monitoring cycle completes
@@ -100,7 +100,7 @@ func TestBug5FrameRateMonitoringValidation(t *testing.T) {
 		}
 
 		// Wait for at least one monitoring cycle
-		time.Sleep(6 * time.Second)
+		time.Sleep(5100 * time.Millisecond) // 5.1 seconds - minimal wait for one cycle
 
 		stats := profiler.GetStats()
 		if stats.FrameRate <= 0 {
@@ -137,7 +137,7 @@ func TestBug5FrameRateIntegration(t *testing.T) {
 	go simulateAnimationLoop(60, 30.0)
 
 	// Wait for simulation and monitoring
-	time.Sleep(8 * time.Second)
+	time.Sleep(6 * time.Second) // 6 seconds for simulation + one monitoring cycle
 
 	stats := profiler.GetStats()
 

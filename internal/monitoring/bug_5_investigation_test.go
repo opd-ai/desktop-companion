@@ -49,7 +49,7 @@ func TestBug5FrameRateMonitoringIsActuallyWorking(t *testing.T) {
 
 		// Wait for monitoring cycle (which runs every 5 seconds)
 		t.Log("Waiting for monitoring cycle to calculate frame rate...")
-		time.Sleep(6 * time.Second)
+		time.Sleep(5100 * time.Millisecond) // 5.1 seconds - minimal wait for one cycle
 
 		stats := profiler.GetStats()
 		if stats.FrameRate <= 0 {
@@ -120,7 +120,7 @@ func TestBug5FrameRateMonitoringIntegrationEvidence(t *testing.T) {
 	}
 
 	// Wait for calculation cycle
-	time.Sleep(6 * time.Second)
+	time.Sleep(5100 * time.Millisecond) // 5.1 seconds - minimal wait for one cycle
 
 	finalStats := profiler.GetStats()
 	t.Logf("✓ Frame rate calculated: %.1f FPS from %d frames", finalStats.FrameRate, finalStats.TotalFrames)
