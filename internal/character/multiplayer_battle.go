@@ -113,7 +113,7 @@ func (mc *MultiplayerCharacter) PerformBattleAction(action battle.BattleAction) 
 	}
 
 	// Get current battle ID (Finding #3 fix)
-	battleID, err := mc.getCurrentBattleID()
+	battleID, err := mc.getCurrentBattleIDUnsafe()
 	if err != nil {
 		return fmt.Errorf("cannot perform battle action: %w", err)
 	}
@@ -292,7 +292,12 @@ func generateBattleID() string {
 func (mc *MultiplayerCharacter) getCurrentBattleID() (string, error) {
 	mc.mu.RLock()
 	defer mc.mu.RUnlock()
+	return mc.getCurrentBattleIDUnsafe()
+}
 
+// getCurrentBattleIDUnsafe returns the current battle ID or error if no active battle (without locking)
+// Internal method for use when mutex is already held
+func (mc *MultiplayerCharacter) getCurrentBattleIDUnsafe() (string, error) {
 	if mc.currentBattleID == "" {
 		return "", fmt.Errorf("no active battle")
 	}

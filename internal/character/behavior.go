@@ -628,7 +628,7 @@ func (c *Character) processAdvancedRomanceFeatures() bool {
 		}
 
 		// Store crisis state for other systems to use
-		c.setInCrisisMode(inCrisis)
+		c.setInCrisisModeUnsafe(inCrisis)
 	}
 
 	return stateChanged
@@ -669,7 +669,12 @@ func (c *Character) applyCompatibilityModifiers(modifiers []CompatibilityModifie
 func (c *Character) setInCrisisMode(inCrisis bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	c.setInCrisisModeUnsafe(inCrisis)
+}
 
+// setInCrisisModeUnsafe updates character state to reflect crisis mode (without locking)
+// Internal method for use when mutex is already held
+func (c *Character) setInCrisisModeUnsafe(inCrisis bool) {
 	// Only update if state actually changed
 	if c.inCrisis != inCrisis {
 		c.inCrisis = inCrisis
