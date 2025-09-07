@@ -18,6 +18,8 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		var showStats = flag.Bool("stats", false, "Show stats overlay")
 		var networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
 		var showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
+		var events = flag.Bool("events", false, "Enable general dialog events system")
+		var triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		// Simulate command line: -stats (without -game)
 		os.Args = []string{"companion", "-stats"}
@@ -25,7 +27,7 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 
 		// Expected behavior: should detect invalid flag combination
 		// Currently this passes the validation (the bug)
-		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork); err == nil {
+		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork, *events, *triggerEvent); err == nil {
 			t.Error("Expected error when -stats is used without -game, but validation passed")
 		}
 	})
@@ -40,13 +42,15 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		var showStats = flag.Bool("stats", false, "Show stats overlay")
 		var networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
 		var showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
+		var events = flag.Bool("events", false, "Enable general dialog events system")
+		var triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		// Simulate command line: -game -stats
 		os.Args = []string{"companion", "-game", "-stats"}
 		flag.Parse()
 
 		// This should pass validation
-		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork); err != nil {
+		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork, *events, *triggerEvent); err != nil {
 			t.Errorf("Expected no error when -stats is used with -game, but got: %v", err)
 		}
 	})
@@ -61,12 +65,14 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		var showStats = flag.Bool("stats", false, "Show stats overlay")
 		var networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
 		var showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
+		var events = flag.Bool("events", false, "Enable general dialog events system")
+		var triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		// Test without any flags
 		os.Args = []string{"companion"}
 		flag.Parse()
 
-		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork); err != nil {
+		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork, *events, *triggerEvent); err != nil {
 			t.Errorf("Expected no error when no flags are used, but got: %v", err)
 		}
 
@@ -76,11 +82,13 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		showStats = flag.Bool("stats", false, "Show stats overlay")
 		networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
 		showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
+		events = flag.Bool("events", false, "Enable general dialog events system")
+		triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		os.Args = []string{"companion", "-game"}
 		flag.Parse()
 
-		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork); err != nil {
+		if err := validateFlagDependencies(*gameMode, *showStats, *networkMode, *showNetwork, *events, *triggerEvent); err != nil {
 			t.Errorf("Expected no error when only -game is used, but got: %v", err)
 		}
 	})

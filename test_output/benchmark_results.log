@@ -1,10 +1,10 @@
 # Character Binary Performance Benchmark
-# Generated: Sat Sep  6 10:21:39 PM EDT 2025
+# Generated: Sat Sep  6 10:24:07 PM EDT 2025
 # Platform: linux/amd64
 
 Character            Size (MB)  Startup (ms)    Memory (MB)    
 ----------           --------   -----------     -----------    
-easy                 31         16              0              
-normal               31         27              0              
-default              31         16              0              
+easy                 31         25              0              
+normal               31         26              0              
+default              31         24              0              
 
