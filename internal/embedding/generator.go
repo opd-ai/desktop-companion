@@ -20,6 +20,7 @@ const mainTemplate = `package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"image/gif"
 	"log"
@@ -29,6 +30,10 @@ import (
 	"github.com/opd-ai/desktop-companion/internal/character"
 	"github.com/opd-ai/desktop-companion/internal/monitoring"
 	"github.com/opd-ai/desktop-companion/internal/ui"
+)
+
+var (
+	version = flag.Bool("version", false, "Show version information")
 )
 
 // Embedded character data - JSON configuration
@@ -45,7 +50,19 @@ var embeddedAnimations = map[string][]byte{
 const appVersion = "1.0.0-{{.CharacterName}}"
 const appID = "com.opdai.{{.CharacterName}}-companion"
 
+// showVersionInfo displays application version information.
+func showVersionInfo() {
+	fmt.Printf("Desktop Companion ({{.CharacterName}}) v%s\n", appVersion)
+	fmt.Println("Built with Go and Fyne - Cross-platform desktop pet")
+}
+
 func main() {
+	flag.Parse()
+
+	if *version {
+		showVersionInfo()
+		return
+	}
 	// Parse embedded character data using standard library JSON
 	var card character.CharacterCard
 	if err := json.Unmarshal([]byte(embeddedCharacterData), &card); err != nil {
