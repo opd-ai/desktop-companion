@@ -17,7 +17,7 @@ This package enables the Desktop Dating Simulator to adapt its behavior based on
 ## Usage
 
 ```go
-import "desktop-companion/internal/platform"
+import "github.com/opd-ai/desktop-companion/internal/platform"
 
 // Get platform information
 info := platform.GetPlatformInfo()

@@ -47,8 +47,8 @@ The responsive package provides adaptive UI layout management for cross-platform
 
 ```go
 import (
-    "desktop-companion/internal/platform"
-    "desktop-companion/internal/ui/responsive"
+    "github.com/opd-ai/desktop-companion/internal/platform"
+    "github.com/opd-ai/desktop-companion/internal/ui/responsive"
 )
 
 // Create platform-aware layout

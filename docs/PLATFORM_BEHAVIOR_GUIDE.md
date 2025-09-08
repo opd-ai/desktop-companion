@@ -74,8 +74,8 @@ size := char.GetOptimalSize(screenWidth)
 #### Basic Platform-Aware Character Creation
 ```go
 import (
-    "desktop-companion/internal/character"
-    "desktop-companion/internal/platform"
+    "github.com/opd-ai/desktop-companion/internal/character"
+    "github.com/opd-ai/desktop-companion/internal/platform"
 )
 
 // Detect current platform

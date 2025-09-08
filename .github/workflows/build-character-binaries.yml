@@ -194,7 +194,7 @@ jobs:
           # Special handling for Android builds with NDK
           if [[ "${{ matrix.goos }}" == "android" ]]; then
             echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
-            sudo cp -r -v . $(go env GOROOT)/desktop-companion
+            sudo cp -r -v . $(go env GOROOT)/github.com-opd-ai-desktop-companion
             
             # Create temporary build directory
             temp_build_dir=$(mktemp -d)

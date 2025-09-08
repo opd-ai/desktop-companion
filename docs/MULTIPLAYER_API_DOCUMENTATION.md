@@ -669,8 +669,8 @@ package main
 
 import (
     "log"
-    "desktop-companion/internal/character"
-    "desktop-companion/internal/network"
+    "github.com/opd-ai/desktop-companion/internal/character"
+    "github.com/opd-ai/desktop-companion/internal/network"
 )
 
 func main() {
