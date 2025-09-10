@@ -28,8 +28,8 @@ func TestBug1HeadlessDisplayCrash(t *testing.T) {
 		t.Fatal("Expected error when no display available, but checkDisplayAvailable returned nil")
 	}
 
-	// Verify it's the expected error message
-	expectedMsg := "no display available - DISPLAY environment variable is not set"
+	// Verify it's the expected error message (updated for enhanced Wayland + X11 support)
+	expectedMsg := "no display available - neither X11 (DISPLAY) nor Wayland (WAYLAND_DISPLAY) environment is available"
 	if !strings.Contains(err.Error(), expectedMsg) {
 		t.Fatalf("Expected error containing %q, got: %v", expectedMsg, err)
 	}
