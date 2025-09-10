@@ -249,45 +249,33 @@ func generateEmbeddedApp(characterName, characterJSON string, animations map[str
 	return nil
 }
 
-// generateGoMod creates a go.mod file for the embedded character
+// generateGoMod creates a simplified go.mod file for the embedded character
+// Since there are no internal packages, module resolution is much simpler
 func generateGoMod(characterName, outputDir string) error {
+	// Get the absolute path to the project root
+	projectRoot, err := filepath.Abs(".")
+	if err != nil {
+		return fmt.Errorf("failed to get project root path: %w", err)
+	}
+
 	goModContent := fmt.Sprintf(`module github.com/opd-ai/desktop-companion/cmd/%s-embedded
 
 go 1.21
 
-// Use replace directive to reference the parent module from relative path
-// This works for local development and CI builds
-replace github.com/opd-ai/desktop-companion => ../../
+// Simple replace directive - use absolute path for reliable module resolution
+replace github.com/opd-ai/desktop-companion => %s
 
 require (
 	fyne.io/fyne/v2 v2.4.5
 	github.com/opd-ai/desktop-companion v0.0.0-00010101000000-000000000000
 )
-
-// Add explicit requirements for internal packages to help with module resolution
-require (
-	github.com/jdkato/prose/v2 v2.0.0
-	github.com/mmcdole/gofeed v1.3.0
-)
-`, characterName)
+`, characterName, projectRoot)
 
 	goModFile := filepath.Join(outputDir, "go.mod")
 	if err := os.WriteFile(goModFile, []byte(goModContent), 0644); err != nil {
 		return fmt.Errorf("failed to write go.mod file: %w", err)
 	}
 
-	// Also copy go.sum from parent if it exists (for dependency resolution)
-	parentGoSum := filepath.Join(outputDir, "../../go.sum")
-	if _, err := os.Stat(parentGoSum); err == nil {
-		embeddedGoSum := filepath.Join(outputDir, "go.sum")
-		if _, err := os.Stat(embeddedGoSum); os.IsNotExist(err) {
-			content, err := os.ReadFile(parentGoSum)
-			if err == nil {
-				os.WriteFile(embeddedGoSum, content, 0644)
-			}
-		}
-	}
-
-	fmt.Printf("  ✓ Generated go.mod for embedded character\n")
+	fmt.Printf("  ✓ Generated simplified go.mod for embedded character\n")
 	return nil
 }

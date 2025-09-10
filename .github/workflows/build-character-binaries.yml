@@ -100,18 +100,13 @@ jobs:
       
       - name: Install dependencies
         run: |
-          # Clean any corrupted module cache first
-          go clean -modcache
-          
           go mod download
           go mod tidy
           
-          # Verify module structure
+          # Verify basic module structure (simplified since no internal packages)
           echo "=== Module verification ==="
           echo "Module path: $(go list -m)"
           echo "Go version: $(go version)"
-          echo "Internal packages:"
-          find internal/ -name "*.go" -type f | head -5 || echo "No internal packages found"
       
       - name: Install platform dependencies
         shell: bash
@@ -146,16 +141,13 @@ jobs:
             -character ${{ matrix.character }} \
             -output cmd/${{ matrix.character }}-embedded
           
-          # Verify the generated embedded character
+          # Verify the generated embedded character (simplified)
           echo "=== Embedded character verification ==="
           echo "Generated files:"
           ls -la cmd/${{ matrix.character }}-embedded/
           echo ""
           echo "go.mod content:"
           cat cmd/${{ matrix.character }}-embedded/go.mod
-          echo ""
-          echo "Testing module resolution:"
-          cd cmd/${{ matrix.character }}-embedded && go mod tidy && echo "✅ Module resolution successful" || echo "❌ Module resolution failed"
       
       - name: Configure Android NDK toolchain
         if: matrix.goos == 'android'
@@ -216,38 +208,22 @@ jobs:
         run: |
           mkdir -p build
           
-          # Special handling for Android builds with NDK
+          # Special handling for Android builds (simplified module handling)
           if [[ "${{ matrix.goos }}" == "android" ]]; then
             echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
             
-            # Create temporary build directory
+            # Create temporary build directory (simplified approach)
             temp_build_dir=$(mktemp -d)
             trap "rm -rf $temp_build_dir" EXIT
             
-            # Copy entire workspace to temporary directory to maintain module structure
-            echo "Copying workspace to temporary build directory..."
-            cp -r . "$temp_build_dir/workspace"
+            # Copy embedded character to temp directory
+            cp -r cmd/${{ matrix.character }}-embedded/* "$temp_build_dir/"
             
-            # Create the build directory within the workspace copy
-            build_dir="$temp_build_dir/workspace/cmd/${{ matrix.character }}-embedded"
-            
-            # Ensure the embedded character directory exists
-            if [[ ! -d "$build_dir" ]]; then
-              echo "❌ Embedded character directory not found: $build_dir"
-              exit 1
-            fi
-            
-            # Copy main go.mod and go.sum to the build directory
-            cp go.mod go.sum "$build_dir/" 2>/dev/null || true
-            
-            # Ensure go.mod exists in build directory
-            if [[ ! -f "$build_dir/go.mod" ]]; then
-              echo "❌ go.mod not found in build directory"
-              exit 1
-            fi
+            # Since no internal packages, just copy main module files
+            cp go.mod go.sum "$temp_build_dir/"
             
             # Create FyneApp.toml for Android metadata
-            cat > $build_dir/FyneApp.toml << EOF
+            cat > $temp_build_dir/FyneApp.toml << EOF
           [Details]
           Icon = "Icon.png"
           Name = "${{ matrix.character }} Companion"
@@ -261,64 +237,29 @@ jobs:
             
             # Create app icon (use character-specific or default)
             if [[ -f "assets/characters/${{ matrix.character }}/icon.png" ]]; then
-              cp "assets/characters/${{ matrix.character }}/icon.png" $build_dir/Icon.png
+              cp "assets/characters/${{ matrix.character }}/icon.png" $temp_build_dir/Icon.png
             elif [[ -f "assets/app/icon.png" ]]; then
-              cp "assets/app/icon.png" $build_dir/Icon.png
+              cp "assets/app/icon.png" $temp_build_dir/Icon.png
             else
-              # Create a simple 512x512 icon as fallback
-              convert -size 512x512 xc:lightblue \
-                -pointsize 72 -fill black -gravity center \
-                -annotate +0+0 "DDS" $build_dir/Icon.png 2>/dev/null || \
-              echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $build_dir/Icon.png
+              echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $temp_build_dir/Icon.png
             fi
             
-            # Build APK with fyne package
-            cd $build_dir
-            echo "Building APK with NDK toolchain (CC: $CC)..."
+            # Build APK with simplified module handling
+            cd $temp_build_dir
+            echo "Building APK with simplified module resolution..."
             echo "Working directory: $(pwd)"
-            echo "Module structure:"
-            ls -la
             
-            # Set up Go module workspace for the embedded character
-            echo "Setting up module workspace for Android build..."
-            export GOWORK=off  # Disable workspaces for clean module resolution
-            
-            # Clean and prepare module dependencies
-            echo "Cleaning module cache and preparing dependencies..."
-            go clean -modcache 2>/dev/null || true
-            
-            # Copy the main go.sum to ensure dependency resolution
-            cp "$temp_build_dir/workspace/go.sum" ./go.sum 2>/dev/null || true
-            
-            # Fix the go.mod replace directive for absolute path
-            sed -i 's|replace github.com/opd-ai/desktop-companion => ../../|replace github.com/opd-ai/desktop-companion => '"$temp_build_dir"'/workspace|g' go.mod
-            
+            # Simple module preparation (no complex workspace setup needed)
             go mod download
             go mod tidy
             
-            # Verify module resolution before building
-            echo "Verifying module resolution..."
-            if ! go list -m all > /dev/null 2>&1; then
-              echo "❌ Module resolution failed"
-              echo "go.mod content:"
-              cat go.mod
-              echo "Trying to fix module issues..."
-              
-              # Try to resolve module issues by going to workspace root
-              cd "$temp_build_dir/workspace"
-              go mod tidy
-              cd "$build_dir"
-              go mod tidy
-            fi
-            
-            # Build with release configuration for optimized APK
             echo "Starting APK build process..."
             echo "Environment variables:"
             echo "  GOOS=$GOOS"
             echo "  GOARCH=$GOARCH" 
             echo "  CGO_ENABLED=$CGO_ENABLED"
-            echo "  CC=$CC"
             
+            # Build APK with simplified command (no complex fallback logic needed)
             if ! fyne package \
               --target "android/${{ matrix.goarch }}" \
               --name "${{ matrix.character }} Companion" \
@@ -326,31 +267,22 @@ jobs:
               --app-version "1.0.0" \
               --release 2>&1; then
               
-              echo "Release build failed, trying debug build..."
-              if ! fyne package \
+              # Try debug build if release fails
+              fyne package \
                 --target "android/${{ matrix.goarch }}" \
                 --name "${{ matrix.character }} Companion" \
                 --app-id "ai.opd.${{ matrix.character }}" \
-                --app-version "1.0.0" 2>&1; then
-                echo "Android APK build failed completely"
-                echo "Build directory contents:"
-                ls -la
-                echo "Go environment:"
-                go env
-                exit 1
-              fi
+                --app-version "1.0.0"
             fi
             
             # Find and move the generated APK
             apk_file=$(find . -name "*.apk" -type f | head -1)
             if [[ -n "$apk_file" ]]; then
               output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
-              # Move to the main build directory (relative to workspace root)
-              mkdir -p "$temp_build_dir/workspace/build"
-              mv "$apk_file" "$temp_build_dir/workspace/build/$output_name"
               
-              # Copy back to the original workspace
-              cp "$temp_build_dir/workspace/build/$output_name" "$GITHUB_WORKSPACE/build/$output_name"
+              # Move to build directory  
+              mkdir -p "$GITHUB_WORKSPACE/build"
+              mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
               echo "✓ Built Android APK: $output_name"
               
               # Get APK info
@@ -369,40 +301,17 @@ jobs:
             fi
             
           else
-            # Standard desktop builds
+            # Standard desktop builds (simplified)
             echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
             
             binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
             
-            # Ensure proper module resolution for embedded characters
-            cd cmd/${{ matrix.character }}-embedded
+            # Simple direct build since no internal packages to resolve
+            go build -ldflags="-s -w" \
+              -o "build/$binary_name" \
+              ./cmd/${{ matrix.character }}-embedded
             
-            # Fix module path if needed
-            if grep -q "replace.*=> ../../" go.mod; then
-              echo "Verifying module resolution for desktop build..."
-              go mod tidy || {
-                echo "Module tidy failed, trying to fix..."
-                go clean -modcache
-                go mod download
-                go mod tidy
-              }
-            fi
-            
-            cd ../..
-            
-            # Use build script for desktop platforms
-            export PLATFORMS="${{ matrix.goos }}/${{ matrix.goarch }}"
-            export LDFLAGS="-s -w"
-            
-            if ./scripts/build-characters.sh build ${{ matrix.character }}; then
-              echo "✓ Build script completed successfully"
-            else
-              echo "Build script failed, trying direct build..."
-              go build -ldflags="-s -w" \
-                -o "build/$binary_name" \
-                ./cmd/${{ matrix.character }}-embedded
-              echo "✓ Built binary: $binary_name"
-            fi
+            echo "✓ Built binary: $binary_name"
           fi
       
       - name: Validate Android APK (if applicable)

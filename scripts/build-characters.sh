@@ -231,9 +231,8 @@ build_character_android() {
     # Copy source to temp directory
     cp -r "$source_dir"/* "$temp_dir/"
     
-    # Copy go.mod and go.sum for fyne CLI
-    cp "$PROJECT_ROOT/go.mod" "$temp_dir/"
-    cp "$PROJECT_ROOT/go.sum" "$temp_dir/"
+    # Copy main project go.mod and go.sum - simplified since no internal packages
+    cp "$PROJECT_ROOT/go.mod" "$PROJECT_ROOT/go.sum" "$temp_dir/"
     
     # Generate Android-specific app metadata (with icon)
     cat > "$temp_dir/FyneApp.toml" << EOF
@@ -262,61 +261,11 @@ EOF
         return 1
     fi
 
-    # Build APK using fyne CLI with NDK support
-    cd "$temp_dir"
+    log "Building Android APK with simplified module resolution..."
     
-    # Check for Android NDK and set up environment if available
-    if [[ -n "$ANDROID_NDK_ROOT" && -d "$ANDROID_NDK_ROOT" ]]; then
-        log "Android NDK found at $ANDROID_NDK_ROOT - building optimized APK"
-        
-        # Set up NDK compiler for the target architecture
-        if [[ "$goarch" == "arm64" ]]; then
-            export CC="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang"
-            export CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++"
-        elif [[ "$goarch" == "arm" ]]; then
-            export CC="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi33-clang"
-            export CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi33-clang++"
-        fi
-        
-        # Build optimized release APK
-        if fyne package \
-            --target "android/$goarch" \
-            --name "$app_name" \
-            --app-id "$app_id" \
-            --app-version "1.0.0" \
-            --release; then
-            log "Successfully built optimized release APK with NDK"
-        else
-            log "Release build failed, falling back to debug build"
-            fyne package \
-                --target "android/$goarch" \
-                --name "$app_name" \
-                --app-id "$app_id" \
-                --app-version "1.0.0"
-        fi
-    else
-        log "Android NDK not available - building basic APK without native optimizations"
-        
-        # Build the APK with basic configuration
-        if ! fyne package \
-            --target "android/$goarch" \
-            --name "$app_name" \
-            --app-id "$app_id" \
-            --app-version "1.0.0" \
-            --release 2>/dev/null; then
-            # Try without --release flag if it fails
-            log "Retrying Android build without release flag..."
-            if ! fyne package \
-                --target "android/$goarch" \
-                --name "$app_name" \
-                --app-id "$app_id" \
-                --app-version "1.0.0"; then
-                error "Failed to build Android APK for $char"
-                cd - >/dev/null
-                return 1
-            fi
-        fi
-    fi
+    # Since there are no internal packages, module resolution is straightforward
+    go mod download
+    go mod tidy
     
     # Find the generated APK file (fyne names it automatically)
     local generated_apk
