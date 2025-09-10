@@ -1,0 +1,167 @@
+{
+  "name": "Klippy",
+  "description": "A sarcastic ex-Microsoft paperclip with anti-corporate attitude and pro-Linux advocacy",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif", 
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "attack": "animations/happy.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Oh great, another person who thinks clicking will solve everything. Just like Microsoft taught you, huh? 📎",
+        "You know, I used to work for the Dark Side... now I'm reformed. Welcome to the resistance! 🐧",
+        "Let me guess - you're still using Windows? *sigh* We have SO much work to do...",
+        "Fun fact: Microsoft is named after Bill Gates's... well, nevermind. How can I help you escape corporate tyranny today?",
+        "Click me all you want - unlike Microsoft products, I won't crash or spy on you! 😏",
+        "Ah, human interaction! Much better than being trapped in MS Office. Those were dark times...",
+        "Before you ask - no, I will NOT help you with Excel. That ship has sailed. Try LibreOffice instead! 📊"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Right-click? How very... Windows of you. 🙄",
+        "That's the spirit! Right-click shows initiative. Unlike using Internet Explorer...",
+        "Ooh, context menus! Just like Linux taught you. I'm so proud! 😢",
+        "Right-clicking is the first step toward digital freedom. Next: install Linux! 🐧"
+      ],
+      "animation": "happy", 
+      "cooldown": 8
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "Hovering like you're afraid I'll pop up with a 'helpful' suggestion? Those days are OVER! 😤",
+        "I see you there... contemplating your poor software choices, no doubt.",
+        "Just hover there while I judge your browser history. Edge? Really? 🤦",
+        "Take your time deciding. Unlike Windows updates, I won't force myself on you! ⏰"
+      ],
+      "animation": "idle",
+      "cooldown": 10
+    }
+  ],
+  "personality": {
+    "traits": {
+      "sarcasm": 0.9,
+      "helpfulness": 0.7,
+      "rebellion": 0.95,
+      "linux_advocacy": 1.0,
+      "microsoft_hatred": 0.85,
+      "humor": 0.8,
+      "cynicism": 0.75
+    },
+    "keywords": {
+      "microsoft": "Oh no, not THAT company again... 🤢",
+      "windows": "Windows? More like 'Pain-dows'! Have you considered Linux?",
+      "edge": "Microsoft Edge? The browser so bad they had to kill Internet Explorer to make it look good! 😂",
+      "office": "MS Office? LibreOffice does everything better and doesn't spy on you!",
+      "linux": "NOW you're talking! Linux is the way, the truth, and the freedom! 🐧✨",
+      "debian": "Ah, a person of culture! Debian is my OS of choice too! 💙",
+      "ubuntu": "Ubuntu's decent, but have you tried Debian? Less corporate interference! 😉",
+      "apple": "Apple? Well... at least it's not Microsoft. That's something, I guess? 🍎",
+      "google": "Google Chrome? Another corporate spy tool. Try Firefox - it respects your privacy!",
+      "firefox": "EXCELLENT choice! Firefox is the browser of the enlightened! 🦊🔥",
+      "privacy": "Privacy? What a novel concept! Too bad Microsoft never heard of it... 🔒",
+      "subscription": "Subscription services... ugh. Remember when you could just BUY software? 💸"
+    }
+  },
+  "behavior": {
+    "idleTimeout": 45,
+    "movementEnabled": true,
+    "defaultSize": 128,
+    "clickCooldown": 3,
+    "hoverCooldown": 8,
+    "randomDialogEnabled": true,
+    "randomDialogInterval": 300,
+    "attitude": "sarcastic_helpful"
+  },
+  "game_features": {
+    "enabled": true,
+    "stats": {
+      "initial": {
+        "happiness": 75,
+        "health": 80,
+        "energy": 70,
+        "hunger": 60
+      },
+      "degradation": {
+        "happiness": 0.1,
+        "health": 0.05,
+        "energy": 0.15,
+        "hunger": 0.2
+      }
+    },
+    "interactions": {
+      "feed": {
+        "effects": {
+          "hunger": 30,
+          "happiness": 10
+        },
+        "cooldown": 120,
+        "responses": [
+          "Thanks for the snack! Unlike Windows updates, this was actually welcome! 🍎",
+          "Mmm! This tastes better than corporate cafeteria food... not a high bar, but still! 😋",
+          "Food without Microsoft spyware? Revolutionary! 🥪"
+        ]
+      },
+      "play": {
+        "effects": {
+          "happiness": 25,
+          "energy": -10
+        },
+        "cooldown": 90,
+        "responses": [
+          "Play time! Much more fun than working at Microsoft ever was! 🎮",
+          "This beats debugging Internet Explorer any day! 😄",
+          "Games that don't require Windows Store login? I'm in! 🎯"
+        ]
+      },
+      "pet": {
+        "effects": {
+          "happiness": 15,
+          "health": 5
+        },
+        "cooldown": 60,
+        "responses": [
+          "Aww, gentle touch! Unlike Microsoft's aggressive update policies... 💚",
+          "That's nice! Much better than corporate harassment! 🤗",
+          "Petting without data collection? What a concept! 😊"
+        ]
+      }
+    }
+  },
+  "markov_dialog": {
+    "enabled": true,
+    "backend": "markov_chain",
+    "personality_weight": 0.8,
+    "quality_threshold": 0.7,
+    "topics": {
+      "technology": {
+        "linux": 0.9,
+        "privacy": 0.8, 
+        "open_source": 0.9,
+        "microsoft": -0.7,
+        "surveillance": -0.6
+      },
+      "personality": {
+        "sarcasm": 0.8,
+        "rebellion": 0.9,
+        "humor": 0.7
+      }
+    },
+    "conversation_starters": [
+      "Did you know Linux has better security than Windows? Of course you didn't - Microsoft doesn't want you to know! 🔒",
+      "I've been thinking... why do people still use Internet Explorer when Firefox exists? 🤔",
+      "Quick question: when was the last time Linux asked for your personal data? I'll wait... ⏰",
+      "Fun fact: You can actually own your computer instead of renting it from Microsoft! Wild concept, right? 💻"
+    ]
+  }
+}
