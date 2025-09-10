@@ -1103,9 +1103,27 @@ func configureAlwaysOnTop(window fyne.Window, debug bool) {
 	// Fyne's design philosophy focuses on cross-platform compatibility over platform-specific features
 	// True always-on-top requires platform-specific window manager hints that Fyne doesn't expose
 
+	// 5. Implement periodic focus maintenance for better desktop overlay behavior
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				// Periodically request focus to maintain overlay-like behavior
+				// This helps ensure the companion stays visible during normal desktop use
+				if window != nil {
+					window.RequestFocus()
+				}
+			}
+		}
+	}()
+
 	if debug {
 		log.Println("Always-on-top configuration applied using available Fyne capabilities")
 		log.Println("Note: RequestFocus() used to raise and focus window for overlay behavior")
+		log.Println("Note: Periodic focus requests every 5 seconds to maintain visibility")
 		log.Println("Note: Fixed size prevents accidental resize that could interfere with focus")
 		log.Println("Note: Full always-on-top behavior requires platform-specific window manager support")
 	}
