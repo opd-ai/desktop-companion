@@ -51,7 +51,6 @@ func TestExecuteClickAction(t *testing.T) {
 	}
 
 	result, err := executor.ExecuteAction(decision)
-
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -95,7 +94,6 @@ func TestExecuteFeedAction(t *testing.T) {
 	}
 
 	result, err := executor.ExecuteAction(decision)
-
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -135,7 +133,6 @@ func TestExecutePlayAction(t *testing.T) {
 	}
 
 	result, err := executor.ExecuteAction(decision)
-
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -177,7 +174,6 @@ func TestExecuteChatActionWithNetwork(t *testing.T) {
 	}
 
 	result, err := executor.ExecuteAction(decision)
-
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -224,7 +220,6 @@ func TestExecuteChatActionWithoutNetwork(t *testing.T) {
 	}
 
 	result, err := executor.ExecuteAction(decision)
-
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -298,7 +293,6 @@ func TestExecuteObserveAction(t *testing.T) {
 	}
 
 	result, err := executor.ExecuteAction(decision)
-
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}

@@ -155,7 +155,7 @@ func TestMoodBasedAnimationWithMissingAnimations(t *testing.T) {
 
 	// Create animations subdirectory and files
 	animDir := filepath.Join(tmpDir, "animations")
-	err = os.MkdirAll(animDir, 0755)
+	err = os.MkdirAll(animDir, 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create animations directory: %v", err)
 	}
@@ -298,7 +298,7 @@ func createTestAnimationFile(t *testing.T, dir, filename string) {
 	// Create minimal valid GIF data
 	validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
 
-	err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0644)
+	err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test animation file %s: %v", filename, err)
 	}

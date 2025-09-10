@@ -3,8 +3,9 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/platform"
 	"fmt"
+
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // PlatformAwareLoader handles loading character cards with platform-specific adaptations.
@@ -82,7 +83,7 @@ func (pal *PlatformAwareLoader) applyPlatformConfig(card *CharacterCard) *Charac
 
 // mergeBehavior merges base behavior with platform-specific overrides.
 // Uses explicit field-by-field merging to maintain control over what gets overridden.
-func (pal *PlatformAwareLoader) mergeBehavior(base Behavior, override Behavior) Behavior {
+func (pal *PlatformAwareLoader) mergeBehavior(base, override Behavior) Behavior {
 	merged := base // Start with base behavior
 
 	// Apply non-zero overrides

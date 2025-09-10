@@ -7,17 +7,17 @@ import (
 
 // UpdateScheduler manages smart feed update scheduling to minimize bandwidth usage
 type UpdateScheduler struct {
-	feeds     map[string]ScheduledFeed // Key: feed URL
-	mu        sync.RWMutex
+	feeds map[string]ScheduledFeed // Key: feed URL
+	mu    sync.RWMutex
 }
 
 // ScheduledFeed tracks feed update scheduling information
 type ScheduledFeed struct {
-	Feed         RSSFeed   // Feed configuration
-	LastUpdate   time.Time // When feed was last updated
-	NextUpdate   time.Time // When feed should be updated next
-	UpdateCount  int       // Number of successful updates
-	Priority     int       // Update priority (1=highest, 5=lowest)
+	Feed        RSSFeed   // Feed configuration
+	LastUpdate  time.Time // When feed was last updated
+	NextUpdate  time.Time // When feed should be updated next
+	UpdateCount int       // Number of successful updates
+	Priority    int       // Update priority (1=highest, 5=lowest)
 }
 
 // NewUpdateScheduler creates a new smart update scheduler
@@ -31,18 +31,18 @@ func NewUpdateScheduler() *UpdateScheduler {
 func (us *UpdateScheduler) AddFeed(feed RSSFeed) error {
 	us.mu.Lock()
 	defer us.mu.Unlock()
-	
+
 	// Calculate initial priority based on category and update frequency
 	priority := us.calculatePriority(feed)
-	
+
 	scheduled := ScheduledFeed{
 		Feed:        feed,
-		LastUpdate:  time.Time{}, // Never updated
+		LastUpdate:  time.Time{},                                    // Never updated
 		NextUpdate:  time.Now().Add(us.calculateInitialDelay(feed)), // Stagger initial updates
 		UpdateCount: 0,
 		Priority:    priority,
 	}
-	
+
 	us.feeds[feed.URL] = scheduled
 	return nil
 }
@@ -51,11 +51,11 @@ func (us *UpdateScheduler) AddFeed(feed RSSFeed) error {
 func (us *UpdateScheduler) GetNextFeed() (*RSSFeed, time.Duration) {
 	us.mu.RLock()
 	defer us.mu.RUnlock()
-	
+
 	var nextFeed *RSSFeed
 	var earliestTime time.Time
 	now := time.Now()
-	
+
 	// Find the feed that should be updated next
 	for _, scheduled := range us.feeds {
 		if scheduled.NextUpdate.Before(now) || scheduled.NextUpdate.Equal(now) {
@@ -64,13 +64,13 @@ func (us *UpdateScheduler) GetNextFeed() (*RSSFeed, time.Duration) {
 				nextFeed = &feedCopy
 			}
 		}
-		
+
 		// Track earliest next update time for scheduling
 		if earliestTime.IsZero() || scheduled.NextUpdate.Before(earliestTime) {
 			earliestTime = scheduled.NextUpdate
 		}
 	}
-	
+
 	// Calculate time until next check
 	var nextCheckIn time.Duration
 	if nextFeed != nil {
@@ -83,7 +83,7 @@ func (us *UpdateScheduler) GetNextFeed() (*RSSFeed, time.Duration) {
 	} else {
 		nextCheckIn = 5 * time.Minute // Default when no feeds
 	}
-	
+
 	return nextFeed, nextCheckIn
 }
 
@@ -91,19 +91,19 @@ func (us *UpdateScheduler) GetNextFeed() (*RSSFeed, time.Duration) {
 func (us *UpdateScheduler) RecordUpdate(feedURL string, updateTime time.Time) {
 	us.mu.Lock()
 	defer us.mu.Unlock()
-	
+
 	scheduled, exists := us.feeds[feedURL]
 	if !exists {
 		return
 	}
-	
+
 	scheduled.LastUpdate = updateTime
 	scheduled.UpdateCount++
-	
+
 	// Calculate next update time based on feed configuration and performance
 	interval := us.calculateNextInterval(scheduled)
 	scheduled.NextUpdate = updateTime.Add(interval)
-	
+
 	us.feeds[feedURL] = scheduled
 }
 
@@ -128,14 +128,14 @@ func (us *UpdateScheduler) calculatePriority(feed RSSFeed) int {
 func (us *UpdateScheduler) calculateInitialDelay(feed RSSFeed) time.Duration {
 	// Stagger feeds by priority and hash of URL
 	baseDelay := time.Duration(us.calculatePriority(feed)) * 30 * time.Second
-	
+
 	// Add small random component based on URL hash to spread updates
 	urlHash := 0
 	for _, char := range feed.URL {
 		urlHash += int(char)
 	}
 	jitter := time.Duration(urlHash%60) * time.Second
-	
+
 	return baseDelay + jitter
 }
 
@@ -146,18 +146,18 @@ func (us *UpdateScheduler) calculateNextInterval(scheduled ScheduledFeed) time.D
 	if baseInterval == 0 {
 		baseInterval = 30 * time.Minute // Default 30 minutes
 	}
-	
+
 	// Apply bandwidth-conscious policies
 	minInterval := 15 * time.Minute // Never update more than every 15 minutes
 	maxInterval := 4 * time.Hour    // Never wait more than 4 hours
-	
+
 	// Adjust based on update history (successful feeds can update more frequently)
 	if scheduled.UpdateCount > 10 {
 		baseInterval = baseInterval * 3 / 4 // 25% faster for reliable feeds
 	} else if scheduled.UpdateCount < 3 {
 		baseInterval = baseInterval * 5 / 4 // 25% slower for new/unreliable feeds
 	}
-	
+
 	// Enforce limits
 	if baseInterval < minInterval {
 		baseInterval = minInterval
@@ -165,6 +165,6 @@ func (us *UpdateScheduler) calculateNextInterval(scheduled ScheduledFeed) time.D
 	if baseInterval > maxInterval {
 		baseInterval = maxInterval
 	}
-	
+
 	return baseInterval
 }

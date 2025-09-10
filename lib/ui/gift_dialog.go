@@ -1,11 +1,12 @@
 package ui
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"fmt"
 	"image/color"
 	"sort"
 	"strings"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"

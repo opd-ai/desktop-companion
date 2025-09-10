@@ -214,6 +214,6 @@ func (nc *NewsCache) GetLatestNews(category string, maxItems int) ([]*NewsItem, 
 	if category == "" || category == "all" {
 		return nc.GetRecentItems(maxItems), nil
 	}
-	
+
 	return nc.GetItemsByCategory(category, maxItems), nil
 }

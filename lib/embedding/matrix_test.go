@@ -149,7 +149,7 @@ func TestMatrixBuildConfiguration(t *testing.T) {
 				filename := artifact.character + "_" + artifact.goos + "_" + artifact.goarch + suffix + ext
 				artifactPath := filepath.Join(tempDir, filename)
 
-				if err := os.WriteFile(artifactPath, []byte("mock binary"), 0644); err != nil {
+				if err := os.WriteFile(artifactPath, []byte("mock binary"), 0o644); err != nil {
 					t.Fatalf("Failed to create mock artifact: %v", err)
 				}
 
@@ -206,7 +206,7 @@ func TestMatrixBuildConfiguration(t *testing.T) {
 		tempDir := t.TempDir()
 		originalPath := filepath.Join(tempDir, "test_binary")
 
-		if err := os.WriteFile(originalPath, testContent, 0644); err != nil {
+		if err := os.WriteFile(originalPath, testContent, 0o644); err != nil {
 			t.Fatalf("Failed to create test file: %v", err)
 		}
 

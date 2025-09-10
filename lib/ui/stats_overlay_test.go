@@ -377,7 +377,7 @@ func createTestCharacterWithGame(t *testing.T, tmpDir string) *character.Charact
 
 	// Write test character card
 	cardPath := filepath.Join(tmpDir, "character.json")
-	if err := os.WriteFile(cardPath, []byte(cardContent), 0644); err != nil {
+	if err := os.WriteFile(cardPath, []byte(cardContent), 0o644); err != nil {
 		t.Fatalf("Failed to write test character card: %v", err)
 	}
 
@@ -426,7 +426,7 @@ func createTestCharacterWithoutGame(t *testing.T, tmpDir string) *character.Char
 
 	// Write test character card
 	cardPath := filepath.Join(tmpDir, "character.json")
-	if err := os.WriteFile(cardPath, []byte(cardContent), 0644); err != nil {
+	if err := os.WriteFile(cardPath, []byte(cardContent), 0o644); err != nil {
 		t.Fatalf("Failed to write test character card: %v", err)
 	}
 
@@ -491,7 +491,7 @@ func createTestAnimationFiles(t *testing.T, dir string) {
 
 	animations := []string{"idle.gif", "talking.gif", "happy.gif", "sad.gif", "hungry.gif", "eating.gif"}
 	for _, filename := range animations {
-		err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0644)
+		err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0o644)
 		if err != nil {
 			t.Fatalf("Failed to create test animation file %s: %v", filename, err)
 		}

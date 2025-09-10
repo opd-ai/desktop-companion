@@ -1,8 +1,9 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/news"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/news"
 )
 
 func TestCharacterCardNewsFeatures(t *testing.T) {

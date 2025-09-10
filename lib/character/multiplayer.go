@@ -18,7 +18,7 @@ type NetworkManager interface {
 // ProtocolManager interface to avoid circular imports
 type ProtocolManager interface {
 	SignMessage(data []byte) ([]byte, error)
-	VerifyMessage(data []byte, signature []byte, publicKey []byte) error
+	VerifyMessage(data, signature, publicKey []byte) error
 }
 
 // NetworkMessage represents a network message
@@ -81,8 +81,8 @@ type MultiplayerWrapperConfig struct {
 // NewMultiplayerCharacter creates a new multiplayer-enabled character wrapper.
 // Uses existing Character constructor and adds network coordination.
 func NewMultiplayerCharacter(card *CharacterCard, config MultiplayerWrapperConfig,
-	networkManager NetworkManager, protocolManager ProtocolManager) (*MultiplayerCharacter, error) {
-
+	networkManager NetworkManager, protocolManager ProtocolManager,
+) (*MultiplayerCharacter, error) {
 	if card == nil {
 		return nil, fmt.Errorf("character card cannot be nil")
 	}

@@ -57,7 +57,7 @@ type DesktopWindow struct {
 
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
-func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode bool, showStats bool, networkManager NetworkManagerInterface, networkMode bool, showNetwork bool, eventsEnabled bool) *DesktopWindow {
+func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode, showStats bool, networkManager NetworkManagerInterface, networkMode, showNetwork, eventsEnabled bool) *DesktopWindow {
 	window := createConfiguredWindow(app, char, debug)
 
 	dw := &DesktopWindow{
@@ -132,7 +132,7 @@ func initializeBasicComponents(dw *DesktopWindow, char *character.Character, deb
 }
 
 // initializeGameFeatures sets up game-related features like stats overlay
-func initializeGameFeatures(dw *DesktopWindow, gameMode bool, showStats bool, char *character.Character) {
+func initializeGameFeatures(dw *DesktopWindow, gameMode, showStats bool, char *character.Character) {
 	if gameMode && char.GetGameState() != nil {
 		dw.statsOverlay = NewStatsOverlay(char)
 		if showStats {
@@ -803,8 +803,8 @@ func (dw *DesktopWindow) initializeFrameRates() (maxFPS, idleFPS, currentInterva
 
 // handleFrameRateAdaptation manages adaptive frame rate switching based on animation state
 func (dw *DesktopWindow) handleFrameRateAdaptation(hasChanges bool, consecutiveNoChanges int,
-	currentInterval, maxFPS, idleFPS time.Duration, ticker *time.Ticker) (time.Duration, int) {
-
+	currentInterval, maxFPS, idleFPS time.Duration, ticker *time.Ticker,
+) (time.Duration, int) {
 	if hasChanges {
 		return dw.handleActiveAnimation(currentInterval, maxFPS, ticker), 0
 	}
@@ -825,8 +825,8 @@ func (dw *DesktopWindow) handleActiveAnimation(currentInterval, maxFPS time.Dura
 
 // handleIdleAnimation switches to low frame rate after consecutive frames without changes
 func (dw *DesktopWindow) handleIdleAnimation(consecutiveNoChanges int, currentInterval, idleFPS time.Duration,
-	ticker *time.Ticker) (time.Duration, int) {
-
+	ticker *time.Ticker,
+) (time.Duration, int) {
 	consecutiveNoChanges++
 	// After 30 frames (0.5 seconds) with no changes, reduce frame rate
 	if consecutiveNoChanges >= 30 && currentInterval != idleFPS {

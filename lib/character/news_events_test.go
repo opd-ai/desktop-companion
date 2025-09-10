@@ -1,10 +1,11 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/dialog"
-	"github.com/opd-ai/desktop-companion/lib/news"
 	"encoding/json"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/dialog"
+	"github.com/opd-ai/desktop-companion/lib/news"
 )
 
 // TestNewsEventsInitialization tests that news events are properly initialized

@@ -85,7 +85,7 @@ func TestGiftManagerWithCatalog(t *testing.T) {
 		}
 	}`
 
-	err := os.WriteFile(giftFile, []byte(giftContent), 0644)
+	err := os.WriteFile(giftFile, []byte(giftContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test gift file: %v", err)
 	}

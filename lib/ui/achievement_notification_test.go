@@ -1,9 +1,10 @@
 package ui
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"testing"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 func TestNewAchievementNotification(t *testing.T) {

@@ -426,7 +426,7 @@ func createAdditionalMoodAnimations(t *testing.T, basePath string) {
 		}
 
 		// Write it to the target location
-		if err := os.WriteFile(finalPath, data, 0644); err != nil {
+		if err := os.WriteFile(finalPath, data, 0o644); err != nil {
 			t.Fatalf("Failed to write animation file: %v", err)
 		}
 	}

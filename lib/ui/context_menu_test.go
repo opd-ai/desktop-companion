@@ -163,7 +163,7 @@ func TestContextMenuShowAtPosition(t *testing.T) {
 	// Check position (note: exact position checking may be limited by Fyne's layout system)
 	pos := menu.content.Position()
 	if pos.X != testX || pos.Y != testY {
-		t.Logf("Position may have been adjusted by layout system: expected (%.1f, %.1f), got (%.1f, %.1f)", 
+		t.Logf("Position may have been adjusted by layout system: expected (%.1f, %.1f), got (%.1f, %.1f)",
 			testX, testY, pos.X, pos.Y)
 	}
 }
@@ -333,7 +333,7 @@ func TestContextMenuAutoHideTimeout(t *testing.T) {
 	// This test verifies the showContextMenu auto-hide behavior
 	// Note: Since we're testing the timeout functionality, we need to be in the context of DesktopWindow
 	// This test documents the expected behavior that will be tested in integration tests
-	
+
 	menu.Show()
 	if !menu.IsVisible() {
 		t.Error("Menu should be visible immediately after Show()")

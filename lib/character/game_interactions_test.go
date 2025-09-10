@@ -369,7 +369,7 @@ func createTestAnimationFiles(t *testing.T, dir string) {
 
 	animations := []string{"idle.gif", "talking.gif", "happy.gif", "sad.gif", "hungry.gif", "eating.gif"}
 	for _, filename := range animations {
-		err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0644)
+		err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0o644)
 		if err != nil {
 			t.Fatalf("Failed to create test animation file %s: %v", filename, err)
 		}

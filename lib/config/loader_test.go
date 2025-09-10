@@ -79,14 +79,14 @@ func TestLoader_LoadJSON(t *testing.T) {
 
 	validConfigPath := filepath.Join(tempDir, "valid.json")
 	validData, _ := json.MarshalIndent(testConfig, "", "  ")
-	if err := os.WriteFile(validConfigPath, validData, 0644); err != nil {
+	if err := os.WriteFile(validConfigPath, validData, 0o644); err != nil {
 		t.Fatalf("Failed to write test config file: %v", err)
 	}
 
 	// Create invalid JSON file
 	invalidConfigPath := filepath.Join(tempDir, "invalid.json")
 	invalidData := []byte(`{"name": "test", "value":}`) // Missing value
-	if err := os.WriteFile(invalidConfigPath, invalidData, 0644); err != nil {
+	if err := os.WriteFile(invalidConfigPath, invalidData, 0o644); err != nil {
 		t.Fatalf("Failed to write invalid config file: %v", err)
 	}
 
@@ -261,7 +261,7 @@ func TestLoader_FileExists(t *testing.T) {
 	// Create an existing file
 	existingFile := "existing.json"
 	existingPath := filepath.Join(tempDir, existingFile)
-	if err := os.WriteFile(existingPath, []byte("{}"), 0644); err != nil {
+	if err := os.WriteFile(existingPath, []byte("{}"), 0o644); err != nil {
 		t.Fatalf("Failed to create existing file: %v", err)
 	}
 
@@ -377,7 +377,7 @@ func TestLoader_ListFiles(t *testing.T) {
 		} else if filepath.Ext(filename) == ".xml" {
 			content = "<xml></xml>"
 		}
-		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte(content), 0o644); err != nil {
 			t.Fatalf("Failed to create test file %s: %v", filename, err)
 		}
 	}
@@ -556,15 +556,15 @@ func TestLoader_ErrorConditions(t *testing.T) {
 	t.Run("SaveToReadOnlyDirectory", func(t *testing.T) {
 		// Create a subdirectory and make it read-only
 		readOnlyDir := filepath.Join(tempDir, "readonly")
-		if err := os.Mkdir(readOnlyDir, 0755); err != nil {
+		if err := os.Mkdir(readOnlyDir, 0o755); err != nil {
 			t.Fatalf("Failed to create readonly dir: %v", err)
 		}
-		if err := os.Chmod(readOnlyDir, 0444); err != nil {
+		if err := os.Chmod(readOnlyDir, 0o444); err != nil {
 			t.Fatalf("Failed to make dir readonly: %v", err)
 		}
 
 		// Restore permissions for cleanup
-		defer os.Chmod(readOnlyDir, 0755)
+		defer os.Chmod(readOnlyDir, 0o755)
 
 		restrictedLoader := New(readOnlyDir)
 		testData := TestConfig{Name: "test", Value: 1}
@@ -577,7 +577,7 @@ func TestLoader_ErrorConditions(t *testing.T) {
 
 	t.Run("LoadFromEmptyFile", func(t *testing.T) {
 		emptyFile := filepath.Join(tempDir, "empty.json")
-		if err := os.WriteFile(emptyFile, []byte(""), 0644); err != nil {
+		if err := os.WriteFile(emptyFile, []byte(""), 0o644); err != nil {
 			t.Fatalf("Failed to create empty file: %v", err)
 		}
 

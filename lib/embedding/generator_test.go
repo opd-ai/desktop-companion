@@ -26,7 +26,7 @@ func TestLoadAnimations(t *testing.T) {
 	}
 
 	animPath := filepath.Join(tempDir, "test.gif")
-	err = os.WriteFile(animPath, testGifData, 0644)
+	err = os.WriteFile(animPath, testGifData, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test GIF: %v", err)
 	} // Test LoadAnimations function
@@ -63,7 +63,7 @@ func TestLoadAnimations_InvalidGIF(t *testing.T) {
 	// Create invalid GIF file
 	invalidData := []byte{0x00, 0x01, 0x02, 0x03}
 	animPath := filepath.Join(tempDir, "invalid.gif")
-	err := os.WriteFile(animPath, invalidData, 0644)
+	err := os.WriteFile(animPath, invalidData, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create invalid GIF: %v", err)
 	}
@@ -157,7 +157,7 @@ func BenchmarkLoadAnimations(b *testing.B) {
 	copy(testGifData, []byte{0x47, 0x49, 0x46, 0x38, 0x37, 0x61}) // GIF header
 
 	animPath := filepath.Join(tempDir, "test.gif")
-	err := os.WriteFile(animPath, testGifData, 0644)
+	err := os.WriteFile(animPath, testGifData, 0o644)
 	if err != nil {
 		b.Fatalf("Failed to create test GIF: %v", err)
 	}

@@ -219,8 +219,7 @@ jobs:
             # Copy embedded character to temp directory
             cp -r cmd/${{ matrix.character }}-embedded/* "$temp_build_dir/"
             
-            # Copy main module files directly
-            cp go.mod go.sum "$temp_build_dir/"
+            # With simplified module structure, we only need the embedded character files
             
             # Create FyneApp.toml for Android metadata
             cat > $temp_build_dir/FyneApp.toml << EOF
@@ -244,12 +243,12 @@ jobs:
               echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $temp_build_dir/Icon.png
             fi
             
-            # Build APK with direct module inheritance
+            # Build APK with simplified module structure
             cd $temp_build_dir
-            echo "Building APK with direct module inheritance..."
+            echo "Building APK with simplified module structure (single replace directive)..."
             echo "Working directory: $(pwd)"
             
-            # Module setup - direct inheritance from parent
+            # Standard module setup (much simpler than previous approach)
             go mod download
             go mod tidy
             

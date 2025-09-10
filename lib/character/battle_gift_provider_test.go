@@ -1,8 +1,9 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/battle"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/battle"
 )
 
 func TestBattleGiftProvider_Integration(t *testing.T) {

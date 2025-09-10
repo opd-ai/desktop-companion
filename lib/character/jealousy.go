@@ -95,7 +95,7 @@ func (jm *JealousyManager) applyJealousyConsequences(gameState *GameState) {
 
 // checkJealousyTriggers evaluates triggers and returns event if one fires
 // Uses probability-based triggering like existing random events
-func (jm *JealousyManager) checkJealousyTriggers(gameState *GameState, lastInteraction time.Time, now time.Time) *TriggeredEvent {
+func (jm *JealousyManager) checkJealousyTriggers(gameState *GameState, lastInteraction, now time.Time) *TriggeredEvent {
 	for _, trigger := range jm.jealousyTriggers {
 		if jm.shouldTriggerJealousy(trigger, gameState, lastInteraction, now) {
 			if jm.rollProbability(trigger.Probability) {
@@ -108,7 +108,7 @@ func (jm *JealousyManager) checkJealousyTriggers(gameState *GameState, lastInter
 
 // shouldTriggerJealousy checks if conditions are met for a jealousy trigger
 // Considers interaction timing, stats, and personality traits
-func (jm *JealousyManager) shouldTriggerJealousy(trigger JealousyTrigger, gameState *GameState, lastInteraction time.Time, now time.Time) bool {
+func (jm *JealousyManager) shouldTriggerJealousy(trigger JealousyTrigger, gameState *GameState, lastInteraction, now time.Time) bool {
 	// Check interaction gap requirement
 	if trigger.InteractionGap > 0 {
 		timeSinceInteraction := now.Sub(lastInteraction)

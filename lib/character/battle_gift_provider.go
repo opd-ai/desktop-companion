@@ -1,8 +1,9 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/battle"
 	"fmt"
+
+	"github.com/opd-ai/desktop-companion/lib/battle"
 )
 
 // BattleGiftProvider implements the battle.GiftProvider interface

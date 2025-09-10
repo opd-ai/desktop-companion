@@ -491,7 +491,7 @@ func (ci *ChatbotInterface) ExportConversation() error {
 	}
 
 	filepath := filepath.Join(homeDir, filename)
-	err = os.WriteFile(filepath, []byte(conversation.String()), 0644)
+	err = os.WriteFile(filepath, []byte(conversation.String()), 0o644)
 	if err != nil {
 		return fmt.Errorf("failed to write conversation file: %v", err)
 	}

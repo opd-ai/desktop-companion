@@ -70,7 +70,7 @@ func TestLoadGiftCatalogIntegration(t *testing.T) {
 		}
 	}`
 
-	err := os.WriteFile(giftFile, []byte(giftContent), 0644)
+	err := os.WriteFile(giftFile, []byte(giftContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test gift file: %v", err)
 	}
@@ -156,7 +156,6 @@ func TestGiveGift(t *testing.T) {
 
 	// Test giving gift
 	response, err := gm.GiveGift("test_gift", "Hope you like it!")
-
 	if err != nil {
 		t.Fatalf("Failed to give gift: %v", err)
 	}

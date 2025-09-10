@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"path/filepath"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestStep1BasicGameFeatures tests that the Step 1 implementation (Basic Game Features)

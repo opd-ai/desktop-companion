@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"encoding/json"
 	"strings"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestStep4ExperimentalFeatures validates that all characters have appropriate battle and gift systems

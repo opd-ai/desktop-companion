@@ -32,6 +32,7 @@ func (m *mockBattleNetworkManager) Broadcast(msg NetworkMessage) error {
 	m.messages = append(m.messages, msg)
 	return nil
 }
+
 func (m *mockBattleNetworkManager) RegisterHandler(msgType string, handler func(NetworkMessage, interface{}) error) {
 	m.handlers[msgType] = handler
 }
@@ -50,7 +51,7 @@ func (m *mockBattleProtocolManager) SignMessage(data []byte) ([]byte, error) {
 	return data, nil
 }
 
-func (m *mockBattleProtocolManager) VerifyMessage(data []byte, signature []byte, publicKey []byte) error {
+func (m *mockBattleProtocolManager) VerifyMessage(data, signature, publicKey []byte) error {
 	return nil
 }
 

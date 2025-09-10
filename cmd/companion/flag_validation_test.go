@@ -14,12 +14,12 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
 		// Redefine flags (simulate main.go flag definitions)
-		var gameMode = flag.Bool("game", false, "Enable Tamagotchi game features")
-		var showStats = flag.Bool("stats", false, "Show stats overlay")
-		var networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
-		var showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
-		var events = flag.Bool("events", false, "Enable general dialog events system")
-		var triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
+		gameMode := flag.Bool("game", false, "Enable Tamagotchi game features")
+		showStats := flag.Bool("stats", false, "Show stats overlay")
+		networkMode := flag.Bool("network", false, "Enable multiplayer networking features")
+		showNetwork := flag.Bool("network-ui", false, "Show network overlay UI")
+		events := flag.Bool("events", false, "Enable general dialog events system")
+		triggerEvent := flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		// Simulate command line: -stats (without -game)
 		os.Args = []string{"companion", "-stats"}
@@ -38,12 +38,12 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
 		// Redefine flags
-		var gameMode = flag.Bool("game", false, "Enable Tamagotchi game features")
-		var showStats = flag.Bool("stats", false, "Show stats overlay")
-		var networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
-		var showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
-		var events = flag.Bool("events", false, "Enable general dialog events system")
-		var triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
+		gameMode := flag.Bool("game", false, "Enable Tamagotchi game features")
+		showStats := flag.Bool("stats", false, "Show stats overlay")
+		networkMode := flag.Bool("network", false, "Enable multiplayer networking features")
+		showNetwork := flag.Bool("network-ui", false, "Show network overlay UI")
+		events := flag.Bool("events", false, "Enable general dialog events system")
+		triggerEvent := flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		// Simulate command line: -game -stats
 		os.Args = []string{"companion", "-game", "-stats"}
@@ -61,12 +61,12 @@ func TestGap1StatsFlagDependencyValidation(t *testing.T) {
 		flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
 		// Redefine flags
-		var gameMode = flag.Bool("game", false, "Enable Tamagotchi game features")
-		var showStats = flag.Bool("stats", false, "Show stats overlay")
-		var networkMode = flag.Bool("network", false, "Enable multiplayer networking features")
-		var showNetwork = flag.Bool("network-ui", false, "Show network overlay UI")
-		var events = flag.Bool("events", false, "Enable general dialog events system")
-		var triggerEvent = flag.String("trigger-event", "", "Manually trigger a specific event by name")
+		gameMode := flag.Bool("game", false, "Enable Tamagotchi game features")
+		showStats := flag.Bool("stats", false, "Show stats overlay")
+		networkMode := flag.Bool("network", false, "Enable multiplayer networking features")
+		showNetwork := flag.Bool("network-ui", false, "Show network overlay UI")
+		events := flag.Bool("events", false, "Enable general dialog events system")
+		triggerEvent := flag.String("trigger-event", "", "Manually trigger a specific event by name")
 
 		// Test without any flags
 		os.Args = []string{"companion"}

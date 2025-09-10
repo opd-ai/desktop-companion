@@ -87,7 +87,6 @@ func TestConfigureWindow(t *testing.T) {
 			window := app.NewWindow("Test")
 
 			err := mwm.ConfigureWindow(window)
-
 			if err != nil {
 				t.Errorf("ConfigureWindow returned error: %v", err)
 			}

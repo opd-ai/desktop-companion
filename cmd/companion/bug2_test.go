@@ -53,14 +53,14 @@ func TestBug2ResolveProjectRootWithAssets(t *testing.T) {
 
 	// Create assets directory structure
 	assetsDir := filepath.Join(tmpDir, "assets", "characters", "default")
-	err = os.MkdirAll(assetsDir, 0755)
+	err = os.MkdirAll(assetsDir, 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create assets directory: %v", err)
 	}
 
 	// Create a test character file
 	characterFile := filepath.Join(assetsDir, "character.json")
-	err = os.WriteFile(characterFile, []byte(`{"name":"test"}`), 0644)
+	err = os.WriteFile(characterFile, []byte(`{"name":"test"}`), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create character file: %v", err)
 	}

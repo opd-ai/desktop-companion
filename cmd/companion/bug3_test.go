@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"image"
 	"image/color"
 	"image/gif"
@@ -10,6 +9,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // Helper function to create a test GIF file

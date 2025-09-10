@@ -37,7 +37,7 @@ func TestBug2ResolveProjectRootBehavior(t *testing.T) {
 
 		// Create assets directory structure like a real deployment
 		assetsDir := filepath.Join(tmpDir, "assets", "characters", "default")
-		err = os.MkdirAll(assetsDir, 0755)
+		err = os.MkdirAll(assetsDir, 0o755)
 		if err != nil {
 			t.Fatalf("Failed to create assets directory: %v", err)
 		}

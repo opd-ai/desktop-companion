@@ -20,7 +20,7 @@ func TestNetworkOverlay_LocalVsNetworkCharacterDistinction(t *testing.T) {
 
 	// Create overlay
 	overlay := NewNetworkOverlay(mockNM)
-	
+
 	// Set a specific local character name
 	localCharName := "My Local Avatar"
 	overlay.SetLocalCharacterName(localCharName)
@@ -54,7 +54,7 @@ func TestNetworkOverlay_LocalVsNetworkCharacterDistinction(t *testing.T) {
 		if i == 0 {
 			continue // Skip local character
 		}
-		
+
 		if char.IsLocal {
 			t.Errorf("Character %d should be network character, but IsLocal=true", i)
 		}
@@ -75,7 +75,7 @@ func TestNetworkOverlay_LocalVsNetworkCharacterDistinction(t *testing.T) {
 	// Test 3: Verify visual distinction works
 	// Local character should have different visual indicators than network characters
 	for i, char := range characters {
-		t.Logf("Character %d: Name=%q, Local=%v, Active=%v, Location=%q, Type=%q", 
+		t.Logf("Character %d: Name=%q, Local=%v, Active=%v, Location=%q, Type=%q",
 			i, char.Name, char.IsLocal, char.IsActive, char.Location, char.CharType)
 	}
 }
@@ -98,7 +98,7 @@ func TestNetworkOverlay_UILayoutContainsCharacterSection(t *testing.T) {
 	size := container.Size()
 	expectedHeight := float32(380) // Should be larger than original 300
 	if size.Height < expectedHeight {
-		t.Errorf("Container height = %f, want >= %f to accommodate character list", 
+		t.Errorf("Container height = %f, want >= %f to accommodate character list",
 			size.Height, expectedHeight)
 	}
 
@@ -198,7 +198,7 @@ func BenchmarkNetworkOverlay_CharacterListUpdate(b *testing.B) {
 	for i := 0; i < 4; i++ {
 		mockNM.AddPeer("peer-"+string(rune('A'+i)), true)
 	}
-	
+
 	overlay := NewNetworkOverlay(mockNM)
 
 	b.ResetTimer()

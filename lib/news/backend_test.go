@@ -1,10 +1,11 @@
 package news
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/dialog"
 	"encoding/json"
 	"testing"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 func TestNewsBlogBackend_Initialize(t *testing.T) {

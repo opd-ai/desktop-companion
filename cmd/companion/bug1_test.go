@@ -74,13 +74,13 @@ func TestBug1AnimationLoadingGracefulDegradation(t *testing.T) {
 
 	// Create character card directory
 	cardDir := filepath.Join(tempDir, "test_character")
-	if err := os.MkdirAll(cardDir, 0755); err != nil {
+	if err := os.MkdirAll(cardDir, 0o755); err != nil {
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
 
 	// Create animations directory and invalid animation files
 	animDir := filepath.Join(cardDir, "animations")
-	if err := os.MkdirAll(animDir, 0755); err != nil {
+	if err := os.MkdirAll(animDir, 0o755); err != nil {
 		t.Fatalf("Failed to create animations directory: %v", err)
 	}
 
@@ -89,10 +89,10 @@ func TestBug1AnimationLoadingGracefulDegradation(t *testing.T) {
 	talkingPath := filepath.Join(animDir, "talking.gif")
 
 	// Create invalid GIF files (empty files that will fail to load)
-	if err := os.WriteFile(idlePath, []byte("invalid gif data"), 0644); err != nil {
+	if err := os.WriteFile(idlePath, []byte("invalid gif data"), 0o644); err != nil {
 		t.Fatalf("Failed to create idle animation file: %v", err)
 	}
-	if err := os.WriteFile(talkingPath, []byte("invalid gif data"), 0644); err != nil {
+	if err := os.WriteFile(talkingPath, []byte("invalid gif data"), 0o644); err != nil {
 		t.Fatalf("Failed to create talking animation file: %v", err)
 	}
 
@@ -120,7 +120,7 @@ func TestBug1AnimationLoadingGracefulDegradation(t *testing.T) {
 		}
 	}`
 
-	if err := os.WriteFile(cardPath, []byte(cardContent), 0644); err != nil {
+	if err := os.WriteFile(cardPath, []byte(cardContent), 0o644); err != nil {
 		t.Fatalf("Failed to create character card: %v", err)
 	}
 
@@ -227,7 +227,7 @@ func createTestAnimationFile(t *testing.T, dir, filename string) {
 	// Create minimal valid GIF data (1x1 pixel, single frame)
 	validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
 
-	err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0644)
+	err := os.WriteFile(filepath.Join(dir, filename), validGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test animation file %s: %v", filename, err)
 	}

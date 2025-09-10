@@ -212,7 +212,6 @@ func TestDesktopWindow_SaveStatusIndicator_GameModeIntegration(t *testing.T) {
 			t.Errorf("Expected save status indicator at %v, got %v", expectedIndicatorPos, indicatorPos)
 		}
 	}
-
 }
 
 func TestDesktopWindow_SaveStatusIndicator_ThreadSafety(t *testing.T) {

@@ -110,7 +110,6 @@ func buildSingleCharacterInPipeline(t *testing.T, character string) {
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()
-
 	if err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
 			t.Fatalf("Build timeout for character %s after 3 minutes", character)
@@ -197,7 +196,6 @@ func testCleanupPipeline(t *testing.T) {
 
 	cmd := exec.Command("make", "clean-characters")
 	output, err := cmd.CombinedOutput()
-
 	if err != nil {
 		t.Fatalf("Failed to run cleanup pipeline: %v\nOutput: %s", err, output)
 	}

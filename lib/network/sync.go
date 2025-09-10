@@ -166,8 +166,8 @@ func (ss *StateSynchronizer) Stop() error {
 
 // UpdateCharacterState updates the local state for a character and marks it for sync
 func (ss *StateSynchronizer) UpdateCharacterState(characterID string, position Position,
-	animation, currentState string, gameStats, romanceStats map[string]float64) error {
-
+	animation, currentState string, gameStats, romanceStats map[string]float64,
+) error {
 	ss.mu.Lock()
 	defer ss.mu.Unlock()
 

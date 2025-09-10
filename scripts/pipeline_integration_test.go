@@ -107,7 +107,6 @@ func TestMultipleCharactersPipeline(t *testing.T) {
 
 				cmd := exec.CommandContext(ctx, "make", "build-character", fmt.Sprintf("CHAR=%s", char))
 				output, err := cmd.CombinedOutput()
-
 				if err != nil {
 					if ctx.Err() == context.DeadlineExceeded {
 						t.Fatalf("Build timeout for character %s after 3 minutes", char)
@@ -385,7 +384,7 @@ func TestValidationScriptIntegration(t *testing.T) {
 
 	// Create mock build directory
 	buildDir := filepath.Join(tempDir, "build")
-	err := os.MkdirAll(buildDir, 0755)
+	err := os.MkdirAll(buildDir, 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create mock build directory: %v", err)
 	}
@@ -400,7 +399,7 @@ fi
 echo "Mock binary running"
 exit 0
 `
-	err = os.WriteFile(mockBinary, []byte(mockScript), 0755)
+	err = os.WriteFile(mockBinary, []byte(mockScript), 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create mock binary: %v", err)
 	}

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"path/filepath"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestStep3SpecializedFeatures tests that Step 3 implementation

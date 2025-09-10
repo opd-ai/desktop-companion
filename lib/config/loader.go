@@ -43,7 +43,7 @@ func (l *Loader) SaveJSON(filename string, data interface{}) error {
 	fullPath := filepath.Join(l.basePath, filename)
 
 	// Ensure directory exists
-	if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(fullPath), 0o755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
@@ -52,7 +52,7 @@ func (l *Loader) SaveJSON(filename string, data interface{}) error {
 		return fmt.Errorf("failed to marshal config data: %w", err)
 	}
 
-	if err := os.WriteFile(fullPath, jsonData, 0644); err != nil {
+	if err := os.WriteFile(fullPath, jsonData, 0o644); err != nil {
 		return fmt.Errorf("failed to write config file %s: %w", fullPath, err)
 	}
 

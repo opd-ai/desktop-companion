@@ -189,7 +189,7 @@ func (nem *NetworkEventManager) TriggerNetworkEvent(eventName string, gameState 
 }
 
 // JoinGroupSession allows a peer to join an ongoing group conversation
-func (nem *NetworkEventManager) JoinGroupSession(sessionID string, participantID string) error {
+func (nem *NetworkEventManager) JoinGroupSession(sessionID, participantID string) error {
 	if !nem.enabled {
 		return fmt.Errorf("network events not enabled")
 	}
@@ -223,7 +223,7 @@ func (nem *NetworkEventManager) JoinGroupSession(sessionID string, participantID
 }
 
 // SubmitGroupChoice handles voting in group conversations
-func (nem *NetworkEventManager) SubmitGroupChoice(sessionID string, participantID string, choiceIndex int) error {
+func (nem *NetworkEventManager) SubmitGroupChoice(sessionID, participantID string, choiceIndex int) error {
 	if !nem.enabled {
 		return fmt.Errorf("network events not enabled")
 	}

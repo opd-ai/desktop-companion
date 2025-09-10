@@ -1,11 +1,12 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/dialog"
-	"github.com/opd-ai/desktop-companion/lib/news"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/dialog"
+	"github.com/opd-ai/desktop-companion/lib/news"
 )
 
 // NewsDialogContext extends DialogContext for news-specific dialog generation

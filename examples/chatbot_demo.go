@@ -34,7 +34,7 @@ func main() {
 
 	// Create demo UI
 	content := createDemoUI(chatbot, char)
-	
+
 	myWindow.SetContent(content)
 	myWindow.ShowAndRun()
 }
@@ -45,12 +45,12 @@ func createDemoUI(chatbot *ui.ChatbotInterface, char *character.Character) fyne.
 	title.TextStyle.Bold = true
 
 	// Status info
-	status := widget.NewLabel(fmt.Sprintf("Character: %s\nChatbot Available: %v", 
+	status := widget.NewLabel(fmt.Sprintf("Character: %s\nChatbot Available: %v",
 		char.GetName(), chatbot.IsAvailable()))
 
 	// Show chatbot interface
 	chatbot.Show()
-	
+
 	// Demo buttons
 	sendDemo := widget.NewButton("Send Demo Message", func() {
 		// Simulate sending a message
@@ -71,17 +71,17 @@ func createDemoUI(chatbot *ui.ChatbotInterface, char *character.Character) fyne.
 	// Instructions
 	instructions := widget.NewLabel(
 		"Instructions:\n" +
-		"1. Type messages in the chat input below\n" +
-		"2. Press Enter or click Send to send messages\n" +
-		"3. Character will respond using AI dialog backend\n" +
-		"4. Conversation history is maintained automatically")
+			"1. Type messages in the chat input below\n" +
+			"2. Press Enter or click Send to send messages\n" +
+			"3. Character will respond using AI dialog backend\n" +
+			"4. Conversation history is maintained automatically")
 
 	// Create layout
 	buttons := container.NewHBox(sendDemo, toggleVisibility, clearHistory)
-	
+
 	// Get the chatbot container
 	chatbotContainer := chatbot.GetContainer()
-	
+
 	return container.NewVBox(
 		title,
 		status,

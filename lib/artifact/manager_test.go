@@ -20,7 +20,7 @@ func TestArtifactManager(t *testing.T) {
 		// Create a test artifact file
 		testFile := filepath.Join(tempDir, "test_binary")
 		testContent := []byte("mock binary content")
-		if err := os.WriteFile(testFile, testContent, 0644); err != nil {
+		if err := os.WriteFile(testFile, testContent, 0o644); err != nil {
 			t.Fatalf("Failed to create test file: %v", err)
 		}
 
@@ -68,7 +68,7 @@ func TestArtifactManager(t *testing.T) {
 
 		for i, tc := range testCases {
 			testFile := filepath.Join(tempDir, "test_binary_"+string(rune('a'+i)))
-			if err := os.WriteFile(testFile, []byte("content"), 0644); err != nil {
+			if err := os.WriteFile(testFile, []byte("content"), 0o644); err != nil {
 				t.Fatalf("Failed to create test file: %v", err)
 			}
 
@@ -186,7 +186,7 @@ func TestRetentionPolicies(t *testing.T) {
 	t.Run("CleanupArtifacts", func(t *testing.T) {
 		// Create test artifact with old modification time
 		testFile := filepath.Join(tempDir, "old_binary")
-		if err := os.WriteFile(testFile, []byte("old content"), 0644); err != nil {
+		if err := os.WriteFile(testFile, []byte("old content"), 0o644); err != nil {
 			t.Fatalf("Failed to create test file: %v", err)
 		}
 
@@ -239,7 +239,7 @@ func TestArtifactCompression(t *testing.T) {
 		// Create and store test artifact
 		testFile := filepath.Join(tempDir, "compress_test")
 		testContent := []byte("content to compress " + string(make([]byte, 1000))) // Make it larger
-		if err := os.WriteFile(testFile, testContent, 0644); err != nil {
+		if err := os.WriteFile(testFile, testContent, 0o644); err != nil {
 			t.Fatalf("Failed to create test file: %v", err)
 		}
 
@@ -334,7 +334,7 @@ func BenchmarkArtifactOperations(b *testing.B) {
 	// Create test file
 	testFile := filepath.Join(tempDir, "bench_test")
 	testContent := make([]byte, 1024*1024) // 1MB test file
-	if err := os.WriteFile(testFile, testContent, 0644); err != nil {
+	if err := os.WriteFile(testFile, testContent, 0o644); err != nil {
 		b.Fatalf("Failed to create test file: %v", err)
 	}
 

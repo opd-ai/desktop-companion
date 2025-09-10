@@ -70,7 +70,7 @@ func DefaultRetentionPolicies() map[string]RetentionPolicy {
 
 // NewManager creates a new artifact manager with the specified artifacts directory
 func NewManager(artifactsDir string) (*Manager, error) {
-	if err := os.MkdirAll(artifactsDir, 0755); err != nil {
+	if err := os.MkdirAll(artifactsDir, 0o755); err != nil {
 		return nil, fmt.Errorf("failed to create artifacts directory: %w", err)
 	}
 
@@ -117,7 +117,7 @@ func (m *Manager) StoreArtifact(srcPath, character, platform, arch string, metad
 
 	// Create destination directory structure
 	destDir := filepath.Join(m.artifactsDir, character, platform+"_"+arch)
-	if err := os.MkdirAll(destDir, 0755); err != nil {
+	if err := os.MkdirAll(destDir, 0o755); err != nil {
 		return nil, fmt.Errorf("failed to create destination directory: %w", err)
 	}
 
@@ -248,7 +248,6 @@ func (m *Manager) ListArtifacts(character, platform, arch string) ([]*ArtifactIn
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to walk artifacts directory: %w", err)
 	}
@@ -342,7 +341,7 @@ func (m *Manager) shouldSkipFile(info os.FileInfo, path string) bool {
 }
 
 // addFileForRemoval adds a file and its corresponding metadata to removal lists
-func (m *Manager) addFileForRemoval(path string, filesToRemove *[]string, metadataToRemove *[]string) {
+func (m *Manager) addFileForRemoval(path string, filesToRemove, metadataToRemove *[]string) {
 	*filesToRemove = append(*filesToRemove, path)
 	// Calculate corresponding metadata file
 	metadataPath := strings.TrimSuffix(path, filepath.Ext(path)) + ".json"
@@ -350,7 +349,7 @@ func (m *Manager) addFileForRemoval(path string, filesToRemove *[]string, metada
 }
 
 // removeCollectedFiles removes the collected artifact files and their metadata
-func (m *Manager) removeCollectedFiles(filesToRemove []string, metadataToRemove []string) error {
+func (m *Manager) removeCollectedFiles(filesToRemove, metadataToRemove []string) error {
 	// Remove artifact files
 	for _, path := range filesToRemove {
 		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {

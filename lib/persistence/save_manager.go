@@ -381,7 +381,7 @@ func (sm *SaveManager) generateSaveFileName(characterName string) string {
 // ensureSaveDirectory creates the save directory if it doesn't exist
 func (sm *SaveManager) ensureSaveDirectory() error {
 	if _, err := os.Stat(sm.savePath); os.IsNotExist(err) {
-		return os.MkdirAll(sm.savePath, 0755)
+		return os.MkdirAll(sm.savePath, 0o755)
 	}
 	return nil
 }

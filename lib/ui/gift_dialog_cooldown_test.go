@@ -1,9 +1,10 @@
 package ui
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
 	"testing"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestGiftDialog_CooldownIntegration tests the integration between cooldown timers and gift dialog

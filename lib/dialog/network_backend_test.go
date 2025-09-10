@@ -176,7 +176,6 @@ func TestNetworkDialogBackend_GenerateResponse_NoNetwork(t *testing.T) {
 
 	context := createTestDialogContext()
 	response, err := backend.GenerateResponse(context)
-
 	if err != nil {
 		t.Errorf("GenerateResponse() error: %v", err)
 	}
@@ -229,7 +228,6 @@ func TestNetworkDialogBackend_GenerateResponse_WithNetworkCoordination(t *testin
 
 	context := createTestDialogContext()
 	response, err := backend.GenerateResponse(context)
-
 	if err != nil {
 		t.Errorf("GenerateResponse() error: %v", err)
 	}
@@ -410,7 +408,6 @@ func TestNetworkDialogBackend_FallbackBehavior(t *testing.T) {
 
 	context := createTestDialogContext()
 	response, err := backend.GenerateResponse(context)
-
 	// Should not error even if network coordination fails
 	if err != nil {
 		t.Errorf("GenerateResponse() should not error on network failure: %v", err)

@@ -7,20 +7,20 @@ import (
 
 // ErrorTracker manages feed reliability and implements error recovery policies
 type ErrorTracker struct {
-	feedErrors    map[string]*FeedErrorInfo // Key: feed URL
-	mu            sync.RWMutex
+	feedErrors map[string]*FeedErrorInfo // Key: feed URL
+	mu         sync.RWMutex
 }
 
 // FeedErrorInfo tracks error statistics and recovery state for a feed
 type FeedErrorInfo struct {
-	URL              string        // Feed URL
-	ConsecutiveErrors int          // Number of consecutive errors
-	LastError        error         // Most recent error
-	LastErrorTime    time.Time     // When the last error occurred
-	LastSuccess      time.Time     // When the feed last succeeded
-	TotalAttempts    int           // Total update attempts
-	TotalErrors      int           // Total errors encountered
-	BackoffUntil     time.Time     // When feed can be retried (exponential backoff)
+	URL               string    // Feed URL
+	ConsecutiveErrors int       // Number of consecutive errors
+	LastError         error     // Most recent error
+	LastErrorTime     time.Time // When the last error occurred
+	LastSuccess       time.Time // When the feed last succeeded
+	TotalAttempts     int       // Total update attempts
+	TotalErrors       int       // Total errors encountered
+	BackoffUntil      time.Time // When feed can be retried (exponential backoff)
 }
 
 // NewErrorTracker creates a new error tracking system
@@ -34,7 +34,7 @@ func NewErrorTracker() *ErrorTracker {
 func (et *ErrorTracker) RecordAttempt(feedURL string) {
 	et.mu.Lock()
 	defer et.mu.Unlock()
-	
+
 	info, exists := et.feedErrors[feedURL]
 	if !exists {
 		info = &FeedErrorInfo{
@@ -42,7 +42,7 @@ func (et *ErrorTracker) RecordAttempt(feedURL string) {
 		}
 		et.feedErrors[feedURL] = info
 	}
-	
+
 	info.TotalAttempts++
 }
 
@@ -50,7 +50,7 @@ func (et *ErrorTracker) RecordAttempt(feedURL string) {
 func (et *ErrorTracker) RecordError(feedURL string, err error) {
 	et.mu.Lock()
 	defer et.mu.Unlock()
-	
+
 	info, exists := et.feedErrors[feedURL]
 	if !exists {
 		info = &FeedErrorInfo{
@@ -58,12 +58,12 @@ func (et *ErrorTracker) RecordError(feedURL string, err error) {
 		}
 		et.feedErrors[feedURL] = info
 	}
-	
+
 	info.ConsecutiveErrors++
 	info.TotalErrors++
 	info.LastError = err
 	info.LastErrorTime = time.Now()
-	
+
 	// Implement exponential backoff
 	backoffDuration := et.calculateBackoffDuration(info.ConsecutiveErrors)
 	info.BackoffUntil = time.Now().Add(backoffDuration)
@@ -73,7 +73,7 @@ func (et *ErrorTracker) RecordError(feedURL string, err error) {
 func (et *ErrorTracker) RecordSuccess(feedURL string) {
 	et.mu.Lock()
 	defer et.mu.Unlock()
-	
+
 	info, exists := et.feedErrors[feedURL]
 	if !exists {
 		info = &FeedErrorInfo{
@@ -81,7 +81,7 @@ func (et *ErrorTracker) RecordSuccess(feedURL string) {
 		}
 		et.feedErrors[feedURL] = info
 	}
-	
+
 	info.ConsecutiveErrors = 0
 	info.LastSuccess = time.Now()
 	info.BackoffUntil = time.Time{} // Clear backoff
@@ -91,17 +91,17 @@ func (et *ErrorTracker) RecordSuccess(feedURL string) {
 func (et *ErrorTracker) ShouldSkipFeed(feedURL string) bool {
 	et.mu.RLock()
 	defer et.mu.RUnlock()
-	
+
 	info, exists := et.feedErrors[feedURL]
 	if !exists {
 		return false // No error history, allow update
 	}
-	
+
 	// Skip if in backoff period
 	if !info.BackoffUntil.IsZero() && time.Now().Before(info.BackoffUntil) {
 		return true
 	}
-	
+
 	// Skip if too many consecutive errors (circuit breaker)
 	if info.ConsecutiveErrors >= 10 {
 		// Disable feed for longer period after 10 consecutive errors
@@ -112,7 +112,7 @@ func (et *ErrorTracker) ShouldSkipFeed(feedURL string) bool {
 		info.ConsecutiveErrors = 0
 		et.feedErrors[feedURL] = info
 	}
-	
+
 	return false
 }
 
@@ -120,26 +120,26 @@ func (et *ErrorTracker) ShouldSkipFeed(feedURL string) bool {
 func (et *ErrorTracker) GetFeedHealth(feedURL string) FeedHealthStats {
 	et.mu.RLock()
 	defer et.mu.RUnlock()
-	
+
 	info, exists := et.feedErrors[feedURL]
 	if !exists {
 		return FeedHealthStats{
-			URL:          feedURL,
-			HealthScore:  100, // Perfect health for unknown feeds
-			ErrorRate:    0,
-			IsHealthy:    true,
+			URL:         feedURL,
+			HealthScore: 100, // Perfect health for unknown feeds
+			ErrorRate:   0,
+			IsHealthy:   true,
 		}
 	}
-	
+
 	// Calculate health score (0-100)
 	healthScore := et.calculateHealthScore(info)
-	
+
 	// Calculate error rate
 	errorRate := 0.0
 	if info.TotalAttempts > 0 {
 		errorRate = float64(info.TotalErrors) / float64(info.TotalAttempts)
 	}
-	
+
 	return FeedHealthStats{
 		URL:               feedURL,
 		HealthScore:       healthScore,
@@ -169,12 +169,12 @@ func (et *ErrorTracker) calculateBackoffDuration(consecutiveErrors int) time.Dur
 	for i := 1; i < consecutiveErrors && i < 6; i++ {
 		baseDelay *= 2
 	}
-	
+
 	// Cap at 1 hour
 	if baseDelay > time.Hour {
 		baseDelay = time.Hour
 	}
-	
+
 	// Add jitter (±25%) to avoid thundering herd
 	jitter := baseDelay / 4
 	jitterSeconds := int(jitter.Seconds())
@@ -183,7 +183,7 @@ func (et *ErrorTracker) calculateBackoffDuration(consecutiveErrors int) time.Dur
 		jitterAmount := time.Now().UnixNano() % int64(jitterSeconds*2)
 		baseDelay = baseDelay - jitter + time.Duration(jitterAmount)*time.Second
 	}
-	
+
 	return baseDelay
 }
 
@@ -192,25 +192,25 @@ func (et *ErrorTracker) calculateHealthScore(info *FeedErrorInfo) int {
 	if info.TotalAttempts == 0 {
 		return 100 // No attempts yet
 	}
-	
+
 	// Base score on error rate
 	successRate := float64(info.TotalAttempts-info.TotalErrors) / float64(info.TotalAttempts)
 	baseScore := int(successRate * 100)
-	
+
 	// Penalize consecutive errors
 	consecutivePenalty := info.ConsecutiveErrors * 10
 	if consecutivePenalty > 50 {
 		consecutivePenalty = 50 // Max 50 point penalty
 	}
-	
+
 	// Bonus for recent success
 	recentSuccessBonus := 0
 	if !info.LastSuccess.IsZero() && time.Since(info.LastSuccess) < 24*time.Hour {
 		recentSuccessBonus = 10
 	}
-	
+
 	healthScore := baseScore - consecutivePenalty + recentSuccessBonus
-	
+
 	// Ensure score is within bounds
 	if healthScore < 0 {
 		healthScore = 0
@@ -218,6 +218,6 @@ func (et *ErrorTracker) calculateHealthScore(info *FeedErrorInfo) int {
 	if healthScore > 100 {
 		healthScore = 100
 	}
-	
+
 	return healthScore
 }

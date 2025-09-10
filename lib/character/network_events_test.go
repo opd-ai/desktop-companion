@@ -272,7 +272,6 @@ func TestTriggerNetworkEvent_RegularEvent(t *testing.T) {
 
 	// Trigger a non-network event
 	event, err := nem.TriggerNetworkEvent("test_conversation", gameState, nil)
-
 	if err != nil {
 		t.Fatalf("Expected no error, got: %v", err)
 	}
@@ -298,7 +297,6 @@ func TestTriggerNetworkEvent_GroupEvent(t *testing.T) {
 
 	// Trigger a group event
 	event, err := nem.TriggerNetworkEvent("group_activity", gameState, []string{"peer1", "peer2"})
-
 	if err != nil {
 		t.Fatalf("Expected no error, got: %v", err)
 	}
@@ -350,7 +348,6 @@ func TestJoinGroupSession(t *testing.T) {
 
 	// Test joining the session
 	err := nem.JoinGroupSession(sessionID, "peer1")
-
 	if err != nil {
 		t.Fatalf("Expected no error joining session, got: %v", err)
 	}
@@ -436,7 +433,6 @@ func TestSubmitGroupChoice(t *testing.T) {
 
 	// Submit a vote
 	err := nem.SubmitGroupChoice(sessionID, "peer1", 0)
-
 	if err != nil {
 		t.Fatalf("Expected no error submitting choice, got: %v", err)
 	}

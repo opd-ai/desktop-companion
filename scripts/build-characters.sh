@@ -231,8 +231,8 @@ build_character_android() {
     # Copy source to temp directory
     cp -r "$source_dir"/* "$temp_dir/"
     
-    # Copy main project go.mod and go.sum - simple inheritance since no internal packages
-    cp "$PROJECT_ROOT/go.mod" "$PROJECT_ROOT/go.sum" "$temp_dir/"
+    # Since we only have one replace directive, module setup is straightforward
+    log "Setting up embedded character module (single replace directive)..."
     
     # Generate Android-specific app metadata (with icon)
     cat > "$temp_dir/FyneApp.toml" << EOF
@@ -261,9 +261,12 @@ EOF
         return 1
     fi
 
-    log "Building Android APK with direct module inheritance..."
+    log "Building Android APK with simplified module structure..."
     
-    # With no internal packages, module resolution is straightforward
+    # With only one replace directive, module resolution is straightforward
+    echo "Working directory: $(pwd)"
+    
+    # Standard module resolution (simplified from previous complex approach)
     go mod download
     go mod tidy
     

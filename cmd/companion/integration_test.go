@@ -43,7 +43,7 @@ func TestMainIntegration(t *testing.T) {
 	}`
 
 	characterPath := filepath.Join(tmpDir, "character.json")
-	err = os.WriteFile(characterPath, []byte(characterConfig), 0644)
+	err = os.WriteFile(characterPath, []byte(characterConfig), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write character config: %v", err)
 	}
@@ -55,12 +55,12 @@ func TestMainIntegration(t *testing.T) {
 	idlePath := filepath.Join(tmpDir, "idle.gif")
 	talkingPath := filepath.Join(tmpDir, "talking.gif")
 
-	err = os.WriteFile(idlePath, gifData, 0644)
+	err = os.WriteFile(idlePath, gifData, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write idle.gif: %v", err)
 	}
 
-	err = os.WriteFile(talkingPath, gifData, 0644)
+	err = os.WriteFile(talkingPath, gifData, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write talking.gif: %v", err)
 	}

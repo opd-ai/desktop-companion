@@ -121,7 +121,7 @@ func NewGroupEventManager(networkManager GroupNetworkManagerInterface, templates
 
 // StartGroupEvent initiates a new group event scenario
 // Returns sessionID and error following Go error conventions
-func (gem *GroupEventManager) StartGroupEvent(templateID string, initiatorID string) (string, error) {
+func (gem *GroupEventManager) StartGroupEvent(templateID, initiatorID string) (string, error) {
 	gem.mu.Lock()
 	defer gem.mu.Unlock()
 

@@ -18,13 +18,13 @@ func TestWorkflowIntegration(t *testing.T) {
 		testChars := []string{"test1", "test2", "test3"}
 		for _, char := range testChars {
 			charDir := filepath.Join(charactersDir, char)
-			if err := os.MkdirAll(charDir, 0755); err != nil {
+			if err := os.MkdirAll(charDir, 0o755); err != nil {
 				t.Fatalf("Failed to create test character dir: %v", err)
 			}
 
 			// Create character.json
 			charFile := filepath.Join(charDir, "character.json")
-			if err := os.WriteFile(charFile, []byte(`{"name":"test"}`), 0644); err != nil {
+			if err := os.WriteFile(charFile, []byte(`{"name":"test"}`), 0o644); err != nil {
 				t.Fatalf("Failed to create character.json: %v", err)
 			}
 		}
@@ -91,7 +91,7 @@ func TestBuildAutomation(t *testing.T) {
 
 		// This would normally use a real character, but for testing we'll mock it
 		// The actual functionality is tested in the main generator tests
-		if err := os.MkdirAll(outputDir, 0755); err != nil {
+		if err := os.MkdirAll(outputDir, 0o755); err != nil {
 			t.Fatalf("Failed to create output directory: %v", err)
 		}
 

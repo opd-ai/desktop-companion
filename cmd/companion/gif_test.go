@@ -44,7 +44,7 @@ func TestBug2InvalidGIFData(t *testing.T) {
 	}`
 
 	characterPath := filepath.Join(tmpDir, "character.json")
-	err = os.WriteFile(characterPath, []byte(characterConfig), 0644)
+	err = os.WriteFile(characterPath, []byte(characterConfig), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write character config: %v", err)
 	}
@@ -53,12 +53,12 @@ func TestBug2InvalidGIFData(t *testing.T) {
 	idlePath := filepath.Join(tmpDir, "idle.gif")
 	talkingPath := filepath.Join(tmpDir, "talking.gif")
 
-	err = os.WriteFile(idlePath, malformedGIF, 0644)
+	err = os.WriteFile(idlePath, malformedGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write idle.gif: %v", err)
 	}
 
-	err = os.WriteFile(talkingPath, malformedGIF, 0644)
+	err = os.WriteFile(talkingPath, malformedGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write talking.gif: %v", err)
 	}
@@ -118,7 +118,7 @@ func TestBug2InvalidGIFDataFixed(t *testing.T) {
 	}`
 
 	characterPath := filepath.Join(tmpDir, "character.json")
-	err = os.WriteFile(characterPath, []byte(characterConfig), 0644)
+	err = os.WriteFile(characterPath, []byte(characterConfig), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write character config: %v", err)
 	}
@@ -127,12 +127,12 @@ func TestBug2InvalidGIFDataFixed(t *testing.T) {
 	idlePath := filepath.Join(tmpDir, "idle.gif")
 	talkingPath := filepath.Join(tmpDir, "talking.gif")
 
-	err = os.WriteFile(idlePath, validGIF, 0644)
+	err = os.WriteFile(idlePath, validGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write idle.gif: %v", err)
 	}
 
-	err = os.WriteFile(talkingPath, validGIF, 0644)
+	err = os.WriteFile(talkingPath, validGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to write talking.gif: %v", err)
 	}

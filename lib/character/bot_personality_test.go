@@ -1,8 +1,9 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/bot"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/bot"
 )
 
 // testCharacterBase returns a basic valid character card structure

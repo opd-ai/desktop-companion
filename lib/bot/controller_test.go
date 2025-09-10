@@ -242,7 +242,6 @@ func TestNewBotController_Valid(t *testing.T) {
 	netController := NewMockNetworkController()
 
 	bot, err := NewBotController(personality, charController, netController)
-
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}

@@ -246,7 +246,7 @@ func TestSaveManagerValidation(t *testing.T) {
 
 	// Test loading corrupted save file
 	savePath := filepath.Join(tmpDir, "corrupted.json")
-	err = os.WriteFile(savePath, []byte("invalid json"), 0644)
+	err = os.WriteFile(savePath, []byte("invalid json"), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create corrupted file: %v", err)
 	}
@@ -566,7 +566,7 @@ func TestSaveManagerStatValidationEdgeCases(t *testing.T) {
 	// This should pass saving but fail on loading due to validation
 	savePath := filepath.Join(tmpDir, "InvalidStatsTest.json")
 	data, _ := json.Marshal(invalidStatsData)
-	os.WriteFile(savePath, data, 0644)
+	os.WriteFile(savePath, data, 0o644)
 
 	_, err = sm.LoadGameState("InvalidStatsTest")
 	if err == nil {
@@ -625,7 +625,7 @@ func TestSaveManagerMoreEdgeCases(t *testing.T) {
 	// Write invalid data directly to file
 	savePath := filepath.Join(tmpDir, "EdgeTest.json")
 	data, _ := json.Marshal(invalidSaveData)
-	os.WriteFile(savePath, data, 0644)
+	os.WriteFile(savePath, data, 0o644)
 
 	_, err = sm.LoadGameState("EdgeTest")
 	if err == nil {

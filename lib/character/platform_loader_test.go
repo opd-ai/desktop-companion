@@ -1,11 +1,12 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/platform"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // TestPlatformAwareLoader_NewLoader tests the creation of platform-aware loaders.
@@ -91,18 +92,18 @@ func TestPlatformAwareLoader_LoadCharacterCard(t *testing.T) {
 			talkingPath := filepath.Join(tmpDir, "talking.gif")
 
 			// Write test data
-			err := os.WriteFile(cardPath, []byte(tt.cardData), 0644)
+			err := os.WriteFile(cardPath, []byte(tt.cardData), 0o644)
 			if err != nil {
 				t.Fatalf("failed to write test card: %v", err)
 			}
 
 			// Create dummy animation files
-			err = os.WriteFile(animPath, []byte("GIF89a"), 0644)
+			err = os.WriteFile(animPath, []byte("GIF89a"), 0o644)
 			if err != nil {
 				t.Fatalf("failed to write test animation: %v", err)
 			}
 
-			err = os.WriteFile(talkingPath, []byte("GIF89a"), 0644)
+			err = os.WriteFile(talkingPath, []byte("GIF89a"), 0o644)
 			if err != nil {
 				t.Fatalf("failed to write talking animation: %v", err)
 			}

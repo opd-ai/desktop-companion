@@ -1,9 +1,10 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/dialog"
 	"encoding/json"
 	"testing"
+
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 func TestDialogBackendValidation(t *testing.T) {

@@ -77,14 +77,14 @@ func TestCharacterCardGameFeatures(t *testing.T) {
 
 	gifFiles := []string{"test_idle.gif", "test_talking.gif", "test_hungry.gif", "test_happy.gif"}
 	for _, filename := range gifFiles {
-		err = os.WriteFile(filepath.Join(tmpDir, filename), validGIF, 0644)
+		err = os.WriteFile(filepath.Join(tmpDir, filename), validGIF, 0o644)
 		if err != nil {
 			t.Fatalf("Failed to create %s: %v", filename, err)
 		}
 	}
 
 	cardPath := filepath.Join(tmpDir, "character.json")
-	err = os.WriteFile(cardPath, []byte(testCardWithGame), 0644)
+	err = os.WriteFile(cardPath, []byte(testCardWithGame), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create character card: %v", err)
 	}
@@ -259,13 +259,13 @@ func TestGameFeatureValidationErrors(t *testing.T) {
 
 			// Create test GIF file
 			validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
-			err = os.WriteFile(filepath.Join(tmpDir, "test.gif"), validGIF, 0644)
+			err = os.WriteFile(filepath.Join(tmpDir, "test.gif"), validGIF, 0o644)
 			if err != nil {
 				t.Fatalf("Failed to create test.gif: %v", err)
 			}
 
 			cardPath := filepath.Join(tmpDir, "character.json")
-			err = os.WriteFile(cardPath, []byte(tt.cardJSON), 0644)
+			err = os.WriteFile(cardPath, []byte(tt.cardJSON), 0o644)
 			if err != nil {
 				t.Fatalf("Failed to create character card: %v", err)
 			}

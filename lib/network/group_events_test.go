@@ -177,7 +177,6 @@ func TestStartGroupEvent_Success(t *testing.T) {
 	gem := NewGroupEventManager(mockNetwork, templates)
 
 	sessionID, err := gem.StartGroupEvent("trivia_game", "peer1")
-
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -597,10 +596,10 @@ func TestConcurrentAccess(t *testing.T) {
 
 // Helper function to check if string contains substring
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && 
-		   (s == substr || (len(s) > len(substr) && 
-		   (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr || 
-		    containsHelper(s, substr))))
+	return len(s) >= len(substr) &&
+		(s == substr || (len(s) > len(substr) &&
+			(s[:len(substr)] == substr || s[len(s)-len(substr):] == substr ||
+				containsHelper(s, substr))))
 }
 
 func containsHelper(s, substr string) bool {

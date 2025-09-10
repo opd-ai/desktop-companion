@@ -1,15 +1,16 @@
 package testing
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/character"
-	"github.com/opd-ai/desktop-companion/lib/config"
-	"github.com/opd-ai/desktop-companion/lib/monitoring"
-	"github.com/opd-ai/desktop-companion/lib/persistence"
 	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/config"
+	"github.com/opd-ai/desktop-companion/lib/monitoring"
+	"github.com/opd-ai/desktop-companion/lib/persistence"
 )
 
 // RegressionTestSuite validates that all core functionality works as expected
@@ -547,13 +548,13 @@ func (s *RegressionTestSuite) createStubAnimationFiles(t *testing.T, card *chara
 
 		// Create directory if it doesn't exist
 		dir := filepath.Dir(fullPath)
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
 			t.Logf("Warning: Could not create animation directory %s: %v", dir, err)
 			continue
 		}
 
 		// Write stub GIF file
-		if err := os.WriteFile(fullPath, gifData, 0644); err != nil {
+		if err := os.WriteFile(fullPath, gifData, 0o644); err != nil {
 			t.Logf("Warning: Could not create stub animation file %s: %v", fullPath, err)
 		}
 	}
@@ -614,8 +615,8 @@ func BenchmarkFullSystemPerformance(b *testing.B) {
 
 	for _, animPath := range card.Animations {
 		fullPath := filepath.Join(tempDir, animPath)
-		os.MkdirAll(filepath.Dir(fullPath), 0755)
-		os.WriteFile(fullPath, gifData, 0644)
+		os.MkdirAll(filepath.Dir(fullPath), 0o755)
+		os.WriteFile(fullPath, gifData, 0o644)
 	}
 
 	char, err := character.New(card, tempDir)

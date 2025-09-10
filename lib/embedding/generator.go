@@ -14,7 +14,7 @@ import (
 )
 
 // mainTemplate generates a standalone Go application with embedded character assets
-// With no internal packages, this is a straightforward single-file application
+// With no internal packages, this imports directly from the main module without replace directives
 const mainTemplate = `package main
 
 import (
@@ -214,7 +214,7 @@ func IsValidGIF(data []byte) bool {
 // generateEmbeddedApp creates the embedded Go application file
 func generateEmbeddedApp(characterName, characterJSON string, animations map[string][]byte, outputDir string) error {
 	// Create output directory
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
+	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
@@ -239,23 +239,24 @@ func generateEmbeddedApp(characterName, characterJSON string, animations map[str
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	// Create go.mod file for the embedded character - simple inheritance approach
+	// Create go.mod file for the embedded character - simplified approach
 	if err := generateGoMod(characterName, outputDir); err != nil {
 		return fmt.Errorf("failed to generate go.mod: %w", err)
 	}
 
-	// Copy go.sum from main project for dependency resolution
+	// Copy go.sum for dependency validation
 	if err := copyGoSum(outputDir); err != nil {
 		return fmt.Errorf("failed to copy go.sum: %w", err)
 	}
 
-	fmt.Printf("  → To build: go build -o %s-companion %s/main.go\n", characterName, outputDir)
+	fmt.Printf("  → To build: cd %s && go build -o %s-companion main.go\n", outputDir, characterName)
+	fmt.Printf("  → Simplified approach: Only one replace directive needed (no complex module copying)\n")
 
 	return nil
 }
 
-// generateGoMod creates a minimal go.mod file for the embedded character
-// With no internal packages, we can use the main module directly
+// generateGoMod creates a simplified go.mod file for the embedded character
+// Uses a minimal replace directive to point to the local module
 func generateGoMod(characterName, outputDir string) error {
 	// Get the project root for the replace directive
 	projectRoot, err := filepath.Abs(".")
@@ -263,27 +264,28 @@ func generateGoMod(characterName, outputDir string) error {
 		return fmt.Errorf("failed to get project root path: %w", err)
 	}
 
-	// Since there are no internal packages, we can create a minimal go.mod
+	// Simple go.mod with minimal replace directive - much cleaner than complex module copying
 	goModContent := fmt.Sprintf(`module github.com/opd-ai/desktop-companion/cmd/%s-embedded
 
 go 1.21
 
-// Direct dependency on main module
 require (
 	fyne.io/fyne/v2 v2.4.5
 	github.com/opd-ai/desktop-companion v0.0.0-00010101000000-000000000000
+	github.com/jdkato/prose/v2 v2.0.0
+	github.com/mmcdole/gofeed v1.3.0
 )
 
-// Replace directive using absolute path for reliability
+// Single replace directive - much simpler than the old approach
 replace github.com/opd-ai/desktop-companion => %s
 `, characterName, projectRoot)
 
 	goModFile := filepath.Join(outputDir, "go.mod")
-	if err := os.WriteFile(goModFile, []byte(goModContent), 0644); err != nil {
+	if err := os.WriteFile(goModFile, []byte(goModContent), 0o644); err != nil {
 		return fmt.Errorf("failed to write go.mod file: %w", err)
 	}
 
-	fmt.Printf("  ✓ Generated minimal go.mod for embedded character\n")
+	fmt.Printf("  ✓ Generated simplified go.mod with minimal replace directive\n")
 	return nil
 }
 
@@ -305,7 +307,7 @@ func copyGoSum(outputDir string) error {
 		return fmt.Errorf("failed to read source go.sum: %w", err)
 	}
 
-	if err := os.WriteFile(destPath, sourceData, 0644); err != nil {
+	if err := os.WriteFile(destPath, sourceData, 0o644); err != nil {
 		return fmt.Errorf("failed to write go.sum: %w", err)
 	}
 

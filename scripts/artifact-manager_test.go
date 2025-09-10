@@ -26,7 +26,7 @@ func TestArtifactManager(t *testing.T) {
 	// Test storing an artifact - create test file outside artifacts directory
 	testBinary := filepath.Join(tempDir, "test_binary")
 	testContent := []byte("test binary content")
-	if err := os.WriteFile(testBinary, testContent, 0644); err != nil {
+	if err := os.WriteFile(testBinary, testContent, 0o644); err != nil {
 		t.Fatalf("Failed to create test binary: %v", err)
 	}
 
@@ -75,7 +75,7 @@ func TestArtifactRetention(t *testing.T) {
 
 	// Create test binary
 	testBinary := filepath.Join(tempDir, "old_binary")
-	if err := os.WriteFile(testBinary, []byte("old content"), 0644); err != nil {
+	if err := os.WriteFile(testBinary, []byte("old content"), 0o644); err != nil {
 		t.Fatalf("Failed to create test binary: %v", err)
 	}
 
@@ -127,7 +127,7 @@ func TestArtifactCompression(t *testing.T) {
 	// Create test binary with compressible content
 	testBinary := filepath.Join(tempDir, "large_binary")
 	largeContent := make([]byte, 1024*1024) // 1MB of zeros (highly compressible)
-	if err := os.WriteFile(testBinary, largeContent, 0644); err != nil {
+	if err := os.WriteFile(testBinary, largeContent, 0o644); err != nil {
 		t.Fatalf("Failed to create test binary: %v", err)
 	}
 
@@ -198,7 +198,7 @@ func TestArtifactValidation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Create test binary
 			testBinary := filepath.Join(tempDir, "test_binary")
-			if err := os.WriteFile(testBinary, []byte("test"), 0644); err != nil {
+			if err := os.WriteFile(testBinary, []byte("test"), 0o644); err != nil {
 				t.Fatalf("Failed to create test binary: %v", err)
 			}
 
@@ -229,7 +229,7 @@ func TestArtifactMetadata(t *testing.T) {
 	// Create test binary
 	testBinary := filepath.Join(tempDir, "test_binary")
 	testContent := []byte("test binary with metadata")
-	if err := os.WriteFile(testBinary, testContent, 0644); err != nil {
+	if err := os.WriteFile(testBinary, testContent, 0o644); err != nil {
 		t.Fatalf("Failed to create test binary: %v", err)
 	}
 
@@ -284,7 +284,7 @@ func BenchmarkArtifactStore(b *testing.B) {
 	// Create test binary
 	testBinary := filepath.Join(tempDir, "bench_binary")
 	testContent := make([]byte, 1024*1024) // 1MB binary
-	if err := os.WriteFile(testBinary, testContent, 0644); err != nil {
+	if err := os.WriteFile(testBinary, testContent, 0o644); err != nil {
 		b.Fatalf("Failed to create test binary: %v", err)
 	}
 
@@ -309,7 +309,7 @@ func BenchmarkArtifactList(b *testing.B) {
 
 	// Pre-populate with artifacts
 	testBinary := filepath.Join(tempDir, "bench_binary")
-	if err := os.WriteFile(testBinary, []byte("test"), 0644); err != nil {
+	if err := os.WriteFile(testBinary, []byte("test"), 0o644); err != nil {
 		b.Fatalf("Failed to create test binary: %v", err)
 	}
 

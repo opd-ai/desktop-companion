@@ -97,7 +97,7 @@ if "%1"=="-version" (
 )
 exit /b 1
 `)
-		fileMode = 0644
+		fileMode = 0o644
 	} else {
 		// Create a Unix shell script
 		mockBinaryContent = []byte(`#!/bin/bash
@@ -107,7 +107,7 @@ if [[ "$1" == "-version" ]]; then
 fi
 exit 1
 `)
-		fileMode = 0755
+		fileMode = 0o755
 	}
 
 	err := os.WriteFile(testBinary, mockBinaryContent, fileMode)
@@ -165,7 +165,7 @@ func TestBinaryMetrics(t *testing.T) {
 
 	// Create file with known size (1KB)
 	content := make([]byte, 1024)
-	err := os.WriteFile(testFile, content, 0644)
+	err := os.WriteFile(testFile, content, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
@@ -198,7 +198,7 @@ func TestValidationErrorHandling(t *testing.T) {
 			name: "non-executable file",
 			setupFunc: func(tempDir string) string {
 				filePath := filepath.Join(tempDir, "non_executable")
-				os.WriteFile(filePath, []byte("test"), 0644) // No execute permission
+				os.WriteFile(filePath, []byte("test"), 0o644) // No execute permission
 				return filePath
 			},
 			expectError: true,
@@ -207,7 +207,7 @@ func TestValidationErrorHandling(t *testing.T) {
 			name: "empty file",
 			setupFunc: func(tempDir string) string {
 				filePath := filepath.Join(tempDir, "empty_file")
-				os.WriteFile(filePath, []byte{}, 0755)
+				os.WriteFile(filePath, []byte{}, 0o755)
 				return filePath
 			},
 			expectError: true, // Empty file won't execute properly

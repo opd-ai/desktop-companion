@@ -12,7 +12,7 @@ import (
 )
 
 // ContextMenu displays a right-click context menu for character interactions.
-// 
+//
 // Design Philosophy:
 // - Follows the same widget architecture as DialogBubble and StatsOverlay for consistency
 // - Uses standard Fyne components (widget.Button) rather than custom implementations
@@ -20,12 +20,13 @@ import (
 // - Provides auto-hide functionality to prevent UI clutter
 //
 // Usage:
-//   menu := NewContextMenu()
-//   menu.SetMenuItems([]ContextMenuItem{
-//       {Text: "Action 1", Callback: func() { /* handle action */ }},
-//       {Text: "Action 2", Callback: func() { /* handle action */ }},
-//   })
-//   menu.Show()
+//
+//	menu := NewContextMenu()
+//	menu.SetMenuItems([]ContextMenuItem{
+//	    {Text: "Action 1", Callback: func() { /* handle action */ }},
+//	    {Text: "Action 2", Callback: func() { /* handle action */ }},
+//	})
+//	menu.Show()
 type ContextMenu struct {
 	widget.BaseWidget
 	background *canvas.Rectangle
@@ -45,7 +46,7 @@ type ContextMenuItem struct {
 
 // NewContextMenu creates a new context menu widget.
 // The menu is initially hidden and has no items.
-// 
+//
 // Returns a fully initialized ContextMenu widget that follows Fyne's
 // widget pattern and can be added to any container layout.
 func NewContextMenu() *ContextMenu {
@@ -81,7 +82,7 @@ func (m *ContextMenu) SetMenuItems(items []ContextMenuItem) {
 	for _, item := range items {
 		// Capture the callback in a closure to avoid loop variable issues
 		callback := item.Callback
-		
+
 		// Create button with consistent styling
 		btn := widget.NewButton(item.Text, func() {
 			// Hide menu when item is clicked
@@ -121,7 +122,7 @@ func (m *ContextMenu) rebuildContent() {
 	}
 
 	m.content = container.NewBorder(nil, nil, nil, nil, m.background, buttonContainer)
-	
+
 	// Update size based on content
 	m.updateSize()
 }
@@ -143,16 +144,16 @@ func (m *ContextMenu) calculateMenuDimensions() (float32, float32) {
 	// Calculate width based on longest text
 	minWidth := float32(120)
 	maxWidth := float32(200)
-	
+
 	// Estimate width from button text (rough calculation)
 	width := minWidth
 	for _, btn := range m.menuItems {
-		textWidth := float32(len(btn.Text)) * 8 + 20 // 8px per char + padding
+		textWidth := float32(len(btn.Text))*8 + 20 // 8px per char + padding
 		if textWidth > width {
 			width = textWidth
 		}
 	}
-	
+
 	if width > maxWidth {
 		width = maxWidth
 	}
@@ -189,7 +190,7 @@ func (m *ContextMenu) applyMenuLayout(width, height, menuX, menuY float32) {
 	// Update button sizes to fit within the menu
 	buttonWidth := width - 8 // Account for padding
 	buttonHeight := float32(28)
-	
+
 	for i, btn := range m.menuItems {
 		btn.Resize(fyne.NewSize(buttonWidth, buttonHeight))
 		btn.Move(fyne.NewPos(4, 4+float32(i)*32)) // 4px padding, 32px spacing

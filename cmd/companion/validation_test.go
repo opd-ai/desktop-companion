@@ -44,7 +44,7 @@ func TestAnimationFileValidationMissing(t *testing.T) {
   }
 }`
 
-	err := os.WriteFile(characterPath, []byte(cardContent), 0644)
+	err := os.WriteFile(characterPath, []byte(cardContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test character file: %v", err)
 	}
@@ -88,12 +88,12 @@ func TestAnimationValidationWithValidFiles(t *testing.T) {
 	// Create valid GIF files
 	validGIF := []byte{71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 0, 0, 255, 255, 255, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59}
 
-	err := os.WriteFile(filepath.Join(tempDir, "idle.gif"), validGIF, 0644)
+	err := os.WriteFile(filepath.Join(tempDir, "idle.gif"), validGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create idle.gif: %v", err)
 	}
 
-	err = os.WriteFile(filepath.Join(tempDir, "talking.gif"), validGIF, 0644)
+	err = os.WriteFile(filepath.Join(tempDir, "talking.gif"), validGIF, 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create talking.gif: %v", err)
 	}
@@ -124,7 +124,7 @@ func TestAnimationValidationWithValidFiles(t *testing.T) {
   }
 }`
 
-	err = os.WriteFile(characterPath, []byte(cardContent), 0644)
+	err = os.WriteFile(characterPath, []byte(cardContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create test character file: %v", err)
 	}

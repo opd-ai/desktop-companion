@@ -1,13 +1,14 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/lib/dialog"
 	"encoding/json"
 	"fmt"
 	"math"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 // RomanceMemory represents a memory of a romance interaction for tracking

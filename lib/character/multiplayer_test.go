@@ -79,7 +79,7 @@ func (m *MockProtocolManager) SignMessage(data []byte) ([]byte, error) {
 	return []byte("mock_signature"), nil
 }
 
-func (m *MockProtocolManager) VerifyMessage(data []byte, signature []byte, publicKey []byte) error {
+func (m *MockProtocolManager) VerifyMessage(data, signature, publicKey []byte) error {
 	return m.verifyErr
 }
 

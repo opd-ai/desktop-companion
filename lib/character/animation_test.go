@@ -126,7 +126,7 @@ func TestAnimationManager_LoadAnimation(t *testing.T) {
 
 	// Create a non-GIF file
 	nonGifPath := filepath.Join(tempDir, "notgif.txt")
-	if err := os.WriteFile(nonGifPath, []byte("not a gif"), 0644); err != nil {
+	if err := os.WriteFile(nonGifPath, []byte("not a gif"), 0o644); err != nil {
 		t.Fatalf("Failed to create non-GIF file: %v", err)
 	}
 

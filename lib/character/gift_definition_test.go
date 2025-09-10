@@ -140,7 +140,7 @@ func TestLoadGiftDefinition(t *testing.T) {
 			tmpDir := t.TempDir()
 			tmpFile := filepath.Join(tmpDir, "test_gift.json")
 
-			err := os.WriteFile(tmpFile, []byte(tt.jsonContent), 0644)
+			err := os.WriteFile(tmpFile, []byte(tt.jsonContent), 0o644)
 			if err != nil {
 				t.Fatalf("Failed to create test file: %v", err)
 			}
@@ -432,18 +432,18 @@ func TestLoadGiftCatalog(t *testing.T) {
 		}
 	}`
 
-	err := os.WriteFile(filepath.Join(tmpDir, "gift1.json"), []byte(gift1), 0644)
+	err := os.WriteFile(filepath.Join(tmpDir, "gift1.json"), []byte(gift1), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create gift1.json: %v", err)
 	}
 
-	err = os.WriteFile(filepath.Join(tmpDir, "gift2.json"), []byte(gift2), 0644)
+	err = os.WriteFile(filepath.Join(tmpDir, "gift2.json"), []byte(gift2), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create gift2.json: %v", err)
 	}
 
 	// Add a non-JSON file that should be ignored
-	err = os.WriteFile(filepath.Join(tmpDir, "readme.txt"), []byte("This should be ignored"), 0644)
+	err = os.WriteFile(filepath.Join(tmpDir, "readme.txt"), []byte("This should be ignored"), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create readme.txt: %v", err)
 	}
@@ -528,12 +528,12 @@ func TestLoadGiftCatalogDuplicateIDs(t *testing.T) {
 	}`
 
 	// Create two files with the same gift ID
-	err := os.WriteFile(filepath.Join(tmpDir, "gift1.json"), []byte(giftContent), 0644)
+	err := os.WriteFile(filepath.Join(tmpDir, "gift1.json"), []byte(giftContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create gift1.json: %v", err)
 	}
 
-	err = os.WriteFile(filepath.Join(tmpDir, "gift2.json"), []byte(giftContent), 0644)
+	err = os.WriteFile(filepath.Join(tmpDir, "gift2.json"), []byte(giftContent), 0o644)
 	if err != nil {
 		t.Fatalf("Failed to create gift2.json: %v", err)
 	}
@@ -602,7 +602,7 @@ func BenchmarkLoadGiftDefinition(b *testing.B) {
 		}
 	}`
 
-	err := os.WriteFile(giftFile, []byte(giftContent), 0644)
+	err := os.WriteFile(giftFile, []byte(giftContent), 0o644)
 	if err != nil {
 		b.Fatalf("Failed to create benchmark gift file: %v", err)
 	}
