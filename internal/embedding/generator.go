@@ -256,11 +256,18 @@ func generateGoMod(characterName, outputDir string) error {
 go 1.21
 
 // Use replace directive to reference the parent module from relative path
+// This works for local development and CI builds
 replace github.com/opd-ai/desktop-companion => ../../
 
 require (
 	fyne.io/fyne/v2 v2.4.5
 	github.com/opd-ai/desktop-companion v0.0.0-00010101000000-000000000000
+)
+
+// Add explicit requirements for internal packages to help with module resolution
+require (
+	github.com/jdkato/prose/v2 v2.0.0
+	github.com/mmcdole/gofeed v1.3.0
 )
 `, characterName)
 

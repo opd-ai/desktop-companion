@@ -84,15 +84,16 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+        env:
+          # Fix tar extraction conflicts by allowing overwrites
+          TAR_OPTIONS: "--overwrite"
       
       - name: Setup Android SDK
         if: matrix.goos == 'android'
         uses: android-actions/setup-android@v3
         with:
-          api-level: 33
-          build-tools: 33.0.2
-          ndk-version: 25.2.9519653
-          cmdline-tools: latest
+          cmdline-tools-version: 12266719
+          packages: 'tools platform-tools build-tools;33.0.2 platforms;android-33 ndk;25.2.9519653'
         env:
           # Fix tar extraction conflicts by allowing overwrites
           TAR_OPTIONS: "--overwrite"
@@ -285,6 +286,13 @@ jobs:
             # Clean and prepare module dependencies
             echo "Cleaning module cache and preparing dependencies..."
             go clean -modcache 2>/dev/null || true
+            
+            # Copy the main go.sum to ensure dependency resolution
+            cp "$temp_build_dir/workspace/go.sum" ./go.sum 2>/dev/null || true
+            
+            # Fix the go.mod replace directive for absolute path
+            sed -i 's|replace github.com/opd-ai/desktop-companion => ../../|replace github.com/opd-ai/desktop-companion => '"$temp_build_dir"'/workspace|g' go.mod
+            
             go mod download
             go mod tidy
             
@@ -365,6 +373,22 @@ jobs:
             echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
             
             binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+            
+            # Ensure proper module resolution for embedded characters
+            cd cmd/${{ matrix.character }}-embedded
+            
+            # Fix module path if needed
+            if grep -q "replace.*=> ../../" go.mod; then
+              echo "Verifying module resolution for desktop build..."
+              go mod tidy || {
+                echo "Module tidy failed, trying to fix..."
+                go clean -modcache
+                go mod download
+                go mod tidy
+              }
+            fi
+            
+            cd ../..
             
             # Use build script for desktop platforms
             export PLATFORMS="${{ matrix.goos }}/${{ matrix.goarch }}"
