@@ -239,8 +239,48 @@ func generateEmbeddedApp(characterName, characterJSON string, animations map[str
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	// Note: No go.mod needed - this will be built as part of the main project
+	// Create go.mod file for the embedded character (needed for GitHub Actions)
+	if err := generateGoMod(characterName, outputDir); err != nil {
+		return fmt.Errorf("failed to generate go.mod: %w", err)
+	}
+
 	fmt.Printf("  → To build: go build -o %s-companion %s/main.go\n", characterName, outputDir)
 
+	return nil
+}
+
+// generateGoMod creates a go.mod file for the embedded character
+func generateGoMod(characterName, outputDir string) error {
+	goModContent := fmt.Sprintf(`module github.com/opd-ai/desktop-companion/cmd/%s-embedded
+
+go 1.21
+
+// Use replace directive to reference the parent module from relative path
+replace github.com/opd-ai/desktop-companion => ../../
+
+require (
+	fyne.io/fyne/v2 v2.4.5
+	github.com/opd-ai/desktop-companion v0.0.0-00010101000000-000000000000
+)
+`, characterName)
+
+	goModFile := filepath.Join(outputDir, "go.mod")
+	if err := os.WriteFile(goModFile, []byte(goModContent), 0644); err != nil {
+		return fmt.Errorf("failed to write go.mod file: %w", err)
+	}
+
+	// Also copy go.sum from parent if it exists (for dependency resolution)
+	parentGoSum := filepath.Join(outputDir, "../../go.sum")
+	if _, err := os.Stat(parentGoSum); err == nil {
+		embeddedGoSum := filepath.Join(outputDir, "go.sum")
+		if _, err := os.Stat(embeddedGoSum); os.IsNotExist(err) {
+			content, err := os.ReadFile(parentGoSum)
+			if err == nil {
+				os.WriteFile(embeddedGoSum, content, 0644)
+			}
+		}
+	}
+
+	fmt.Printf("  ✓ Generated go.mod for embedded character\n")
 	return nil
 }

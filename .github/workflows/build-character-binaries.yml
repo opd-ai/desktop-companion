@@ -98,6 +98,13 @@ jobs:
         run: |
           go mod download
           go mod tidy
+          
+          # Verify module structure
+          echo "=== Module verification ==="
+          echo "Module path: $(go list -m)"
+          echo "Go version: $(go version)"
+          echo "Internal packages:"
+          find internal/ -name "*.go" -type f | head -5 || echo "No internal packages found"
       
       - name: Install platform dependencies
         shell: bash
@@ -130,7 +137,18 @@ jobs:
         run: |
           go run scripts/embed-character.go \
             -character ${{ matrix.character }} \
-            -output cmd/companion-${{ matrix.character }}
+            -output cmd/${{ matrix.character }}-embedded
+          
+          # Verify the generated embedded character
+          echo "=== Embedded character verification ==="
+          echo "Generated files:"
+          ls -la cmd/${{ matrix.character }}-embedded/
+          echo ""
+          echo "go.mod content:"
+          cat cmd/${{ matrix.character }}-embedded/go.mod
+          echo ""
+          echo "Testing module resolution:"
+          cd cmd/${{ matrix.character }}-embedded && go mod tidy && echo "✅ Module resolution successful" || echo "❌ Module resolution failed"
       
       - name: Configure Android NDK toolchain
         if: matrix.goos == 'android'
@@ -200,9 +218,19 @@ jobs:
             temp_build_dir=$(mktemp -d)
             trap "rm -rf $temp_build_dir" EXIT
             
-            # Copy embedded character source
-            cp -r cmd/companion-${{ matrix.character }}/* $temp_build_dir/
-            cp go.mod go.sum $temp_build_dir/
+            # Copy embedded character source and ensure proper module context
+            cp -r cmd/${{ matrix.character }}-embedded/* $temp_build_dir/
+            
+            # Copy necessary parent module files for the replace directive to work
+            # The go.mod in the embedded character uses 'replace github.com/opd-ai/desktop-companion => ../../'
+            # So we need the parent module available at the right relative path
+            mkdir -p $temp_build_dir/../../
+            cp -r . "$temp_build_dir/../../" 2>/dev/null || true
+            
+            # The embedded character has its own go.mod, but ensure go.sum is available
+            if [[ ! -f "$temp_build_dir/go.sum" ]]; then
+              cp go.sum $temp_build_dir/ 2>/dev/null || true
+            fi
             
             # Create FyneApp.toml for Android metadata
             cat > $temp_build_dir/FyneApp.toml << EOF
@@ -233,6 +261,11 @@ jobs:
             # Build APK with fyne package
             cd $temp_build_dir
             echo "Building APK with NDK toolchain (CC: $CC)..."
+            
+            # Set up Go module workspace for the embedded character
+            echo "Setting up module workspace for Android build..."
+            export GOWORK=off  # Disable workspaces for clean module resolution
+            go mod tidy
             
             # Build with release configuration for optimized APK
             if ! fyne package \
@@ -289,7 +322,7 @@ jobs:
               echo "Build script failed, trying direct build..."
               go build -ldflags="-s -w" \
                 -o "build/$binary_name" \
-                ./cmd/companion-${{ matrix.character }}
+                ./cmd/${{ matrix.character }}-embedded
               echo "✓ Built binary: $binary_name"
             fi
           fi
