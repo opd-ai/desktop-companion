@@ -62,8 +62,8 @@ func TestHoverDialogDebug(t *testing.T) {
 	t.Logf("Last interaction time: %v", char.lastInteraction)
 	t.Logf("Time since last interaction: %v", time.Since(char.lastInteraction))
 
-	// Wait for the 2-second guard to pass
-	time.Sleep(3 * time.Second)
+	// Wait for the 2-second guard to pass (reduced for automated testing)
+	time.Sleep(100 * time.Millisecond)
 
 	// Reset lastInteraction to ensure the guard doesn't block
 	char.lastInteraction = time.Now().Add(-5 * time.Second)
