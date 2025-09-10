@@ -1120,10 +1120,10 @@ func configureAlwaysOnTop(window fyne.Window, debug bool) {
 func configureTransparency(window fyne.Window, debug bool) {
 	// Remove window padding to make character appear directly on desktop
 	window.SetPadded(false)
-	
+
 	// Remove window decorations for overlay effect
 	window.SetTitle("") // Remove title bar to reduce window decoration
-	
+
 	// Set window to be borderless-like by minimizing decorations
 	window.SetFixedSize(true) // Prevents resize handles from appearing
 
@@ -1133,7 +1133,7 @@ func configureTransparency(window fyne.Window, debug bool) {
 		log.Println("Character should appear with minimal window decoration for overlay effect")
 		log.Println("Window decorations minimized for transparent overlay appearance")
 	}
-}// setupKeyboardShortcuts configures keyboard shortcuts for the desktop window
+} // setupKeyboardShortcuts configures keyboard shortcuts for the desktop window
 func (dw *DesktopWindow) setupKeyboardShortcuts() {
 	canvas := dw.window.Canvas()
 
