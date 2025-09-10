@@ -1088,22 +1088,26 @@ func (dw *DesktopWindow) checkForNewAchievements() {
 // configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities
 // Following the "lazy programmer" principle: use what's available rather than implementing platform-specific code
 func configureAlwaysOnTop(window fyne.Window, debug bool) {
-	// Fyne v2.4.5 has limited always-on-top support, but we can try available approaches:
+	// Fyne v2.4.5 has limited always-on-top support, but we can use available approaches:
 
-	// 1. Try to minimize window decorations (makes it more overlay-like)
-	window.SetTitle("") // Remove title bar text for cleaner overlay appearance
+	// 1. Use RequestFocus to raise and focus the window (closest to always-on-top behavior)
+	window.RequestFocus()
 
-	// 2. Set window to be borderless for better desktop integration
-	// Note: Fyne doesn't expose direct borderless mode, but we can minimize decoration
+	// 2. Try to minimize window decorations (makes it more overlay-like)
+	// Note: Title removal is already handled in configureTransparency to avoid duplication
 
-	// 3. Configure for desktop overlay use case
+	// 3. Set window to fixed size to prevent accidental resizing that could lose focus
+	window.SetFixedSize(true)
+
+	// 4. Configure for desktop overlay use case
 	// Fyne's design philosophy focuses on cross-platform compatibility over platform-specific features
 	// True always-on-top requires platform-specific window manager hints that Fyne doesn't expose
 
 	if debug {
 		log.Println("Always-on-top configuration applied using available Fyne capabilities")
+		log.Println("Note: RequestFocus() used to raise and focus window for overlay behavior")
+		log.Println("Note: Fixed size prevents accidental resize that could interfere with focus")
 		log.Println("Note: Full always-on-top behavior requires platform-specific window manager support")
-		log.Println("Window configured for optimal desktop overlay experience within Fyne's limitations")
 	}
 
 	// Future enhancement opportunity:
