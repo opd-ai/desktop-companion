@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 // NewsBlogBackend implements the DialogBackend interface for news summarization

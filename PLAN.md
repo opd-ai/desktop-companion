@@ -10,7 +10,7 @@ This plan outlines the implementation of standalone, zero-configuration binary e
 
 **Core Structure:**
 - **Main Entry Point**: `cmd/companion/main.go` - Uses flag-based configuration with character path loading
-- **Character System**: `internal/character/` - Modular character loading via JSON cards and GIF animations
+- **Character System**: `lib/character/` - Modular character loading via JSON cards and GIF animations
 - **Asset Loading**: Runtime asset resolution via `resolveProjectRoot()` and `LoadCard()` functions
 - **JSON Schema**: Comprehensive character cards with 19+ archetypes supporting game mechanics, romance systems, AI dialogs, and multiplayer features
 
@@ -235,9 +235,9 @@ import (
     "fyne.io/fyne/v2"
     "fyne.io/fyne/v2/app"
     
-    "github.com/opd-ai/desktop-companion/internal/character"
-    "github.com/opd-ai/desktop-companion/internal/monitoring"
-    "github.com/opd-ai/desktop-companion/internal/ui"
+    "github.com/opd-ai/desktop-companion/lib/character"
+    "github.com/opd-ai/desktop-companion/lib/monitoring"
+    "github.com/opd-ai/desktop-companion/lib/ui"
 )
 
 // Embedded character data
@@ -388,7 +388,7 @@ func main() {
 
 ### 3.2 Character Package Extensions
 
-**Extend `internal/character/animation.go`:**
+**Extend `lib/character/animation.go`:**
 
 Add the following method to support embedded animations:
 
@@ -413,7 +413,7 @@ func (am *AnimationManager) LoadEmbeddedAnimation(name string, gifData *gif.GIF)
 }
 ```
 
-**Extend `internal/character/behavior.go`:**
+**Extend `lib/character/behavior.go`:**
 
 Add constructor for embedded character creation:
 

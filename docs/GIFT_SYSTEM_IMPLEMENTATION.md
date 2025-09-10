@@ -35,13 +35,13 @@
 ## 🔧 FILES CREATED/MODIFIED
 
 ### New Files:
-- `internal/character/gift_manager.go` - Core gift system implementation
-- `internal/character/gift_manager_clean_test.go` - Basic functionality tests
-- `internal/character/gift_integration_test.go` - Integration and real-world tests
+- `lib/character/gift_manager.go` - Core gift system implementation
+- `lib/character/gift_manager_clean_test.go` - Basic functionality tests
+- `lib/character/gift_integration_test.go` - Integration and real-world tests
 
 ### Modified Files:
-- `internal/character/gift_definition.go` - Added GiftMemory struct and time import
-- `internal/character/game_state.go` - Added GiftMemories field
+- `lib/character/gift_definition.go` - Added GiftMemory struct and time import
+- `lib/character/game_state.go` - Added GiftMemories field
 - `PLAN.md` - Updated implementation status
 
 ### Existing Assets:
@@ -54,25 +54,25 @@
 ### Basic Functionality Test:
 ```bash
 cd /workspaces/DDS
-go test ./internal/character -run "GiftManager" -v
+go test ./lib/character -run "GiftManager" -v
 ```
 
 ### Integration Test (with real gift files):
 ```bash
 cd /workspaces/DDS  
-go test ./internal/character -run "RealGiftCatalog" -v
+go test ./lib/character -run "RealGiftCatalog" -v
 ```
 
 ### Performance Benchmark:
 ```bash
 cd /workspaces/DDS
-go test ./internal/character -bench "Gift" -benchmem
+go test ./lib/character -bench "Gift" -benchmem
 ```
 
 ### Full Gift System Test Suite:
 ```bash
 cd /workspaces/DDS
-go test ./internal/character -run "Gift" -v
+go test ./lib/character -run "Gift" -v
 ```
 
 ---

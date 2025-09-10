@@ -3,8 +3,8 @@ package ui
 import (
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/monitoring"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/monitoring"
 
 	"fyne.io/fyne/v2/test"
 )

@@ -1,7 +1,7 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 	"os"
 	"path/filepath"
 	"strings"

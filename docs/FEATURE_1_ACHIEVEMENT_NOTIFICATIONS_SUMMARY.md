@@ -6,21 +6,21 @@ Successfully implemented visual achievement unlocking notifications that appear 
 ## ✅ Completed Components
 
 ### 1. Core Achievement Data Structure
-- **File**: `internal/character/progression.go`
+- **File**: `lib/character/progression.go`
 - **Changes**: 
   - Modified `ProgressionState.Update()` to return `[]AchievementDetails` instead of `[]string`
   - Added `AchievementDetails` struct with Name, Details, Timestamp, and Reward fields
   - Added `createAchievementDetails()` helper function
 
 ### 2. Game State Integration
-- **File**: `internal/character/game_state.go`
+- **File**: `lib/character/game_state.go`
 - **Changes**:
   - Updated `updateProgression()`, `buildProgressionStates()` to handle new return type
   - Added `recentAchievements` field and `GetRecentAchievements()` method
   - Maintains compatibility with existing save/load systems
 
 ### 3. Achievement Notification Widget
-- **File**: `internal/ui/achievement_notification.go`
+- **File**: `lib/ui/achievement_notification.go`
 - **Features**:
   - Golden-styled notification with elegant appearance
   - Auto-hide after 4 seconds with smooth animation
@@ -29,7 +29,7 @@ Successfully implemented visual achievement unlocking notifications that appear 
   - Comprehensive error handling for nil rewards
 
 ### 4. Desktop Window Integration
-- **File**: `internal/ui/window.go`
+- **File**: `lib/ui/window.go`
 - **Changes**:
   - Added `achievementNotification` field
   - Integrated into game mode initialization
@@ -38,8 +38,8 @@ Successfully implemented visual achievement unlocking notifications that appear 
   - Only active in game mode with progression system
 
 ### 5. Comprehensive Test Coverage
-- **Achievement Widget Tests**: `internal/ui/achievement_notification_test.go` (90+ statements)
-- **Integration Tests**: `internal/ui/window_achievement_test.go` (5 test scenarios)
+- **Achievement Widget Tests**: `lib/ui/achievement_notification_test.go` (90+ statements)
+- **Integration Tests**: `lib/ui/window_achievement_test.go` (5 test scenarios)
 - **Character Progression Tests**: Updated existing tests for new return types
 - **Total Coverage**: >80% for all modified components
 

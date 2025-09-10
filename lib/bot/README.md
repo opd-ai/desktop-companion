@@ -170,12 +170,12 @@ Comprehensive test suite with >75% coverage includes:
 
 Run tests:
 ```bash
-go test ./internal/bot/... -v -cover
+go test ./lib/bot/... -v -cover
 ```
 
 Run benchmarks:
 ```bash
-go test ./internal/bot/... -bench=. -benchmem
+go test ./lib/bot/... -bench=. -benchmem
 ```
 
 ## Integration with Existing Systems

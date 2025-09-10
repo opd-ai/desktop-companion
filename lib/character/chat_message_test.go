@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 func TestHandleChatMessage(t *testing.T) {

@@ -141,7 +141,7 @@ Apply these mandatory patterns when working with this codebase:
 
 **Package Structure** (233 total Go files):
 ```
-internal/ (205 files)
+lib/ (205 files)
 ├── character/     # Core character logic, validation, romance system
 ├── config/        # Configuration management and JSON loading
 ├── dialog/        # Advanced dialog backends and Markov chain generation  
@@ -225,11 +225,11 @@ func (fm *FeatureManager) ProcessRequest(ctx context.Context, req Request) error
 
 **Core Application**:
 - `cmd/companion/` - Main application entry point and integration tests
-- `internal/character/` - Character behavior, romance system, and animation management
-- `internal/ui/` - Fyne-based GUI components and windowing system
-- `internal/config/` - Configuration loading and validation
-- `internal/persistence/` - Save/load system for game state and character memory
-- `internal/monitoring/` - Performance profiling and metrics collection
+- `lib/character/` - Character behavior, romance system, and animation management
+- `lib/ui/` - Fyne-based GUI components and windowing system
+- `lib/config/` - Configuration loading and validation
+- `lib/persistence/` - Save/load system for game state and character memory
+- `lib/monitoring/` - Performance profiling and metrics collection
 
 **Assets and Configuration**:
 - `assets/characters/` - 14 character archetypes with JSON configuration and GIF animations

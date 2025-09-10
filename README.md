@@ -807,7 +807,7 @@ go run cmd/companion/main.go -game -stats -events -character assets/characters/e
 ```
 DDS/
 ├── cmd/companion/main.go           # Application entry point
-├── internal/
+├── lib/
 │   ├── character/
 │   │   ├── card.go                 # JSON configuration parser (stdlib)
 │   │   ├── animation.go            # GIF animation manager (stdlib)
@@ -909,7 +909,7 @@ DDS/
 go test ./... -v -cover
 
 # Run specific package tests
-go test ./internal/character -v
+go test ./lib/character -v
 
 # Run with race detection
 go test ./... -race

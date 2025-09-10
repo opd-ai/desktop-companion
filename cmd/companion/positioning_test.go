@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestBug3WindowPositioningNotImplemented validates that window positioning logic only stores position

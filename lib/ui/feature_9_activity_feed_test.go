@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/lib/network"
 )
 
 // TestFeature9_NetworkPeerActivityFeed tests the complete Feature 9 implementation

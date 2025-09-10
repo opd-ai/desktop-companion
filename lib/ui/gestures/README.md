@@ -125,7 +125,7 @@ The gesture system includes comprehensive tests covering:
 
 Run tests with:
 ```bash
-go test ./internal/ui/gestures/... -v -cover
+go test ./lib/ui/gestures/... -v -cover
 ```
 
 ## Integration Notes
@@ -163,7 +163,7 @@ Planned features for subsequent phases:
 ## Dependencies
 
 - `fyne.io/fyne/v2`: GUI framework and event handling
-- `desktop-companion/internal/platform`: Platform detection system
+- `desktop-companion/lib/platform`: Platform detection system
 - Go standard library: `time` package for gesture timing
 
 All dependencies use permissive licenses compatible with commercial use.

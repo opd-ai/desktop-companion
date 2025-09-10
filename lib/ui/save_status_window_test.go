@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/test"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 func TestDesktopWindow_SaveStatusIndicatorIntegration(t *testing.T) {

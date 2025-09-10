@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/jdkato/prose/v2"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
-	"github.com/opd-ai/desktop-companion/internal/news"
-	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
+	"github.com/opd-ai/desktop-companion/lib/news"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // animationLoadResult represents the result of loading a single animation

@@ -3,7 +3,7 @@ package ui
 import (
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestBug1GiftContextMenuFix validates the fix for missing gift system context menu integration

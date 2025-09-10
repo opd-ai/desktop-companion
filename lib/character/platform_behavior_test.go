@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // TestNewPlatformBehaviorAdapter tests the creation of platform behavior adapters

@@ -6,7 +6,7 @@ package character
 import (
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // PlatformBehaviorAdapter manages platform-specific behavior adaptations for characters.

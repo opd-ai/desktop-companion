@@ -3,7 +3,7 @@ package testing
 import (
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestBug4CharacterNameValidation - Investigation shows this is NOT a bug

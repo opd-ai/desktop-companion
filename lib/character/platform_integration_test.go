@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // TestNewWithPlatform tests the platform-aware character constructor

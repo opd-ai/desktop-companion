@@ -9,7 +9,7 @@ import (
 
 	"fyne.io/fyne/v2"
 
-	"github.com/opd-ai/desktop-companion/internal/platform"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // GestureHandler translates touch gestures to mouse events based on platform capabilities.

@@ -12,18 +12,18 @@ This document provides a comprehensive analysis of the Desktop Dating Simulator 
 
 #### Core Components Analysis
 
-**Character Management System** (`internal/character/`)
+**Character Management System** (`lib/character/`)
 - **Main Interface**: `Character` struct with comprehensive behavior methods
 - **Key Methods**: `HandleClick()`, `HandleRightClick()`, `HandleHover()`, `Update()`
 - **State Management**: Thread-safe with `sync.RWMutex` protection
 - **Extension Points**: Dialog backends, general events, game interactions
 
-**UI Event System** (`internal/ui/`)
+**UI Event System** (`lib/ui/`)
 - **Event Handlers**: `DesktopWindow.handleClick()`, `DesktopWindow.handleRightClick()`
 - **Input Processing**: Fyne GUI framework integration
 - **Interaction Flow**: UI → Character → Response → Animation
 
-**Dialog System** (`internal/dialog/`)
+**Dialog System** (`lib/dialog/`)
 - **Interface**: `DialogBackend` with pluggable implementations
 - **Context System**: Rich `DialogContext` for AI responses
 - **Memory System**: `UpdateMemory()` for learning and adaptation
@@ -141,7 +141,7 @@ func (mc *MultiplayerCharacter) HandleClick() string {
 ### 2.2 Extension Points Identification
 
 #### 1. Dialog Backend Integration
-**File**: `internal/dialog/interface.go`
+**File**: `lib/dialog/interface.go`
 **Approach**: Implement `DialogBackend` for network communication
 ```go
 type NetworkDialogBackend struct {
@@ -158,7 +158,7 @@ func (ndb *NetworkDialogBackend) GenerateResponse(ctx DialogContext) (DialogResp
 ```
 
 #### 2. General Events System
-**File**: `internal/character/general_events.go`  
+**File**: `lib/character/general_events.go`  
 **Approach**: Leverage existing interactive scenario system
 ```go
 // Add to character card JSON:
@@ -177,7 +177,7 @@ func (ndb *NetworkDialogBackend) GenerateResponse(ctx DialogContext) (DialogResp
 ```
 
 #### 3. Character Behavior Coordination
-**File**: `internal/character/behavior.go`
+**File**: `lib/character/behavior.go`
 **Approach**: Hook into existing `Update()` cycle
 ```go
 func (c *Character) Update() bool {
@@ -202,8 +202,8 @@ func (c *Character) Update() bool {
 #### Compatibility Testing Strategy
 ```bash
 # All existing tests must pass unchanged
-go test ./internal/character/... -v
-go test ./internal/ui/... -v
+go test ./lib/character/... -v
+go test ./lib/ui/... -v
 
 # Existing character cards must load successfully  
 go run cmd/companion/main.go -character assets/characters/default/character.json
@@ -372,9 +372,9 @@ type PeerCharacterState struct {
 - [ ] Create `MultiplayerCharacter` wrapper
 
 #### Deliverables:
-- `internal/network/manager.go`
-- `internal/network/discovery.go` 
-- `internal/network/protocol.go`
+- `lib/network/manager.go`
+- `lib/network/discovery.go` 
+- `lib/network/protocol.go`
 - Updated character card schema
 
 ### Phase 2: Bot Framework (Week 3-4)
@@ -385,9 +385,9 @@ type PeerCharacterState struct {
 - [ ] Integrate with existing dialog system
 
 #### Deliverables:
-- `internal/bot/controller.go`
-- `internal/bot/personality.go`
-- `internal/bot/decision_engine.go`
+- `lib/bot/controller.go`
+- `lib/bot/personality.go`
+- `lib/bot/decision_engine.go`
 - Network-aware dialog backend
 
 ### Phase 3: UI Integration (Week 5)
@@ -398,8 +398,8 @@ type PeerCharacterState struct {
 - [ ] Chat interface for peer communication
 
 #### Deliverables:
-- `internal/ui/network_overlay.go`
-- `internal/ui/peer_manager.go`
+- `lib/ui/network_overlay.go`
+- `lib/ui/peer_manager.go`
 - Updated main application
 
 ### Phase 4: Testing & Polish (Week 6)

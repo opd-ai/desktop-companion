@@ -8,9 +8,9 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/platform"
-	"github.com/opd-ai/desktop-companion/internal/ui"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/platform"
+	"github.com/opd-ai/desktop-companion/lib/ui"
 )
 
 // TouchEnabledWindow demonstrates how to modify the existing DesktopWindow

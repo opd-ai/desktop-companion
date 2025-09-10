@@ -33,7 +33,7 @@ The Platform-Aware Character Behavior System is a comprehensive solution that au
 
 ### Core Components
 
-#### 1. **PlatformBehaviorAdapter** (`internal/character/platform_behavior.go`)
+#### 1. **PlatformBehaviorAdapter** (`lib/character/platform_behavior.go`)
 ```go
 // Create platform-aware adapter
 adapter := character.NewPlatformBehaviorAdapter(platformInfo)
@@ -74,8 +74,8 @@ size := char.GetOptimalSize(screenWidth)
 #### Basic Platform-Aware Character Creation
 ```go
 import (
-    "github.com/opd-ai/desktop-companion/internal/character"
-    "github.com/opd-ai/desktop-companion/internal/platform"
+    "github.com/opd-ai/desktop-companion/lib/character"
+    "github.com/opd-ai/desktop-companion/lib/platform"
 )
 
 // Detect current platform
@@ -192,7 +192,7 @@ char, err := character.New(card, basePath)
 
 ### Test Structure
 ```
-internal/character/
+lib/character/
 ├── platform_behavior_test.go      # Core adapter unit tests
 ├── platform_integration_test.go   # Character integration tests  
 └── platform_loader_test.go        # Configuration loading tests
@@ -201,10 +201,10 @@ internal/character/
 ### Running Tests
 ```bash
 # Run all platform-related tests
-go test ./internal/character -run "Platform" -v
+go test ./lib/character -run "Platform" -v
 
 # Run with coverage analysis
-go test ./internal/character -run "Platform" -coverprofile=coverage.out
+go test ./lib/character -run "Platform" -coverprofile=coverage.out
 
 # View coverage report
 go tool cover -html=coverage.out

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/embedding"
+	"github.com/opd-ai/desktop-companion/lib/embedding"
 )
 
 func TestLoadAnimations(t *testing.T) {

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
-	"github.com/opd-ai/desktop-companion/internal/ui"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
+	"github.com/opd-ai/desktop-companion/lib/ui"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"

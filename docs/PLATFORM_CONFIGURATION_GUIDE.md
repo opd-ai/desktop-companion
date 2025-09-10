@@ -163,7 +163,7 @@ The platform loader automatically adapts interaction triggers between platforms:
 ### Loading Platform-Aware Characters
 
 ```go
-import "desktop-companion/internal/character"
+import "desktop-companion/lib/character"
 
 // Create platform-aware loader
 loader := character.NewPlatformAwareLoader()

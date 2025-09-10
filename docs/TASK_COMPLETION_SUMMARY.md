@@ -9,7 +9,7 @@
 ## Implementation Completed
 
 ### 1. Enhanced NetworkOverlay with Character Distinction
-**File**: `internal/ui/network_overlay.go`
+**File**: `lib/ui/network_overlay.go`
 
 **Key Features Added**:
 - **CharacterInfo Structure**: New data structure to track character location, activity, and type
@@ -40,14 +40,14 @@ func (no *NetworkOverlay) updateCharacterList()
 - **Reduced Peer List Height**: Made room for character list without crowding
 
 ### 3. Integration with Main Application
-**File**: `internal/ui/window.go`
+**File**: `lib/ui/window.go`
 - **Automatic Character Name**: Uses character card name for local character display
 - **Seamless Integration**: Character name set during NetworkOverlay creation
 
 ### 4. Comprehensive Testing
 **Files**: 
-- `internal/ui/network_overlay_test.go` (updated)
-- `internal/ui/network_overlay_character_distinction_test.go` (new)
+- `lib/ui/network_overlay_test.go` (updated)
+- `lib/ui/network_overlay_character_distinction_test.go` (new)
 
 **Test Coverage**:
 - **Character Distinction Tests**: Validates local vs network character differentiation
@@ -134,15 +134,15 @@ All tasks and success criteria achieved:
 ## Files Modified/Created
 
 ### Modified Files (7)
-1. `internal/ui/network_overlay.go` - Enhanced with character distinction
-2. `internal/ui/network_overlay_test.go` - Updated tests  
-3. `internal/ui/window.go` - Integration for character name
+1. `lib/ui/network_overlay.go` - Enhanced with character distinction
+2. `lib/ui/network_overlay_test.go` - Updated tests  
+3. `lib/ui/window.go` - Integration for character name
 4. `examples/integrated_demo/main.go` - Fixed function signature
 5. `README.md` - Added multiplayer examples and documentation
 6. `PLAN.md` - Updated success criteria and task status
 
 ### Created Files (2)
-7. `internal/ui/network_overlay_character_distinction_test.go` - Comprehensive tests
+7. `lib/ui/network_overlay_character_distinction_test.go` - Comprehensive tests
 8. `NETWORK_CHARACTER_DISTINCTION_ENHANCEMENT.md` - Enhancement documentation
 
 ## Validation Results

@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/battle"
-	"github.com/opd-ai/desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/lib/battle"
+	"github.com/opd-ai/desktop-companion/lib/network"
 )
 
 // BattleInvitationHandler is imported from the UI package to avoid circular imports

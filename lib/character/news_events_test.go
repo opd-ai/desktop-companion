@@ -1,8 +1,8 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/dialog"
-	"github.com/opd-ai/desktop-companion/internal/news"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
+	"github.com/opd-ai/desktop-companion/lib/news"
 	"encoding/json"
 	"testing"
 )

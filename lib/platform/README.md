@@ -1,6 +1,6 @@
 # Platform Detection Package
 
-The `internal/platform` package provides cross-platform detection and capability information for adaptive behavior between desktop and mobile environments. This package implements Phase 5.1 of the Android Migration Plan.
+The `lib/platform` package provides cross-platform detection and capability information for adaptive behavior between desktop and mobile environments. This package implements Phase 5.1 of the Android Migration Plan.
 
 ## Overview
 
@@ -17,7 +17,7 @@ This package enables the Desktop Dating Simulator to adapt its behavior based on
 ## Usage
 
 ```go
-import "github.com/opd-ai/desktop-companion/internal/platform"
+import "github.com/opd-ai/desktop-companion/lib/platform"
 
 // Get platform information
 info := platform.GetPlatformInfo()
@@ -104,7 +104,7 @@ The package includes comprehensive unit tests with:
 
 Run tests with:
 ```bash
-go test ./internal/platform -v -cover -race
+go test ./lib/platform -v -cover -race
 ```
 
 ## Future Enhancements

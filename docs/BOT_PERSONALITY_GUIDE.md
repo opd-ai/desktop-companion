@@ -534,7 +534,7 @@ go run cmd/companion/main.go -character test_bot.json -debug
 go run cmd/companion/main.go -character test_bot.json -debug | grep "bot_decision"
 
 # Performance testing
-go test ./internal/bot -bench=. -v
+go test ./lib/bot -bench=. -v
 ```
 
 ### Personality Metrics

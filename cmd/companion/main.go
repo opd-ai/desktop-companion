@@ -11,10 +11,10 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/monitoring"
-	"github.com/opd-ai/desktop-companion/internal/network"
-	"github.com/opd-ai/desktop-companion/internal/ui"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/monitoring"
+	"github.com/opd-ai/desktop-companion/lib/network"
+	"github.com/opd-ai/desktop-companion/lib/ui"
 )
 
 var (

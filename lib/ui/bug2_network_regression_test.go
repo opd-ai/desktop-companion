@@ -3,7 +3,7 @@ package ui
 import (
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 )
 
 // TestBug2NetworkContextMenuRegression validates that the network context menu fix continues to work

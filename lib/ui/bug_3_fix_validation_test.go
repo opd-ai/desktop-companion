@@ -3,8 +3,8 @@ package ui
 import (
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 // TestBug3FixValidation tests that Bug #3 fix works correctly

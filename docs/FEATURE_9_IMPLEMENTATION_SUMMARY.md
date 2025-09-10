@@ -6,14 +6,14 @@ Successfully implemented Feature 9: Network Peer Activity Feed with real-time sc
 ## 📋 IMPLEMENTATION DETAILS
 
 ### Files Created:
-1. **`internal/network/activity_tracker.go`** (234 lines)
+1. **`lib/network/activity_tracker.go`** (234 lines)
    - Thread-safe activity event tracking system
    - Support for 7 activity types (joined/left/interaction/chat/battle/discovery/state_change)
    - FIFO event queue with configurable limits
    - Asynchronous listener system with panic protection
    - Helper functions for common activity events
 
-2. **`internal/ui/activity_feed.go`** (149 lines)
+2. **`lib/ui/activity_feed.go`** (149 lines)
    - Scrollable activity feed widget using Fyne components
    - Real-time event listener integration
    - Visual styling based on activity type (color-coded importance levels)
@@ -21,7 +21,7 @@ Successfully implemented Feature 9: Network Peer Activity Feed with real-time sc
    - Event limit management with automatic pruning
 
 ### Files Modified:
-1. **`internal/ui/network_overlay.go`**
+1. **`lib/ui/network_overlay.go`**
    - Added activity tracker and feed to NetworkOverlay struct
    - Integrated activity feed into main UI layout
    - Added activity tracking methods (TrackPeerJoined, TrackChatMessage, etc.)
@@ -29,19 +29,19 @@ Successfully implemented Feature 9: Network Peer Activity Feed with real-time sc
    - Enhanced chat message handling to track activities
 
 ### Test Coverage:
-1. **`internal/network/activity_tracker_test.go`** (15 test functions)
+1. **`lib/network/activity_tracker_test.go`** (15 test functions)
    - Comprehensive activity tracker testing
    - Thread safety validation
    - Event helper function testing
    - Memory management and limits testing
 
-2. **`internal/ui/activity_feed_test.go`** (10 test functions)
+2. **`lib/ui/activity_feed_test.go`** (10 test functions)
    - UI widget testing with Fyne test framework
    - Real-time update validation
    - Event styling and display testing
    - Integration testing
 
-3. **`internal/ui/feature_9_activity_feed_test.go`** (6 test functions)
+3. **`lib/ui/feature_9_activity_feed_test.go`** (6 test functions)
    - Complete requirement validation
    - End-to-end integration testing
    - Feature compliance verification

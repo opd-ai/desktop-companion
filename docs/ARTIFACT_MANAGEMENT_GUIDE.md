@@ -10,7 +10,7 @@ The artifact management system provides comprehensive storage, retention, and op
 
 ### Core Components
 
-1. **Artifact Manager** (`internal/artifact/manager.go`)
+1. **Artifact Manager** (`lib/artifact/manager.go`)
    - Central management of binary artifacts
    - Metadata tracking and storage
    - Retention policy enforcement
@@ -186,13 +186,13 @@ The artifact management system includes comprehensive tests:
 
 ```bash
 # Run all artifact management tests
-go test ./internal/artifact/... -v
+go test ./lib/artifact/... -v
 
 # Run enhanced matrix tests with artifact features
-go test ./internal/embedding/... -v
+go test ./lib/embedding/... -v
 
 # Run performance benchmarks
-go test ./internal/artifact/... -bench=. -benchmem
+go test ./lib/artifact/... -bench=. -benchmem
 ```
 
 ## Configuration

@@ -1,7 +1,7 @@
 package character
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/battle"
+	"github.com/opd-ai/desktop-companion/lib/battle"
 	"fmt"
 )
 

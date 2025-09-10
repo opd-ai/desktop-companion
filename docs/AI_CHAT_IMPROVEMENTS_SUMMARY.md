@@ -4,7 +4,7 @@
 Successfully implemented "B. AI Chat Improvements" as requested, enhancing the chatbot system with three major features:
 
 ### 1. ✅ Personality-Driven Prompts
-**Location**: `/workspaces/DDS/internal/character/behavior.go`
+**Location**: `/workspaces/DDS/lib/character/behavior.go`
 - **Enhanced `buildChatDialogContext` method** (lines ~2260-2290)
   - Integrates personality traits into dialog context for AI prompt generation
   - Uses character's personality configuration to influence chat responses
@@ -18,7 +18,7 @@ Successfully implemented "B. AI Chat Improvements" as requested, enhancing the c
   - Returns formatted personality prompt string for chat dialog generation
 
 ### 2. ✅ Memory Integration
-**Location**: `/workspaces/DDS/internal/character/behavior.go` & `/workspaces/DDS/internal/ui/chatbot_interface.go`
+**Location**: `/workspaces/DDS/lib/character/behavior.go` & `/workspaces/DDS/lib/ui/chatbot_interface.go`
 
 **Character Memory API**:
 - **Added `GetRecentDialogMemories` method** (lines 1408-1417)
@@ -50,7 +50,7 @@ Successfully implemented "B. AI Chat Improvements" as requested, enhancing the c
   - Maintains persistent conversation history across sessions
 
 ### 3. ✅ Chat Export Functionality
-**Location**: `/workspaces/DDS/internal/ui/chatbot_interface.go` & `/workspaces/DDS/internal/ui/window.go`
+**Location**: `/workspaces/DDS/lib/ui/chatbot_interface.go` & `/workspaces/DDS/lib/ui/window.go`
 
 **Export Implementation**:
 - **Added `ExportConversation` method** (lines 401-450)
@@ -96,17 +96,17 @@ Successfully implemented "B. AI Chat Improvements" as requested, enhancing the c
 - Includes conversation metadata (character name, export timestamp)
 
 ## Testing
-**Created comprehensive test suite**: `/workspaces/DDS/internal/ui/ai_chat_improvements_test.go`
+**Created comprehensive test suite**: `/workspaces/DDS/lib/ui/ai_chat_improvements_test.go`
 - Tests export functionality with real file I/O
 - Validates memory API availability and safety
 - Verifies conversation formatting and content
 - Includes cleanup for test artifacts
 
 ## Files Modified
-1. `/workspaces/DDS/internal/character/behavior.go` - Core memory and personality integration
-2. `/workspaces/DDS/internal/ui/chatbot_interface.go` - Memory loading and export functionality
-3. `/workspaces/DDS/internal/ui/window.go` - Context menu integration for export
-4. `/workspaces/DDS/internal/ui/ai_chat_improvements_test.go` - Comprehensive testing
+1. `/workspaces/DDS/lib/character/behavior.go` - Core memory and personality integration
+2. `/workspaces/DDS/lib/ui/chatbot_interface.go` - Memory loading and export functionality
+3. `/workspaces/DDS/lib/ui/window.go` - Context menu integration for export
+4. `/workspaces/DDS/lib/ui/ai_chat_improvements_test.go` - Comprehensive testing
 
 ## Usage Examples
 

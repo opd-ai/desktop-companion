@@ -8,7 +8,7 @@ The Bot Action System provides autonomous character behavior through personality
 
 ### Core Components
 
-1. **ActionExecutor** (`internal/bot/actions.go`): Handles action execution with comprehensive error handling and performance tracking
+1. **ActionExecutor** (`lib/bot/actions.go`): Handles action execution with comprehensive error handling and performance tracking
 2. **BotController Integration**: Seamlessly integrates with existing bot personality system
 3. **Learning System**: Analyzes action effectiveness and learns from peer interactions
 

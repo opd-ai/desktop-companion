@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 	"fmt"
 	"image/color"
 	"sort"

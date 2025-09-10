@@ -42,8 +42,8 @@ Successfully architected and implemented a minimally invasive "general dialog ev
 
 ### **New Files**
 ```
-internal/character/general_events.go          # Core event system (333 lines)
-internal/character/general_events_test.go     # Comprehensive test suite (280+ lines)
+lib/character/general_events.go          # Core event system (333 lines)
+lib/character/general_events_test.go     # Comprehensive test suite (280+ lines)
 assets/characters/examples/interactive_events.json     # Example character with conversations & games
 assets/characters/examples/roleplay_character.json     # Example character focused on roleplay
 GENERAL_EVENTS_GUIDE.md                      # Complete documentation (400+ lines)
@@ -51,8 +51,8 @@ GENERAL_EVENTS_GUIDE.md                      # Complete documentation (400+ line
 
 ### **Modified Files**
 ```
-internal/character/card.go                    # Added GeneralEvents field + validation (15 lines)
-internal/character/behavior.go               # Added event manager + API methods (120 lines)
+lib/character/card.go                    # Added GeneralEvents field + validation (15 lines)
+lib/character/behavior.go               # Added event manager + API methods (120 lines)
 README.md                                     # Updated documentation (50+ lines)
 ```
 

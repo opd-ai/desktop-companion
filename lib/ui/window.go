@@ -15,9 +15,9 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/monitoring"
-	"github.com/opd-ai/desktop-companion/internal/network"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/monitoring"
+	"github.com/opd-ai/desktop-companion/lib/network"
 )
 
 // BattleInvitationHandler is a global callback for battle invitation dialogs

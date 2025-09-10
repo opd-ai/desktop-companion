@@ -303,13 +303,13 @@ Comprehensive test suite includes:
 
 ```bash
 # Run all network event tests
-go test ./internal/character -v -run "Network|Join|Submit|Group|Peer"
+go test ./lib/character -v -run "Network|Join|Submit|Group|Peer"
 
 # Run with coverage analysis
-go test ./internal/character -v -run "Network" -coverprofile=coverage.out
+go test ./lib/character -v -run "Network" -coverprofile=coverage.out
 
 # Run performance benchmarks
-go test ./internal/character -bench=Benchmark -benchmem -run=^$
+go test ./lib/character -bench=Benchmark -benchmem -run=^$
 ```
 
 ## Troubleshooting

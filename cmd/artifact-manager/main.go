@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/artifact"
+	"github.com/opd-ai/desktop-companion/lib/artifact"
 )
 
 const (

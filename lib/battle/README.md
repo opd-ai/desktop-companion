@@ -16,8 +16,8 @@ This package implements the core turn-based battle system for Desktop Dating Sim
 
 ## Multiplayer Integration
 - Network message types: `battle_invite`, `battle_action`, `battle_result`, `battle_end`
-- Protocol support in `internal/network/protocol.go`
-- MultiplayerCharacter extensions in `internal/character/multiplayer_battle.go`
+- Protocol support in `lib/network/protocol.go`
+- MultiplayerCharacter extensions in `lib/character/multiplayer_battle.go`
 - Comprehensive test coverage for network integration
 
 ## Design Principles

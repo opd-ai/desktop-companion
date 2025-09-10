@@ -12,7 +12,7 @@
 ## Detailed Findings
 
 ### Finding #1
-**Location:** `/home/user/go/src/github.com/opd-ai/DDS/internal/ui/window.go:1114-1125`
+**Location:** `/home/user/go/src/github.com/opd-ai/DDS/lib/ui/window.go:1114-1125`
 **Component:** `configureTransparency()`
 **Status:** Function exists but implements no actual transparency - only removes padding
 **Marker Type:** Misleading implementation with transparent overlay claims
@@ -106,7 +106,7 @@ if runtime.GOOS != "windows" {
 ---
 
 ### Finding #4
-**Location:** `/home/user/go/src/github.com/opd-ai/DDS/internal/ui/window.go:107-108`
+**Location:** `/home/user/go/src/github.com/opd-ai/DDS/lib/ui/window.go:107-108`
 **Component:** `configureAlwaysOnTop()`
 **Status:** Function is called but has limited implementation comment suggesting incomplete always-on-top support
 **Marker Type:** Comment about limited support + incomplete implementation
@@ -159,7 +159,7 @@ The current animations are placeholders. To add real animations:
 ---
 
 ### Finding #6
-**Location:** `/home/user/go/src/github.com/opd-ai/DDS/internal/platform/README.md:112-120`
+**Location:** `/home/user/go/src/github.com/opd-ai/DDS/lib/platform/README.md:112-120`
 **Component:** Platform version detection functions
 **Status:** Resolved - 2025-09-06 - commit:b1172c0
 **Marker Type:** "extensible placeholders" comment
@@ -187,7 +187,7 @@ Version detection functions are designed as extensible placeholders:
 ---
 
 ### Finding #7
-**Location:** `/home/user/go/src/github.com/opd-ai/DDS/internal/ui/README_BATTLE_UI.md:72`
+**Location:** `/home/user/go/src/github.com/opd-ai/DDS/lib/ui/README_BATTLE_UI.md:72`
 **Component:** Battle UI placeholder implementation
 **Status:** Battle UI components exist but documentation indicates "placeholder implementation ready for full battle system integration"
 **Marker Type:** "Placeholder implementation" in documentation

@@ -33,12 +33,12 @@ type CharacterInfo struct {
 ### Code Changes
 
 #### Files Modified
-- `internal/ui/network_overlay.go`: Enhanced with character distinction features
-- `internal/ui/network_overlay_test.go`: Updated tests for new functionality
-- `internal/ui/window.go`: Integration to set local character name
+- `lib/ui/network_overlay.go`: Enhanced with character distinction features
+- `lib/ui/network_overlay_test.go`: Updated tests for new functionality
+- `lib/ui/window.go`: Integration to set local character name
 
 #### Files Added
-- `internal/ui/network_overlay_character_distinction_test.go`: Comprehensive tests for character distinction functionality
+- `lib/ui/network_overlay_character_distinction_test.go`: Comprehensive tests for character distinction functionality
 
 ### API Changes
 

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/opd-ai/desktop-companion/internal/bot"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
-	"github.com/opd-ai/desktop-companion/internal/news"
+	"github.com/opd-ai/desktop-companion/lib/bot"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
+	"github.com/opd-ai/desktop-companion/lib/news"
 )
 
 // Battle animation constants based on JRPG Battle System plan

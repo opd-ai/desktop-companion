@@ -7,8 +7,8 @@ import (
 
 	"fyne.io/fyne/v2/test"
 
-	"github.com/opd-ai/desktop-companion/internal/character"
-	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/lib/character"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 func TestNewChatbotInterface(t *testing.T) {

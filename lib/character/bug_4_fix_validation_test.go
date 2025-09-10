@@ -6,7 +6,7 @@ package character
 import (
 	"testing"
 
-	"github.com/opd-ai/desktop-companion/internal/dialog"
+	"github.com/opd-ai/desktop-companion/lib/dialog"
 )
 
 func TestBug4FixValidation(t *testing.T) {

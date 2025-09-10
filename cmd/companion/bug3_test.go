@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/opd-ai/desktop-companion/internal/character"
+	"github.com/opd-ai/desktop-companion/lib/character"
 	"image"
 	"image/color"
 	"image/gif"

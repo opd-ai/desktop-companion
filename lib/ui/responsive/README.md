@@ -47,8 +47,8 @@ The responsive package provides adaptive UI layout management for cross-platform
 
 ```go
 import (
-    "github.com/opd-ai/desktop-companion/internal/platform"
-    "github.com/opd-ai/desktop-companion/internal/ui/responsive"
+    "github.com/opd-ai/desktop-companion/lib/platform"
+    "github.com/opd-ai/desktop-companion/lib/ui/responsive"
 )
 
 // Create platform-aware layout
@@ -129,13 +129,13 @@ The package includes comprehensive tests with 90.1% coverage:
 
 ```bash
 # Run all tests
-go test ./internal/ui/responsive/... -v
+go test ./lib/ui/responsive/... -v
 
 # Check coverage
-go test ./internal/ui/responsive/... -cover
+go test ./lib/ui/responsive/... -cover
 
 # Run benchmarks
-go test ./internal/ui/responsive/... -bench=.
+go test ./lib/ui/responsive/... -bench=.
 ```
 
 ### Test Categories
