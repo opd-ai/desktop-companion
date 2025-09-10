@@ -14,6 +14,11 @@ func TestRelationshipProgressionIntegration(t *testing.T) {
 		t.Fatalf("Failed to load romance character: %v", err)
 	}
 
+	// Disable news features for this test to avoid network timeouts
+	if card.NewsFeatures != nil {
+		card.NewsFeatures.Enabled = false
+	}
+
 	// Create character instance
 	character, err := New(card, "../../assets/characters/romance")
 	if err != nil {
@@ -57,8 +62,8 @@ func TestRelationshipProgressionIntegration(t *testing.T) {
 		response := character.HandleRomanceInteraction("compliment")
 		t.Logf("Compliment %d response: %s", i+1, response)
 
-		// Wait for cooldown to expire
-		time.Sleep(time.Second * 1)
+		// Wait for cooldown to expire (reduced for automated testing)
+		time.Sleep(time.Millisecond * 100)
 
 		stats := gameState.GetRomanceStats()
 		level := gameState.GetRelationshipLevel()
@@ -109,7 +114,7 @@ func TestRelationshipProgressionIntegration(t *testing.T) {
 		response := character.HandleRomanceInteraction("deep_conversation")
 		t.Logf("Deep conversation %d response: %s", i+1, response)
 
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * 100)
 
 		stats := gameState.GetRomanceStats()
 		level := gameState.GetRelationshipLevel()

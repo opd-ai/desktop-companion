@@ -193,6 +193,12 @@ func TestMultiplayerCharacter_PerformBattleAction(t *testing.T) {
 	mc.networkEnabled = true
 	mc.mu.Unlock()
 
+	// First initiate a battle to set currentBattleID
+	err = mc.InitiateBattle("opponent-456")
+	if err != nil {
+		t.Fatalf("Failed to initiate battle: %v", err)
+	}
+
 	// Test battle action
 	action := battle.BattleAction{
 		Type:     battle.ACTION_ATTACK,
