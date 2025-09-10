@@ -47,8 +47,8 @@ sudo pacman -S gcc pkg-config libgl libxrandr libxcursor libxinerama libxi
 
 ```bash
 # Clone and prepare
-git clone https://github.com/opd-ai/DDS
-cd DDS
+git clone https://github.com/opd-ai/desktop-companion
+cd desktop-companion
 
 # Install dependencies
 make deps
@@ -164,7 +164,7 @@ Build = 1
 Description = "A cross-platform virtual companion with AI-powered interactions"
 DeveloperName = "OPD AI"
 DeveloperID = "ai.opd"
-Website = "https://github.com/opd-ai/DDS"
+Website = "https://github.com/opd-ai/desktop-companion"
 ```
 
 ### Character Configuration

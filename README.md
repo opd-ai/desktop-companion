@@ -103,9 +103,10 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/opd-ai/DDS
-cd DDS
+```bash
+# Quick start
+git clone https://github.com/opd-ai/desktop-companion
+cd desktop-companion
 
 # Install dependencies
 go mod download
