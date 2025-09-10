@@ -94,20 +94,36 @@ android-setup:
 	@echo "  - Android NDK installed"
 	@echo "  - Java 8+ installed"
 	@echo "  - fyne CLI tool installed (already done)"
+	@echo ""
+	@echo "Current environment:"
+	@echo "  ANDROID_HOME: $(ANDROID_HOME)"
+	@if command -v adb >/dev/null 2>&1; then \
+		echo "  ADB: Available"; \
+	else \
+		echo "  ADB: Not found in PATH"; \
+	fi
+	@if [ -d "$(ANDROID_HOME)" ]; then \
+		echo "  Android SDK: Found"; \
+	else \
+		echo "  Android SDK: Not found or ANDROID_HOME not set"; \
+	fi
 
 # Build Android APK
 android-apk: $(BUILD_DIR)
 	@echo "Building Android APK..."
+	@echo "Copying source files to build directory..."
+	cp -r $(CMD_DIR)/* $(BUILD_DIR)/
 	cd $(BUILD_DIR) && fyne package --target android --app-id ai.opd.dds --name "Desktop Companion" \
 		--app-version "1.0.0" --app-build 1 --icon ../assets/app/icon.gif \
-		--src ../$(CMD_DIR) --release
+		--release
 
 # Build Android APK (debug version)
 android-debug: $(BUILD_DIR)
 	@echo "Building Android APK (debug)..."
+	@echo "Copying source files to build directory..."
+	cp -r $(CMD_DIR)/* $(BUILD_DIR)/
 	cd $(BUILD_DIR) && fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
-		--app-version "1.0.0-debug" --app-build 1 --icon ../assets/app/icon.gif \
-		--src ../$(CMD_DIR)
+		--app-version "1.0.0-debug" --app-build 1 --icon ../assets/app/icon.gif
 
 # Install APK to connected Android device
 android-install: android-apk
