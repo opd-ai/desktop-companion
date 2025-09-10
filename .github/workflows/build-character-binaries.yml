@@ -93,9 +93,15 @@ jobs:
           build-tools: 33.0.2
           ndk-version: 25.2.9519653
           cmdline-tools: latest
+        env:
+          # Fix tar extraction conflicts by allowing overwrites
+          TAR_OPTIONS: "--overwrite"
       
       - name: Install dependencies
         run: |
+          # Clean any corrupted module cache first
+          go clean -modcache
+          
           go mod download
           go mod tidy
           
@@ -212,28 +218,35 @@ jobs:
           # Special handling for Android builds with NDK
           if [[ "${{ matrix.goos }}" == "android" ]]; then
             echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
-            sudo cp -r -v . $(go env GOROOT)/github.com-opd-ai-desktop-companion
             
             # Create temporary build directory
             temp_build_dir=$(mktemp -d)
             trap "rm -rf $temp_build_dir" EXIT
             
-            # Copy embedded character source and ensure proper module context
-            cp -r cmd/${{ matrix.character }}-embedded/* $temp_build_dir/
+            # Copy entire workspace to temporary directory to maintain module structure
+            echo "Copying workspace to temporary build directory..."
+            cp -r . "$temp_build_dir/workspace"
             
-            # Copy necessary parent module files for the replace directive to work
-            # The go.mod in the embedded character uses 'replace github.com/opd-ai/desktop-companion => ../../'
-            # So we need the parent module available at the right relative path
-            mkdir -p $temp_build_dir/../../
-            cp -r . "$temp_build_dir/../../" 2>/dev/null || true
+            # Create the build directory within the workspace copy
+            build_dir="$temp_build_dir/workspace/cmd/${{ matrix.character }}-embedded"
             
-            # The embedded character has its own go.mod, but ensure go.sum is available
-            if [[ ! -f "$temp_build_dir/go.sum" ]]; then
-              cp go.sum $temp_build_dir/ 2>/dev/null || true
+            # Ensure the embedded character directory exists
+            if [[ ! -d "$build_dir" ]]; then
+              echo "❌ Embedded character directory not found: $build_dir"
+              exit 1
+            fi
+            
+            # Copy main go.mod and go.sum to the build directory
+            cp go.mod go.sum "$build_dir/" 2>/dev/null || true
+            
+            # Ensure go.mod exists in build directory
+            if [[ ! -f "$build_dir/go.mod" ]]; then
+              echo "❌ go.mod not found in build directory"
+              exit 1
             fi
             
             # Create FyneApp.toml for Android metadata
-            cat > $temp_build_dir/FyneApp.toml << EOF
+            cat > $build_dir/FyneApp.toml << EOF
           [Details]
           Icon = "Icon.png"
           Name = "${{ matrix.character }} Companion"
@@ -247,41 +260,75 @@ jobs:
             
             # Create app icon (use character-specific or default)
             if [[ -f "assets/characters/${{ matrix.character }}/icon.png" ]]; then
-              cp "assets/characters/${{ matrix.character }}/icon.png" $temp_build_dir/Icon.png
+              cp "assets/characters/${{ matrix.character }}/icon.png" $build_dir/Icon.png
             elif [[ -f "assets/app/icon.png" ]]; then
-              cp "assets/app/icon.png" $temp_build_dir/Icon.png
+              cp "assets/app/icon.png" $build_dir/Icon.png
             else
               # Create a simple 512x512 icon as fallback
               convert -size 512x512 xc:lightblue \
                 -pointsize 72 -fill black -gravity center \
-                -annotate +0+0 "DDS" $temp_build_dir/Icon.png 2>/dev/null || \
-              echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $temp_build_dir/Icon.png
+                -annotate +0+0 "DDS" $build_dir/Icon.png 2>/dev/null || \
+              echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $build_dir/Icon.png
             fi
             
             # Build APK with fyne package
-            cd $temp_build_dir
+            cd $build_dir
             echo "Building APK with NDK toolchain (CC: $CC)..."
+            echo "Working directory: $(pwd)"
+            echo "Module structure:"
+            ls -la
             
             # Set up Go module workspace for the embedded character
             echo "Setting up module workspace for Android build..."
             export GOWORK=off  # Disable workspaces for clean module resolution
+            
+            # Clean and prepare module dependencies
+            echo "Cleaning module cache and preparing dependencies..."
+            go clean -modcache 2>/dev/null || true
+            go mod download
             go mod tidy
             
+            # Verify module resolution before building
+            echo "Verifying module resolution..."
+            if ! go list -m all > /dev/null 2>&1; then
+              echo "❌ Module resolution failed"
+              echo "go.mod content:"
+              cat go.mod
+              echo "Trying to fix module issues..."
+              
+              # Try to resolve module issues by going to workspace root
+              cd "$temp_build_dir/workspace"
+              go mod tidy
+              cd "$build_dir"
+              go mod tidy
+            fi
+            
             # Build with release configuration for optimized APK
+            echo "Starting APK build process..."
+            echo "Environment variables:"
+            echo "  GOOS=$GOOS"
+            echo "  GOARCH=$GOARCH" 
+            echo "  CGO_ENABLED=$CGO_ENABLED"
+            echo "  CC=$CC"
+            
             if ! fyne package \
               --target "android/${{ matrix.goarch }}" \
               --name "${{ matrix.character }} Companion" \
               --app-id "ai.opd.${{ matrix.character }}" \
               --app-version "1.0.0" \
-              --release; then
+              --release 2>&1; then
               
               echo "Release build failed, trying debug build..."
               if ! fyne package \
                 --target "android/${{ matrix.goarch }}" \
                 --name "${{ matrix.character }} Companion" \
                 --app-id "ai.opd.${{ matrix.character }}" \
-                --app-version "1.0.0"; then
+                --app-version "1.0.0" 2>&1; then
                 echo "Android APK build failed completely"
+                echo "Build directory contents:"
+                ls -la
+                echo "Go environment:"
+                go env
                 exit 1
               fi
             fi
@@ -290,19 +337,26 @@ jobs:
             apk_file=$(find . -name "*.apk" -type f | head -1)
             if [[ -n "$apk_file" ]]; then
               output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
-              mv "$apk_file" "../build/$output_name"
+              # Move to the main build directory (relative to workspace root)
+              mkdir -p "$temp_build_dir/workspace/build"
+              mv "$apk_file" "$temp_build_dir/workspace/build/$output_name"
+              
+              # Copy back to the original workspace
+              cp "$temp_build_dir/workspace/build/$output_name" "$GITHUB_WORKSPACE/build/$output_name"
               echo "✓ Built Android APK: $output_name"
               
               # Get APK info
               if command -v aapt >/dev/null 2>&1; then
                 echo "APK Information:"
-                aapt dump badging "../build/$output_name" | head -5
+                aapt dump badging "$GITHUB_WORKSPACE/build/$output_name" | head -5
               fi
               
               # Show file size
-              ls -lh "../build/$output_name"
+              ls -lh "$GITHUB_WORKSPACE/build/$output_name"
             else
               echo "No APK file generated"
+              echo "Files in build directory:"
+              find . -type f -name "*.apk" -o -name "*.aar" -o -name "*.so" | head -10
               exit 1
             fi
             
