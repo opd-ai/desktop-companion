@@ -12,6 +12,8 @@ on:
 
 env:
   GO_VERSION: '1.21'
+  ANDROID_NDK_VERSION: '25.2.9519653'  # Pin to compatible NDK version
+  FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
   
 jobs:
   generate-matrix:
@@ -106,6 +108,8 @@ jobs:
         with:
           cmdline-tools-version: 12266719
           packages: 'tools platform-tools build-tools;33.0.2 platforms;android-33 ndk;25.2.9519653'
+          # Accept all Android SDK licenses automatically
+          accept-android-sdk-licenses: true
         continue-on-error: false
       
       - name: Install dependencies
@@ -168,6 +172,26 @@ jobs:
         run: |
           echo "Configuring NDK toolchain for Android builds..."
           
+          # Force use of NDK version 25.2.9519653 (compatible with Fyne v2.4.5)
+          export ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653
+          export ANDROID_NDK_HOME=$ANDROID_NDK_ROOT
+          
+          # Verify NDK exists and fallback if needed
+          if [[ ! -d "$ANDROID_NDK_ROOT" ]]; then
+            echo "NDK 25.2.9519653 not found, checking available versions..."
+            ls -la /usr/local/lib/android/sdk/ndk/ || true
+            
+            # Try to find any 25.x version
+            NDK_25_DIR=$(find /usr/local/lib/android/sdk/ndk -maxdepth 1 -name "25.*" -type d | head -1)
+            if [[ -n "$NDK_25_DIR" ]]; then
+              export ANDROID_NDK_ROOT="$NDK_25_DIR"
+              echo "Found compatible NDK: $ANDROID_NDK_ROOT"
+            else
+              echo "❌ No compatible NDK version found. Fyne v2.4.5 requires NDK 25.x"
+              exit 1
+            fi
+          fi
+          
           # Set up NDK toolchain for ARM64 (primary Android architecture)
           export CC=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang
           export CXX=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++
@@ -184,8 +208,13 @@ jobs:
           export GOOS=android
           export GOARCH=${{ matrix.goarch }}
           export CGO_ENABLED=1
+          # Add critical CGO flags for Android NDK compatibility
+          export CGO_CFLAGS="-I$ANDROID_NDK_ROOT/sysroot/usr/include"
+          export CGO_LDFLAGS="-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm/usr/lib"
           
           # Add environment variables for subsequent steps
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
           echo "CC=$CC" >> $GITHUB_ENV
           echo "CXX=$CXX" >> $GITHUB_ENV
           echo "AR=$AR" >> $GITHUB_ENV
@@ -193,6 +222,8 @@ jobs:
           echo "GOOS=android" >> $GITHUB_ENV
           echo "GOARCH=${{ matrix.goarch }}" >> $GITHUB_ENV
           echo "CGO_ENABLED=1" >> $GITHUB_ENV
+          echo "CGO_CFLAGS=-I$ANDROID_NDK_ROOT/sysroot/usr/include" >> $GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
           
           # Verify NDK tools exist
           if [[ -f "$CC" ]]; then
@@ -224,6 +255,20 @@ jobs:
           # Direct Android build with minimal module setup
           if [[ "${{ matrix.goos }}" == "android" ]]; then
             echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
+            
+            # Validate NDK environment before building
+            echo "=== Android Build Environment Validation ==="
+            echo "ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
+            echo "CC: $CC"
+            echo "CXX: $CXX"
+            echo "CGO_ENABLED: $CGO_ENABLED"
+            
+            # Test compiler toolchain
+            if ! $CC --version >/dev/null 2>&1; then
+              echo "❌ C compiler failed: $CC"
+              exit 1
+            fi
+            echo "✅ C compiler validated: $CC"
             
             # Create temporary build directory
             temp_build_dir=$(mktemp -d)
@@ -270,46 +315,60 @@ jobs:
             echo "  GOOS=$GOOS"
             echo "  GOARCH=$GOARCH" 
             echo "  CGO_ENABLED=$CGO_ENABLED"
+            echo "  ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
             
-            # Build APK with direct dependency resolution
-            if ! fyne package \
+            # Build APK with direct dependency resolution and better error handling
+            build_success=false
+            if fyne package \
               --target "android/${{ matrix.goarch }}" \
               --name "${{ matrix.character }} Companion" \
               --app-id "ai.opd.${{ matrix.character }}" \
               --app-version "1.0.0" \
               --release 2>&1; then
-              
-              # Try debug build if release fails
-              fyne package \
+              build_success=true
+            else
+              echo "Release build failed, trying debug build..."
+              if fyne package \
                 --target "android/${{ matrix.goarch }}" \
                 --name "${{ matrix.character }} Companion" \
                 --app-id "ai.opd.${{ matrix.character }}" \
-                --app-version "1.0.0"
+                --app-version "1.0.0"; then
+                build_success=true
+              else
+                echo "❌ Both release and debug builds failed"
+                echo "Checking for common issues:"
+                echo "  - NDK version: $(ls -la $ANDROID_NDK_ROOT 2>/dev/null || echo 'NDK not found')"
+                echo "  - Go version: $(go version)"
+                echo "  - Fyne version: $(fyne version)"
+                exit 1
+              fi
             fi
             
-            # Find and move the generated APK
-            apk_file=$(find . -name "*.apk" -type f | head -1)
-            if [[ -n "$apk_file" ]]; then
-              output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
-              
-              # Move to build directory  
-              mkdir -p "$GITHUB_WORKSPACE/build"
-              mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
-              echo "✓ Built Android APK: $output_name"
-              
-              # Get APK info
-              if command -v aapt >/dev/null 2>&1; then
-                echo "APK Information:"
-                aapt dump badging "$GITHUB_WORKSPACE/build/$output_name" | head -5
+            if [[ "$build_success" == "true" ]]; then
+              # Find and move the generated APK
+              apk_file=$(find . -name "*.apk" -type f | head -1)
+              if [[ -n "$apk_file" ]]; then
+                output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+                
+                # Move to build directory  
+                mkdir -p "$GITHUB_WORKSPACE/build"
+                mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
+                echo "✓ Built Android APK: $output_name"
+                
+                # Get APK info
+                if command -v aapt >/dev/null 2>&1; then
+                  echo "APK Information:"
+                  aapt dump badging "$GITHUB_WORKSPACE/build/$output_name" | head -5
+                fi
+                
+                # Show file size
+                ls -lh "$GITHUB_WORKSPACE/build/$output_name"
+              else
+                echo "No APK file generated"
+                echo "Files in build directory:"
+                find . -type f -name "*.apk" -o -name "*.aar" -o -name "*.so" | head -10
+                exit 1
               fi
-              
-              # Show file size
-              ls -lh "$GITHUB_WORKSPACE/build/$output_name"
-            else
-              echo "No APK file generated"
-              echo "Files in build directory:"
-              find . -type f -name "*.apk" -o -name "*.aar" -o -name "*.so" | head -10
-              exit 1
             fi
             
           else
