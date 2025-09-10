@@ -322,17 +322,25 @@ func handleTriggerEventFlag(char *character.Character) error {
 func checkDisplayAvailable() error {
 	// Check for X11 display on Linux/Unix systems
 	display := os.Getenv("DISPLAY")
-	if display == "" {
-		return fmt.Errorf("no display available - DISPLAY environment variable is not set.\n" +
+	waylandDisplay := os.Getenv("WAYLAND_DISPLAY")
+
+	// Check if any display environment is available
+	if display == "" && waylandDisplay == "" {
+		return fmt.Errorf("no display available - neither X11 (DISPLAY) nor Wayland (WAYLAND_DISPLAY) environment is available.\n" +
 			"This application requires a graphical desktop environment to run.\n" +
 			"Please run from a desktop session or use X11 forwarding for remote connections")
 	}
 
-	// For additional safety, we could also check for Wayland
-	waylandDisplay := os.Getenv("WAYLAND_DISPLAY")
-	if display == "" && waylandDisplay == "" {
-		return fmt.Errorf("no display available - neither X11 (DISPLAY) nor Wayland (WAYLAND_DISPLAY) environment is available.\n" +
-			"This application requires a graphical desktop environment to run")
+	// Additional detection for headless systems and SSH sessions
+	if os.Getenv("SSH_CONNECTION") != "" || os.Getenv("SSH_CLIENT") != "" {
+		log.Println("Warning: Running in SSH session - GUI may not be available")
+		log.Println("If you encounter graphics errors, ensure X11 forwarding is enabled (ssh -X)")
+	}
+
+	// Check for headless system indicators
+	if os.Getenv("XDG_CURRENT_DESKTOP") == "" && os.Getenv("DESKTOP_SESSION") == "" && display != "" {
+		log.Println("Warning: No desktop environment detected - running in minimal graphics mode")
+		log.Println("Character display may have limited functionality")
 	}
 
 	return nil
