@@ -14,7 +14,7 @@ import (
 )
 
 // mainTemplate generates a standalone Go application with embedded character assets
-// Uses Go's standard library approach - no external dependencies for asset embedding
+// With no internal packages, this is a straightforward single-file application
 const mainTemplate = `package main
 
 import (
@@ -239,9 +239,14 @@ func generateEmbeddedApp(characterName, characterJSON string, animations map[str
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	// Create go.mod file for the embedded character (needed for GitHub Actions)
+	// Create go.mod file for the embedded character - simple inheritance approach
 	if err := generateGoMod(characterName, outputDir); err != nil {
 		return fmt.Errorf("failed to generate go.mod: %w", err)
+	}
+
+	// Copy go.sum from main project for dependency resolution
+	if err := copyGoSum(outputDir); err != nil {
+		return fmt.Errorf("failed to copy go.sum: %w", err)
 	}
 
 	fmt.Printf("  → To build: go build -o %s-companion %s/main.go\n", characterName, outputDir)
@@ -249,26 +254,28 @@ func generateEmbeddedApp(characterName, characterJSON string, animations map[str
 	return nil
 }
 
-// generateGoMod creates a simplified go.mod file for the embedded character
-// Since there are no internal packages, module resolution is much simpler
+// generateGoMod creates a minimal go.mod file for the embedded character
+// With no internal packages, we can use the main module directly
 func generateGoMod(characterName, outputDir string) error {
-	// Get the absolute path to the project root
+	// Get the project root for the replace directive
 	projectRoot, err := filepath.Abs(".")
 	if err != nil {
 		return fmt.Errorf("failed to get project root path: %w", err)
 	}
 
+	// Since there are no internal packages, we can create a minimal go.mod
 	goModContent := fmt.Sprintf(`module github.com/opd-ai/desktop-companion/cmd/%s-embedded
 
 go 1.21
 
-// Simple replace directive - use absolute path for reliable module resolution
-replace github.com/opd-ai/desktop-companion => %s
-
+// Direct dependency on main module
 require (
 	fyne.io/fyne/v2 v2.4.5
 	github.com/opd-ai/desktop-companion v0.0.0-00010101000000-000000000000
 )
+
+// Replace directive using absolute path for reliability
+replace github.com/opd-ai/desktop-companion => %s
 `, characterName, projectRoot)
 
 	goModFile := filepath.Join(outputDir, "go.mod")
@@ -276,6 +283,32 @@ require (
 		return fmt.Errorf("failed to write go.mod file: %w", err)
 	}
 
-	fmt.Printf("  ✓ Generated simplified go.mod for embedded character\n")
+	fmt.Printf("  ✓ Generated minimal go.mod for embedded character\n")
+	return nil
+}
+
+// copyGoSum copies the main project's go.sum to the embedded character directory
+// This ensures all dependencies are properly validated
+func copyGoSum(outputDir string) error {
+	sourcePath := "go.sum"
+	destPath := filepath.Join(outputDir, "go.sum")
+
+	// Check if source go.sum exists
+	if _, err := os.Stat(sourcePath); err != nil {
+		// If no go.sum exists, that's ok - it will be generated
+		return nil
+	}
+
+	// Copy go.sum
+	sourceData, err := os.ReadFile(sourcePath)
+	if err != nil {
+		return fmt.Errorf("failed to read source go.sum: %w", err)
+	}
+
+	if err := os.WriteFile(destPath, sourceData, 0644); err != nil {
+		return fmt.Errorf("failed to write go.sum: %w", err)
+	}
+
+	fmt.Printf("  ✓ Copied go.sum for dependency validation\n")
 	return nil
 }

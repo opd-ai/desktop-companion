@@ -103,7 +103,7 @@ jobs:
           go mod download
           go mod tidy
           
-          # Verify basic module structure (simplified since no internal packages)
+          # Verify basic module structure (no internal packages - direct inheritance)
           echo "=== Module verification ==="
           echo "Module path: $(go list -m)"
           echo "Go version: $(go version)"
@@ -141,7 +141,7 @@ jobs:
             -character ${{ matrix.character }} \
             -output cmd/${{ matrix.character }}-embedded
           
-          # Verify the generated embedded character (simplified)
+          # Verify the generated embedded character
           echo "=== Embedded character verification ==="
           echo "Generated files:"
           ls -la cmd/${{ matrix.character }}-embedded/
@@ -208,18 +208,18 @@ jobs:
         run: |
           mkdir -p build
           
-          # Special handling for Android builds (simplified module handling)
+          # Direct Android build with minimal module setup
           if [[ "${{ matrix.goos }}" == "android" ]]; then
             echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
             
-            # Create temporary build directory (simplified approach)
+            # Create temporary build directory
             temp_build_dir=$(mktemp -d)
             trap "rm -rf $temp_build_dir" EXIT
             
             # Copy embedded character to temp directory
             cp -r cmd/${{ matrix.character }}-embedded/* "$temp_build_dir/"
             
-            # Since no internal packages, just copy main module files
+            # Copy main module files directly
             cp go.mod go.sum "$temp_build_dir/"
             
             # Create FyneApp.toml for Android metadata
@@ -244,12 +244,12 @@ jobs:
               echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $temp_build_dir/Icon.png
             fi
             
-            # Build APK with simplified module handling
+            # Build APK with direct module inheritance
             cd $temp_build_dir
-            echo "Building APK with simplified module resolution..."
+            echo "Building APK with direct module inheritance..."
             echo "Working directory: $(pwd)"
             
-            # Simple module preparation (no complex workspace setup needed)
+            # Module setup - direct inheritance from parent
             go mod download
             go mod tidy
             
@@ -259,7 +259,7 @@ jobs:
             echo "  GOARCH=$GOARCH" 
             echo "  CGO_ENABLED=$CGO_ENABLED"
             
-            # Build APK with simplified command (no complex fallback logic needed)
+            # Build APK with direct dependency resolution
             if ! fyne package \
               --target "android/${{ matrix.goarch }}" \
               --name "${{ matrix.character }} Companion" \
@@ -301,12 +301,12 @@ jobs:
             fi
             
           else
-            # Standard desktop builds (simplified)
+            # Direct build - no complex internal package resolution needed
             echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
             
             binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
             
-            # Simple direct build since no internal packages to resolve
+            # Simple build using embedded character module
             go build -ldflags="-s -w" \
               -o "build/$binary_name" \
               ./cmd/${{ matrix.character }}-embedded
