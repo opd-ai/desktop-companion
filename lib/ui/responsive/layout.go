@@ -59,7 +59,9 @@ func NewLayout(platform *platform.PlatformInfo, app fyne.App) *Layout {
 	}
 
 	// Fallback to reasonable defaults if screen detection fails or in test environment
-	if screenSize.Width <= 10 || screenSize.Height <= 10 {
+	// Test environments often have small canvas sizes that don't reflect real screen sizes
+	if screenSize.Width <= 10 || screenSize.Height <= 10 ||
+		(screenSize.Width <= 100 && screenSize.Height <= 100) {
 		if platform != nil && platform.IsMobile() {
 			screenSize = fyne.NewSize(360, 640) // Common mobile resolution
 		} else {
