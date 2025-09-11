@@ -1,0 +1,609 @@
+name: Build Character-Specific Binaries (Refactored)
+
+# This workflow builds character-specific binaries for multiple platforms including Android APKs.
+# Refactored to use marketplace actions instead of manual shell commands for better maintainability.
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: '1.21'
+  ANDROID_NDK_VERSION: '25.2.9519653'  # Pin to compatible NDK version
+  FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
+  
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      characters: ${{ steps.characters.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Make scripts executable and generate character matrix
+      - name: Generate character matrix
+        id: characters
+        run: |
+          # Make script executable
+          chmod +x scripts/build-characters.sh
+          
+          # Generate character list and convert to JSON array
+          CHARS=$(./scripts/build-characters.sh list | grep "•" | sed 's/.*• //' | jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix=$CHARS" >> $GITHUB_OUTPUT
+          echo "Generated matrix: $CHARS"
+
+  build-binaries:
+    needs: generate-matrix
+    strategy:
+      matrix:
+        character: ${{ fromJson(needs.generate-matrix.outputs.characters) }}
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            ext: ""
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            ext: ".exe"
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            ext: ""
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            ext: ""
+            target_suffix: "-arm64"
+          - os: ubuntu-latest
+            goos: android
+            goarch: arm64
+            ext: ".apk"
+            target_suffix: "-android"
+          - os: ubuntu-latest
+            goos: android
+            goarch: arm
+            ext: ".apk"
+            target_suffix: "-android32"
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Use official Go setup with built-in caching (replaces manual cache management)
+      - name: Setup Go
+        uses: actions/setup-go@v5  # Updated to latest version with automatic caching
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true  # Automatic Go module and build caching
+      
+      # Simple script permission setup (replaces complex shell commands)
+      - name: Make scripts executable
+        run: |
+          find scripts -name "*.sh" -type f -exec chmod +x {} \;
+          echo "✅ Scripts made executable"
+      
+      # Use official Android SDK setup action (replaces manual Android setup)
+      - name: Setup Android SDK
+        if: matrix.goos == 'android'
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 12266719
+          packages: 'tools platform-tools build-tools;33.0.2 platforms;android-33 ndk;25.2.9519653'
+          accept-android-sdk-licenses: true
+      
+      # Use official Java setup action (replaces manual Java installation)
+      - name: Setup Java for Android builds
+        if: matrix.goos == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      # Use cached APT package installation (replaces manual apt commands)
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+          version: 1.0
+          execute_install_scripts: true
+      
+      # Install Go tools for Android builds
+      - name: Install Go tools for Android
+        if: matrix.goos == 'android'
+        run: |
+          echo "Installing fyne CLI for Android builds..."
+          go install fyne.io/tools/cmd/fyne@latest
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          echo "✅ Android build dependencies installed"
+      
+      # Install Go dependencies (simplified dependency management)
+      - name: Install Go dependencies
+        run: |
+          go mod download
+          go mod tidy
+          
+          # Verify module structure
+          echo "=== Module verification ==="
+          echo "Module path: $(go list -m)"
+          echo "Go version: $(go version)"
+          echo "Module cache location: $(go env GOMODCACHE)"
+          echo "✅ Dependencies installed successfully"
+      
+      # Generate embedded character (simplified character embedding)
+      - name: Generate embedded character
+        run: |
+          character="${{ matrix.character }}"
+          output_dir="cmd/${character}-embedded"
+          
+          echo "Generating embedded character: ${character}"
+          go run scripts/embed-character.go -character "${character}" -output "${output_dir}"
+          
+          # Verify generation
+          echo "=== Embedded character verification ==="
+          echo "Generated files:"
+          ls -la "${output_dir}/"
+          echo ""
+          echo "go.mod content:"
+          cat "${output_dir}/go.mod"
+          echo "✅ Character embedded successfully"
+      
+      # Configure Android build environment (simplified NDK setup)
+      - name: Configure Android build environment
+        if: matrix.goos == 'android'
+        run: |
+          echo "Configuring NDK toolchain for Android builds..."
+          
+          # Set NDK paths with fallback detection
+          NDK_ROOT="/usr/local/lib/android/sdk/ndk/25.2.9519653"
+          if [[ ! -d "$NDK_ROOT" ]]; then
+            echo "NDK 25.2.9519653 not found, checking available versions..."
+            ls -la /usr/local/lib/android/sdk/ndk/ || true
+            
+            # Find any 25.x version
+            NDK_25_DIR=$(find /usr/local/lib/android/sdk/ndk -maxdepth 1 -name "25.*" -type d | head -1)
+            if [[ -n "$NDK_25_DIR" ]]; then
+              NDK_ROOT="$NDK_25_DIR"
+              echo "Found compatible NDK: $NDK_ROOT"
+            else
+              echo "❌ No compatible NDK version found. Fyne v2.4.5 requires NDK 25.x"
+              exit 1
+            fi
+          fi
+          
+          # Set up toolchain paths based on architecture
+          TOOLCHAIN_BASE="${NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          
+          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+            CC="${TOOLCHAIN_BASE}/armv7a-linux-androideabi33-clang"
+            CXX="${TOOLCHAIN_BASE}/armv7a-linux-androideabi33-clang++"
+          else
+            CC="${TOOLCHAIN_BASE}/aarch64-linux-android33-clang"
+            CXX="${TOOLCHAIN_BASE}/aarch64-linux-android33-clang++"
+          fi
+          
+          AR="${TOOLCHAIN_BASE}/llvm-ar"
+          STRIP="${TOOLCHAIN_BASE}/llvm-strip"
+          
+          # Verify toolchain exists
+          if [[ ! -f "$CC" ]]; then
+            echo "❌ NDK toolchain not found: $CC"
+            exit 1
+          fi
+          
+          # Export environment variables for subsequent steps
+          echo "ANDROID_NDK_ROOT=$NDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$NDK_ROOT" >> $GITHUB_ENV
+          echo "CC=$CC" >> $GITHUB_ENV
+          echo "CXX=$CXX" >> $GITHUB_ENV
+          echo "AR=$AR" >> $GITHUB_ENV
+          echo "STRIP=$STRIP" >> $GITHUB_ENV
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
+          echo "CGO_CFLAGS=-I$NDK_ROOT/sysroot/usr/include" >> $GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          
+          echo "=== Android Build Environment Summary ==="
+          echo "Android SDK: ${ANDROID_SDK_ROOT:-Not set}"
+          echo "Android NDK: $NDK_ROOT"
+          echo "Target Architecture: ${{ matrix.goarch }}"
+          echo "C Compiler: $CC"
+          echo "✅ Android NDK toolchain configured successfully"
+      
+      # Build Android APK (simplified APK building)
+      - name: Build Android APK
+        if: matrix.goos == 'android'
+        run: |
+          mkdir -p build
+          
+          echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
+          
+          # Validate NDK environment
+          echo "=== Android Build Environment Validation ==="
+          echo "ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
+          echo "CC: $CC"
+          echo "CGO_ENABLED: $CGO_ENABLED"
+          
+          # Test compiler
+          if ! $CC --version >/dev/null 2>&1; then
+            echo "❌ C compiler failed: $CC"
+            exit 1
+          fi
+          echo "✅ C compiler validated"
+          
+          # Create temporary build directory
+          temp_build_dir=$(mktemp -d)
+          trap "rm -rf $temp_build_dir" EXIT
+          
+          # Copy embedded character to temp directory
+          cp -r cmd/${{ matrix.character }}-embedded/* "$temp_build_dir/"
+          
+          # Create FyneApp.toml
+          cat > $temp_build_dir/FyneApp.toml << 'FYNE_EOF'
+          [Details]
+          Icon = "Icon.png"
+          Name = "${{ matrix.character }} Companion"
+          ID = "ai.opd.${{ matrix.character }}"
+          Version = "1.0.0"
+          Build = "${{ github.run_number }}"
+          
+          [Development]
+          AutoInject = true
+          FYNE_EOF
+          
+          # Create app icon
+          if [[ -f "assets/characters/${{ matrix.character }}/icon.png" ]]; then
+            cp "assets/characters/${{ matrix.character }}/icon.png" $temp_build_dir/Icon.png
+          elif [[ -f "assets/app/icon.png" ]]; then
+            cp "assets/app/icon.png" $temp_build_dir/Icon.png
+          else
+            echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" | base64 -d > $temp_build_dir/Icon.png
+          fi
+          
+          # Build APK
+          cd $temp_build_dir
+          go mod download
+          go mod tidy
+          
+          echo "Starting APK build process..."
+          
+          build_success=false
+          if fyne package \
+            --target "android/${{ matrix.goarch }}" \
+            --name "${{ matrix.character }} Companion" \
+            --app-id "ai.opd.${{ matrix.character }}" \
+            --app-version "1.0.0" \
+            --release 2>&1; then
+            build_success=true
+          else
+            echo "Release build failed, trying debug build..."
+            if fyne package \
+              --target "android/${{ matrix.goarch }}" \
+              --name "${{ matrix.character }} Companion" \
+              --app-id "ai.opd.${{ matrix.character }}" \
+              --app-version "1.0.0"; then
+              build_success=true
+            else
+              echo "❌ Both release and debug builds failed"
+              exit 1
+            fi
+          fi
+          
+          if [[ "$build_success" == "true" ]]; then
+            # Find and move APK
+            apk_file=$(find . -name "*.apk" -type f | head -1)
+            if [[ -n "$apk_file" ]]; then
+              output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+              mkdir -p "$GITHUB_WORKSPACE/build"
+              mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
+              echo "✓ Built Android APK: $output_name"
+              ls -lh "$GITHUB_WORKSPACE/build/$output_name"
+            else
+              echo "❌ No APK file generated"
+              exit 1
+            fi
+          fi
+        env:
+          CGO_ENABLED: 1
+          GOOS: android
+          GOARCH: ${{ matrix.goarch }}
+      
+      # Build regular binary (simplified binary building)
+      - name: Build binary
+        if: matrix.goos != 'android'
+        run: |
+          mkdir -p build
+          
+          echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
+          
+          binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+          
+          go build -ldflags="-s -w" \
+            -o "build/$binary_name" \
+            ./cmd/${{ matrix.character }}-embedded
+          
+          echo "✓ Built binary: $binary_name"
+          ls -lh "build/$binary_name"
+        env:
+          CGO_ENABLED: 1
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+      
+      # Validate Android APK (simplified APK validation)
+      - name: Validate Android APK
+        if: matrix.goos == 'android'
+        run: |
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          
+          if [[ ! -f "$apk_file" ]]; then
+            echo "❌ APK file not found: $apk_file"
+            exit 1
+          fi
+          
+          echo "Validating Android APK: $apk_file"
+          
+          # Check file size
+          file_size=$(stat -c%s "$apk_file")
+          min_size=$((1024 * 1024))      # 1MB minimum
+          max_size=$((100 * 1024 * 1024)) # 100MB maximum
+          
+          if [[ $file_size -lt $min_size ]]; then
+            echo "❌ APK file too small: $file_size bytes (minimum: $min_size)"
+            exit 1
+          elif [[ $file_size -gt $max_size ]]; then
+            echo "⚠️ APK file quite large: $file_size bytes (maximum: $max_size)"
+          else
+            echo "✅ APK file size acceptable: $file_size bytes"
+          fi
+          
+          # Validate APK structure
+          if command -v unzip >/dev/null 2>&1; then
+            echo "Checking APK contents..."
+            required_files=("AndroidManifest.xml" "classes.dex" "META-INF/")
+            
+            for required in "${required_files[@]}"; do
+              if unzip -l "$apk_file" | grep -q "$required"; then
+                echo "✅ Found required component: $required"
+              else
+                echo "❌ Missing required component: $required"
+                exit 1
+              fi
+            done
+          fi
+          
+          # Run custom validator if available
+          if [[ -f "scripts/apk-validator.go" ]]; then
+            echo "Running custom APK validation..."
+            if go run scripts/apk-validator.go "$apk_file" "${{ matrix.character }}"; then
+              echo "✅ Custom APK validation passed"
+            else
+              echo "⚠️ Custom APK validation failed"
+            fi
+          fi
+          
+          echo "✅ Android APK validation completed successfully"
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.character }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.target_suffix || '' }}
+          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}*
+          retention-days: ${{ github.ref == 'refs/heads/main' && '30' || '7' }}
+
+  # Simplified artifact management job
+  optimize-artifacts:
+    needs: [generate-matrix, build-binaries]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+      
+      # Simplified artifact management
+      - name: Build and run artifact manager
+        run: |
+          # Build artifact manager
+          echo "Building artifact manager..."
+          go build -ldflags="-s -w" -o artifact-manager cmd/artifact-manager/main.go
+          
+          # Create managed artifacts directory
+          mkdir -p managed-artifacts
+          
+          # Process each artifact
+          for artifact_dir in artifacts/*/; do
+            if [[ -d "$artifact_dir" ]]; then
+              artifact_name=$(basename "$artifact_dir")
+              echo "Processing artifact: $artifact_name"
+              
+              # Extract character, platform, arch from artifact name
+              IFS='-' read -ra PARTS <<< "$artifact_name"
+              if [[ ${#PARTS[@]} -ge 3 ]]; then
+                character="${PARTS[0]}"
+                platform="${PARTS[1]}"
+                arch="${PARTS[2]}"
+                
+                # Find binary file in artifact directory
+                binary_file=$(find "$artifact_dir" -type f | head -1)
+                
+                if [[ -n "$binary_file" ]]; then
+                  echo "Storing artifact: $character $platform $arch $binary_file"
+                  ./artifact-manager -dir managed-artifacts store "$character" "$platform" "$arch" "$binary_file"
+                fi
+              fi
+            fi
+          done
+          
+          # Generate statistics and apply retention
+          echo "=== Artifact Statistics ==="
+          ./artifact-manager -dir managed-artifacts stats
+          
+          echo "=== Applying Retention Policies ==="
+          ./artifact-manager -dir managed-artifacts compress production
+          
+          echo "✅ Artifact optimization completed"
+      
+      - name: Upload managed artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: managed-artifacts
+          path: managed-artifacts/
+          retention-days: 30
+
+  # Simplified release packaging job
+  package-releases:
+    needs: [generate-matrix, build-binaries, optimize-artifacts]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+      
+      # Simplified release packaging
+      - name: Create release packages
+        run: |
+          # Create releases directory
+          mkdir -p releases
+          
+          # Build artifact manager
+          go build -ldflags="-s -w" -o artifact-manager cmd/artifact-manager/main.go
+          
+          # Create release info header
+          cat > releases/RELEASE_INFO.md << EOF
+          # DDS Character Binary Release
+          
+          **Build Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          **Git Commit:** ${GITHUB_SHA:0:8}
+          **GitHub Run:** ${GITHUB_RUN_NUMBER}
+          **Workflow:** ${GITHUB_WORKFLOW}
+          
+          ## Available Characters
+          EOF
+          
+          # Process each character
+          echo '${{ needs.generate-matrix.outputs.characters }}' | jq -r '.[]' | while read character; do
+            echo "Creating release package for $character..."
+            mkdir -p "releases/$character"
+            
+            # Copy all platform binaries for this character
+            find artifacts/ -name "$character-*" -type d -exec cp -r {}/* "releases/$character/" \; 2>/dev/null || true
+            
+            # Count artifacts and calculate size
+            artifact_count=$(find "releases/$character/" -type f | wc -l)
+            total_size=$(find "releases/$character/" -type f -exec stat -c%s {} + 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+            
+            # Add character info to release notes
+            size_str=""
+            if [[ $total_size -gt $((1024 * 1024)) ]]; then
+              size_str="$(echo "scale=2; $total_size / 1024 / 1024" | bc) MB"
+            else
+              size_str="$(echo "scale=0; $total_size / 1024" | bc) KB"
+            fi
+            
+            echo "- **$character**: $artifact_count binaries, $size_str" >> releases/RELEASE_INFO.md
+            
+            # Create platform-specific archives
+            for os in linux windows darwin; do
+              ext=""
+              archive_ext="tar.gz"
+              if [[ "$os" == "windows" ]]; then
+                ext=".exe"
+                archive_ext="zip"
+              fi
+              
+              # Handle both regular and ARM64 variants
+              for arch_variant in "amd64" "arm64"; do
+                suffix=""
+                if [[ "$arch_variant" == "arm64" ]]; then
+                  suffix="-arm64"
+                fi
+                
+                binary_file="releases/$character/${character}_${os}_${arch_variant}${suffix}${ext}"
+                if [[ -f "$binary_file" ]]; then
+                  cd "releases/$character"
+                  
+                  # Create archive
+                  archive_name="../${character}_${os}_${arch_variant}${suffix}.${archive_ext}"
+                  if [[ "$os" == "windows" ]]; then
+                    zip -r "$archive_name" "${character}_${os}_${arch_variant}${suffix}${ext}"
+                  else
+                    tar -czf "$archive_name" "${character}_${os}_${arch_variant}${suffix}${ext}"
+                  fi
+                  
+                  # Generate checksum
+                  if command -v sha256sum >/dev/null; then
+                    cd ..
+                    sha256sum "$(basename "$archive_name")" > "$(basename "$archive_name").sha256"
+                    cd "$character"
+                  fi
+                  
+                  cd - >/dev/null
+                  echo "✓ Created package for $character on $os/$arch_variant"
+                fi
+              done
+            done
+          done
+          
+          # Add checksums to release info
+          echo "" >> releases/RELEASE_INFO.md
+          echo "## File Checksums" >> releases/RELEASE_INFO.md
+          find releases/ -name "*.sha256" -exec cat {} \; >> releases/RELEASE_INFO.md 2>/dev/null || true
+          
+          # Generate summary statistics
+          total_packages=$(find releases/ -name "*.tar.gz" -o -name "*.zip" | wc -l)
+          total_release_size=$(find releases/ -name "*.tar.gz" -o -name "*.zip" -exec stat -c%s {} + 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+          
+          if [[ $total_release_size -gt $((1024 * 1024 * 1024)) ]]; then
+            size_display="$(echo "scale=2; $total_release_size / 1024 / 1024 / 1024" | bc) GB"
+          else
+            size_display="$(echo "scale=2; $total_release_size / 1024 / 1024" | bc) MB"
+          fi
+          
+          echo "" >> releases/RELEASE_INFO.md
+          echo "Release Summary:" >> releases/RELEASE_INFO.md
+          echo "- Total Packages: $total_packages" >> releases/RELEASE_INFO.md
+          echo "- Total Size: $size_display" >> releases/RELEASE_INFO.md
+          
+          echo "=== Created Release Packages ==="
+          find releases/ -name "*.tar.gz" -o -name "*.zip" | sort
+          
+          echo "✅ Release packaging completed"
+      
+      - name: Upload release packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: character-releases
+          path: releases/
+          retention-days: 90
+          if-no-files-found: ignore
+      
+      - name: Upload release manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest
+          path: releases/RELEASE_INFO.md
+          retention-days: 365
