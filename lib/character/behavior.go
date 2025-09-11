@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"log"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -12,7 +13,21 @@ import (
 	"github.com/opd-ai/desktop-companion/lib/dialog"
 	"github.com/opd-ai/desktop-companion/lib/news"
 	"github.com/opd-ai/desktop-companion/lib/platform"
+	"github.com/sirupsen/logrus"
 )
+
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
 
 // animationLoadResult represents the result of loading a single animation
 type animationLoadResult struct {
@@ -77,27 +92,92 @@ type Character struct {
 // New creates a new character instance from a character card
 // Loads all animations and initializes behavior state
 func New(card *CharacterCard, basePath string) (*Character, error) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": card.Name,
+		"basePath":      basePath,
+	}).Info("Creating new character instance")
+
 	// Use platform-aware constructor with nil platform (defaults to desktop behavior)
-	return NewWithPlatform(card, basePath, nil)
+	char, err := NewWithPlatform(card, basePath, nil)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller":        caller,
+			"characterName": card.Name,
+			"basePath":      basePath,
+			"error":         err.Error(),
+		}).Error("Failed to create character instance")
+		return nil, err
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": card.Name,
+	}).Info("Character instance created successfully")
+
+	return char, nil
 }
 
 // NewWithPlatform creates a new character instance with platform-aware behavior adaptation.
 // This constructor integrates platform detection to optimize character behavior for the target platform.
 func NewWithPlatform(card *CharacterCard, basePath string, platformInfo *platform.PlatformInfo) (*Character, error) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":          caller,
+		"characterName":   card.Name,
+		"basePath":        basePath,
+		"hasPlatformInfo": platformInfo != nil,
+	}).Info("Creating character with platform awareness")
+
 	char := createCharacterInstanceWithPlatform(card, basePath, platformInfo)
 
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Character instance structure created")
+
 	if err := initializeCharacterSystems(char); err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Failed to initialize character systems")
 		return nil, err
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Character systems initialized")
 
 	loadedAnimations, err := loadCharacterAnimations(char)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Failed to load character animations")
 		return nil, err
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"caller":         caller,
+		"animationCount": len(loadedAnimations),
+	}).Info("Character animations loaded")
+
 	if err := setupInitialAnimation(char, loadedAnimations); err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Failed to setup initial animation")
 		return nil, err
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Initial animation setup completed")
+
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": card.Name,
+	}).Info("Platform-aware character creation completed successfully")
 
 	return char, nil
 }
@@ -106,21 +186,58 @@ func NewWithPlatform(card *CharacterCard, basePath string, platformInfo *platfor
 // This constructor supports standalone binary distribution with embedded animations
 // Uses pre-loaded AnimationManager instead of filesystem-based asset loading
 func NewEmbedded(card *CharacterCard, animManager *AnimationManager) (*Character, error) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": card.Name,
+	}).Info("Creating embedded character instance")
+
 	// Create character instance without base path (not needed for embedded assets)
 	char := createCharacterInstanceWithPlatform(card, "", nil)
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Character instance structure created for embedded assets")
 
 	// Override the animation manager with the pre-loaded embedded one
 	char.animationManager = animManager
 
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Animation manager assigned from embedded assets")
+
 	if err := initializeCharacterSystems(char); err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Failed to initialize character systems for embedded character")
 		return nil, err
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Character systems initialized for embedded character")
+
 	// Skip filesystem-based animation loading since we have embedded animations
 	// Verify at least one animation is available
-	if len(animManager.GetLoadedAnimations()) == 0 {
+	loadedAnimations := animManager.GetLoadedAnimations()
+	if len(loadedAnimations) == 0 {
+		logrus.WithFields(logrus.Fields{
+			"caller":        caller,
+			"characterName": card.Name,
+		}).Error("No embedded animations available")
 		return nil, fmt.Errorf("no embedded animations available for character %s", card.Name)
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":         caller,
+		"animationCount": len(loadedAnimations),
+	}).Info("Embedded animations verified")
+
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": card.Name,
+	}).Info("Embedded character creation completed successfully")
 
 	return char, nil
 }

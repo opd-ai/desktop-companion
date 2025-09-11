@@ -2,10 +2,26 @@ package battle
 
 import (
 	"math/rand"
+	"runtime"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
-// AIDifficulty defines the sophistication level of AI decision making
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
+
+// AIDifficulty determines how challenging the AI opponent is
 type AIDifficulty string
 
 const (
@@ -59,9 +75,30 @@ func NewBattleAIWithGifts(characterID string, difficulty AIDifficulty, strategy 
 }
 
 // SelectAction chooses the best action for the current battle situation
+// This function simulates AI decision-making and strategic thinking for game battles
 func (ai *BattleAI) SelectAction(battleState *BattleState, timeRemaining time.Duration) BattleAction {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Warn("SIMULATION FUNCTION - NOT A REAL OPERATION")
+
+	logrus.WithFields(logrus.Fields{
+		"caller":          caller,
+		"characterID":     ai.characterID,
+		"difficulty":      ai.difficulty,
+		"strategy":        ai.strategy,
+		"timeRemaining":   timeRemaining,
+		"operation":       "AI battle decision making",
+		"simulatedSystem": "artificial intelligence and strategic planning",
+	}).Info("Simulating AI action selection for battle")
+
 	// Emergency timeout decision (< 5 seconds)
 	if timeRemaining < AI_EMERGENCY_TIMEOUT {
+		logrus.WithFields(logrus.Fields{
+			"caller":        caller,
+			"timeRemaining": timeRemaining,
+			"actionType":    "emergency",
+		}).Debug("Emergency timeout triggered, selecting quick action")
 		return ai.selectQuickAction(battleState)
 	}
 
@@ -69,14 +106,32 @@ func (ai *BattleAI) SelectAction(battleState *BattleState, timeRemaining time.Du
 	threat := ai.assessThreat(battleState)
 	opportunity := ai.assessOpportunity(battleState)
 
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"threat":      threat,
+		"opportunity": opportunity,
+	}).Debug("Situation analysis completed")
+
 	// Select strategy based on situation and AI personality
 	action := ai.selectStrategicAction(battleState, threat, opportunity)
+
+	logrus.WithFields(logrus.Fields{
+		"caller":     caller,
+		"actionType": action.Type,
+		"targetID":   action.TargetID,
+	}).Debug("Strategic action selected")
 
 	// Enhance action with items if available
 	action = ai.enhanceActionWithItem(action)
 
 	// Track action history to avoid repetition
 	ai.updateActionHistory(action.Type)
+
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"finalAction": action.Type,
+		"targetID":    action.TargetID,
+	}).Info("AI action selection simulation completed")
 
 	return action
 }

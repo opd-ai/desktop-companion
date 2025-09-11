@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"runtime"
 	"strings"
 	"time"
 
@@ -14,11 +15,25 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
+	"github.com/sirupsen/logrus"
 
 	"github.com/opd-ai/desktop-companion/lib/character"
 	"github.com/opd-ai/desktop-companion/lib/monitoring"
 	"github.com/opd-ai/desktop-companion/lib/network"
 )
+
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
 
 // BattleInvitationHandler is a global callback for battle invitation dialogs
 // Provides minimal coupling between multiplayer battle system and UI (Fix for Finding #1)
@@ -58,7 +73,23 @@ type DesktopWindow struct {
 // NewDesktopWindow creates a new transparent desktop window
 // Uses Fyne's desktop app interface for always-on-top and transparency
 func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profiler *monitoring.Profiler, gameMode, showStats bool, networkManager NetworkManagerInterface, networkMode, showNetwork, eventsEnabled bool) *DesktopWindow {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": char.GetCard().Name,
+		"debug":         debug,
+		"gameMode":      gameMode,
+		"showStats":     showStats,
+		"networkMode":   networkMode,
+		"showNetwork":   showNetwork,
+		"eventsEnabled": eventsEnabled,
+	}).Info("Creating new desktop window")
+
 	window := createConfiguredWindow(app, char, debug)
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Window configured")
 
 	dw := &DesktopWindow{
 		window:        window,
@@ -72,22 +103,64 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		eventsEnabled: eventsEnabled,
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("DesktopWindow structure initialized")
+
 	initializeBasicComponents(dw, char, debug)
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Basic components initialized")
+
 	initializeGameFeatures(dw, gameMode, showStats, char)
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Game features initialized")
+
 	initializeDialogFeatures(dw, char)
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Dialog features initialized")
+
 	initializeGiftSystem(dw, gameMode, char)
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Gift system initialized")
+
 	initializeNetworkFeatures(dw, networkMode, networkManager, showNetwork, char)
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Network features initialized")
 
 	// Set up window content and interactions
 	dw.setupContent()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Window content setup completed")
+
 	dw.setupInteractions()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Window interactions setup completed")
 
 	// Start animation update loop
 	go dw.animationLoop()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Animation loop started")
 
 	if debug {
-		log.Printf("Created desktop window: %dx%d with always-on-top configuration", char.GetSize(), char.GetSize())
+		logrus.WithFields(logrus.Fields{
+			"caller":     caller,
+			"windowSize": char.GetSize(),
+		}).Debug("Debug mode: Desktop window created with configuration")
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"characterName": char.GetCard().Name,
+		"windowSize":    char.GetSize(),
+	}).Info("Desktop window created successfully")
 
 	return dw
 }

@@ -6,6 +6,7 @@ require (
 	fyne.io/fyne/v2 v2.5.2
 	github.com/jdkato/prose/v2 v2.0.0
 	github.com/mmcdole/gofeed v1.3.0
+	github.com/sirupsen/logrus v1.9.3
 )
 
 require (

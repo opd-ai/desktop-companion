@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // RandomEventManager handles automatic triggering of random events that affect character stats
@@ -22,6 +24,14 @@ type RandomEventManager struct {
 // NewRandomEventManager creates a new random event manager from character card configuration
 // Uses current time as seed for pseudo-random event generation
 func NewRandomEventManager(events []RandomEventConfig, enabled bool, interval time.Duration) *RandomEventManager {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":     caller,
+		"eventCount": len(events),
+		"enabled":    enabled,
+		"interval":   interval.String(),
+	}).Info("Creating new random event manager")
+
 	// Initialize with time-based seed for pseudo-randomness
 	source := rand.NewSource(time.Now().UnixNano())
 
@@ -32,6 +42,19 @@ func NewRandomEventManager(events []RandomEventConfig, enabled bool, interval ti
 		enabled:        enabled && len(events) > 0, // Only enable if we have events and enabled is true
 		checkInterval:  interval,
 		randomSource:   rand.New(source),
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":          caller,
+		"actuallyEnabled": rem.enabled,
+		"eventCount":      len(events),
+	}).Debug("Random event manager configuration completed")
+
+	if !rem.enabled {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"reason": "no events configured or disabled",
+		}).Info("Random event manager created but disabled")
 	}
 
 	return rem
@@ -151,9 +174,31 @@ func (rem *RandomEventManager) attemptEventTriggerWithFrequency(event RandomEven
 }
 
 // rollEventProbability performs probability check for event triggering
+// This function simulates dice-rolling or probability mechanics for game events
 func (rem *RandomEventManager) rollEventProbability(probability float64) bool {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Warn("SIMULATION FUNCTION - NOT A REAL OPERATION")
+
+	logrus.WithFields(logrus.Fields{
+		"caller":          caller,
+		"probability":     probability,
+		"operation":       "pseudo-random probability generation",
+		"simulatedSystem": "dice rolling mechanics",
+	}).Info("Simulating probability check for event triggering")
+
 	randomValue := rem.randomSource.Float64()
-	return randomValue <= probability
+	result := randomValue <= probability
+
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"randomValue": randomValue,
+		"probability": probability,
+		"result":      result,
+	}).Debug("Probability roll completed")
+
+	return result
 }
 
 // createTriggeredEvent creates and records a triggered event

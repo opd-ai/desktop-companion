@@ -6,9 +6,23 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync"
 	"time"
 )
+
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
 
 // SaveStatus represents the current state of save operations
 // Used by UI components to display save status indicators

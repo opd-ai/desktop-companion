@@ -9,7 +9,22 @@ import (
 	"runtime/pprof"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
 
 // Profiler handles performance monitoring and memory profiling
 // Uses Go's built-in runtime/pprof package - following "lazy programmer" principle
@@ -40,9 +55,15 @@ type PerformanceStats struct {
 
 // NewProfiler creates a new performance profiler
 func NewProfiler(memoryTargetMB int) *Profiler {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":         caller,
+		"memoryTargetMB": memoryTargetMB,
+	}).Info("Creating new performance profiler")
+
 	ctx, cancel := context.WithCancel(context.Background())
 
-	return &Profiler{
+	profiler := &Profiler{
 		enabled:        false,
 		targetMemoryMB: memoryTargetMB,
 		ctx:            ctx,
@@ -51,30 +72,79 @@ func NewProfiler(memoryTargetMB int) *Profiler {
 			StartTime: time.Now(),
 		},
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":         caller,
+		"memoryTargetMB": memoryTargetMB,
+	}).Debug("Performance profiler created")
+
+	return profiler
 }
 
 // Start begins performance monitoring and optional file-based profiling
 func (p *Profiler) Start(memProfilePath, cpuProfilePath string, debug bool) error {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":         caller,
+		"memProfilePath": memProfilePath,
+		"cpuProfilePath": cpuProfilePath,
+		"debug":          debug,
+	}).Info("Starting performance profiler")
+
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	if err := p.validateStartConditions(); err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Profiler start validation failed")
 		return err
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Start conditions validated")
 
 	// Enable profiler if any profiling is requested OR debug mode is enabled
 	// In production with debug=false and no profile paths, no monitoring overhead
 	profilingRequested := memProfilePath != "" || cpuProfilePath != "" || debug
 
+	logrus.WithFields(logrus.Fields{
+		"caller":             caller,
+		"profilingRequested": profilingRequested,
+	}).Debug("Profiling request evaluation")
+
 	if profilingRequested {
 		p.initializeProfiler()
 
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Debug("Profiler initialized")
+
 		if err := p.startCPUProfilingIfEnabled(cpuProfilePath, debug); err != nil {
+			logrus.WithFields(logrus.Fields{
+				"caller":         caller,
+				"cpuProfilePath": cpuProfilePath,
+				"error":          err.Error(),
+			}).Error("Failed to start CPU profiling")
 			return err
 		}
 
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Debug("CPU profiling started if enabled")
+
 		p.startMonitoring(debug)
 		p.logStartupIfDebug(debug)
+
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Info("Performance profiler started successfully")
+	} else {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Info("No profiling requested, profiler remains disabled")
 	}
 
 	return nil
