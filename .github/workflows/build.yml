@@ -233,11 +233,14 @@ jobs:
         mkdir -p build artifacts
         cd build
         # Build debug APK (doesn't require signing)
-        fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
+        #fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
+        #  --app-version "1.0.0-${{ github.run_number }}" --app-build ${{ github.run_number }} \
+        #  --icon "../assets/characters/default/animations/idle.gif" \
+        #  --src "../cmd/companion" || echo "Android build failed, continuing..."
+        cd ../cmd/companion && fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
           --app-version "1.0.0-${{ github.run_number }}" --app-build ${{ github.run_number }} \
-          --icon "../assets/characters/default/animations/idle.gif" \
-          --src "../cmd/companion" || echo "Android build failed, continuing..."
-        
+          --icon "../assets/characters/default/animations/idle.gif" || echo "Android build failed, continuing..."
+
         # Find and copy APK if created
         if ls *.apk 1> /dev/null 2>&1; then
           cp *.apk ../artifacts/companion-debug.apk
