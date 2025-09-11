@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/opd-ai/desktop-companion/lib/dialog"
 	"github.com/opd-ai/desktop-companion/lib/news"
+	"github.com/sirupsen/logrus"
 )
 
 // NewsDialogContext extends DialogContext for news-specific dialog generation
@@ -133,8 +133,8 @@ func (c *Character) performInitialFeedUpdate(newsBackend *news.NewsBlogBackend) 
 func (c *Character) logDebugMessage(format string, args ...interface{}) {
 	caller := getCaller()
 	logrus.WithFields(logrus.Fields{
-		"caller":      caller,
-		"debugMode":   c.debug,
+		"caller":        caller,
+		"debugMode":     c.debug,
 		"messageFormat": format,
 	}).Debug("Logging debug message")
 

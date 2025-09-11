@@ -206,10 +206,10 @@ func (pm *ProtocolManager) AddPeerKey(peerID string, publicKey ed25519.PublicKey
 
 	if len(publicKey) != ed25519.PublicKeySize {
 		logrus.WithFields(logrus.Fields{
-			"caller":         caller,
-			"peerID":         peerID,
-			"expectedSize":   ed25519.PublicKeySize,
-			"actualSize":     len(publicKey),
+			"caller":       caller,
+			"peerID":       peerID,
+			"expectedSize": ed25519.PublicKeySize,
+			"actualSize":   len(publicKey),
 		}).Error("Invalid public key size")
 		return fmt.Errorf("invalid public key size: expected %d, got %d",
 			ed25519.PublicKeySize, len(publicKey))

@@ -115,8 +115,8 @@ func (am *AnimationManager) LoadAnimation(name, filepath string) error {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"caller":         caller,
-		"name":           name,
+		"caller":          caller,
+		"name":            name,
 		"totalAnimations": len(am.animations),
 	}).Info("Animation loaded successfully")
 
