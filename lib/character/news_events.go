@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/opd-ai/desktop-companion/lib/dialog"
 	"github.com/opd-ai/desktop-companion/lib/news"
 )
@@ -87,18 +88,61 @@ func (c *Character) addFeedsToBackend(newsBackend *news.NewsBlogBackend) error {
 
 // performInitialFeedUpdate starts initial feed update in background if feeds are configured
 func (c *Character) performInitialFeedUpdate(newsBackend *news.NewsBlogBackend) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":    caller,
+		"feedCount": len(c.card.NewsFeatures.Feeds),
+	}).Info("Starting initial feed update")
+
 	if len(c.card.NewsFeatures.Feeds) > 0 {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Debug("Launching background goroutine for feed updates")
+
 		go func() {
-			if err := newsBackend.UpdateFeeds(); err != nil && c.debug {
-				fmt.Printf("[DEBUG] Initial feed update failed: %v\n", err)
+			logrus.WithFields(logrus.Fields{
+				"caller": "performInitialFeedUpdate.goroutine",
+			}).Debug("Feed update goroutine started")
+
+			if err := newsBackend.UpdateFeeds(); err != nil {
+				logrus.WithFields(logrus.Fields{
+					"caller": "performInitialFeedUpdate.goroutine",
+					"error":  err.Error(),
+				}).Warn("Initial feed update failed")
+				if c.debug {
+					fmt.Printf("[DEBUG] Initial feed update failed: %v\n", err)
+				}
+			} else {
+				logrus.WithFields(logrus.Fields{
+					"caller": "performInitialFeedUpdate.goroutine",
+				}).Info("Initial feed update completed successfully")
 			}
+
+			logrus.WithFields(logrus.Fields{
+				"caller": "performInitialFeedUpdate.goroutine",
+			}).Debug("Feed update goroutine completed")
 		}()
+	} else {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Debug("No feeds configured, skipping initial update")
 	}
 }
 
 // logDebugMessage outputs debug message if debug mode is enabled
 func (c *Character) logDebugMessage(format string, args ...interface{}) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"debugMode":   c.debug,
+		"messageFormat": format,
+	}).Debug("Logging debug message")
+
 	if c.debug {
+		logrus.WithFields(logrus.Fields{
+			"caller":  caller,
+			"message": fmt.Sprintf(format, args...),
+		}).Debug("Character debug message")
 		fmt.Printf("[DEBUG] "+format+"\n", args...)
 	}
 }

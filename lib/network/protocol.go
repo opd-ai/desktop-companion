@@ -7,8 +7,24 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"runtime"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
 
 // ProtocolManager handles message signing, verification, and structured payloads
 // for the DDS multiplayer protocol. Uses Go's standard library Ed25519 implementation
@@ -132,50 +148,129 @@ type ExtendedDiscoveryPayload struct {
 // NewProtocolManager creates a new ProtocolManager with Ed25519 key generation.
 // Uses crypto/rand for secure key generation following security best practices.
 func NewProtocolManager() (*ProtocolManager, error) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Info("Creating new protocol manager with Ed25519 keys")
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Generating Ed25519 key pair")
+
 	// Generate Ed25519 key pair using Go's standard library
 	publicKey, privateKey, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Failed to generate Ed25519 key pair")
 		return nil, fmt.Errorf("failed to generate Ed25519 keys: %w", err)
 	}
 
-	return &ProtocolManager{
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"publicKeySize": len(publicKey),
+	}).Debug("Ed25519 key pair generated successfully")
+
+	manager := &ProtocolManager{
 		privateKey: privateKey,
 		publicKey:  publicKey,
 		peerKeys:   make(map[string]ed25519.PublicKey),
-	}, nil
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Info("Protocol manager created successfully")
+
+	return manager, nil
 }
 
 // GetPublicKey returns the public key for this peer
 func (pm *ProtocolManager) GetPublicKey() ed25519.PublicKey {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"publicKeySize": len(pm.publicKey),
+	}).Debug("Returning public key")
+
 	return pm.publicKey
 }
 
 // AddPeerKey stores a peer's public key for future verification
 func (pm *ProtocolManager) AddPeerKey(peerID string, publicKey ed25519.PublicKey) error {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+		"peerID": peerID,
+	}).Info("Adding peer public key for verification")
+
 	if len(publicKey) != ed25519.PublicKeySize {
+		logrus.WithFields(logrus.Fields{
+			"caller":         caller,
+			"peerID":         peerID,
+			"expectedSize":   ed25519.PublicKeySize,
+			"actualSize":     len(publicKey),
+		}).Error("Invalid public key size")
 		return fmt.Errorf("invalid public key size: expected %d, got %d",
 			ed25519.PublicKeySize, len(publicKey))
 	}
+
 	pm.peerKeys[peerID] = publicKey
+
+	logrus.WithFields(logrus.Fields{
+		"caller":    caller,
+		"peerID":    peerID,
+		"totalKeys": len(pm.peerKeys),
+	}).Info("Peer public key added successfully")
+
 	return nil
 }
 
 // SignMessage creates a signed message with Ed25519 signature
 func (pm *ProtocolManager) SignMessage(msg Message) (*SignedMessage, error) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"messageType": string(msg.Type),
+		"from":        msg.From,
+		"to":          msg.To,
+	}).Info("Signing message with Ed25519")
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Marshaling message for signing")
+
 	// Serialize message for signing
 	msgBytes, err := json.Marshal(msg)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"error":  err.Error(),
+		}).Error("Failed to marshal message for signing")
 		return nil, fmt.Errorf("failed to marshal message: %w", err)
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"messageSize": len(msgBytes),
+	}).Debug("Message marshaled, creating signature")
 
 	// Sign the serialized message
 	signature := ed25519.Sign(pm.privateKey, msgBytes)
 
-	return &SignedMessage{
+	signedMessage := &SignedMessage{
 		Message:   msg,
 		Signature: signature,
 		PublicKey: pm.publicKey,
-	}, nil
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"messageType":   string(msg.Type),
+		"signatureSize": len(signature),
+	}).Info("Message signed successfully")
+
+	return signedMessage, nil
 }
 
 // VerifyMessage verifies a signed message using Ed25519 signature verification

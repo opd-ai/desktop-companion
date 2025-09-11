@@ -2642,8 +2642,24 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 		return c.extractTopicsBasic(message)
 	}
 
-	// Extract named entities for topic classification
-	entities := doc.Entities()
+	// Extract topics from named entities
+	c.extractTopicsFromEntities(doc.Entities(), topics)
+
+	// Extract topics from tokens with part-of-speech analysis
+	tokens := doc.Tokens()
+	c.extractTopicsFromTokens(tokens, topics)
+
+	// Add confidence scoring based on detected features
+	c.addConfidenceScoring(doc.Entities(), tokens, topics)
+
+	// Merge with basic topics and add metadata
+	c.mergeBasicTopicsAndMetadata(message, tokens, topics)
+
+	return topics
+}
+
+// extractTopicsFromEntities classifies named entities into topic categories
+func (c *Character) extractTopicsFromEntities(entities []prose.Entity, topics map[string]interface{}) {
 	for _, entity := range entities {
 		switch entity.Label {
 		case "PERSON":
@@ -2658,9 +2674,10 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 			topics["financial"] = true
 		}
 	}
+}
 
-	// Extract tokens for advanced keyword analysis
-	tokens := doc.Tokens()
+// extractTopicsFromTokens performs part-of-speech based topic classification
+func (c *Character) extractTopicsFromTokens(tokens []prose.Token, topics map[string]interface{}) {
 	for _, token := range tokens {
 		tag := token.Tag
 		text := strings.ToLower(token.Text)
@@ -2668,34 +2685,51 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 		// Use part-of-speech tags for better classification
 		switch {
 		case tag == "VB" || tag == "VBD" || tag == "VBG": // Verbs
-			switch text {
-			case "love", "like", "enjoy":
-				topics["romance"] = true
-			case "work", "working":
-				topics["professional"] = true
-			case "play", "playing":
-				topics["entertainment"] = true
-			}
+			c.classifyVerbTopics(text, topics)
 		case strings.Contains(tag, "NN"): // Nouns
-			switch text {
-			case "weather", "rain", "sun":
-				topics["weather"] = true
-			case "food", "meal", "lunch", "dinner":
-				topics["food"] = true
-			case "family", "friend", "relationship":
-				topics["relationships"] = true
-			}
+			c.classifyNounTopics(text, topics)
 		case strings.Contains(tag, "JJ"): // Adjectives
-			switch text {
-			case "happy", "sad", "excited", "tired":
-				topics["emotional_state"] = text
-			case "beautiful", "nice", "amazing":
-				topics["appreciation"] = true
-			}
+			c.classifyAdjectiveTopics(text, topics)
 		}
 	}
+}
 
-	// Add confidence scoring based on number of detected features
+// classifyVerbTopics categorizes verb-based topics
+func (c *Character) classifyVerbTopics(text string, topics map[string]interface{}) {
+	switch text {
+	case "love", "like", "enjoy":
+		topics["romance"] = true
+	case "work", "working":
+		topics["professional"] = true
+	case "play", "playing":
+		topics["entertainment"] = true
+	}
+}
+
+// classifyNounTopics categorizes noun-based topics
+func (c *Character) classifyNounTopics(text string, topics map[string]interface{}) {
+	switch text {
+	case "weather", "rain", "sun":
+		topics["weather"] = true
+	case "food", "meal", "lunch", "dinner":
+		topics["food"] = true
+	case "family", "friend", "relationship":
+		topics["relationships"] = true
+	}
+}
+
+// classifyAdjectiveTopics categorizes adjective-based topics
+func (c *Character) classifyAdjectiveTopics(text string, topics map[string]interface{}) {
+	switch text {
+	case "happy", "sad", "excited", "tired":
+		topics["emotional_state"] = text
+	case "beautiful", "nice", "amazing":
+		topics["appreciation"] = true
+	}
+}
+
+// addConfidenceScoring calculates and adds confidence level based on detected features
+func (c *Character) addConfidenceScoring(entities []prose.Entity, tokens []prose.Token, topics map[string]interface{}) {
 	featureCount := len(entities) + len(tokens)/5 // Weight tokens less
 	if featureCount > 10 {
 		topics["confidence"] = "high"
@@ -2704,7 +2738,10 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 	} else {
 		topics["confidence"] = "low"
 	}
+}
 
+// mergeBasicTopicsAndMetadata adds fallback topics and message metadata
+func (c *Character) mergeBasicTopicsAndMetadata(message string, tokens []prose.Token, topics map[string]interface{}) {
 	// Fallback keyword detection for uncovered cases
 	basicTopics := c.extractTopicsBasic(message)
 	for key, value := range basicTopics {
@@ -2716,8 +2753,6 @@ func (c *Character) extractTopicsFromMessage(message string) map[string]interfac
 	// Add message metadata
 	topics["message_length"] = len(message)
 	topics["word_count"] = len(tokens)
-
-	return topics
 }
 
 // extractTopicsBasic provides fallback basic keyword-based topic detection

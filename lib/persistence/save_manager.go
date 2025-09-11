@@ -9,6 +9,8 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // getCaller returns the calling function name for structured logging
@@ -91,8 +93,14 @@ type SaveMetadata struct {
 // NewSaveManager creates a new save manager instance
 // savePath should be the directory where save file will be stored
 func NewSaveManager(savePath string) *SaveManager {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":   caller,
+		"savePath": savePath,
+	}).Info("Creating new save manager")
+
 	ctx, cancel := context.WithCancel(context.Background())
-	return &SaveManager{
+	manager := &SaveManager{
 		savePath: savePath,
 		autoSave: false,
 		interval: 5 * time.Minute,        // Default auto-save interval
@@ -100,20 +108,46 @@ func NewSaveManager(savePath string) *SaveManager {
 		ctx:      ctx,
 		cancel:   cancel,
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"savePath":    savePath,
+		"autoSave":    manager.autoSave,
+		"intervalMin": manager.interval.Minutes(),
+	}).Info("Save manager created successfully")
+
+	return manager
 }
 
 // SetStatusCallback sets the callback function for save status updates
 // The callback will be called with status and message parameters during save operations
 // Pass nil to disable status callbacks
 func (sm *SaveManager) SetStatusCallback(callback func(SaveStatus, string)) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":      caller,
+		"hasCallback": callback != nil,
+	}).Info("Setting save status callback")
+
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 	sm.statusCallback = callback
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Save status callback set successfully")
 }
 
 // notifyStatus calls the status callback if one is set
 // Thread-safe method that can be called from any goroutine
 func (sm *SaveManager) notifyStatus(status SaveStatus, message string) {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":  caller,
+		"status":  int(status),
+		"message": message,
+	}).Debug("Notifying save status")
+
 	sm.mu.RLock()
 	callback := sm.statusCallback
 	sm.mu.RUnlock()

@@ -7,6 +7,8 @@ import (
 	"os"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // AnimationManager handles GIF animation playback using Go's standard library
@@ -23,42 +25,100 @@ type AnimationManager struct {
 
 // NewAnimationManager creates a new animation manager
 func NewAnimationManager() *AnimationManager {
-	return &AnimationManager{
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Info("Creating new animation manager")
+
+	manager := &AnimationManager{
 		animations: make(map[string]*gif.GIF),
 		playing:    true,
 		lastUpdate: time.Now(),
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":  caller,
+		"playing": manager.playing,
+	}).Info("Animation manager created successfully")
+
+	return manager
 }
 
 // LoadAnimation loads a GIF animation from file using standard library
 // Returns error if file cannot be loaded or is not a valid GIF
 func (am *AnimationManager) LoadAnimation(name, filepath string) error {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":   caller,
+		"name":     name,
+		"filepath": filepath,
+	}).Info("Loading GIF animation from file")
+
 	am.mu.Lock()
 	defer am.mu.Unlock()
 
+	logrus.WithFields(logrus.Fields{
+		"caller":   caller,
+		"filepath": filepath,
+	}).Debug("Opening animation file")
+
 	file, err := os.Open(filepath)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller":   caller,
+			"filepath": filepath,
+			"error":    err.Error(),
+		}).Error("Failed to open animation file")
 		return fmt.Errorf("failed to open animation file %s: %w", filepath, err)
 	}
 	defer file.Close()
 
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Decoding GIF animation data")
+
 	// Use standard library gif.DecodeAll - no external dependencies
 	gifData, err := gif.DecodeAll(file)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"caller":   caller,
+			"filepath": filepath,
+			"error":    err.Error(),
+		}).Error("Failed to decode GIF animation")
 		return fmt.Errorf("failed to decode GIF %s: %w", filepath, err)
 	}
 
 	// Validate GIF has frames
 	if len(gifData.Image) == 0 {
+		logrus.WithFields(logrus.Fields{
+			"caller":   caller,
+			"filepath": filepath,
+		}).Error("GIF animation contains no frames")
 		return fmt.Errorf("GIF file %s contains no frames", filepath)
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":     caller,
+		"name":       name,
+		"frameCount": len(gifData.Image),
+	}).Debug("GIF animation decoded successfully")
 
 	am.animations[name] = gifData
 
 	// Set as current animation if this is the first one loaded
 	if am.currentAnim == "" {
 		am.currentAnim = name
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"name":   name,
+		}).Debug("Set as current animation (first loaded)")
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":         caller,
+		"name":           name,
+		"totalAnimations": len(am.animations),
+	}).Info("Animation loaded successfully")
 
 	return nil
 }

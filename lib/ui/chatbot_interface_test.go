@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/test"
+	"github.com/sirupsen/logrus"
 
 	"github.com/opd-ai/desktop-companion/lib/character"
 	"github.com/opd-ai/desktop-companion/lib/dialog"
@@ -381,12 +382,28 @@ func BenchmarkChatbotInterface_UpdateDisplay(b *testing.B) {
 
 // createMockCharacter creates a character for testing with actual animation files
 func createMockCharacter(card *character.CharacterCard) *character.Character {
+	logrus.Warn("SIMULATION FUNCTION - NOT A REAL OPERATION")
+	logrus.WithFields(logrus.Fields{
+		"function":      "createMockCharacter",
+		"realOperation": "character.New with production assets",
+		"testDataPath":  "../../testdata",
+	}).Warn("Creating mock character for testing purposes")
+
 	// Use real animation files from testdata directory
 	char, err := character.New(card, "../../testdata")
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"function": "createMockCharacter",
+			"error":    err.Error(),
+		}).Warn("Mock character creation failed - returning nil for test handling")
 		// Return nil if creation fails - tests will handle this
 		return nil
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"function": "createMockCharacter",
+		"success":  true,
+	}).Warn("Mock character created successfully")
 
 	return char
 }

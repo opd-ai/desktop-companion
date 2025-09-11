@@ -4,9 +4,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"runtime"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+// getCaller returns the calling function name for structured logging
+func getCaller() string {
+	pc, _, _, ok := runtime.Caller(1)
+	if !ok {
+		return "unknown"
+	}
+	fn := runtime.FuncForPC(pc)
+	if fn == nil {
+		return "unknown"
+	}
+	return fn.Name()
+}
 
 // SimpleRandomBackend implements DialogBackend using existing dialog selection logic
 // Provides 1:1 compatibility with the existing system while adding dialog interface compliance
@@ -28,11 +44,28 @@ type SimpleRandomConfig struct {
 
 // NewSimpleRandomBackend creates a new simple random dialog backend
 func NewSimpleRandomBackend() *SimpleRandomBackend {
-	return &SimpleRandomBackend{}
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Info("Creating new simple random dialog backend")
+
+	backend := &SimpleRandomBackend{}
+
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Info("Simple random dialog backend created successfully")
+
+	return backend
 }
 
 // Initialize sets up the simple random backend with JSON configuration
 func (s *SimpleRandomBackend) Initialize(config json.RawMessage) error {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":     caller,
+		"configSize": len(config),
+	}).Info("Initializing simple random dialog backend")
+
 	// Set defaults
 	s.config = SimpleRandomConfig{
 		Type:                 "basic",
@@ -42,12 +75,38 @@ func (s *SimpleRandomBackend) Initialize(config json.RawMessage) error {
 		PreferRomanceDialogs: true,
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Default configuration set")
+
 	// Parse configuration
 	if len(config) > 0 {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Debug("Parsing custom configuration")
+
 		if err := json.Unmarshal(config, &s.config); err != nil {
+			logrus.WithFields(logrus.Fields{
+				"caller": caller,
+				"error":  err.Error(),
+			}).Error("Failed to parse simple random backend configuration")
 			return fmt.Errorf("failed to parse simple random config: %w", err)
 		}
+
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+		}).Debug("Custom configuration parsed successfully")
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"caller":                caller,
+		"type":                  s.config.Type,
+		"personalityInfluence":  s.config.PersonalityInfluence,
+		"useDialogHistory":      s.config.UseDialogHistory,
+		"responseVariation":     s.config.ResponseVariation,
+		"preferRomanceDialogs":  s.config.PreferRomanceDialogs,
+		"fallbackResponseCount": len(s.config.FallbackResponses),
+	}).Info("Simple random dialog backend initialized successfully")
 
 	// Validate configuration
 	if err := s.validateConfig(); err != nil {
