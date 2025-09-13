@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+	
+	"github.com/sirupsen/logrus"
 )
 
 // MarkovChainBackend implements DialogBackend using Markov chain text generation
@@ -187,9 +189,25 @@ func (m *MarkovChainBackend) trainWithText(text, trigger string) error {
 // trainWithCharacterDialogs includes existing character dialogs in training
 // Since Character fields are private, this method will be called with data passed from the character package
 func (m *MarkovChainBackend) trainWithCharacterDialogs() {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"function":      "trainWithCharacterDialogs",
+		"realOperation": "Access character dialog history and train Markov chains with actual conversation data",
+	}).Warn("SIMULATION FUNCTION - NOT A REAL OPERATION")
+	
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Info("Function entry - trainWithCharacterDialogs")
+	
 	// This method will be updated to accept training data as parameters
 	// For now, skip training with character dialogs if we can't access them
 	// The character package should call TrainWithDialogData() with the appropriate data
+	
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+		"note":   "Character dialog training skipped - awaiting integration with character package",
+	}).Warn("Simulation function completed without actual training")
 }
 
 // trainWithDefaults provides minimal training data if none is configured
@@ -603,7 +621,25 @@ func (m *MarkovChainBackend) calculateWordOverlap(words1, words2 []string) float
 
 // applyPersonalityAdjustments modifies response based on character personality
 func (m *MarkovChainBackend) applyPersonalityAdjustments(text string, context DialogContext) string {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"function":      "applyPersonalityAdjustments",
+		"realOperation": "Apply sophisticated personality-based text transformations using NLP and character traits",
+		"usePersonality": m.config.UsePersonality,
+		"personalityBoost": m.config.PersonalityBoost,
+	}).Warn("SIMULATION FUNCTION - NOT A REAL OPERATION")
+	
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+		"inputText": text,
+	}).Info("Function entry - applyPersonalityAdjustments")
+	
 	if !m.config.UsePersonality || m.config.PersonalityBoost == 0 {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"reason": "personality features disabled",
+		}).Info("Function exit - returning text unchanged")
 		return text
 	}
 
@@ -611,6 +647,12 @@ func (m *MarkovChainBackend) applyPersonalityAdjustments(text string, context Di
 	// - Add personality-specific words or phrases
 	// - Adjust sentence structure based on traits
 	// - Modify punctuation/emphasis based on personality
+	
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+		"note":   "Personality adjustments not implemented - returning original text",
+	}).Warn("Simulation function completed without real personality transformation")
+	
 	return text
 }
 
@@ -843,7 +885,25 @@ func (m *MarkovChainBackend) countUniqueWords(words []string) int {
 
 // checkWordOrdering provides a basic check for reasonable word ordering
 func (m *MarkovChainBackend) checkWordOrdering(words []string) float64 {
+	caller := getCaller()
+	logrus.WithFields(logrus.Fields{
+		"caller":        caller,
+		"function":      "checkWordOrdering",
+		"realOperation": "Advanced grammatical analysis using proper NLP libraries and syntax trees",
+		"wordCount":     len(words),
+	}).Warn("SIMULATION FUNCTION - NOT A REAL OPERATION")
+	
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+		"words":  words,
+	}).Info("Function entry - checkWordOrdering")
+	
 	if len(words) < 2 {
+		logrus.WithFields(logrus.Fields{
+			"caller": caller,
+			"result": 0.5,
+			"reason": "insufficient words for ordering analysis",
+		}).Info("Function exit - insufficient data")
 		return 0.5
 	}
 
