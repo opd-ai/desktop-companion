@@ -1,5 +1,4 @@
 package dialog
-package dialog
 
 import (
 	"encoding/json"

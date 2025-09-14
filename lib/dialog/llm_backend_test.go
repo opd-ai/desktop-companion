@@ -1,11 +1,10 @@
 package dialog
-package dialog
 
 import (
 	"encoding/json"
 	"strings"
 	"testing"
-	"time"
+	"fmt"
 )
 
 // TestLLMDialogBackend_Integration tests the complete LLM backend integration
