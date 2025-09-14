@@ -588,16 +588,53 @@ func (c *Character) initializeDialogSystem() error {
 	c.dialogManager.RegisterBackend("simple_random", dialog.NewSimpleRandomBackend())
 	c.dialogManager.RegisterBackend("markov_chain", dialog.NewMarkovChainBackend())
 
-	// Register LLM backend (optional dependency)
-	c.dialogManager.RegisterBackend("llm", dialog.NewLLMDialogBackend())
+	// Register LLM backend with error handling (optional dependency)
+	llmBackend := dialog.NewLLMDialogBackend()
+	c.dialogManager.RegisterBackend("llm", llmBackend)
+
+	// Test LLM backend availability if configured
+	if c.card.DialogBackend.Backends != nil {
+		if llmConfig, hasLLM := c.card.DialogBackend.Backends["llm"]; hasLLM {
+			if err := llmBackend.Initialize(llmConfig); err != nil {
+				if c.debug {
+					fmt.Printf("[DEBUG] LLM backend initialization failed: %v - falling back to other backends\n", err)
+				}
+				// Note: LLM backend remains registered but will be disabled - this allows fallback chains to work
+			} else {
+				if c.debug {
+					fmt.Printf("[DEBUG] LLM backend initialized successfully\n")
+				}
+			}
+		}
+	}
 
 	// Register news backend if news features are enabled
 	if c.card.HasNewsFeatures() {
 		newsBackend := news.NewNewsBlogBackend()
 		c.dialogManager.RegisterBackend("news_blog", newsBackend)
 
-		if c.debug {
-			fmt.Printf("[DEBUG] Registered news backend for character with news features\n")
+		// Test news backend initialization if configured
+		if c.card.DialogBackend.Backends != nil {
+			if newsConfig, hasNews := c.card.DialogBackend.Backends["news_blog"]; hasNews {
+				if err := newsBackend.Initialize(newsConfig); err != nil {
+					if c.debug {
+						fmt.Printf("[DEBUG] News backend initialization failed: %v - news features may not work\n", err)
+					}
+				} else {
+					if c.debug {
+						fmt.Printf("[DEBUG] News backend initialized successfully with %d preferred categories\n",
+							len(newsBackend.GetBackendInfo().Capabilities))
+					}
+				}
+			} else {
+				if c.debug {
+					fmt.Printf("[DEBUG] Registered news backend for character with news features (config will be applied later)\n")
+				}
+			}
+		} else {
+			if c.debug {
+				fmt.Printf("[DEBUG] Registered news backend for character with news features (no config available)\n")
+			}
 		}
 	}
 
@@ -618,20 +655,51 @@ func (c *Character) initializeDialogSystem() error {
 }
 
 // configureBackends initializes each configured backend with its JSON configuration
+// Gracefully handles backend initialization failures to allow dialog system to work
+// even if some advanced features are unavailable
 func (c *Character) configureBackends() error {
 	if c.card.DialogBackend == nil || c.card.DialogBackend.Backends == nil {
 		return nil
 	}
 
+	var initializationWarnings []string
+
 	for backendName, config := range c.card.DialogBackend.Backends {
 		backend, exists := c.dialogManager.GetBackend(backendName)
 		if !exists {
+			if c.debug {
+				fmt.Printf("[DEBUG] Backend '%s' not registered, skipping configuration\n", backendName)
+			}
 			continue // Skip unknown backends
 		}
 
-		if err := backend.Initialize(config); err != nil {
-			return fmt.Errorf("failed to initialize backend '%s': %w", backendName, err)
+		// Skip backends that may have been pre-initialized (LLM and news)
+		if backendName == "llm" || backendName == "news_blog" {
+			// These were already initialized during registration with error handling
+			continue
 		}
+
+		if err := backend.Initialize(config); err != nil {
+			warning := fmt.Sprintf("Backend '%s' initialization failed: %v", backendName, err)
+			initializationWarnings = append(initializationWarnings, warning)
+
+			if c.debug {
+				fmt.Printf("[DEBUG] %s - continuing with available backends\n", warning)
+			}
+
+			// Continue with other backends rather than failing completely
+			continue
+		}
+
+		if c.debug {
+			fmt.Printf("[DEBUG] Backend '%s' initialized successfully\n", backendName)
+		}
+	}
+
+	// Log warnings if any backends failed but don't fail the entire dialog system
+	if len(initializationWarnings) > 0 && c.debug {
+		fmt.Printf("[DEBUG] Dialog system initialized with %d backend warnings. Fallback backends remain available.\n",
+			len(initializationWarnings))
 	}
 
 	return nil
