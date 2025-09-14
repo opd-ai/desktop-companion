@@ -756,7 +756,7 @@ func checkDisplayAvailable() error {
 
 	// Get platform information for mobile detection
 	platformInfo := platform.GetPlatformInfo()
-	
+
 	logrus.WithFields(logrus.Fields{
 		"caller":     caller,
 		"platform":   platformInfo.OS,

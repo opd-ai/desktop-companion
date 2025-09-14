@@ -162,6 +162,7 @@ func (am *AnimationManager) SetCurrentAnimation(name string) error {
 
 // GetCurrentFrame returns the current frame image and whether a new frame is available
 // Frame advancement is handled by Update() method to avoid race conditions
+// This method is optimized for high-frequency calls (60+ FPS) by avoiding timing calculations
 func (am *AnimationManager) GetCurrentFrame() (image.Image, bool) {
 	am.mu.RLock()
 	defer am.mu.RUnlock()
@@ -175,16 +176,9 @@ func (am *AnimationManager) GetCurrentFrame() (image.Image, bool) {
 		return nil, false
 	}
 
-	// Check if we should advance to next frame based on GIF timing
-	frameDelay := time.Duration(currentGif.Delay[am.frameIndex]) * 10 * time.Millisecond
-	if frameDelay == 0 {
-		frameDelay = 100 * time.Millisecond // Default 100ms per frame
-	}
-
-	// Only check timing, don't modify state (avoid race condition)
-	newFrame := time.Since(am.lastUpdate) >= frameDelay
-
-	return currentGif.Image[am.frameIndex], newFrame
+	// Return current frame without timing calculations
+	// Timing is handled by Update() method to avoid redundant time.Since() calls
+	return currentGif.Image[am.frameIndex], false
 }
 
 // GetCurrentFrameImage returns just the current frame without timing logic
