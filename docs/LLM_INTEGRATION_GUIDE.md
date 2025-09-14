@@ -81,7 +81,7 @@ Add an optional `dialogBackend` section to character JSON files:
 Use the provided configuration generator:
 
 ```bash
-go run scripts/llm-config-generator.go \
+go run tools/llm-config-generator/main.go \
   -input assets/characters \
   -archetype romance \
   -enable \
