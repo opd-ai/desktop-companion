@@ -54,6 +54,7 @@ type SaveManager struct {
 	ctx            context.Context
 	cancel         context.CancelFunc
 	statusCallback func(SaveStatus, string) // Callback for status updates
+	saveWg         sync.WaitGroup          // Tracks active save operations for clean shutdown
 }
 
 // GameSaveData represents the complete save state for a character
@@ -277,6 +278,10 @@ func (sm *SaveManager) SaveGameState(characterName string, data *GameSaveData) e
 		return fmt.Errorf("character name cannot be empty")
 	}
 
+	// Track active save operation for clean shutdown synchronization
+	sm.saveWg.Add(1)
+	defer sm.saveWg.Done()
+
 	// Notify start of save operation
 	sm.notifyStatus(SaveStatusSaving, "")
 
@@ -294,8 +299,7 @@ func (sm *SaveManager) SaveGameState(characterName string, data *GameSaveData) e
 
 	// Ensure save directory exists
 	if err := sm.ensureSaveDirectory(); err != nil {
-		errMsg := fmt.Sprintf("failed to create save directory: %v", err)
-		saveError = fmt.Errorf(errMsg)
+		saveError = fmt.Errorf("failed to create save directory: %v", err)
 		return saveError
 	}
 
@@ -608,6 +612,11 @@ func (sm *SaveManager) validateStatDataSafe(name string, stat *StatData) error {
 }
 
 // Close shuts down the save manager and stops auto-save
+// Waits for any active save operations to complete before returning
 func (sm *SaveManager) Close() {
 	sm.DisableAutoSave()
+	
+	// Wait for all active save operations to complete
+	// This ensures no save operations are interrupted during shutdown
+	sm.saveWg.Wait()
 }
