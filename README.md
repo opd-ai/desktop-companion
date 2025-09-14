@@ -369,7 +369,7 @@ go run cmd/companion/main.go -network -character assets/characters/multiplayer/s
 - **Auto-save**: Game state automatically saves at intervals that vary by difficulty:
   - Easy: 10 minutes (600 seconds)
   - Normal/Romance: 5 minutes (300 seconds)  
-  - Specialist: ~6.7 minutes (400 seconds)
+  - Specialist: 10 minutes (600 seconds)
   - Hard: 2 minutes (120 seconds)
   - Challenge: 1 minute (60 seconds)
 
@@ -483,7 +483,7 @@ Characters are defined using JSON configuration files with this structure:
 
 - `idleTimeout` (number, 10-300): Seconds before returning to idle animation
 - `movementEnabled` (boolean): Allow dragging the character (default: false)
-- `defaultSize` (number, 64-512): Character size in pixels (default: 128)
+- `defaultSize` (number, 64-512): Character size in pixels (uses 128 when value is 0 or negative)
 
 #### Multiplayer Configuration (Optional)
 
@@ -509,7 +509,7 @@ Characters can be configured for peer-to-peer networking and multiplayer feature
 - `discoveryPort` (number, 1024-65535): UDP port for peer discovery (default: 8080)
 
 **Security Notes:**
-- All network messages are cryptographically signed with Ed25519
+- All network messages are cryptographically signed with Ed25519 (authenticated, but not encrypted; messages are readable by network intermediaries)
 - Only characters with matching `networkID` can communicate
 - Discovery ports below 1024 are restricted to avoid system conflicts
 
