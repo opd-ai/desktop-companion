@@ -13,7 +13,7 @@ The BotController implements autonomous character behavior that feels natural an
 - **Rate Limiting**: Prevents excessive actions that would feel unnatural
 - **Network Integration**: Coordinates with multiplayer features when available
 - **Zero Breaking Changes**: Integrates via interfaces without modifying existing Character code
-- **High Performance**: <50ns per Update() call, suitable for 60 FPS integration
+- **High Performance**: ~81ns per Update() call, suitable for 60 FPS integration
 
 ## Architecture
 
@@ -143,7 +143,7 @@ The bot can perform these autonomous actions:
 ## Performance Characteristics
 
 - **Memory Usage**: <5KB per bot instance
-- **CPU Usage**: <50ns per Update() call
+- **CPU Usage**: ~81ns per Update() call
 - **Action Generation**: ~2μs per decision cycle
 - **Thread Safety**: Full concurrent access support
 - **Integration Cost**: Zero overhead when bot is disabled

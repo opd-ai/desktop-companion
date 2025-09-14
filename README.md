@@ -65,7 +65,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Natural Timing**: Human-like delays and variations prevent mechanical behavior
   - **Character Integration**: Seamless integration with existing Character.Update() cycle
   - **Network Coordination**: Bot characters can interact with peers in multiplayer mode
-  - **Performance Optimized**: <50ns per Update() call, suitable for 60 FPS real-time operation
+  - **Performance Optimized**: ~81ns per Update() call, suitable for 60 FPS real-time operation
   - **Rate Limiting**: Prevents excessive actions that would feel unnatural
 - ⚔️ **Battle System**: Turn-based tactical combat system *(Complete)*
   - **Fair Combat**: Balanced turn-based mechanics with timeout protection
