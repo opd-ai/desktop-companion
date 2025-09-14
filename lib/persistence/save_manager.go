@@ -54,7 +54,7 @@ type SaveManager struct {
 	ctx            context.Context
 	cancel         context.CancelFunc
 	statusCallback func(SaveStatus, string) // Callback for status updates
-	saveWg         sync.WaitGroup          // Tracks active save operations for clean shutdown
+	saveWg         sync.WaitGroup           // Tracks active save operations for clean shutdown
 }
 
 // GameSaveData represents the complete save state for a character
@@ -615,7 +615,7 @@ func (sm *SaveManager) validateStatDataSafe(name string, stat *StatData) error {
 // Waits for any active save operations to complete before returning
 func (sm *SaveManager) Close() {
 	sm.DisableAutoSave()
-	
+
 	// Wait for all active save operations to complete
 	// This ensures no save operations are interrupted during shutdown
 	sm.saveWg.Wait()
