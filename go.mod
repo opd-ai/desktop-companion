@@ -6,6 +6,7 @@ require (
 	fyne.io/fyne/v2 v2.5.2
 	github.com/jdkato/prose/v2 v2.0.0
 	github.com/mmcdole/gofeed v1.3.0
+	github.com/opd-ai/minilm v0.0.0-20250914002606-5e5d977501ea
 	github.com/sirupsen/logrus v1.9.3
 )
 
@@ -35,7 +36,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.4.0 // indirect
-	github.com/opd-ai/minilm v0.0.0-20250914002606-5e5d977501ea // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rymdport/portal v0.2.6 // indirect
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
