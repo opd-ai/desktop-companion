@@ -1,0 +1,118 @@
+{
+  "name": "LLM-Powered Companion",
+  "description": "A virtual companion enhanced with LLM-powered dialog generation",
+  
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "thinking": "../default/animations/idle.gif"
+  },
+
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello! I'm enhanced with AI!",
+        "My responses are generated using language models!",
+        "I can have more natural conversations now!"
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    }
+  ],
+
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+
+  "stats": {
+    "happiness": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 20
+    },
+    "energy": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 1.2,
+      "criticalThreshold": 30
+    }
+  },
+
+  "personality": {
+    "traits": {
+      "friendliness": 0.8,
+      "intelligence": 0.9,
+      "curiosity": 0.7,
+      "helpfulness": 0.85
+    }
+  },
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "llm",
+    "fallbackChain": ["markov_chain", "simple_random"],
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "confidenceThreshold": 0.5,
+    "responseTimeout": 5000,
+    "debugMode": false,
+    "backends": {
+      "llm": {
+        "modelPath": "models/companion-chat.gguf",
+        "maxTokens": 50,
+        "temperature": 0.8,
+        "topP": 0.9,
+        "topK": 40,
+        "repeatPenalty": 1.1,
+        "contextSize": 2048,
+        "personalityWeight": 1.5,
+        "moodInfluence": 1.0,
+        "useCharacterName": true,
+        "useSituation": true,
+        "useRelationship": true,
+        "systemPrompt": "You are a friendly and intelligent virtual companion. Respond naturally and helpfully.",
+        "personalityPrompt": "You are curious, helpful, and enjoy learning from conversations. Show genuine interest in the user.",
+        "fallbackResponses": [
+          "I'm thinking about that...",
+          "Let me process that for a moment...",
+          "That's really interesting to consider..."
+        ],
+        "enabled": true,
+        "mockMode": true,
+        "debug": false,
+        "maxGenerationTime": 30,
+        "healthCheckInterval": 60,
+        "concurrentRequests": 2
+      },
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.7,
+        "temperatureMax": 0.9,
+        "usePersonality": true,
+        "trainingData": [
+          "Hello! I'm your AI-powered companion!",
+          "I love learning new things and having conversations!",
+          "My language model helps me understand you better!",
+          "Thanks for chatting with me, it helps me improve!",
+          "I can generate more natural responses now!",
+          "Feel free to ask me anything, I'm here to help!",
+          "Each conversation teaches me something new!",
+          "I enjoy our discussions and learning from you!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.6,
+          "maxRepetition": 0.4,
+          "requireComplete": true,
+          "minUniqueWords": 3
+        }
+      }
+    }
+  }
+}

@@ -588,6 +588,9 @@ func (c *Character) initializeDialogSystem() error {
 	c.dialogManager.RegisterBackend("simple_random", dialog.NewSimpleRandomBackend())
 	c.dialogManager.RegisterBackend("markov_chain", dialog.NewMarkovChainBackend())
 
+	// Register LLM backend (optional dependency)
+	c.dialogManager.RegisterBackend("llm", dialog.NewLLMDialogBackend())
+
 	// Register news backend if news features are enabled
 	if c.card.HasNewsFeatures() {
 		newsBackend := news.NewNewsBlogBackend()
