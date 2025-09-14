@@ -424,9 +424,9 @@ jobs:
             fi
             
             # Use our custom APK validator if available
-            if [[ -f "scripts/apk-validator.go" ]]; then
+            if [[ -f "tools/apk-validator/main.go" ]]; then
               echo "Running custom APK validation..."
-              if go run scripts/apk-validator.go "$apk_file" "${{ matrix.character }}"; then
+              if go run tools/apk-validator/main.go "$apk_file" "${{ matrix.character }}"; then
                 echo "✅ Custom APK validation passed"
               else
                 echo "⚠️ Custom APK validation failed"
