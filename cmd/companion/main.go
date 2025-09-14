@@ -15,6 +15,7 @@ import (
 	"github.com/opd-ai/desktop-companion/lib/character"
 	"github.com/opd-ai/desktop-companion/lib/monitoring"
 	"github.com/opd-ai/desktop-companion/lib/network"
+	"github.com/opd-ai/desktop-companion/lib/platform"
 	"github.com/opd-ai/desktop-companion/lib/ui"
 )
 
@@ -746,13 +747,33 @@ func handleTriggerEventFlag(char *character.Character) error {
 }
 
 // checkDisplayAvailable verifies that a display is available for GUI applications
+// Automatically handles platform differences - mobile platforms don't need X11/Wayland
 func checkDisplayAvailable() error {
 	caller := getCaller()
 	logrus.WithFields(logrus.Fields{
 		"caller": caller,
 	}).Info("Checking display availability for GUI application")
 
-	// Check for X11 display on Linux/Unix systems
+	// Get platform information for mobile detection
+	platformInfo := platform.GetPlatformInfo()
+	
+	logrus.WithFields(logrus.Fields{
+		"caller":     caller,
+		"platform":   platformInfo.OS,
+		"formFactor": platformInfo.FormFactor,
+		"isMobile":   platformInfo.IsMobile(),
+	}).Debug("Platform detection results")
+
+	// Mobile platforms (Android/iOS) don't use X11/Wayland display systems
+	if platformInfo.IsMobile() {
+		logrus.WithFields(logrus.Fields{
+			"caller":   caller,
+			"platform": platformInfo.OS,
+		}).Info("Mobile platform detected - skipping desktop display checks")
+		return nil
+	}
+
+	// Desktop platforms require X11 or Wayland display environment
 	display := os.Getenv("DISPLAY")
 	waylandDisplay := os.Getenv("WAYLAND_DISPLAY")
 
@@ -760,53 +781,60 @@ func checkDisplayAvailable() error {
 		"caller":         caller,
 		"display":        display,
 		"waylandDisplay": waylandDisplay,
-	}).Debug("Environment display variables")
+		"platform":       platformInfo.OS,
+	}).Debug("Desktop display environment variables")
 
-	// Check if any display environment is available
+	// Check if any display environment is available for desktop platforms
 	if display == "" && waylandDisplay == "" {
 		logrus.WithFields(logrus.Fields{
-			"caller": caller,
-		}).Error("No display environment available")
+			"caller":   caller,
+			"platform": platformInfo.OS,
+		}).Error("No display environment available for desktop platform")
 		return fmt.Errorf("no display available - neither X11 (DISPLAY) nor Wayland (WAYLAND_DISPLAY) environment is available.\n" +
 			"This application requires a graphical desktop environment to run.\n" +
 			"Please run from a desktop session or use X11 forwarding for remote connections")
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"caller": caller,
-	}).Info("Display environment available")
+		"caller":   caller,
+		"platform": platformInfo.OS,
+	}).Info("Desktop display environment available")
 
-	// Additional detection for headless systems and SSH sessions
+	// Additional detection for headless systems and SSH sessions on desktop platforms
 	sshConnection := os.Getenv("SSH_CONNECTION")
 	sshClient := os.Getenv("SSH_CLIENT")
 
 	if sshConnection != "" || sshClient != "" {
 		logrus.WithFields(logrus.Fields{
 			"caller":        caller,
+			"platform":      platformInfo.OS,
 			"sshConnection": sshConnection,
 			"sshClient":     sshClient,
-		}).Warn("Running in SSH session - GUI may not be available")
+		}).Warn("Running in SSH session on desktop platform - GUI may not be available")
 	}
 
-	// Check for headless system indicators
+	// Check for headless system indicators on desktop platforms
 	xdgDesktop := os.Getenv("XDG_CURRENT_DESKTOP")
 	desktopSession := os.Getenv("DESKTOP_SESSION")
 
 	logrus.WithFields(logrus.Fields{
 		"caller":         caller,
+		"platform":       platformInfo.OS,
 		"xdgDesktop":     xdgDesktop,
 		"desktopSession": desktopSession,
 	}).Debug("Desktop environment variables")
 
 	if xdgDesktop == "" && desktopSession == "" && display != "" {
 		logrus.WithFields(logrus.Fields{
-			"caller": caller,
+			"caller":   caller,
+			"platform": platformInfo.OS,
 		}).Warn("No desktop environment detected - running in minimal graphics mode")
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"caller": caller,
-	}).Info("Display availability check completed successfully")
+		"caller":   caller,
+		"platform": platformInfo.OS,
+	}).Info("Display availability check completed successfully for desktop platform")
 
 	return nil
 }
