@@ -35,6 +35,19 @@ Automated APK integrity testing is provided for CI/CD validation. The script `sc
 
 See `scripts/apk_integrity_test.go` for details.
 
+## Network Connection Recovery
+
+The multiplayer networking system uses a `ConnectionManager` to handle connection lifecycle, error recovery, and reconnection with exponential backoff. All network operations use Go's standard library and interface types for testability.
+
+### Features
+
+- Automatic reconnection on failure (with exponential backoff)
+- Explicit error handling for connection loss and timeouts
+- Thread-safe connection state
+- Unit tests for recovery logic and error scenarios
+
+See `lib/network/connection.go` for implementation details.
+
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features
