@@ -45520,7 +45520,7 @@
     {
       "name": "NewAPKValidator",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 30,
       "is_exported": true,
       "is_method": false,
@@ -45555,7 +45555,7 @@
     {
       "name": "ValidateAPK",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 35,
       "is_exported": true,
       "is_method": true,
@@ -45591,7 +45591,7 @@
     {
       "name": "validateFileExists",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 60,
       "is_exported": false,
       "is_method": true,
@@ -45627,7 +45627,7 @@
     {
       "name": "validateZipStructure",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 73,
       "is_exported": false,
       "is_method": true,
@@ -45663,7 +45663,7 @@
     {
       "name": "validateAPKComponents",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 88,
       "is_exported": false,
       "is_method": true,
@@ -45699,7 +45699,7 @@
     {
       "name": "validateManifest",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 126,
       "is_exported": false,
       "is_method": true,
@@ -45735,7 +45735,7 @@
     {
       "name": "GetAPKInfo",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 156,
       "is_exported": true,
       "is_method": true,
@@ -45771,7 +45771,7 @@
     {
       "name": "String",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 206,
       "is_exported": true,
       "is_method": true,
@@ -45807,7 +45807,7 @@
     {
       "name": "ValidateCharacterAPK",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 219,
       "is_exported": true,
       "is_method": false,
@@ -45842,7 +45842,7 @@
     {
       "name": "main",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 259,
       "is_exported": false,
       "is_method": false,
@@ -98574,7 +98574,7 @@
     {
       "name": "APKValidator",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 13,
       "is_exported": true,
       "total_fields": 1,
@@ -98793,7 +98793,7 @@
     {
       "name": "AndroidManifest",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 18,
       "is_exported": true,
       "total_fields": 5,
@@ -98822,7 +98822,7 @@
     {
       "name": "APKInfo",
       "package": "main",
-      "file": "scripts/apk-validator.go",
+      "file": "tools/apk-validator/main.go",
       "line": 195,
       "is_exported": true,
       "total_fields": 7,
@@ -112160,7 +112160,7 @@
         "/home/user/go/src/github.com/opd-ai/desktop-companion/examples/integrated_demo/main.go",
         "/home/user/go/src/github.com/opd-ai/desktop-companion/scripts/embed-character.go",
         "/home/user/go/src/github.com/opd-ai/desktop-companion/tools/validate_characters.go",
-        "/home/user/go/src/github.com/opd-ai/desktop-companion/scripts/apk-validator.go"
+        "/home/user/go/src/github.com/opd-ai/desktop-companion/tools/apk-validator/main.go"
       ],
       "lines": {
         "total": 2477,

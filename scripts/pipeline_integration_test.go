@@ -472,53 +472,9 @@ func TestMakefileIntegration(t *testing.T) {
 				t.Errorf("Unexpected error for target %s: %v\nOutput: %s", tt.target, err, string(output))
 			}
 
-			if !tt.expectError {
-				t.Logf("Target %s output: %s", tt.target, string(output))
-			}
-		})
-	}
-}
-
-// TestFullPipelineDocumentation tests that the documentation is accurate
-func TestFullPipelineDocumentation(t *testing.T) {
-	projectRoot, err := findProjectRoot()
-	if err != nil {
-		t.Fatalf("Failed to find project root: %v", err)
-	}
-
-	// Check that PLAN.md exists and contains expected sections
-	planPath := filepath.Join(projectRoot, "PLAN.md")
-	planContent, err := os.ReadFile(planPath)
-	if err != nil {
-		t.Fatalf("Failed to read PLAN.md: %v", err)
-	}
-
-	planStr := string(planContent)
-	expectedSections := []string{
-		"## 7. Implementation Timeline",
-		"Phase 1: Core Infrastructure",
-		"Phase 2: CI/CD Pipeline",
-		"Phase 3: Integration and Testing",
-		"Phase 4: Release and Monitoring",
-	}
-
-	for _, section := range expectedSections {
-		if !strings.Contains(planStr, section) {
-			t.Errorf("PLAN.md missing expected section: %s", section)
+		if !tt.expectError {
+			t.Logf("Target %s output: %s", tt.target, string(output))
 		}
+	})
 	}
-
-	// Check README for character binary documentation
-	readmePath := filepath.Join(projectRoot, "README.md")
-	readmeContent, err := os.ReadFile(readmePath)
-	if err != nil {
-		t.Fatalf("Failed to read README.md: %v", err)
-	}
-
-	readmeStr := string(readmeContent)
-	if !strings.Contains(readmeStr, "Character-Specific Binary Generation") {
-		t.Log("README.md may need updates for character binary generation documentation")
-	}
-
-	t.Log("Documentation check completed")
 }

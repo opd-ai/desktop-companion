@@ -72,7 +72,7 @@
 
 ### Local Testing Tools
 - **scripts/test-android-build.sh**: APK build simulation
-- **scripts/apk-validator.go**: APK structure validation
+- **tools/apk-validator/main.go**: APK structure validation
 - **scripts/validate-pipeline.sh**: Comprehensive pipeline testing
 
 ### Validation Checks

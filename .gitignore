@@ -37,3 +37,7 @@ go.work.sum
 /demo
 /test_*
 /tmp
+scripts/embed-character
+apk-validator
+artifact-manager
+llm-config-generator
