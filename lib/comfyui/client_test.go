@@ -11,6 +11,7 @@ import (
     "testing"
     "time"
     "encoding/json"
+    ws "nhooyr.io/websocket"
 )
 
 // Test configuration validation
@@ -161,3 +162,82 @@ func TestIsRetryable(t *testing.T) {
         if got := isRetryable(cse.in); got != cse.want { t.Fatalf("case %d got %v want %v", i, got, cse.want) }
     }
 }
+
+// --- WebSocket Monitoring Tests ---
+
+// startWSServer spins up a test HTTP server upgrading a single path to websocket.
+func startWSServer(t *testing.T, handler func(ctx context.Context, c *ws.Conn)) *httptest.Server {
+    t.Helper()
+    return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if !strings.Contains(r.URL.RawQuery, "job_id=") {
+            w.WriteHeader(http.StatusBadRequest)
+            return
+        }
+        c, err := ws.Accept(w, r, nil)
+        if err != nil { t.Fatalf("accept: %v", err) }
+        go handler(r.Context(), c)
+    }))
+}
+
+func TestMonitorJobSuccess(t *testing.T) {
+    srv := startWSServer(t, func(ctx context.Context, c *ws.Conn) {
+        msgs := []string{
+            `{"job_id":"abc","status":"running","progress":0.25}`,
+            `{"job_id":"abc","status":"running","progress":0.50}`,
+            `{"job_id":"abc","status":"completed","progress":1}`,
+        }
+        for _, m := range msgs {
+            if err := c.Write(ctx, ws.MessageText, []byte(m)); err != nil { return }
+        }
+        c.Close(ws.StatusNormalClosure, "done")
+    })
+    defer srv.Close()
+    cfg := DefaultConfig(); cfg.ServerURL = srv.URL; cfg.WSPath = "/"
+    cli, err := New(cfg)
+    if err != nil { t.Fatalf("new: %v", err) }
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+    defer cancel()
+    ch, err := cli.MonitorJob(ctx, "abc")
+    if err != nil { t.Fatalf("monitor: %v", err) }
+    var count int
+    for p := range ch {
+        if p.Err != nil { t.Fatalf("unexpected error: %v", p.Err) }
+        count++
+    }
+    if count != 3 { t.Fatalf("expected 3 progress messages, got %d", count) }
+}
+
+func TestMonitorJobMalformedJSON(t *testing.T) {
+    srv := startWSServer(t, func(ctx context.Context, c *ws.Conn) {
+        _ = c.Write(ctx, ws.MessageText, []byte("not-json"))
+    })
+    defer srv.Close()
+    cfg := DefaultConfig(); cfg.ServerURL = srv.URL; cfg.WSPath = "/"
+    cli, _ := New(cfg)
+    ch, err := cli.MonitorJob(context.Background(), "jjj")
+    if err != nil { t.Fatalf("monitor: %v", err) }
+    msg, ok := <-ch
+    if !ok { t.Fatalf("expected one message") }
+    if msg.Err == nil || !strings.Contains(msg.Err.Error(), "decode progress") { t.Fatalf("expected decode error, got %+v", msg) }
+}
+
+func TestMonitorJobContextCancel(t *testing.T) {
+    srv := startWSServer(t, func(ctx context.Context, c *ws.Conn) {
+        // send one message then wait so context can cancel
+        _ = c.Write(ctx, ws.MessageText, []byte(`{"job_id":"cxl","status":"running","progress":0.1}`))
+        time.Sleep(200 * time.Millisecond)
+    })
+    defer srv.Close()
+    cfg := DefaultConfig(); cfg.ServerURL = srv.URL; cfg.WSPath = "/"
+    cli, _ := New(cfg)
+    ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+    defer cancel()
+    ch, err := cli.MonitorJob(ctx, "cxl")
+    if err != nil { t.Fatalf("monitor: %v", err) }
+    var sawCancel bool
+    for p := range ch {
+        if p.Status == "cancelled" { sawCancel = true }
+    }
+    if !sawCancel { t.Fatalf("expected cancelled status") }
+}
+

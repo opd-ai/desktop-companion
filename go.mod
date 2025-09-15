@@ -8,6 +8,7 @@ require (
 	github.com/mmcdole/gofeed v1.3.0
 	github.com/opd-ai/minilm v0.0.0-20250914002606-5e5d977501ea
 	github.com/sirupsen/logrus v1.9.3
+	nhooyr.io/websocket v1.8.11
 )
 
 require (

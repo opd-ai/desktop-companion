@@ -3,6 +3,11 @@
 
 .PHONY: all build clean test deps
 
+# Test configuration
+# Default test timeout shortened from Go's default (10m) to 5m to surface
+# hanging tests faster. Override with: `make test TEST_TIMEOUT=2m` if needed.
+TEST_TIMEOUT ?= 5m
+
 # Build configuration
 BINARY_NAME=companion
 BUILD_DIR=build
@@ -21,8 +26,8 @@ deps:
 test:
 	@echo "Running animation validation..."
 	@bash scripts/validate-animations.sh
-	@echo "Running Go tests..."
-	go test ./... -v -cover
+	@echo "Running Go tests (timeout=$(TEST_TIMEOUT))..."
+	go test ./... -v -cover -timeout $(TEST_TIMEOUT)
 
 # Clean build artifacts
 clean:
@@ -224,6 +229,7 @@ help:
 	@echo "  run                - Run application locally"
 	@echo "  run-debug          - Run with debug output"
 	@echo "  test               - Run unit tests"
+	@echo "                     (use TEST_TIMEOUT=duration to override default 5m)"
 	@echo "  coverage           - Generate test coverage report"
 	@echo "  clean              - Remove build artifacts"
 	@echo "  deps               - Install/update dependencies"

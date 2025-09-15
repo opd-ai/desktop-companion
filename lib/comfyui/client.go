@@ -30,6 +30,8 @@ import (
     "net/http"
     "time"
     "strings"
+    "net/url"
+    ws "nhooyr.io/websocket"
 )
 
 // Client defines the minimal ComfyUI operations required by the first
@@ -46,6 +48,12 @@ type Client interface {
     SubmitWorkflow(ctx context.Context, wf *Workflow) (*Job, error)
     // GetQueueStatus returns current queue metrics (pending/running/finished).
     GetQueueStatus(ctx context.Context) (*QueueStatus, error)
+    // MonitorJob establishes a WebSocket connection and streams progress
+    // updates for the given job. The returned channel is closed when the job
+    // completes, the context is cancelled, or a fatal error occurs. Any error
+    // encountered mid-stream is surfaced via JobProgress.Err in the final
+    // message before channel close.
+    MonitorJob(ctx context.Context, jobID string) (<-chan JobProgress, error)
 }
 
 // HTTPClient abstracts the subset of *http.Client used. This enables tests to
@@ -68,6 +76,8 @@ type Config struct {
     // RetryBackoff is the base duration used for linear backoff between
     // retries (multiplied by attempt index starting from 1).
     RetryBackoff  time.Duration
+    // WSPath is the path component for websocket connections (default: /ws).
+    WSPath        string
 }
 
 // DefaultConfig returns a conservative default configuration.
@@ -76,9 +86,10 @@ type Config struct {
 func DefaultConfig() Config {
     return Config{
         ServerURL:     "http://localhost:8188",
-        Timeout:       30 * time.Second,
+            Timeout:       10 * time.Second, // reduced from 30s to speed up failure detection
         RetryAttempts: 2,
         RetryBackoff:  500 * time.Millisecond,
+        WSPath:        "/ws",
     }
 }
 
@@ -234,6 +245,95 @@ func (c *client) GetQueueStatus(ctx context.Context) (*QueueStatus, error) {
         return nil, fmt.Errorf("decode queue status: %w", err)
     }
     return &qs, nil
+}
+
+// JobProgress represents a single progress update frame received over the
+// WebSocket. Not all fields are guaranteed to be populated; they reflect what
+// the server provides. Err is non-nil only on terminal error (after which the
+// channel will close).
+type JobProgress struct {
+    JobID    string   `json:"job_id"`
+    Status   string   `json:"status"`
+    Progress float64  `json:"progress"`
+    Message  string   `json:"message,omitempty"`
+    Err      error    `json:"-"`
+}
+
+// MonitorJob connects to the WebSocket endpoint and streams progress. Design
+// choices:
+//   * Simplicity: single output channel, errors embedded in final message.
+//   * Early validation: reject empty jobID.
+//   * Graceful termination: close on completion states (completed, failed, error).
+//   * Minimal parsing: decode JSON into JobProgress; unrecognized fields ignored.
+//   * No reconnection logic yet — can be layered later without changing signature.
+func (c *client) MonitorJob(ctx context.Context, jobID string) (<-chan JobProgress, error) {
+    if jobID == "" {
+        return nil, errors.New("jobID required")
+    }
+    u, err := url.Parse(c.cfg.ServerURL)
+    if err != nil {
+        return nil, fmt.Errorf("parse server url: %w", err)
+    }
+    // Convert scheme for websocket.
+    switch u.Scheme {
+    case "http": u.Scheme = "ws"
+    case "https": u.Scheme = "wss"
+    }
+    path := c.cfg.WSPath
+    if !strings.HasPrefix(path, "/") { path = "/" + path }
+    u.Path = path
+    q := u.Query()
+    q.Set("job_id", jobID)
+    u.RawQuery = q.Encode()
+
+    // Dial with context.
+    conn, _, err := ws.Dial(ctx, u.String(), nil)
+    if err != nil {
+        return nil, fmt.Errorf("websocket dial: %w", err)
+    }
+    ch := make(chan JobProgress)
+    go c.readProgress(ctx, conn, jobID, ch)
+    return ch, nil
+}
+
+func (c *client) readProgress(ctx context.Context, conn *ws.Conn, jobID string, ch chan<- JobProgress) {
+    defer close(ch)
+    defer conn.Close(ws.StatusNormalClosure, "closing")
+    for {
+        // Respect context cancellation.
+        if ctx.Err() != nil {
+            ch <- JobProgress{JobID: jobID, Status: "cancelled", Err: ctx.Err()}
+            return
+        }
+        _, data, err := conn.Read(ctx)
+        if err != nil {
+            // Normal close without prior completion: surface as error.
+            if ctx.Err() != nil {
+                ch <- JobProgress{JobID: jobID, Status: "cancelled", Err: ctx.Err()}
+                return
+            }
+            ch <- JobProgress{JobID: jobID, Status: "error", Err: err}
+            return
+        }
+        var prog JobProgress
+        if err := json.Unmarshal(data, &prog); err != nil {
+            ch <- JobProgress{JobID: jobID, Status: "error", Err: fmt.Errorf("decode progress: %w", err)}
+            return
+        }
+        if prog.JobID == "" { prog.JobID = jobID }
+        ch <- prog
+        if isTerminalState(prog.Status) {
+            return
+        }
+    }
+}
+
+func isTerminalState(s string) bool {
+    switch strings.ToLower(s) {
+    case "completed", "failed", "error", "cancelled":
+        return true
+    }
+    return false
 }
 
 // nilString returns empty string; helper used only to make intent explicit when checking job id.
