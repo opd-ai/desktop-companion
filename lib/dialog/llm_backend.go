@@ -537,12 +537,20 @@ func (llm *LLMDialogBackend) GetModelInfo() map[string]interface{} {
 		"mock_mode":   llm.config.MockMode,
 	}
 
-	if llm.enabled && llm.llmBackend != nil {
-		// TODO: Get additional model info from miniLM if available
-		info["backend_type"] = "minilm"
-		info["max_tokens"] = llm.config.MaxTokens
-		info["temperature"] = llm.config.Temperature
-		info["context_size"] = llm.config.ContextSize
+	if llm.enabled {
+		if llm.config.MockMode {
+			// In mock mode, simulate minilm backend info
+			info["backend_type"] = "minilm"
+			info["max_tokens"] = llm.config.MaxTokens
+			info["temperature"] = llm.config.Temperature
+			info["context_size"] = llm.config.ContextSize
+		} else if llm.llmBackend != nil {
+			// TODO: Get additional model info from miniLM if available
+			info["backend_type"] = "minilm"
+			info["max_tokens"] = llm.config.MaxTokens
+			info["temperature"] = llm.config.Temperature
+			info["context_size"] = llm.config.ContextSize
+		}
 	}
 
 	return info
@@ -597,6 +605,13 @@ func (llm *LLMDialogBackend) RecoverFromError() error {
 
 	if !llm.initialized {
 		return fmt.Errorf("backend not initialized")
+	}
+
+	// In mock mode, just re-enable without miniLM initialization
+	if llm.config.MockMode {
+		logrus.Info("Recovering LLM backend in mock mode")
+		llm.enabled = true
+		return nil
 	}
 
 	// Attempt to re-initialize the miniLM backend
