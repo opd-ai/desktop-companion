@@ -1,2 +1,5 @@
+2025/09/15 15:59:28 Fyne error:  Error parsing user locale
+2025/09/15 15:59:28   Cause: language: tag is not well-formed
+2025/09/15 15:59:28   At: /go/pkg/mod/fyne.io/fyne/v2@v2.5.2/lang/locale.go:35
 Desktop Companion (easy) v1.0.0-easy
 Built with Go and Fyne - Cross-platform desktop pet
