@@ -108,6 +108,7 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
      * Coverage maintained >80% after WebSocket addition (success, malformed JSON, dial error, cancel scenarios tested)
      * Next Steps: (1) Implement workflow template loader (2) Add result retrieval & file persistence layer (3) Introduce batch queue abstraction
      * Risk Reduction: Early tests lock API shape; future additions can extend interface without breaking callers
+  * UPDATE (Sep 15 2025 - later): Workflow template loader IMPLEMENTED (`TemplateLoader` in `lib/comfyui/workflow.go`). Features: read‑through caching, context cancellation, JSON round‑trip deep copy for isolation, deterministic ID fallback, placeholder substitution for `{{KEY}}` tokens in string values across nodes & meta. Comprehensive tests added (`workflow_test.go`): cache reuse, missing file, invalid JSON, substitution (nested array/map), deep copy integrity, context cancellation, generated ID. Coverage for comfyui package now 82.2% (>80% target). No external dependencies added (stdlib only). Next Steps revised: (1) Result retrieval & file persistence layer (2) Batch queue abstraction / backpressure (3) Workflow discovery & advanced validation.
    - Technical requirements:
      - GIF specs: 4-8 frames, <500KB file size, transparency support
      - Support for all required animation states per character archetype
