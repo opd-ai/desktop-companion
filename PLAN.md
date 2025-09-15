@@ -23,7 +23,7 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
 - [x] **Events Flag Integration**: Command-line flag exists and IS functionally connected to UI system with keyboard shortcuts (Ctrl+E/R/G/H)
 
 #### Major  
-- [ ] **Animation Asset Requirements**: All characters use placeholder GIF animations
+- [ ] **Animation Asset Requirements**: All characters use placeholder GIF animations - **Replaced by ComfyUI pipeline** (see GIF_PLAN.md)
 - [ ] **Android Build Testing**: APK generation exists but lacks comprehensive testing
 - [ ] **Network System Edge Cases**: Some error handling paths in multiplayer networking need strengthening
 
@@ -91,17 +91,22 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
 
 ### Phase 2: Major Components [2-3 weeks]
 
-1. **Animation Asset Creation and Management**
-   - Description: Replace placeholder animations with proper character-specific GIF assets
-   - Implementation steps:
-     a. Create asset generation pipeline for consistent animation style
-     b. Generate character-specific animations for each of 19+ archetypes
-     c. Implement animation validation system to ensure quality standards
-     d. Add animation optimization tools to reduce file sizes
-     e. Create animation testing framework for visual regression testing
-   - Testing requirements: Animation loading tests, performance impact testing
-   - Dependencies: Asset creation tools, animation manager system
-   - Estimated time: 1-2 weeks
+1. **ComfyUI Animation Asset Pipeline**
+   - Description: Implement automated GIF asset generation using local ComfyUI instance for character animations
+   - Implementation steps (see GIF_PLAN.md for complete details):
+     a. Develop ComfyUI HTTP/WebSocket client integration (`lib/comfyui/`)
+     b. Create base character generation from archetype descriptions
+     c. Generate mood/activity variants (idle, talking, happy, sad, hungry, eating, romance-specific)
+     d. Convert static sequences to optimized GIF animations with transparency
+     e. Implement batch processing for all 19+ character archetypes
+   - Technical requirements:
+     - GIF specs: 4-8 frames, <500KB file size, transparency support
+     - Support for all required animation states per character archetype
+     - Automated quality validation and retry mechanisms
+     - Integration with existing character validation system
+   - Testing requirements: Animation quality validation, ComfyUI integration tests, batch processing validation
+   - Dependencies: Local ComfyUI instance, workflow templates, asset optimization libraries
+   - Estimated time: 4-6 weeks (detailed in GIF_PLAN.md implementation phases)
 
 2. **Android Build System Hardening**
    - Description: Strengthen Android APK generation with comprehensive testing and validation
@@ -174,9 +179,10 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
 - **Platform Native**: Ensure new features work across Windows, macOS, Linux, and Android
 
 ### External Dependencies
-- **Animation Tools**: Consider integrating with GIF optimization libraries for asset pipeline
+- **ComfyUI Integration**: Local ComfyUI instance for automated GIF asset generation (see GIF_PLAN.md)
+- **Animation Pipeline**: HTTP/WebSocket clients for ComfyUI API, workflow template management
 - **Testing Frameworks**: May need additional testing utilities for visual and performance testing
-- **Build Tools**: Potential integration with asset bundling tools for automated workflows
+- **Build Tools**: Asset bundling tools integrated with ComfyUI workflow automation
 
 ### Performance Considerations
 - **Memory Management**: Target <512MB memory usage for smooth operation on resource-constrained devices
@@ -223,7 +229,7 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
 - [ ] All public APIs documented with comprehensive godoc comments
 - [ ] User guide updated with new features and capabilities
 - [ ] Architecture documentation reflects current implementation
-- [ ] Character creation tutorial includes animation asset requirements
+- [ ] Character creation tutorial includes ComfyUI animation pipeline setup (see GIF_PLAN.md)
 - [ ] Troubleshooting guide covers common deployment scenarios
 
 ### Feature Completeness
@@ -250,13 +256,13 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
 ## Risk Assessment
 
 ### Technical Risks
-- **Animation Asset Creation**: May require significant artistic resources and time
+- **ComfyUI Pipeline Integration**: Requires local ComfyUI setup and workflow template development
 - **Android Platform Complexity**: Mobile platform testing can be challenging without dedicated devices
 - **Network Edge Cases**: Difficult to test all possible network failure scenarios
 - **Performance Optimization**: May require extensive profiling and iteration
 
 ### Mitigation Strategies
-- **Asset Pipeline**: Create automated tools for consistent animation generation
+- **ComfyUI Pipeline**: Automated workflow generation with comprehensive testing and fallback mechanisms (detailed in GIF_PLAN.md)
 - **Testing Infrastructure**: Invest in comprehensive automated testing across platforms
 - **Community Involvement**: Engage user community for beta testing and feedback
 - **Incremental Delivery**: Release improvements incrementally to gather feedback early
