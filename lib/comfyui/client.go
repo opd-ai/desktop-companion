@@ -55,6 +55,10 @@ type Client interface {
     // encountered mid-stream is surfaced via JobProgress.Err in the final
     // message before channel close.
     MonitorJob(ctx context.Context, jobID string) (<-chan JobProgress, error)
+    // GetResult fetches the final result payload for a completed job. It
+    // returns a JobResult containing zero or more Artifacts (binary data
+    // already base64-decoded). Callers can persist them with SaveArtifacts.
+    GetResult(ctx context.Context, jobID string) (*JobResult, error)
 }
 
 // HTTPClient abstracts the subset of *http.Client used. This enables tests to
