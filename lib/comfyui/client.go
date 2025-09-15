@@ -28,9 +28,10 @@ import (
     "fmt"
     "io"
     "net/http"
-    "time"
-    "strings"
     "net/url"
+    "strings"
+    "time"
+
     ws "nhooyr.io/websocket"
 )
 
@@ -300,32 +301,44 @@ func (c *client) readProgress(ctx context.Context, conn *ws.Conn, jobID string, 
     defer close(ch)
     defer conn.Close(ws.StatusNormalClosure, "closing")
     for {
-        // Respect context cancellation.
         if ctx.Err() != nil {
             ch <- JobProgress{JobID: jobID, Status: "cancelled", Err: ctx.Err()}
             return
         }
         _, data, err := conn.Read(ctx)
         if err != nil {
-            // Normal close without prior completion: surface as error.
+            // If the context has been cancelled or deadline exceeded, surface a
+            // cancelled status instead of a generic error so callers can
+            // differentiate user/timeouts from transport faults.
             if ctx.Err() != nil {
                 ch <- JobProgress{JobID: jobID, Status: "cancelled", Err: ctx.Err()}
+                return
+            }
+            // Treat normal closure / EOF as graceful termination without emitting an error frame.
+            if ws.CloseStatus(err) == ws.StatusNormalClosure || errors.Is(err, io.EOF) {
                 return
             }
             ch <- JobProgress{JobID: jobID, Status: "error", Err: err}
             return
         }
-        var prog JobProgress
-        if err := json.Unmarshal(data, &prog); err != nil {
-            ch <- JobProgress{JobID: jobID, Status: "error", Err: fmt.Errorf("decode progress: %w", err)}
-            return
-        }
-        if prog.JobID == "" { prog.JobID = jobID }
+        prog, terminal := parseProgress(data, jobID)
         ch <- prog
-        if isTerminalState(prog.Status) {
+        if terminal || prog.Err != nil {
             return
         }
     }
+}
+
+// parseProgress decodes a progress frame into JobProgress. It always returns a
+// JobProgress (with Err set on failure) plus a boolean indicating terminal
+// state. Keeping this logic separate keeps readProgress concise.
+func parseProgress(data []byte, fallbackJobID string) (JobProgress, bool) {
+    var prog JobProgress
+    if err := json.Unmarshal(data, &prog); err != nil {
+        return JobProgress{JobID: fallbackJobID, Status: "error", Err: fmt.Errorf("decode progress: %w", err)}, true
+    }
+    if prog.JobID == "" { prog.JobID = fallbackJobID }
+    return prog, isTerminalState(prog.Status)
 }
 
 func isTerminalState(s string) bool {

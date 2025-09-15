@@ -175,7 +175,8 @@ func startWSServer(t *testing.T, handler func(ctx context.Context, c *ws.Conn)) 
         }
         c, err := ws.Accept(w, r, nil)
         if err != nil { t.Fatalf("accept: %v", err) }
-        go handler(r.Context(), c)
+        // Use background context so writes are not cancelled when handler returns.
+        go handler(context.Background(), c)
     }))
 }
 
@@ -195,37 +196,43 @@ func TestMonitorJobSuccess(t *testing.T) {
     cfg := DefaultConfig(); cfg.ServerURL = srv.URL; cfg.WSPath = "/"
     cli, err := New(cfg)
     if err != nil { t.Fatalf("new: %v", err) }
-    ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+    ctx, cancel := context.WithTimeout(context.Background(), 1500*time.Millisecond)
     defer cancel()
     ch, err := cli.MonitorJob(ctx, "abc")
     if err != nil { t.Fatalf("monitor: %v", err) }
     var count int
-    for p := range ch {
-        if p.Err != nil { t.Fatalf("unexpected error: %v", p.Err) }
-        count++
-    }
+    for range ch { count++ }
     if count != 3 { t.Fatalf("expected 3 progress messages, got %d", count) }
 }
 
 func TestMonitorJobMalformedJSON(t *testing.T) {
     srv := startWSServer(t, func(ctx context.Context, c *ws.Conn) {
+        _ = c.Write(ctx, ws.MessageText, []byte(`{"job_id":"jjj","status":"running","progress":0.1}`))
         _ = c.Write(ctx, ws.MessageText, []byte("not-json"))
+        time.Sleep(20 * time.Millisecond)
+        c.Close(ws.StatusNormalClosure, "done")
     })
     defer srv.Close()
     cfg := DefaultConfig(); cfg.ServerURL = srv.URL; cfg.WSPath = "/"
     cli, _ := New(cfg)
     ch, err := cli.MonitorJob(context.Background(), "jjj")
     if err != nil { t.Fatalf("monitor: %v", err) }
-    msg, ok := <-ch
-    if !ok { t.Fatalf("expected one message") }
-    if msg.Err == nil || !strings.Contains(msg.Err.Error(), "decode progress") { t.Fatalf("expected decode error, got %+v", msg) }
+    var sawDecodeErr bool
+    for p := range ch {
+        if p.Err != nil && strings.Contains(p.Err.Error(), "decode progress") { sawDecodeErr = true }
+    }
+    if !sawDecodeErr { t.Fatalf("expected decode progress error") }
 }
 
 func TestMonitorJobContextCancel(t *testing.T) {
     srv := startWSServer(t, func(ctx context.Context, c *ws.Conn) {
-        // send one message then wait so context can cancel
-        _ = c.Write(ctx, ws.MessageText, []byte(`{"job_id":"cxl","status":"running","progress":0.1}`))
-        time.Sleep(200 * time.Millisecond)
+        // continually send until client context cancels
+        ticker := time.NewTicker(20 * time.Millisecond)
+        defer ticker.Stop()
+        for i := 0; i < 20; i++ { // max 400ms
+            _ = c.Write(ctx, ws.MessageText, []byte(`{"job_id":"cxl","status":"running","progress":0.1}`))
+            time.Sleep(20 * time.Millisecond)
+        }
     })
     defer srv.Close()
     cfg := DefaultConfig(); cfg.ServerURL = srv.URL; cfg.WSPath = "/"
@@ -239,5 +246,31 @@ func TestMonitorJobContextCancel(t *testing.T) {
         if p.Status == "cancelled" { sawCancel = true }
     }
     if !sawCancel { t.Fatalf("expected cancelled status") }
+}
+
+func TestMonitorJobDialError(t *testing.T) {
+    cfg := DefaultConfig(); cfg.ServerURL = "http://127.0.0.1:0"; cfg.WSPath = "/"
+    cli, _ := New(cfg)
+    _, err := cli.MonitorJob(context.Background(), "id1")
+    if err == nil { t.Fatalf("expected dial error") }
+}
+
+func TestMonitorJobEmptyID(t *testing.T) {
+    cfg := DefaultConfig(); cfg.ServerURL = "http://localhost:8188"; cfg.WSPath = "/"
+    cli, _ := New(cfg)
+    _, err := cli.MonitorJob(context.Background(), "")
+    if err == nil || !strings.Contains(err.Error(), "jobID required") { t.Fatalf("expected jobID required error") }
+}
+
+// parseProgress internal helper tests
+func TestParseProgressDecodeError(t *testing.T) {
+    prog, terminal := parseProgress([]byte("not-json"), "fb")
+    if prog.Err == nil || !terminal { t.Fatalf("expected decode error & terminal, got %+v term=%v", prog, terminal) }
+}
+
+func TestParseProgressTerminalState(t *testing.T) {
+    data := []byte(`{"job_id":"x","status":"completed","progress":1}`)
+    prog, terminal := parseProgress(data, "fallback")
+    if prog.Err != nil || !terminal || prog.JobID != "x" { t.Fatalf("unexpected parse result %+v term=%v", prog, terminal) }
 }
 

@@ -104,7 +104,9 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
      * Config validation, retry w/ backoff, contextual error wrapping implemented
      * >80% unit test coverage for current code (success, retry, exhaustion, invalid JSON, context cancel, empty job id)
      * Purpose: establish stable base before adding WebSocket monitoring & workflow templating
-     * Next Steps: (1) Add WebSocket progress monitor (MonitorJob) (2) Implement workflow template loader (3) Add result retrieval & file persistence layer
+     * WebSocket progress monitoring (`MonitorJob`) implemented (streaming progress frames, cancellation & malformed JSON handling)
+     * Coverage maintained >80% after WebSocket addition (success, malformed JSON, dial error, cancel scenarios tested)
+     * Next Steps: (1) Implement workflow template loader (2) Add result retrieval & file persistence layer (3) Introduce batch queue abstraction
      * Risk Reduction: Early tests lock API shape; future additions can extend interface without breaking callers
    - Technical requirements:
      - GIF specs: 4-8 frames, <500KB file size, transparency support
