@@ -102,6 +102,14 @@ func (llm *LLMDialogBackend) Initialize(configData json.RawMessage) error {
 		return nil
 	}
 
+	// Handle mock mode - bypass miniLM initialization
+	if llm.config.MockMode {
+		logrus.Info("LLM dialog backend initialized in mock mode")
+		llm.enabled = true
+		llm.initialized = true
+		return nil
+	}
+
 	// Create miniLM DialogManager and LLMBackend
 	llm.manager = dialog.NewDialogManager(llm.config.Debug)
 	llm.llmBackend = dialog.NewLLMBackend()
@@ -167,6 +175,11 @@ func (llm *LLMDialogBackend) CanHandle(context DialogContext) bool {
 func (llm *LLMDialogBackend) GenerateResponse(context DialogContext) (DialogResponse, error) {
 	if !llm.initialized || !llm.enabled {
 		return DialogResponse{}, fmt.Errorf("LLM backend not available")
+	}
+
+	// Handle mock mode - return mock response
+	if llm.config.MockMode {
+		return llm.createMockResponse(context), nil
 	}
 
 	// Check health before attempting generation
@@ -392,6 +405,34 @@ func (llm *LLMDialogBackend) createFallbackResponse(context DialogContext) Dialo
 	}
 }
 
+// createMockResponse creates a mock response for testing and development
+func (llm *LLMDialogBackend) createMockResponse(context DialogContext) DialogResponse {
+	mockResponses := []string{
+		"This is a mock LLM response for testing purposes.",
+		"Mock mode is active - this response is simulated.",
+		"Hello! This is a test response from the mock LLM backend.",
+	}
+
+	// Use trigger-based selection for deterministic responses in tests
+	responseIndex := 0
+	if context.Trigger != "" {
+		responseIndex = len(context.Trigger) % len(mockResponses)
+	}
+
+	return DialogResponse{
+		Text:         mockResponses[responseIndex],
+		Animation:    "talking",
+		Confidence:   0.9, // High confidence for mock responses
+		ResponseType: "mock",
+		Duration:     3, // 3 seconds
+		Metadata: map[string]interface{}{
+			"backend":   "llm",
+			"mock_mode": true,
+			"trigger":   context.Trigger,
+		},
+	}
+}
+
 // GetBackendInfo implements DialogBackend.GetBackendInfo
 func (llm *LLMDialogBackend) GetBackendInfo() BackendInfo {
 	version := "1.0.0"
@@ -471,6 +512,11 @@ func (llm *LLMDialogBackend) UpdateMemory(context DialogContext, response Dialog
 func (llm *LLMDialogBackend) IsHealthy() bool {
 	if !llm.initialized || !llm.enabled {
 		return false
+	}
+
+	// In mock mode, always healthy if enabled
+	if llm.config.MockMode {
+		return true
 	}
 
 	if llm.manager == nil || llm.llmBackend == nil {
