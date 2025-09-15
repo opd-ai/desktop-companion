@@ -515,6 +515,27 @@ gif-generator deploy --source generated/ --target assets/characters/
 
 This pipeline design provides a comprehensive solution for automated GIF asset generation that integrates seamlessly with the existing desktop-companion architecture. The modular design ensures maintainability while the interface-based approach supports future extensions and improvements.
 
-The implementation follows the project's "lazy programmer" philosophy by leveraging ComfyUI's existing capabilities while writing minimal glue code for integration. The pipeline supports all 19 character archetypes and maintains compatibility with the existing character system.
+## Quick Start
 
-By automating the asset generation process, this pipeline will significantly reduce the manual effort required to create and maintain character animations while ensuring consistent quality and style across the entire character library.
+1. Ensure ComfyUI is running locally (`http://localhost:8188`).
+2. Configure pipeline settings in `config.json` as described above.
+3. Run the CLI:
+    ```bash
+    gif-generator batch --config batch_config.json --parallel 4
+    ```
+4. Validate generated assets:
+    ```bash
+    gif-generator validate --path assets/characters/
+    ```
+5. Deploy assets:
+    ```bash
+    gif-generator deploy --source generated/ --target assets/characters/
+    ```
+
+## Troubleshooting
+
+- **ComfyUI not reachable**: Check that the server is running and accessible at the configured URL.
+- **GIF validation failed**: Ensure generated GIFs meet frame count, file size, and transparency requirements.
+- **Asset deployment issues**: Verify file permissions and backup settings in deployment config.
+- **Performance bottlenecks**: Adjust parallelism and resource limits in config.
+- **Template errors**: Validate workflow templates for correct placeholders and JSON structure.

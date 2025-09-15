@@ -17,6 +17,7 @@ type GIFConfig struct {
 // ValidateGIF checks frame count, file size, and transparency for a GIF asset.
 func ValidateGIF(path string, cfg GIFConfig) error {
 	fi, err := os.Stat(path)
+	// Package pipeline provides orchestration and deployment logic for asset generation pipelines.
 	if err != nil {
 		return fmt.Errorf("stat: %w", err)
 	}
@@ -25,6 +26,7 @@ func ValidateGIF(path string, cfg GIFConfig) error {
 	}
 	f, err := os.Open(path)
 	if err != nil {
+		// ValidateGIF checks a GIF file for frame count, file size, and transparency compliance.
 		return fmt.Errorf("open: %w", err)
 	}
 	defer f.Close()

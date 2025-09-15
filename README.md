@@ -1,5 +1,25 @@
 # Desktop Companion (DDS)
 
+## ComfyUI GIF Asset Pipeline
+
+The DDS project includes an automated pipeline for generating GIF character animations using a local ComfyUI instance. This system supports all 19 character archetypes and ensures consistent quality and style across assets.
+
+### Usage
+
+1. Start ComfyUI locally (`http://localhost:8188`).
+2. Configure generation parameters in `config.json`.
+3. Run asset generation:
+  ```bash
+  gif-generator batch --config batch_config.json --parallel 4
+  ```
+4. Validate and deploy assets:
+  ```bash
+  gif-generator validate --path assets/characters/
+  gif-generator deploy --source generated/ --target assets/characters/
+  ```
+
+See [GIF_PLAN.md](GIF_PLAN.md) for technical details and troubleshooting.
+
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features
