@@ -22,7 +22,7 @@ func TestFrameCacheBasic(t *testing.T) {
 	zeroCache := NewFrameCache(0)
 	img := createTestImage(32, 32, color.RGBA{255, 0, 0, 255})
 	zeroCache.Put("test", img)
-	
+
 	stats := zeroCache.GetStats()
 	if stats.MaxSize <= 0 {
 		t.Error("Zero size cache should default to reasonable size")
@@ -95,7 +95,7 @@ func TestFrameRateOptimizerEdgeCases(t *testing.T) {
 // TestOptimizedAnimationManagerEdgeCases tests edge cases for animation manager
 func TestOptimizedAnimationManagerEdgeCases(t *testing.T) {
 	frameCache := NewFrameCache(10)
-	
+
 	// Test invalid FPS
 	oam := NewOptimizedAnimationManager(frameCache, 0)
 	if oam.targetFPS <= 0 {
@@ -150,7 +150,7 @@ func TestFrameSkippingPrecision(t *testing.T) {
 // TestCacheMemoryEfficiency validates memory usage patterns
 func TestCacheMemoryEfficiency(t *testing.T) {
 	cache := NewFrameCache(1000)
-	
+
 	// Add many frames and verify LRU eviction
 	for i := 0; i < 1500; i++ {
 		img := createTestImage(8, 8, color.RGBA{uint8(i % 255), 0, 0, 255})

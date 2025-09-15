@@ -13,16 +13,16 @@ import (
 // OptimizedAnimationManager enhances the standard animation manager with performance optimizations.
 // Includes frame caching, smart refresh logic, and platform-aware frame rate adjustment.
 type OptimizedAnimationManager struct {
-	mu              sync.RWMutex
-	frameCache      *FrameCache
-	targetFPS       int
-	lastFrameTime   time.Time
-	frameInterval   time.Duration
-	animationName   string
-	frameIndex      int
-	totalFrames     int
-	width           int
-	height          int
+	mu            sync.RWMutex
+	frameCache    *FrameCache
+	targetFPS     int
+	lastFrameTime time.Time
+	frameInterval time.Duration
+	animationName string
+	frameIndex    int
+	totalFrames   int
+	width         int
+	height        int
 }
 
 // NewOptimizedAnimationManager creates an optimized animation manager.
@@ -32,7 +32,7 @@ func NewOptimizedAnimationManager(frameCache *FrameCache, targetFPS int) *Optimi
 	if targetFPS <= 0 {
 		targetFPS = 60 // Default to 60 FPS
 	}
-	
+
 	return &OptimizedAnimationManager{
 		frameCache:    frameCache,
 		targetFPS:     targetFPS,
@@ -46,7 +46,7 @@ func NewOptimizedAnimationManager(frameCache *FrameCache, targetFPS int) *Optimi
 func (oam *OptimizedAnimationManager) SetAnimation(name string, totalFrames int, width, height int) {
 	oam.mu.Lock()
 	defer oam.mu.Unlock()
-	
+
 	oam.animationName = name
 	oam.totalFrames = totalFrames
 	oam.width = width
@@ -59,33 +59,33 @@ func (oam *OptimizedAnimationManager) SetAnimation(name string, totalFrames int,
 func (oam *OptimizedAnimationManager) GetOptimizedFrame(gifData *gif.GIF) image.Image {
 	oam.mu.Lock()
 	defer oam.mu.Unlock()
-	
+
 	// Check if we should skip this frame for performance
 	now := time.Now()
 	if oam.shouldSkipFrame(now) {
 		return nil
 	}
-	
+
 	// Generate cache key for current frame
 	cacheKey := GetCacheKey(oam.animationName, oam.frameIndex, oam.width, oam.height)
-	
+
 	// Try to get cached frame first
 	if cachedFrame, found := oam.frameCache.Get(cacheKey); found {
 		oam.lastFrameTime = now
 		return cachedFrame
 	}
-	
+
 	// Cache miss - process frame and cache it
 	if gifData != nil && oam.frameIndex < len(gifData.Image) {
 		frame := gifData.Image[oam.frameIndex]
-		
+
 		// Cache the processed frame for future use
 		oam.frameCache.Put(cacheKey, frame)
 		oam.lastFrameTime = now
-		
+
 		return frame
 	}
-	
+
 	return nil
 }
 
@@ -96,7 +96,7 @@ func (oam *OptimizedAnimationManager) shouldSkipFrame(now time.Time) bool {
 	if oam.lastFrameTime.IsZero() {
 		return false
 	}
-	
+
 	// Skip if not enough time has passed for target FPS
 	elapsed := now.Sub(oam.lastFrameTime)
 	return elapsed < oam.frameInterval
@@ -107,7 +107,7 @@ func (oam *OptimizedAnimationManager) shouldSkipFrame(now time.Time) bool {
 func (oam *OptimizedAnimationManager) AdvanceFrame() {
 	oam.mu.Lock()
 	defer oam.mu.Unlock()
-	
+
 	if oam.totalFrames > 0 {
 		oam.frameIndex = (oam.frameIndex + 1) % oam.totalFrames
 	}
@@ -118,7 +118,7 @@ func (oam *OptimizedAnimationManager) AdvanceFrame() {
 func (oam *OptimizedAnimationManager) SetTargetFPS(fps int) {
 	oam.mu.Lock()
 	defer oam.mu.Unlock()
-	
+
 	if fps > 0 {
 		oam.targetFPS = fps
 		oam.frameInterval = time.Second / time.Duration(fps)
@@ -144,14 +144,14 @@ func (oam *OptimizedAnimationManager) ClearCache() {
 // FrameRateOptimizer provides platform-aware frame rate optimization.
 // Adjusts rendering parameters based on device capabilities and power state.
 type FrameRateOptimizer struct {
-	mu                    sync.RWMutex
-	isDesktop            bool
-	isMobile             bool
-	isBackgrounded       bool
-	batteryLevel         float64
-	currentFPS           int
-	targetFPS            int
-	adaptiveAdjustment   bool
+	mu                 sync.RWMutex
+	isDesktop          bool
+	isMobile           bool
+	isBackgrounded     bool
+	batteryLevel       float64
+	currentFPS         int
+	targetFPS          int
+	adaptiveAdjustment bool
 }
 
 // NewFrameRateOptimizer creates a platform-aware frame rate optimizer.
@@ -162,7 +162,7 @@ func NewFrameRateOptimizer(isDesktop, isMobile bool) *FrameRateOptimizer {
 		adaptiveAdjustment: true,
 		batteryLevel:       1.0, // Assume full battery if unknown
 	}
-	
+
 	// Set initial target FPS based on platform
 	if isDesktop {
 		optimizer.targetFPS = 60
@@ -171,7 +171,7 @@ func NewFrameRateOptimizer(isDesktop, isMobile bool) *FrameRateOptimizer {
 	} else {
 		optimizer.targetFPS = 45 // Conservative default
 	}
-	
+
 	optimizer.currentFPS = optimizer.targetFPS
 	return optimizer
 }
@@ -180,9 +180,9 @@ func NewFrameRateOptimizer(isDesktop, isMobile bool) *FrameRateOptimizer {
 func (fro *FrameRateOptimizer) GetOptimalFPS() int {
 	fro.mu.RLock()
 	defer fro.mu.RUnlock()
-	
+
 	baseFPS := fro.targetFPS
-	
+
 	// Reduce FPS when backgrounded
 	if fro.isBackgrounded {
 		if fro.isDesktop {
@@ -191,7 +191,7 @@ func (fro *FrameRateOptimizer) GetOptimalFPS() int {
 			return 5 // Mobile background FPS
 		}
 	}
-	
+
 	// Adaptive adjustment based on battery level (mobile only)
 	if fro.isMobile && fro.adaptiveAdjustment {
 		if fro.batteryLevel < 0.2 { // Low battery
@@ -200,7 +200,7 @@ func (fro *FrameRateOptimizer) GetOptimalFPS() int {
 			return baseFPS * 3 / 4
 		}
 	}
-	
+
 	return baseFPS
 }
 
@@ -217,7 +217,7 @@ func (fro *FrameRateOptimizer) SetBackgroundState(isBackground bool) {
 func (fro *FrameRateOptimizer) SetBatteryLevel(level float64) {
 	fro.mu.Lock()
 	defer fro.mu.Unlock()
-	
+
 	if level >= 0.0 && level <= 1.0 {
 		fro.batteryLevel = level
 	}
@@ -235,6 +235,6 @@ func (fro *FrameRateOptimizer) UpdateCurrentFPS(fps int) {
 func (fro *FrameRateOptimizer) GetFrameRateRecommendation() (targetFPS int, useAdaptive bool) {
 	fro.mu.RLock()
 	defer fro.mu.RUnlock()
-	
+
 	return fro.GetOptimalFPS(), fro.adaptiveAdjustment
 }

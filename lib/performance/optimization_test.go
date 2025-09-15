@@ -120,7 +120,7 @@ func TestOptimizedAnimationManager(t *testing.T) {
 	if gifData == nil || len(gifData.Image) == 0 {
 		t.Fatal("Test GIF data is invalid")
 	}
-	
+
 	oam.SetAnimation("test", len(gifData.Image), 64, 64)
 
 	// Test frame retrieval
@@ -140,7 +140,7 @@ func TestOptimizedAnimationManager(t *testing.T) {
 	if frame2 == nil {
 		t.Error("Should get cached frame")
 	}
-	
+
 	// Since we're using the same frame index, this should be a cache hit
 	if newStats.HitCount <= initialStats.HitCount {
 		t.Logf("Initial hits: %d, new hits: %d", initialStats.HitCount, newStats.HitCount)
@@ -224,7 +224,7 @@ func TestCacheConcurrency(t *testing.T) {
 
 	// Run concurrent operations
 	done := make(chan bool)
-	
+
 	// Writer goroutine
 	go func() {
 		for i := 0; i < 100; i++ {
@@ -278,7 +278,7 @@ func BenchmarkOptimizedAnimationManager(b *testing.B) {
 	frameCache := NewFrameCache(1000)
 	oam := NewOptimizedAnimationManager(frameCache, 60)
 	gifData := createTestGIF()
-	
+
 	oam.SetAnimation("benchmark", len(gifData.Image), 64, 64)
 
 	b.ResetTimer()
@@ -318,16 +318,16 @@ func createTestImage(width, height int, c color.RGBA) image.Image {
 func createTestGIF() *gif.GIF {
 	// Create 3 frames with different colors
 	frame1 := image.NewPaletted(image.Rect(0, 0, 64, 64), color.Palette{
-		color.RGBA{255, 0, 0, 255},   // Red
-		color.RGBA{0, 0, 0, 0},       // Transparent
+		color.RGBA{255, 0, 0, 255}, // Red
+		color.RGBA{0, 0, 0, 0},     // Transparent
 	})
 	frame2 := image.NewPaletted(image.Rect(0, 0, 64, 64), color.Palette{
-		color.RGBA{0, 255, 0, 255},   // Green
-		color.RGBA{0, 0, 0, 0},       // Transparent
+		color.RGBA{0, 255, 0, 255}, // Green
+		color.RGBA{0, 0, 0, 0},     // Transparent
 	})
 	frame3 := image.NewPaletted(image.Rect(0, 0, 64, 64), color.Palette{
-		color.RGBA{0, 0, 255, 255},   // Blue
-		color.RGBA{0, 0, 0, 0},       // Transparent
+		color.RGBA{0, 0, 255, 255}, // Blue
+		color.RGBA{0, 0, 0, 0},     // Transparent
 	})
 
 	// Fill frames with their respective colors

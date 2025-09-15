@@ -13,19 +13,19 @@ import (
 // Uses LRU eviction policy to maintain memory efficiency while improving frame access performance.
 // Designed to optimize the animation rendering pipeline by caching processed frames.
 type FrameCache struct {
-	mu       sync.RWMutex
-	maxSize  int
-	cache    map[string]*cacheEntry
-	lruList  *list.List
-	hitCount int64
+	mu        sync.RWMutex
+	maxSize   int
+	cache     map[string]*cacheEntry
+	lruList   *list.List
+	hitCount  int64
 	missCount int64
 }
 
 // cacheEntry holds a cached frame with LRU list element for efficient eviction
 type cacheEntry struct {
-	key       string
-	frame     image.Image
-	listElem  *list.Element
+	key      string
+	frame    image.Image
+	listElem *list.Element
 }
 
 // FrameCacheStats provides cache performance metrics
@@ -43,7 +43,7 @@ func NewFrameCache(maxSize int) *FrameCache {
 	if maxSize <= 0 {
 		maxSize = 100 // Default to reasonable cache size
 	}
-	
+
 	return &FrameCache{
 		maxSize: maxSize,
 		cache:   make(map[string]*cacheEntry),
@@ -56,17 +56,17 @@ func NewFrameCache(maxSize int) *FrameCache {
 func (fc *FrameCache) Get(key string) (image.Image, bool) {
 	fc.mu.Lock()
 	defer fc.mu.Unlock()
-	
+
 	entry, exists := fc.cache[key]
 	if !exists {
 		fc.missCount++
 		return nil, false
 	}
-	
+
 	// Move to front of LRU list (most recently used)
 	fc.lruList.MoveToFront(entry.listElem)
 	fc.hitCount++
-	
+
 	return entry.frame, true
 }
 
@@ -76,10 +76,10 @@ func (fc *FrameCache) Put(key string, frame image.Image) {
 	if frame == nil {
 		return // Don't cache nil frames
 	}
-	
+
 	fc.mu.Lock()
 	defer fc.mu.Unlock()
-	
+
 	// Check if key already exists
 	if entry, exists := fc.cache[key]; exists {
 		// Update existing entry and move to front
@@ -87,7 +87,7 @@ func (fc *FrameCache) Put(key string, frame image.Image) {
 		fc.lruList.MoveToFront(entry.listElem)
 		return
 	}
-	
+
 	// Create new entry
 	elem := fc.lruList.PushFront(key)
 	entry := &cacheEntry{
@@ -96,7 +96,7 @@ func (fc *FrameCache) Put(key string, frame image.Image) {
 		listElem: elem,
 	}
 	fc.cache[key] = entry
-	
+
 	// Evict oldest entries if over capacity
 	fc.evictIfNeeded()
 }
@@ -118,7 +118,7 @@ func (fc *FrameCache) evictIfNeeded() {
 func (fc *FrameCache) Clear() {
 	fc.mu.Lock()
 	defer fc.mu.Unlock()
-	
+
 	fc.cache = make(map[string]*cacheEntry)
 	fc.lruList.Init()
 	fc.hitCount = 0
@@ -129,13 +129,13 @@ func (fc *FrameCache) Clear() {
 func (fc *FrameCache) GetStats() FrameCacheStats {
 	fc.mu.RLock()
 	defer fc.mu.RUnlock()
-	
+
 	total := fc.hitCount + fc.missCount
 	hitRatio := 0.0
 	if total > 0 {
 		hitRatio = float64(fc.hitCount) / float64(total)
 	}
-	
+
 	return FrameCacheStats{
 		HitCount:  fc.hitCount,
 		MissCount: fc.missCount,
@@ -150,10 +150,10 @@ func (fc *FrameCache) GetStats() FrameCacheStats {
 func GetCacheKey(animationName string, frameIndex int, width, height int) string {
 	// Use efficient string formatting for cache key generation
 	// Format: "animName:frameIdx:widthxheight"
-	return animationName + ":" + 
-		   intToString(frameIndex) + ":" + 
-		   intToString(width) + "x" + 
-		   intToString(height)
+	return animationName + ":" +
+		intToString(frameIndex) + ":" +
+		intToString(width) + "x" +
+		intToString(height)
 }
 
 // intToString converts int to string efficiently for cache key generation
@@ -161,26 +161,26 @@ func intToString(n int) string {
 	if n == 0 {
 		return "0"
 	}
-	
+
 	// Simple int to string conversion without fmt.Sprintf overhead
 	negative := n < 0
 	if negative {
 		n = -n
 	}
-	
+
 	var buf [20]byte // enough for 64-bit int
 	i := len(buf)
-	
+
 	for n > 0 {
 		i--
 		buf[i] = byte('0' + n%10)
 		n /= 10
 	}
-	
+
 	if negative {
 		i--
 		buf[i] = '-'
 	}
-	
+
 	return string(buf[i:])
 }
