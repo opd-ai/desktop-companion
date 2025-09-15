@@ -20,6 +20,21 @@ The DDS project includes an automated pipeline for generating GIF character anim
 
 See [GIF_PLAN.md](GIF_PLAN.md) for technical details and troubleshooting.
 
+## Android Build Testing
+
+Automated APK integrity testing is provided for CI/CD validation. The script `scripts/apk_integrity_test.go` checks APK existence, signature, and package name using Android SDK tools (`apksigner`, `aapt`).
+
+### Usage
+
+1. Build your APK (see Fyne mobile docs).
+2. Run the test:
+  ```bash
+  ./scripts/test-android-apk.sh path/to/app.apk com.example.package
+  ```
+3. The script will fail if the APK is missing, unsigned, or has the wrong package name.
+
+See `scripts/apk_integrity_test.go` for details.
+
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features
