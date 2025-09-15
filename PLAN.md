@@ -20,7 +20,7 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
 
 #### Critical
 - [x] **Dialog System Test Coverage**: Increased from 30.1% to 51.0% overall with significantly improved MarkovChainBackend coverage (70%+ for core methods)
-- [ ] **Events Flag Integration**: Command-line flag exists but not functionally connected to UI system
+- [x] **Events Flag Integration**: Command-line flag exists and IS functionally connected to UI system with keyboard shortcuts (Ctrl+E/R/G/H)
 
 #### Major  
 - [ ] **Animation Asset Requirements**: All characters use placeholder GIF animations
@@ -77,17 +77,17 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
    - Coverage improvement: +20.9 percentage points for overall dialog system
    - Estimated time: 3-5 days → COMPLETED
 
-2. **Events Flag Functional Integration**
-   - Description: Connect the `-events` command-line flag to actual UI functionality
-   - Implementation steps:
-     a. Modify `cmd/companion/main.go` to pass events flag to DesktopWindow constructor
-     b. Update `NewDesktopWindow()` function signature to accept events parameter
-     c. Implement event system activation/deactivation based on flag
-     d. Add keyboard shortcut registration conditional on events flag
-     e. Update all calling code to provide events parameter
-   - Testing requirements: Command-line flag integration tests, UI behavior verification
+2. **Events Flag Functional Integration** - ✅ COMPLETED
+   - Description: Command-line flag now properly controls general dialog events functionality
+   - Implementation completed:
+     a. ✅ `cmd/companion/main.go` passes events flag to DesktopWindow constructor
+     b. ✅ `NewDesktopWindow()` function accepts and uses events parameter  
+     c. ✅ Event system activation/deactivation implemented based on flag
+     d. ✅ Keyboard shortcut registration conditional on events flag (Ctrl+E/R/G/H)
+     e. ✅ All calling code updated to provide events parameter
+   - Testing status: ✅ Command-line flag integration tests pass, UI behavior verified
    - Dependencies: UI system, character event system
-   - Estimated time: 2-3 days
+   - Status: COMPLETE - All functionality implemented and tested
 
 ### Phase 2: Major Components [2-3 weeks]
 
