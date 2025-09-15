@@ -69,6 +69,38 @@ performance.PutCharacterState(cs) // Must return to prevent leaks
 
 See `lib/performance/pool.go` for details and benchmarks.
 
+## Advanced Dialog Context Enhancement
+
+The dialog system includes advanced conversation context tracking for more natural and contextually aware responses. The `ConversationContext` tracks topics, emotional state, and conversation history to generate better responses.
+
+### Features
+
+- **Topic Detection**: Automatically identifies conversation topics (weather, feelings, activities, food, health)
+- **Emotional State Tracking**: Monitors valence, arousal, and dominance in conversations
+- **Message History**: Maintains recent conversation context for better continuity
+- **Context-Aware Responses**: Markov chain backend uses conversation context to enhance response quality
+
+### Integration
+
+The Markov chain backend automatically:
+- Updates conversation context with each message
+- Enhances responses with detected topics and emotional state
+- Provides context summaries for debugging and analysis
+
+Usage example:
+```go
+// Context is automatically managed by dialog backends
+context := dialog.NewConversationContext()
+context.AddMessage(ctx, "I feel happy about the sunny weather")
+
+// Get current state
+activeTopics := context.GetActiveTopics() // ["weather", "feelings"]
+summary := context.GetContextSummary()   // "discussing weather"
+emotional := context.EmotionalState      // Positive valence, moderate arousal
+```
+
+See `lib/dialog/context.go` for implementation details and `context_test.go` for usage examples.
+
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features

@@ -1,6 +1,7 @@
 package dialog
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -17,6 +18,9 @@ type MarkovChainBackend struct {
 	chains      map[string]*MarkovChain // Per-trigger chain storage
 	globalChain *MarkovChain            // Global chain for fallback
 	initialized bool
+
+	// Enhanced context tracking
+	conversationContext *ConversationContext // Track conversation topics and emotional state
 }
 
 // MarkovConfig defines JSON configuration for the Markov chain backend
@@ -101,6 +105,9 @@ func (m *MarkovChainBackend) Initialize(config json.RawMessage) error {
 	if err := m.validateConfig(); err != nil {
 		return fmt.Errorf("invalid Markov config: %w", err)
 	}
+
+	// Initialize conversation context tracking
+	m.conversationContext = NewConversationContext()
 
 	// Create global chain
 	m.globalChain = NewMarkovChain(m.config.ChainOrder)
@@ -250,25 +257,40 @@ func (m *MarkovChainBackend) cleanTrainingText(text string) string {
 }
 
 // GenerateResponse produces a dialog response using Markov chain generation
-func (m *MarkovChainBackend) GenerateResponse(context DialogContext) (DialogResponse, error) {
+func (m *MarkovChainBackend) GenerateResponse(dialogCtx DialogContext) (DialogResponse, error) {
 	if !m.initialized {
 		return DialogResponse{}, fmt.Errorf("backend not initialized")
 	}
 
+	// Update conversation context with current dialog
+	if dialogCtx.LastResponse != "" {
+		ctx := context.Background()
+		m.conversationContext.AddMessage(ctx, dialogCtx.LastResponse)
+	}
+
 	// Select and validate chain availability
-	chain, err := m.validateChainAvailability(context.Trigger)
+	chain, err := m.validateChainAvailability(dialogCtx.Trigger)
 	if err != nil {
 		return DialogResponse{}, err
 	}
 
 	// Generate response text with context-aware parameters
-	text, confidence, err := m.generateContextualResponse(chain, context)
+	text, confidence, err := m.generateContextualResponse(chain, dialogCtx)
 	if err != nil {
 		return DialogResponse{}, err
 	}
 
+	// Update conversation context with generated response
+	ctx := context.Background()
+	m.conversationContext.AddMessage(ctx, text)
+
 	// Build complete dialog response with metadata
-	return m.buildDialogResponse(text, confidence, context), nil
+	response := m.buildDialogResponse(text, confidence, dialogCtx)
+
+	// Enhance response with conversation context
+	m.enhanceResponseWithContext(&response)
+
+	return response, nil
 }
 
 // validateChainAvailability selects and validates that an appropriate chain exists
@@ -281,20 +303,20 @@ func (m *MarkovChainBackend) validateChainAvailability(trigger string) (*MarkovC
 }
 
 // generateContextualResponse creates response text using chain generation with context parameters
-func (m *MarkovChainBackend) generateContextualResponse(chain *MarkovChain, context DialogContext) (string, float64, error) {
+func (m *MarkovChainBackend) generateContextualResponse(chain *MarkovChain, dialogCtx DialogContext) (string, float64, error) {
 	// Calculate generation parameters based on context
-	temperature := m.calculateTemperature(context)
-	targetWords := m.calculateTargetWords(context)
+	temperature := m.calculateTemperature(dialogCtx)
+	targetWords := m.calculateTargetWords(dialogCtx)
 
 	// Generate response text
-	text, confidence := m.generateWithChain(chain, targetWords, temperature, context)
+	text, confidence := m.generateWithChain(chain, targetWords, temperature, dialogCtx)
 
 	// Apply personality and mood adjustments
-	text = m.applyPersonalityAdjustments(text, context)
+	text = m.applyPersonalityAdjustments(text, dialogCtx)
 
 	// Validate and filter response
-	if !m.validateResponse(text, context) {
-		text = m.selectFallbackResponse(context)
+	if !m.validateResponse(text, dialogCtx) {
+		text = m.selectFallbackResponse(dialogCtx)
 		confidence = 0.3
 	}
 
@@ -302,15 +324,15 @@ func (m *MarkovChainBackend) generateContextualResponse(chain *MarkovChain, cont
 }
 
 // buildDialogResponse constructs the complete DialogResponse with all metadata fields
-func (m *MarkovChainBackend) buildDialogResponse(text string, confidence float64, context DialogContext) DialogResponse {
+func (m *MarkovChainBackend) buildDialogResponse(text string, confidence float64, dialogCtx DialogContext) DialogResponse {
 	return DialogResponse{
 		Text:             text,
-		Animation:        m.selectAnimation(text, context),
+		Animation:        m.selectAnimation(text, dialogCtx),
 		Confidence:       confidence,
-		ResponseType:     m.classifyResponseType(text, context),
-		EmotionalTone:    m.detectEmotionalTone(text, context),
+		ResponseType:     m.classifyResponseType(text, dialogCtx),
+		EmotionalTone:    m.detectEmotionalTone(text, dialogCtx),
 		Topics:           m.extractTopics(text),
-		MemoryImportance: m.calculateMemoryImportance(text, context),
+		MemoryImportance: m.calculateMemoryImportance(text, dialogCtx),
 		LearningValue:    confidence * 0.8, // High confidence responses are more valuable for learning
 	}
 }
@@ -1180,6 +1202,44 @@ func (m *MarkovChainBackend) UpdateMemory(context DialogContext, response Dialog
 	// For negative feedback, we could implement negative reinforcement
 	// For now, we just record the feedback (no action taken)
 	return nil
+}
+
+// enhanceResponseWithContext adds conversation context information to the dialog response
+func (m *MarkovChainBackend) enhanceResponseWithContext(response *DialogResponse) {
+	if m.conversationContext == nil {
+		return
+	}
+
+	// Add active topics to response metadata
+	activeTopics := m.conversationContext.GetActiveTopics()
+	if len(activeTopics) > 0 {
+		topicNames := make([]string, len(activeTopics))
+		for i, topic := range activeTopics {
+			topicNames[i] = topic.Name
+		}
+		response.Topics = topicNames
+	}
+
+	// Add emotional tone based on conversation context
+	if response.EmotionalTone == "" {
+		emotional := m.conversationContext.EmotionalState
+		if emotional.Valence > 0.3 {
+			response.EmotionalTone = "happy"
+		} else if emotional.Valence < -0.3 {
+			response.EmotionalTone = "sad"
+		} else if emotional.Arousal > 0.6 {
+			response.EmotionalTone = "excited"
+		} else {
+			response.EmotionalTone = "calm"
+		}
+	}
+
+	// Add context summary to metadata
+	if response.Metadata == nil {
+		response.Metadata = make(map[string]interface{})
+	}
+	response.Metadata["contextSummary"] = m.conversationContext.GetContextSummary()
+	response.Metadata["emotionalState"] = m.conversationContext.EmotionalState
 }
 
 // NewMarkovChain creates a new Markov chain with the specified order
