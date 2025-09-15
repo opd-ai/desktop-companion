@@ -22,13 +22,32 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
+	"time"
 )
 
 // QueueManager limits concurrent workflow submissions to the underlying
 // ComfyUI Client. Safe for concurrent use.
 type QueueManager struct {
-	client Client
-	sem    chan struct{}
+	client      Client
+	sem         chan struct{}
+	metrics     *QueueMetrics
+	retryPolicy RetryPolicy
+	mu          sync.Mutex
+}
+
+// QueueMetrics tracks job success, failure, and average latency.
+type QueueMetrics struct {
+	Successes    int
+	Failures     int
+	TotalLatency time.Duration
+	JobCount     int
+}
+
+// RetryPolicy controls retry behavior for transient errors.
+type RetryPolicy struct {
+	MaxRetries int
+	Backoff    time.Duration
 }
 
 // NewQueueManager creates a new QueueManager. If limit <= 0 it defaults to 1.
@@ -36,7 +55,12 @@ func NewQueueManager(client Client, limit int) *QueueManager {
 	if limit <= 0 {
 		limit = 1
 	}
-	return &QueueManager{client: client, sem: make(chan struct{}, limit)}
+	return &QueueManager{
+		client:      client,
+		sem:         make(chan struct{}, limit),
+		metrics:     &QueueMetrics{},
+		retryPolicy: RetryPolicy{MaxRetries: 2, Backoff: 100 * time.Millisecond},
+	}
 }
 
 // Submit submits a single workflow respecting the concurrency limit. It
@@ -44,20 +68,47 @@ func NewQueueManager(client Client, limit int) *QueueManager {
 // for a slot or during submission returns promptly.
 func (qm *QueueManager) Submit(ctx context.Context, wf *Workflow) (*Job, error) {
 	if wf == nil {
+		qm.mu.Lock()
+		qm.metrics.Failures++
+		qm.mu.Unlock()
 		return nil, errors.New("workflow nil")
 	}
-	// Acquire slot or abort if context cancelled.
 	select {
 	case qm.sem <- struct{}{}:
-		// acquired
 	case <-ctx.Done():
+		qm.mu.Lock()
+		qm.metrics.Failures++
+		qm.mu.Unlock()
 		return nil, ctx.Err()
 	}
 	defer func() { <-qm.sem }()
-	job, err := qm.client.SubmitWorkflow(ctx, wf)
+	var job *Job
+	var err error
+	start := time.Now()
+	for attempt := 0; attempt <= qm.retryPolicy.MaxRetries; attempt++ {
+		job, err = qm.client.SubmitWorkflow(ctx, wf)
+		if err == nil {
+			break
+		}
+		if attempt < qm.retryPolicy.MaxRetries {
+			select {
+			case <-ctx.Done():
+				break
+			case <-time.After(qm.retryPolicy.Backoff):
+			}
+		}
+	}
+	latency := time.Since(start)
+	qm.mu.Lock()
+	qm.metrics.JobCount++
+	qm.metrics.TotalLatency += latency
 	if err != nil {
+		qm.metrics.Failures++
+		qm.mu.Unlock()
 		return nil, fmt.Errorf("submit workflow %s: %w", wf.ID, err)
 	}
+	qm.metrics.Successes++
+	qm.mu.Unlock()
 	return job, nil
 }
 
@@ -74,12 +125,10 @@ func (qm *QueueManager) SubmitBatch(ctx context.Context, wfs []*Workflow) ([]*Jo
 	}
 	resCh := make(chan pair, len(wfs))
 
-	// Launch each submission in its own goroutine; bounded by semaphore in Submit.
 	for i, wf := range wfs {
 		idx, wf := i, wf
 		go func() {
 			if wf == nil {
-				// Treat nil workflow as immediate error.
 				select {
 				case errCh <- errors.New("nil workflow in batch"):
 				default:
@@ -98,7 +147,6 @@ func (qm *QueueManager) SubmitBatch(ctx context.Context, wfs []*Workflow) ([]*Jo
 		}()
 	}
 
-	// Collect results.
 	remaining := len(wfs)
 	for remaining > 0 {
 		select {
@@ -112,4 +160,12 @@ func (qm *QueueManager) SubmitBatch(ctx context.Context, wfs []*Workflow) ([]*Jo
 		}
 	}
 	return jobs, nil
+}
+
+// GetMetrics returns a copy of the current queue metrics.
+func (qm *QueueManager) GetMetrics() QueueMetrics {
+	qm.mu.Lock()
+	defer qm.mu.Unlock()
+	m := *qm.metrics
+	return m
 }
