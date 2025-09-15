@@ -99,6 +99,13 @@ The Desktop Companion (DDS) project is approximately 95% complete with excellent
      c. Generate mood/activity variants (idle, talking, happy, sad, hungry, eating, romance-specific)
      d. Convert static sequences to optimized GIF animations with transparency
      e. Implement batch processing for all 19+ character archetypes
+   - Current Progress (Sep 15 2025):
+     * Initial `lib/comfyui` package created with minimal HTTP client (`SubmitWorkflow`, `GetQueueStatus`)
+     * Config validation, retry w/ backoff, contextual error wrapping implemented
+     * >80% unit test coverage for current code (success, retry, exhaustion, invalid JSON, context cancel, empty job id)
+     * Purpose: establish stable base before adding WebSocket monitoring & workflow templating
+     * Next Steps: (1) Add WebSocket progress monitor (MonitorJob) (2) Implement workflow template loader (3) Add result retrieval & file persistence layer
+     * Risk Reduction: Early tests lock API shape; future additions can extend interface without breaking callers
    - Technical requirements:
      - GIF specs: 4-8 frames, <500KB file size, transparency support
      - Support for all required animation states per character archetype
