@@ -15,7 +15,7 @@ func TestCharacterStatePool(t *testing.T) {
 	cs.ID = "test"
 	cs.Health = 100
 	PutCharacterState(cs)
-	
+
 	// Get another one to verify pool reuse
 	cs2 := GetCharacterState()
 	if cs2.ID != "" || cs2.Health != 0 {
@@ -32,7 +32,7 @@ func TestAnimationFramePool(t *testing.T) {
 	af.ImageData = append(af.ImageData, 1, 2, 3)
 	af.Width = 64
 	PutAnimationFrame(af)
-	
+
 	af2 := GetAnimationFrame()
 	if len(af2.ImageData) != 0 || af2.Width != 0 {
 		t.Error("AnimationFrame not properly cleared")
@@ -48,7 +48,7 @@ func TestNetworkMessagePool(t *testing.T) {
 	nm.Type = "test"
 	nm.Payload = append(nm.Payload, 1, 2, 3)
 	PutNetworkMessage(nm)
-	
+
 	nm2 := GetNetworkMessage()
 	if nm2.Type != "" || len(nm2.Payload) != 0 {
 		t.Error("NetworkMessage not properly cleared")
