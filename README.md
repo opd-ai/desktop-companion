@@ -48,6 +48,27 @@ The multiplayer networking system uses a `ConnectionManager` to handle connectio
 
 See `lib/network/connection.go` for implementation details.
 
+## Performance Optimization
+
+The application includes memory optimization features to reduce garbage collection pressure and improve performance. The `lib/performance` package provides object pools using `sync.Pool` for frequently allocated types.
+
+### Memory Pools
+
+- **Character State Pool**: Reuses character state objects during updates
+- **Animation Frame Pool**: Optimizes memory usage during animation processing  
+- **Network Message Pool**: Reduces allocations for network communication
+
+Usage example:
+```go
+// Get from pool, use, then return
+cs := performance.GetCharacterState()
+cs.Health = 100
+// ... use character state ...
+performance.PutCharacterState(cs) // Must return to prevent leaks
+```
+
+See `lib/performance/pool.go` for details and benchmarks.
+
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features
