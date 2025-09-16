@@ -130,9 +130,9 @@ setup_error_handling() {
     # Handle script interruption
     trap 'handle_interrupt' INT TERM
     
-    # Handle script errors
+    # Handle script errors only (not normal exits)
     if [[ -n "$cleanup_function" ]]; then
-        trap "$cleanup_function" ERR EXIT
+        trap "$cleanup_function" ERR
     fi
 }
 

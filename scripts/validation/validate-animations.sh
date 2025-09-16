@@ -369,10 +369,6 @@ parse_arguments() {
     
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -h|--help)
-                show_usage
-                exit 0
-                ;;
             -v|--verbose)
                 VERBOSE=true
                 shift
@@ -409,6 +405,16 @@ main() {
     # Set up error handling
     setup_error_handling
     init_common
+    
+    # Handle help flags before argument parsing to avoid subshell issues
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+        esac
+    done
     
     # Parse arguments
     local action

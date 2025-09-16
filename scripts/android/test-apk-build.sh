@@ -29,7 +29,6 @@ source "$LIB_DIR/config.sh"
 # ============================================================================
 
 # Test settings
-TEST_CHARACTER="${1:-default}"
 TEST_ARCHITECTURES=("arm64" "arm")
 DRY_RUN="${DDS_DRY_RUN}"
 CLEAN_AFTER_TEST=true
@@ -375,10 +374,6 @@ parse_arguments() {
     
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -h|--help)
-                show_usage
-                exit 0
-                ;;
             --dry-run)
                 DRY_RUN=true
                 shift
@@ -416,6 +411,16 @@ main() {
     # Set up error handling with cleanup
     setup_error_handling cleanup_test_environment
     init_common
+    
+    # Handle help flags before argument parsing to avoid subshell issues
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+        esac
+    done
     
     # Parse arguments
     local character

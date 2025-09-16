@@ -507,10 +507,6 @@ parse_arguments() {
     
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -h|--help|help)
-                show_usage
-                exit 0
-                ;;
             -p|--parallel)
                 MAX_PARALLEL="$2"
                 shift 2
@@ -554,6 +550,16 @@ main() {
     setup_error_handling clean_builds
     init_common
     
+    # Handle help flags before argument parsing to avoid subshell issues
+    for arg in "$@"; do
+        case "$arg" in
+            -h|--help|help)
+                show_usage
+                exit 0
+                ;;
+        esac
+    done
+    
     # Parse arguments
     local command
     command=$(parse_arguments "$@")
@@ -581,6 +587,9 @@ main() {
             ;;
         platforms)
             show_platform_info
+            ;;
+        help)
+            show_usage
             ;;
         *)
             error "Unknown command: $command"
