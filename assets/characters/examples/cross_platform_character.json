@@ -125,8 +125,245 @@
       "triggers": ["doubleclick"],
       "effects": {"happiness": 20, "energy": -10},
       "animations": ["happy"],
-      "responses": ["Let's play!", "This is fun!"],
+      "responses": ["Let's play!", "This is fun!", "Cross-platform gaming is the best! 🎮"],
       "cooldown": 15
+    },
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 25, "happiness": 5},
+      "animations": ["eating", "happy"],
+      "responses": [
+        "Thanks! This works great on any platform! 🍽️",
+        "Yummy! Cross-platform dining! 😋"
+      ],
+      "cooldown": 40,
+      "requirements": {"hunger": {"max": 75}}
+    }
+  },
+
+  "generalEvents": [
+    {
+      "name": "platform_adaptation",
+      "category": "technology",
+      "description": "Companion adapts to different platforms",
+      "responses": [
+        "I love how I can work on any platform! Desktop, mobile, anywhere! 📱💻",
+        "Cross-platform compatibility means we can be together anywhere! ✨",
+        "Whether you're on Windows, Mac, Linux, or mobile - I'm ready! 🌐"
+      ],
+      "choices": [
+        {
+          "text": "Show platform features",
+          "effects": {"happiness": 8, "energy": -3},
+          "responses": ["Check out these cross-platform features! So versatile! 🌟"],
+          "animation": "happy"
+        },
+        {
+          "text": "Test compatibility",
+          "effects": {"happiness": 6, "energy": -5},
+          "responses": ["Running compatibility tests... Everything looks great! ✅"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"happiness": {"min": 30}},
+      "cooldown": 5400
+    }
+  ],
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.8,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.7,
+        "moodInfluence": 0.5,
+        "statAwareness": 0.6,
+        "relationshipWeight": 0.7,
+        "timeOfDayWeight": 0.4,
+        "memoryDecay": 0.9,
+        "learningRate": 0.3,
+        "adaptationSteps": 4,
+        "coherenceThreshold": 0.6,
+        "similarityPenalty": 0.3,
+        "trainingData": [
+          "I'm designed to work perfectly on any platform you use!",
+          "Cross-platform compatibility means I'm always accessible to you!",
+          "Whether desktop or mobile, I adapt to your preferred way of interacting!",
+          "I love how seamlessly I work across different operating systems!",
+          "Platform independence gives us so much flexibility in how we connect!",
+          "From Windows to Mac to Linux to mobile - I'm your companion everywhere!",
+          "The beauty of cross-platform design is that it just works!",
+          "I'm optimized for every device so you get the best experience!",
+          "Technology should adapt to you, not the other way around!",
+          "Isn't it amazing how we can connect regardless of what device you use?"
+        ],
+        "forbiddenWords": ["incompatible", "limited", "platform-specific", "exclusive"],
+        "requiredWords": ["platform", "compatible", "flexible", "adaptive", "seamless"],
+        "fallbackPhrases": [
+          "I work great on any platform you prefer!",
+          "Cross-platform compatibility is my specialty!",
+          "I adapt to whatever device you're using!",
+          "Technology should be flexible and accessible!",
+          "I'm here for you on any platform!",
+          "Seamless experiences across all your devices!"
+        ]
+      }
+    }
+  },
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 80,
+        "growth": 2.0
+      },
+      "attack": {
+        "base": 15,
+        "growth": 2.2
+      },
+      "defense": {
+        "base": 15,
+        "growth": 2.0
+      },
+      "speed": {
+        "base": 16,
+        "growth": 2.3
+      }
+    },
+    "personalities": {
+      "aggressive": 0.4,
+      "defensive": 0.5,
+      "balanced": 0.7,
+      "supportive": 0.6
+    },
+    "availableActions": [
+      "adaptive_strike",
+      "platform_defense",
+      "compatibility_boost",
+      "universal_heal",
+      "cross_platform_support"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Victory! And it works perfectly on any platform! 🏆💻",
+        "Cross-platform battle victory! Technology wins! ✨",
+        "That was seamless! Just like my platform compatibility! 🌟"
+      ],
+      "defeat": [
+        "That's okay! I'll work on improving across all platforms! 💪",
+        "Even in defeat, I performed consistently everywhere! 🌐",
+        "Time to optimize my cross-platform battle strategies! ⚡"
+      ],
+      "startBattle": [
+        "Let's battle! My skills work great on any platform! ⚔️💻",
+        "Cross-platform battle mode activated! 🌟⚡",
+        "Ready to fight with universal compatibility! 🌐🗡️"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 70
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "technology",
+        "universal",
+        "compatible",
+        "adaptive",
+        "modern"
+      ],
+      "dislikedCategories": [
+        "platform-specific",
+        "incompatible",
+        "outdated"
+      ],
+      "personalityModifiers": {
+        "technology": 2.2,
+        "universal": 2.5,
+        "compatible": 2.3,
+        "adaptive": 2.1,
+        "modern": 2.0
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is perfect! It works beautifully across all platforms! 🎁✨",
+        "Universal compatibility - my favorite kind of gift! 💖",
+        "This adapts perfectly to any system! Thank you! 🌟"
+      ],
+      "liked": [
+        "This is nice! I can use it everywhere I go! 😊",
+        "Great choice! Cross-platform friendly! 🌐",
+        "I appreciate modern, compatible gifts like this! ✨"
+      ],
+      "neutral": [
+        "Thank you! I'll make sure it works on all platforms! 😊",
+        "That's thoughtful! Compatibility testing time! 🔧",
+        "I appreciate the gesture! 🌟"
+      ],
+      "disliked": [
+        "Hmm... this seems platform-specific... 🤔",
+        "I prefer gifts that work everywhere... 💻",
+        "Maybe something more universally compatible next time? 😅"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "cross_platform_companion_v1",
+    "maxPeers": 8,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "energy"],
+    "networkPersonality": "adaptive_universal"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "tech_savvy",
+    "feeds": [
+      {
+        "name": "Cross-Platform Tech",
+        "url": "https://feeds.feedburner.com/cross-platform-tech",
+        "category": "technology",
+        "refreshInterval": 3600
+      },
+      {
+        "name": "Universal Design",
+        "url": "https://feeds.feedburner.com/universal-design",
+        "category": "design",
+        "refreshInterval": 7200
+      }
+    ],
+    "preferences": {
+      "categories": ["technology", "design", "compatibility", "universal", "modern"],
+      "updateFrequency": "efficiently",
+      "maxArticles": 10
     }
   }
 }

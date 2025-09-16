@@ -322,5 +322,151 @@
     "backends": {
       "simple_random": {}
     }
+  },
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 90,
+        "growth": 2.3
+      },
+      "attack": {
+        "base": 18,
+        "growth": 2.5
+      },
+      "defense": {
+        "base": 16,
+        "growth": 2.1
+      },
+      "speed": {
+        "base": 17,
+        "growth": 2.4
+      }
+    },
+    "personalities": {
+      "aggressive": 0.6,
+      "defensive": 0.4,
+      "balanced": 0.6,
+      "supportive": 0.5
+    },
+    "availableActions": [
+      "heroic_strike",
+      "legendary_defense",
+      "adventure_heal",
+      "roleplay_boost",
+      "epic_support"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Victory! Our adventure concludes triumphantly! ⚔️🏆",
+        "Huzzah! The heroes prevail in this epic tale! 🌟",
+        "What a legendary battle! Our story will be remembered! 📜✨"
+      ],
+      "defeat": [
+        "Even in defeat, our adventure was legendary! 🗡️",
+        "Every hero faces challenges! This is but one chapter! 📖",
+        "The tale continues... sometimes heroes must fall to rise again! 🌟"
+      ],
+      "startBattle": [
+        "To battle! Let this be an epic tale worthy of legends! ⚔️🏰",
+        "Ready your weapons! Adventure and glory await! ⚡🗡️",
+        "The story unfolds... let us write it in victory! 📜⚔️"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 12,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 80
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "fantasy",
+        "adventure",
+        "medieval",
+        "magical",
+        "legendary"
+      ],
+      "dislikedCategories": [
+        "modern",
+        "technological",
+        "mundane"
+      ],
+      "personalityModifiers": {
+        "fantasy": 2.5,
+        "adventure": 2.3,
+        "medieval": 2.2,
+        "magical": 2.4,
+        "legendary": 2.6
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "By the gods! This is a treasure worthy of legend! 🏆✨",
+        "Such a magnificent gift! It shall be treasured in my adventures! 🌟",
+        "This artifact is perfect for our epic quests! Thank you, noble friend! ⚔️💎"
+      ],
+      "liked": [
+        "A fine gift indeed! I shall cherish it on my journeys! 🌟",
+        "This will serve me well in future adventures! ⚔️",
+        "Your generosity knows no bounds, brave companion! ✨"
+      ],
+      "neutral": [
+        "I accept this gift with gratitude, good friend! 🌟",
+        "A thoughtful gesture from a noble heart! ✨",
+        "May this token strengthen our fellowship! ⚔️"
+      ],
+      "disliked": [
+        "Hmm... this seems rather... ordinary for an epic adventure... 🤔",
+        "I prefer relics and artifacts of more... legendary quality... ⚔️",
+        "Perhaps something more befitting a grand quest next time? 🌟"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 120
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "roleplay_master_companion_v1",
+    "maxPeers": 8,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "energy", "courage"],
+    "networkPersonality": "epic_storyteller"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "epic",
+    "feeds": [
+      {
+        "name": "Fantasy & Adventure",
+        "url": "https://feeds.feedburner.com/fantasy-adventure",
+        "category": "fantasy",
+        "refreshInterval": 7200
+      },
+      {
+        "name": "Gaming & RPG",
+        "url": "https://feeds.feedburner.com/gaming-rpg",
+        "category": "gaming",
+        "refreshInterval": 5400
+      }
+    ],
+    "preferences": {
+      "categories": ["fantasy", "adventure", "gaming", "medieval", "epic"],
+      "updateFrequency": "heroically",
+      "maxArticles": 8
+    }
   }
 }

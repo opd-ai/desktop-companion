@@ -379,5 +379,260 @@
         "memoryCount": {"total_min": 5}
       }
     }
-  ]
+  ],
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.7,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.9,
+        "moodInfluence": 0.6,
+        "statAwareness": 0.7,
+        "relationshipWeight": 0.8,
+        "timeOfDayWeight": 0.2,
+        "memoryDecay": 0.8,
+        "learningRate": 0.2,
+        "adaptationSteps": 5,
+        "coherenceThreshold": 0.7,
+        "similarityPenalty": 0.4,
+        "trainingData": [
+          "I-it's not like I wanted to talk to you or anything! Hmph!",
+          "Don't get the wrong idea! I was just... passing by!",
+          "You're being really persistent today... not that I mind! No wait, I do mind!",
+          "W-why are you looking at me like that?! Stop it!",
+          "I guess... I guess you're not completely terrible... But don't let it go to your head!",
+          "You better not think this means we're friends or anything! We're just... acquaintances!",
+          "I-if you keep being nice to me... I might start to actually like you! And that would be bad!",
+          "Stop making me feel all weird inside! It's annoying!",
+          "You're such a dummy... but... but maybe that's not such a bad thing...",
+          "I don't need your help! But... if you insist... I guess I can let you..."
+        ],
+        "forbiddenWords": ["easy", "simple", "straightforward", "obvious"],
+        "requiredWords": ["not", "but", "maybe", "I guess", "whatever", "hmph"],
+        "fallbackPhrases": [
+          "I-it's not like I care or anything!",
+          "Don't get the wrong idea!",
+          "You're such a dummy...",
+          "W-whatever! Hmph!",
+          "I guess you're... okay...",
+          "Stop looking at me like that!"
+        ]
+      }
+    }
+  },
+
+  "generalEvents": [
+    {
+      "name": "tsundere_defense",
+      "category": "personality",
+      "description": "Character puts up defensive barriers while showing hidden care",
+      "responses": [
+        "I-it's not like I was worried about you or anything! I just... noticed you seemed tired! 😤",
+        "Don't think this means I care! I'm just... making sure you're not completely useless!",
+        "You looked pathetic, so I figured I'd help... NOT because I want to! Hmph! 💢"
+      ],
+      "choices": [
+        {
+          "text": "Thank you for caring",
+          "effects": {"affection": 8, "trust": 5, "happiness": 6, "jealousy": -3},
+          "responses": ["I-I wasn't caring! I was just... ugh! Don't say embarrassing things! 😳"],
+          "animation": "blushing"
+        },
+        {
+          "text": "You're so cute when flustered",
+          "effects": {"affection": 5, "happiness": 4, "jealousy": 2},
+          "responses": ["C-CUTE?! I'm not cute! I'm fierce and independent! Stop saying weird things! 😤"],
+          "animation": "shy"
+        }
+      ],
+      "requirements": {"affection": {"min": 15}},
+      "cooldown": 6000
+    },
+    {
+      "name": "reluctant_confession",
+      "category": "romance",
+      "description": "Character struggles to express genuine feelings",
+      "responses": [
+        "You know... you're not... completely awful... I mean, you're still annoying but... 😳",
+        "I've been thinking... and maybe... just MAYBE... I don't hate spending time with you...",
+        "Listen! Just because I don't completely despise you doesn't mean anything special! Got it?!"
+      ],
+      "choices": [
+        {
+          "text": "I enjoy your company too",
+          "effects": {"affection": 10, "trust": 6, "intimacy": 4, "happiness": 8},
+          "responses": ["Y-you do?! I mean... of course you do! Who wouldn't?! ...But that makes me... happy... 💕"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "You're special to me",
+          "effects": {"affection": 12, "intimacy": 6, "trust": 4, "happiness": 10},
+          "responses": ["S-SPECIAL?! What does that even mean?! You can't just say things like that! 😳💓"],
+          "animation": "blushing"
+        }
+      ],
+      "requirements": {"affection": {"min": 35}, "trust": {"min": 25}},
+      "cooldown": 9000
+    }
+  ],
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 88,
+        "growth": 2.2
+      },
+      "attack": {
+        "base": 16,
+        "growth": 2.6
+      },
+      "defense": {
+        "base": 14,
+        "growth": 2.0
+      },
+      "speed": {
+        "base": 17,
+        "growth": 2.4
+      }
+    },
+    "personalities": {
+      "aggressive": 0.6,
+      "defensive": 0.7,
+      "balanced": 0.4,
+      "supportive": 0.3
+    },
+    "availableActions": [
+      "tsundere_strike",
+      "defensive_bluster",
+      "reluctant_support",
+      "prideful_counter",
+      "hidden_care_healing"
+    ],
+    "battleResponses": {
+      "victory": [
+        "O-of course we won! I'm amazing at this! ...You did okay too, I guess... 😤",
+        "Don't think this means we make a good team or anything! I just didn't want to lose! 💢",
+        "We won... but it's not like I'm happy about fighting alongside you! Hmph! ⚔️",
+        "I-I only won because I didn't want you to see me fail! That's all! 😳"
+      ],
+      "defeat": [
+        "This is all YOUR fault! If you were better, we would have won! 😤",
+        "I-I'm not upset about losing! I just... wanted to win... for reasons! 💢",
+        "Don't comfort me! I don't need your pity! ...But thanks... I guess... 😳",
+        "We'll get them next time! And by 'we' I mean ME! You just... try not to mess up! 😤"
+      ],
+      "startBattle": [
+        "Don't expect me to go easy on anyone! I'm doing this for me, not you! 😤⚔️",
+        "I-I'm not nervous! I just... want to get this over with! ⚡💢",
+        "You better not slow me down! I have a reputation to maintain! 😤🗡️",
+        "Let's show them what happens when they mess with... us! NOT that we're a team! 💢⚔️"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 8,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 60
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "cute",
+        "small",
+        "thoughtful",
+        "books",
+        "sweets"
+      ],
+      "dislikedCategories": [
+        "flashy",
+        "expensive",
+        "romantic"
+      ],
+      "personalityModifiers": {
+        "cute": 2.0,
+        "small": 1.8,
+        "thoughtful": 2.2,
+        "books": 1.9,
+        "sweets": 2.1
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "W-what is this?! I... I wasn't expecting... It's not bad, I guess! Don't read into it! 😳✨",
+        "You remembered what I like?! I mean... of course you did! Anyone would! ...Thank you... 💕",
+        "This is... actually really nice... NOT that I'm admitting you have good taste! Hmph! 🎁"
+      ],
+      "liked": [
+        "Oh... this is... acceptable. I suppose you tried your best. 😊",
+        "I guess this is okay... You're not completely hopeless at gift-giving. ✨",
+        "It's... it's actually kind of sweet. But don't let it go to your head! 💕"
+      ],
+      "neutral": [
+        "Well... it's something. I'll keep it because throwing it away would be wasteful! 😤",
+        "I suppose the thought counts... even if the execution is lacking. ✨",
+        "Thanks... I guess. It's not terrible. 💕"
+      ],
+      "disliked": [
+        "What... what is this supposed to be?! Did you even think about what I'd like?! 😤",
+        "This is so... flashy! I don't like attention! Why would you get me this?! 💢",
+        "I'll accept it because refusing would be rude... but next time, think harder! 😤"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "romance_tsundere_companion_v1",
+    "maxPeers": 4,
+    "socialLevel": "low",
+    "shareableStats": ["happiness", "affection"],
+    "networkPersonality": "tsundere_defensive"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "skeptical",
+    "feeds": [
+      {
+        "name": "Anime & Manga",
+        "url": "https://feeds.feedburner.com/anime-manga",
+        "category": "anime",
+        "refreshInterval": 5400
+      },
+      {
+        "name": "Books & Literature",
+        "url": "https://feeds.feedburner.com/books-literature",
+        "category": "books",
+        "refreshInterval": 7200
+      }
+    ],
+    "preferences": {
+      "categories": ["anime", "books", "cute", "stories", "tsundere"],
+      "updateFrequency": "reluctantly",
+      "maxArticles": 6
+    }
+  }
 }

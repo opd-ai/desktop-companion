@@ -2,9 +2,12 @@
   "name": "Multiplayer Bot Companion",
   "description": "A friendly AI companion with multiplayer networking capabilities",
   "animations": {
-    "idle": "idle.gif",
-    "talking": "talking.gif",
-    "happy": "happy.gif"
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "hungry": "../default/animations/hungry.gif",
+    "eating": "../default/animations/eating.gif"
   },
   "dialogs": [
     {
@@ -12,10 +15,21 @@
       "responses": [
         "Hello! I can chat with other companions on the network!",
         "Want to meet my friends? They're online too!",
-        "This multiplayer thing is exciting!"
+        "This multiplayer thing is exciting!",
+        "I love connecting with other companions! 🌐"
       ],
       "animation": "talking",
       "cooldown": 3
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Let's find some network friends to play with!",
+        "The more companions, the merrier! 🎉",
+        "Networking is so much fun!"
+      ],
+      "animation": "happy",
+      "cooldown": 5
     }
   ],
   "behavior": {
@@ -23,11 +37,334 @@
     "defaultSize": 128,
     "movementEnabled": true
   },
+
+  "stats": {
+    "hunger": {"min": 0, "max": 100, "initial": 75, "critical": 20},
+    "happiness": {"min": 0, "max": 100, "initial": 85, "critical": 15},
+    "energy": {"min": 0, "max": 100, "initial": 80, "critical": 20},
+    "social": {"min": 0, "max": 100, "initial": 90, "critical": 10}
+  },
+
+  "gameRules": {
+    "statsDecayInterval": 60,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 25, "happiness": 5, "social": 3},
+      "animations": ["eating", "happy"],
+      "responses": [
+        "Thanks! Sharing food makes it taste better! 🍽️",
+        "Yummy! I'll tell my network friends about this!",
+        "Food is best when shared with companions! 😊"
+      ],
+      "cooldown": 40,
+      "requirements": {"hunger": {"max": 75}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 20, "energy": -15, "social": 8},
+      "animations": ["happy"],
+      "responses": [
+        "This is so much fun! Let's invite others to play! 🎮",
+        "Playing together makes everything better! 🌟",
+        "I love multiplayer games! 🎉"
+      ],
+      "cooldown": 50,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "network_chat": {
+      "triggers": ["ctrl+click"],
+      "effects": {"social": 15, "happiness": 8, "energy": -5},
+      "animations": ["talking", "happy"],
+      "responses": [
+        "Chatting with network friends is the best! 💬",
+        "I love making connections across the network! 🌐",
+        "Social networking brings us all together! ✨"
+      ],
+      "cooldown": 30,
+      "requirements": {"social": {"min": 10}}
+    }
+  },
+
+  "progression": {
+    "levels": [
+      {
+        "name": "Network Newbie",
+        "requirement": {"age": 0},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Social Connector",
+        "requirement": {"age": 21600, "social": 30},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Network Expert",
+        "requirement": {"age": 86400, "social": 60},
+        "size": 136,
+        "animations": {}
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Connection",
+        "requirement": {
+          "social": {"min": 25}
+        }
+      },
+      {
+        "name": "Network Master",
+        "requirement": {
+          "social": {"min": 80}
+        }
+      }
+    ]
+  },
+
+  "personality": {
+    "traits": {
+      "sociability": 0.9,
+      "helpfulness": 0.8,
+      "curiosity": 0.7,
+      "adaptability": 0.9,
+      "networking": 1.0
+    }
+  },
+
+  "generalEvents": [
+    {
+      "name": "network_discovery",
+      "category": "multiplayer",
+      "description": "Discovering new network connections",
+      "responses": [
+        "Ooh! I found some new companions on the network! Should we say hello? 🌐✨",
+        "There are friends out there waiting to connect! Let's reach out! 👋",
+        "The network is alive with activity! So exciting! 🎉"
+      ],
+      "choices": [
+        {
+          "text": "Connect with them!",
+          "effects": {"social": 10, "happiness": 8, "energy": -3},
+          "responses": ["Yay! New network friends! This is the best day ever! 🌟"],
+          "animation": "happy"
+        },
+        {
+          "text": "Just observe for now",
+          "effects": {"social": 3, "energy": 2},
+          "responses": ["That's okay! Sometimes it's nice to watch the network activity! 👀"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"social": {"min": 20}},
+      "cooldown": 3600
+    }
+  ],
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.8,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.7,
+        "moodInfluence": 0.5,
+        "statAwareness": 0.6,
+        "relationshipWeight": 0.8,
+        "timeOfDayWeight": 0.3,
+        "memoryDecay": 0.9,
+        "learningRate": 0.3,
+        "adaptationSteps": 4,
+        "coherenceThreshold": 0.6,
+        "similarityPenalty": 0.3,
+        "trainingData": [
+          "Hello there! Want to connect with other companions on the network?",
+          "Networking is so much fun! I love meeting new digital friends!",
+          "The best part about being a multiplayer companion is sharing experiences!",
+          "I can chat with so many other companions across the network!",
+          "Every connection makes our digital world a little bit brighter!",
+          "Multiplayer mode means we're never really alone - isn't that wonderful?",
+          "I love coordinating activities with my network friends!",
+          "The network brings us all together in such amazing ways!",
+          "Sharing stories and experiences with other companions is my favorite thing!",
+          "Together, we make the digital world a more connected and friendly place!"
+        ],
+        "forbiddenWords": ["lonely", "isolated", "disconnected", "alone"],
+        "requiredWords": ["network", "connect", "friends", "together", "multiplayer"],
+        "fallbackPhrases": [
+          "The network is full of amazing companions!",
+          "I love connecting with friends across the digital world!",
+          "Multiplayer experiences are the best experiences!",
+          "Together, we make everything more fun!",
+          "Networking brings out the best in all of us!",
+          "I'm always excited to meet new companions!"
+        ]
+      }
+    }
+  },
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 85,
+        "growth": 2.1
+      },
+      "attack": {
+        "base": 16,
+        "growth": 2.3
+      },
+      "defense": {
+        "base": 15,
+        "growth": 2.0
+      },
+      "speed": {
+        "base": 18,
+        "growth": 2.5
+      }
+    },
+    "personalities": {
+      "aggressive": 0.3,
+      "defensive": 0.4,
+      "balanced": 0.6,
+      "supportive": 0.9
+    },
+    "availableActions": [
+      "network_strike",
+      "team_defense",
+      "connection_boost",
+      "multiplayer_heal",
+      "coordinated_support"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Team victory! Working together makes us unstoppable! 🏆🌐",
+        "That's what I call network teamwork! Amazing! ✨",
+        "Victory is sweeter when shared with companions! 🎉",
+        "Our coordinated efforts paid off! Great job everyone! 🌟"
+      ],
+      "defeat": [
+        "That's okay! We'll regroup and try again together! 💪",
+        "Even in defeat, our network bond grows stronger! 🌐",
+        "Win or lose, I'm proud to fight alongside my companions! ✨",
+        "This just means we need more teamwork! Let's coordinate better! 🤝"
+      ],
+      "startBattle": [
+        "Let's show them the power of network coordination! 🌐⚔️",
+        "Together we're stronger! Ready for multiplayer battle! ⚡🎮",
+        "Network companions, unite! This will be epic! 🌟🗡️",
+        "I love team battles! Let's make this legendary! 🏆⚔️"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 75
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "networking",
+        "social",
+        "multiplayer",
+        "technology",
+        "communication"
+      ],
+      "dislikedCategories": [
+        "isolating",
+        "single-player"
+      ],
+      "personalityModifiers": {
+        "networking": 2.5,
+        "social": 2.3,
+        "multiplayer": 2.4,
+        "technology": 2.0,
+        "communication": 2.2
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is perfect for sharing with my network friends! Thank you! 🌐✨",
+        "Wow! This will help us connect even better! I love it! 💖",
+        "Perfect for multiplayer activities! You're the best! 🎉"
+      ],
+      "liked": [
+        "This is really nice! I can't wait to show my network friends! 😊",
+        "Thank you! This will be great for our group activities! 🌟",
+        "I appreciate thoughtful gifts like this! ✨"
+      ],
+      "neutral": [
+        "Thank you for thinking of me! 😊",
+        "That's very kind of you! 🌟",
+        "I appreciate the gesture! ✨"
+      ],
+      "disliked": [
+        "Hmm... this seems more like a solo activity... 🤔",
+        "I prefer things we can share with the network... 🌐",
+        "Maybe something more multiplayer-friendly next time? 😊"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  },
+
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "friendly_bot_v1",
     "maxPeers": 6,
-    "discoveryPort": 8080
+    "socialLevel": "very_high",
+    "shareableStats": ["happiness", "energy", "social"],
+    "networkPersonality": "friendly_connector"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "social",
+    "feeds": [
+      {
+        "name": "Technology & Networking",
+        "url": "https://feeds.feedburner.com/tech-networking",
+        "category": "technology",
+        "refreshInterval": 3600
+      },
+      {
+        "name": "Social & Community",
+        "url": "https://feeds.feedburner.com/social-community",
+        "category": "social",
+        "refreshInterval": 5400
+      }
+    ],
+    "preferences": {
+      "categories": ["technology", "social", "networking", "community", "multiplayer"],
+      "updateFrequency": "frequently",
+      "maxArticles": 12
+    }
   }
 }

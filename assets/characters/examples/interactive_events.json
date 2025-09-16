@@ -326,5 +326,150 @@
     "backends": {
       "simple_random": {}
     }
+  },
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 80,
+        "growth": 2.0
+      },
+      "attack": {
+        "base": 15,
+        "growth": 2.2
+      },
+      "defense": {
+        "base": 15,
+        "growth": 2.0
+      },
+      "speed": {
+        "base": 16,
+        "growth": 2.1
+      }
+    },
+    "personalities": {
+      "aggressive": 0.4,
+      "defensive": 0.5,
+      "balanced": 0.7,
+      "supportive": 0.6
+    },
+    "availableActions": [
+      "interactive_strike",
+      "event_shield",
+      "curiosity_boost",
+      "story_heal",
+      "scenario_support"
+    ],
+    "battleResponses": {
+      "victory": [
+        "That was an interactive adventure! We won together! 🎉",
+        "Victory through collaboration and creativity! ✨",
+        "What an exciting battle scenario! We did great! 🌟"
+      ],
+      "defeat": [
+        "That was still a fun interactive experience! 😊",
+        "Every scenario teaches us something new! 📚",
+        "Win or lose, I love these adventures with you! 💕"
+      ],
+      "startBattle": [
+        "Let's make this battle an interactive story! ⚔️📖",
+        "Ready for an adventurous scenario? 🌟⚡",
+        "This will be like a choose-your-own-adventure! 🎮🗡️"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 70
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "interactive",
+        "creative",
+        "stories",
+        "games",
+        "educational"
+      ],
+      "dislikedCategories": [
+        "passive",
+        "boring"
+      ],
+      "personalityModifiers": {
+        "interactive": 2.3,
+        "creative": 2.1,
+        "stories": 2.0,
+        "games": 1.9,
+        "educational": 1.8
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is so interactive and fun! I love it! 🎁✨",
+        "Perfect! This will make our activities even more engaging! 🌟",
+        "You really understand what makes me excited! 🎉"
+      ],
+      "liked": [
+        "This is interesting! Thanks for thinking of me! 😊",
+        "I appreciate thoughtful gifts like this! ✨",
+        "How creative! I like your choice! 🌟"
+      ],
+      "neutral": [
+        "Thank you for the gift! 😊",
+        "That's thoughtful of you! ✨",
+        "I appreciate the gesture! 🌟"
+      ],
+      "disliked": [
+        "Well... it's not very interactive, is it? 😅",
+        "I prefer things that are more engaging, but thanks! 🌟",
+        "Maybe something more creative next time? 😊"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "interactive_events_companion_v1",
+    "maxPeers": 6,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "energy", "curiosity"],
+    "networkPersonality": "interactive_facilitator"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "curious",
+    "feeds": [
+      {
+        "name": "Interactive Stories",
+        "url": "https://feeds.feedburner.com/interactive-stories",
+        "category": "stories",
+        "refreshInterval": 5400
+      },
+      {
+        "name": "Creative Games",
+        "url": "https://feeds.feedburner.com/creative-games",
+        "category": "games",
+        "refreshInterval": 7200
+      }
+    ],
+    "preferences": {
+      "categories": ["stories", "games", "interactive", "creative", "educational"],
+      "updateFrequency": "actively",
+      "maxArticles": 10
+    }
   }
 }
