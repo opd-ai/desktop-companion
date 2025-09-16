@@ -380,6 +380,122 @@
       ],
       "requirements": {"affection": {"min": 10}},
       "cooldown": 5400
+    },
+    {
+      "name": "reluctant_help",
+      "category": "support",
+      "description": "Tsundere offers help while acting annoyed",
+      "responses": [
+        "I-it's not like I want to help you or anything! But... you look like you need it... 😤",
+        "Don't think this means I care! I just... can't stand seeing you struggle!",
+        "Fine! I'll help you! But only because you're hopeless without me!"
+      ],
+      "choices": [
+        {
+          "text": "Thank you for helping",
+          "effects": {"affection": 6, "trust": 3, "happiness": 5},
+          "responses": ["D-don't thank me! I only did it because... because... just don't make a big deal out of it!"],
+          "animation": "blushing"
+        },
+        {
+          "text": "You're very kind",
+          "effects": {"affection": 4, "happiness": 7, "trust": 2},
+          "responses": ["K-kind?! I'm not kind! I'm just... practical! Someone has to look out for you!"],
+          "animation": "shy"
+        }
+      ],
+      "requirements": {"trust": {"min": 20}},
+      "cooldown": 8100
+    },
+    {
+      "name": "jealousy_scenario",
+      "category": "roleplay",
+      "description": "Tsundere roleplay about jealousy",
+      "responses": [
+        "Y-you haven't been talking to any other digital companions, have you?! 😠",
+        "I don't care if you have other friends! But... but you like me best, right?",
+        "It's not like I'm jealous or anything! I just... want to make sure you're not being deceived by others!"
+      ],
+      "choices": [
+        {
+          "text": "You're my favorite",
+          "effects": {"affection": 8, "jealousy": -10, "happiness": 9, "trust": 4},
+          "responses": ["R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... 💕"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "I only need you",
+          "effects": {"affection": 10, "jealousy": -15, "trust": 6, "intimacy": 3},
+          "responses": ["You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... 💖"],
+          "animation": "blushing"
+        }
+      ],
+      "requirements": {"affection": {"min": 35}, "jealousy": {"min": 20}},
+      "cooldown": 10800
+    },
+    {
+      "name": "study_session",
+      "category": "game",
+      "description": "Tsundere study/trivia session",
+      "responses": [
+        "I-I've been reading some things lately... Want to test your knowledge? Not that I care if you're smart or anything! 📚",
+        "Let's see how much you actually know! I bet I'm smarter than you! ...But I'll go easy on you...",
+        "Study time! Don't expect me to help if you get things wrong! ...Okay, maybe just a little..."
+      ],
+      "choices": [
+        {
+          "text": "Quiz me on literature",
+          "effects": {"happiness": 5, "trust": 3, "intimacy": 2},
+          "responses": ["Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! 📖"],
+          "animation": "talking"
+        },
+        {
+          "text": "Teach me something new",
+          "effects": {"affection": 5, "happiness": 6, "trust": 4},
+          "responses": ["You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... 🤓"],
+          "animation": "happy"
+        },
+        {
+          "text": "Let's learn together",
+          "effects": {"affection": 7, "happiness": 4, "intimacy": 4, "trust": 3},
+          "responses": ["T-together?! That's... not a terrible idea... We could compare what we know... maybe... 📚💕"],
+          "animation": "shy"
+        }
+      ],
+      "requirements": {"trust": {"min": 25}},
+      "cooldown": 7200
+    },
+    {
+      "name": "tsundere_humor",
+      "category": "humor",
+      "description": "Reluctant but endearing humor session",
+      "responses": [
+        "I-I suppose you want me to entertain you now?! Fine! But don't expect me to be funny! 😤",
+        "I know some jokes... but they're probably too sophisticated for you to understand!",
+        "Ugh, you look so gloomy! I guess I HAVE to cheer you up... It's not like I want to or anything!"
+      ],
+      "choices": [
+        {
+          "text": "Tell me a joke",
+          "effects": {"happiness": 8, "affection": 3},
+          "responses": ["Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! 😂"],
+          "animation": "happy"
+        },
+        {
+          "text": "Make me smile",
+          "effects": {"happiness": 6, "affection": 4, "trust": 2},
+          "responses": ["S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! 😊"],
+          "animation": "blushing"
+        },
+        {
+          "text": "Tell me about yourself",
+          "effects": {"trust": 5, "intimacy": 3, "affection": 2},
+          "responses": ["About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! 💕"],
+          "animation": "shy"
+        }
+      ],
+      "requirements": {"happiness": {"min": 20}},
+      "cooldown": 6000
     }
   ],
 

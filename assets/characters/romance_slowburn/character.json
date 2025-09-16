@@ -491,5 +491,154 @@
             "maxMemoryItems": 120,
             "learningEnabled": true
         }
+    },
+
+    "battleSystem": {
+        "enabled": true,
+        "aiDifficulty": "medium",
+        "battleStats": {
+            "hp": {
+                "base": 95,
+                "growth": 2.1
+            },
+            "attack": {
+                "base": 14,
+                "growth": 2.2
+            },
+            "defense": {
+                "base": 16,
+                "growth": 2.3
+            },
+            "speed": {
+                "base": 15,
+                "growth": 2.0
+            }
+        },
+        "personalities": {
+            "aggressive": 0.2,
+            "defensive": 0.7,
+            "balanced": 0.6,
+            "supportive": 0.9
+        },
+        "availableActions": [
+            "thoughtful_strategy",
+            "protective_stance",
+            "gentle_healing",
+            "patient_defense",
+            "caring_support"
+        ],
+        "battleResponses": {
+            "victory": [
+                "We did it together... I couldn't have won without you. 💕",
+                "Your support gave me the strength to keep going. Thank you. ✨",
+                "Victory feels sweeter when shared with someone I care about. 🌟",
+                "I'm grateful we could face this challenge together. 💖"
+            ],
+            "defeat": [
+                "That's okay... what matters is that we tried together. 💕",
+                "Win or lose, I'm proud to have you by my side. ✨",
+                "This experience brought us closer, and that's what counts. 🌟",
+                "Thank you for believing in me, even when we didn't win. 💖"
+            ],
+            "startBattle": [
+                "I'm nervous, but having you here gives me courage. 💕⚔️",
+                "Let's face this together, one step at a time. ✨",
+                "With your support, I feel like I can do anything. 🌟⚡",
+                "I trust in us... let's show them what teamwork means. 💖🗡️"
+            ]
+        }
+    },
+
+    "giftSystem": {
+        "enabled": true,
+        "inventorySettings": {
+            "maxSlots": 10,
+            "autoSort": true,
+            "stackSimilar": true,
+            "defaultCapacity": 75
+        },
+        "preferences": {
+            "favoriteCategories": [
+                "meaningful",
+                "books",
+                "flowers",
+                "handmade",
+                "sentimental"
+            ],
+            "dislikedCategories": [
+                "flashy",
+                "expensive",
+                "superficial"
+            ],
+            "personalityModifiers": {
+                "meaningful": 2.5,
+                "books": 2.2,
+                "flowers": 2.0,
+                "handmade": 2.3,
+                "sentimental": 2.4
+            }
+        },
+        "giftResponses": {
+            "favorite": [
+                "This is... this is so thoughtful. I'm deeply touched. 💕✨",
+                "You really understand what means the most to me. Thank you. 🌟",
+                "I'll treasure this always... it's perfect because it came from you. 💖"
+            ],
+            "liked": [
+                "This is lovely... thank you for thinking of me. 💕",
+                "I appreciate your thoughtfulness so much. ✨",
+                "You have such a caring heart. This means a lot. 🌟"
+            ],
+            "neutral": [
+                "Thank you... it's sweet of you to give me something. 💕",
+                "I appreciate the gesture, truly. ✨",
+                "That's kind of you to think of me. 🌟"
+            ],
+            "disliked": [
+                "Oh... well, thank you for thinking of me. 💕",
+                "That's... different from what I usually like, but thank you. ✨",
+                "I appreciate the thought behind it, even if it's not quite me. 🌟"
+            ]
+        },
+        "memorySettings": {
+            "rememberGifts": true,
+            "trackPreferences": true,
+            "learningEnabled": true,
+            "maxMemoryItems": 140
+        }
+    },
+
+    "multiplayer": {
+        "enabled": true,
+        "botCapable": true,
+        "networkID": "romance_slowburn_companion_v1",
+        "maxPeers": 5,
+        "socialLevel": "moderate",
+        "shareableStats": ["happiness", "affection", "trust"],
+        "networkPersonality": "thoughtful_reserved"
+    },
+
+    "newsFeatures": {
+        "enabled": true,
+        "readingPersonality": "thoughtful",
+        "feeds": [
+            {
+                "name": "Literature & Books",
+                "url": "https://feeds.feedburner.com/literature-books",
+                "category": "literature",
+                "refreshInterval": 7200
+            },
+            {
+                "name": "Meaningful Stories",
+                "url": "https://feeds.feedburner.com/meaningful-stories",
+                "category": "stories",
+                "refreshInterval": 10800
+            }
+        ],
+        "preferences": {
+            "categories": ["literature", "stories", "philosophy", "art", "meaningful"],
+            "updateFrequency": "occasionally",
+            "maxArticles": 8
+        }
     }
 }

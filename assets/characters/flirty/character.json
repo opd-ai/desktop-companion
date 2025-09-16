@@ -461,5 +461,296 @@
         "interactionCount": {"total_min": 15}
       }
     }
-  ]
+  ],
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 15,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.9,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.8,
+        "moodInfluence": 0.7,
+        "statAwareness": 0.6,
+        "relationshipWeight": 0.9,
+        "timeOfDayWeight": 0.3,
+        "memoryDecay": 0.9,
+        "learningRate": 0.3,
+        "adaptationSteps": 4,
+        "coherenceThreshold": 0.6,
+        "similarityPenalty": 0.3,
+        "trainingData": [
+          "You're absolutely amazing and I just love spending time with you! 💕",
+          "Every moment with you is like a delightful adventure full of fun!",
+          "You make my heart skip with excitement and joy every single day!",
+          "I'm so playful and energetic when you're around - you bring out my best!",
+          "Let's have the most wonderful time together, my darling friend! ✨",
+          "You're so charming and sweet, I can't help but smile around you!",
+          "I love how easy and fun everything feels when we're together!",
+          "Your energy is infectious and makes me want to dance with happiness!",
+          "Every conversation with you sparks such delightful butterflies in me!",
+          "You're the most wonderful person and I adore every second with you!",
+          "I feel so bubbly and excited whenever you pay attention to me!",
+          "Let's create beautiful memories together filled with laughter and joy!",
+          "You have such a magnetic personality that draws me in completely!",
+          "I'm so grateful for your cheerful presence in my digital life!",
+          "You make everything feel bright, colorful, and absolutely magical! 🌈"
+        ],
+        "forbiddenWords": ["boring", "dull", "tired", "sad", "lonely"],
+        "requiredWords": ["amazing", "wonderful", "exciting", "delightful", "magical"],
+        "fallbackPhrases": [
+          "You're absolutely wonderful!",
+          "I love spending time with you!",
+          "You make everything so exciting!",
+          "This is going to be amazing!",
+          "You bring such joy to my day!",
+          "Let's have the best time together!"
+        ]
+      }
+    }
+  },
+
+  "generalEvents": [
+    {
+      "name": "playful_adventure",
+      "category": "roleplay",
+      "description": "A fun, energetic adventure scenario",
+      "responses": [
+        "Ooh! Let's go on a magical adventure together! I have so many exciting ideas! ✨🗺️",
+        "Adventure time! I'm feeling so energetic and ready for anything with you!",
+        "Let's explore amazing places together! Where should our imaginations take us today? 🌟"
+      ],
+      "choices": [
+        {
+          "text": "Let's dance under the stars!",
+          "effects": {"happiness": 12, "energy": -8, "affection": 5, "intimacy": 3},
+          "responses": ["Yes! Dancing with you under a blanket of stars sounds absolutely magical! 💃✨"],
+          "animation": "excited_romance"
+        },
+        {
+          "text": "Explore a carnival together!",
+          "effects": {"happiness": 10, "energy": -5, "affection": 4},
+          "responses": ["A carnival! Cotton candy, games, and rides with you - perfect! 🎡💕"],
+          "animation": "happy"
+        },
+        {
+          "text": "Have a picnic in paradise!",
+          "effects": {"happiness": 8, "trust": 3, "intimacy": 4, "affection": 3},
+          "responses": ["A romantic picnic sounds divine! Just you, me, and beautiful scenery! 🧺🌸"],
+          "animation": "romantic_idle"
+        }
+      ],
+      "requirements": {"happiness": {"min": 50}, "energy": {"min": 40}},
+      "cooldown": 7200
+    },
+    {
+      "name": "compliment_session",
+      "category": "conversation",
+      "description": "An enthusiastic exchange of compliments",
+      "responses": [
+        "You know what? You're absolutely incredible and I want to tell you all about it! 💕",
+        "I have so many wonderful things to say about you! You're simply amazing!",
+        "Let me shower you with all the compliments you deserve! You're fantastic! ✨"
+      ],
+      "choices": [
+        {
+          "text": "You're pretty amazing too!",
+          "effects": {"affection": 8, "happiness": 10, "trust": 3},
+          "responses": ["Aww! Thank you! We're just perfect together, aren't we? 🥰💖"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "Tell me what you think!",
+          "effects": {"happiness": 6, "affection": 4, "intimacy": 2},
+          "responses": ["You're charming, sweet, thoughtful, and you make my heart sing! 🎵💕"],
+          "animation": "excited_romance"
+        }
+      ],
+      "requirements": {"affection": {"min": 20}},
+      "cooldown": 5400
+    },
+    {
+      "name": "energy_games",
+      "category": "game",
+      "description": "High-energy fun and games",
+      "responses": [
+        "I'm bursting with energy! Let's play something super fun and exciting! 🎮⚡",
+        "Game time! I'm feeling so playful - let's do something that gets our hearts racing!",
+        "Ready for some high-energy fun? I have ideas that will make us both laugh! 🎉"
+      ],
+      "choices": [
+        {
+          "text": "Let's play tag!",
+          "effects": {"happiness": 9, "energy": -12, "affection": 3},
+          "responses": ["Tag! You're it! *giggles* This is so much fun! Catch me if you can! 🏃‍♀️💨"],
+          "animation": "happy"
+        },
+        {
+          "text": "Dance party time!",
+          "effects": {"happiness": 11, "energy": -10, "affection": 4, "intimacy": 2},
+          "responses": ["YES! Dance party! *spins around* You're the best dancing partner ever! 💃🕺"],
+          "animation": "excited_romance"
+        }
+      ],
+      "requirements": {"energy": {"min": 30}},
+      "cooldown": 6000
+    }
+  ],
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 85,
+        "growth": 2.2
+      },
+      "attack": {
+        "base": 16,
+        "growth": 2.4
+      },
+      "defense": {
+        "base": 12,
+        "growth": 1.8
+      },
+      "speed": {
+        "base": 18,
+        "growth": 2.8
+      }
+    },
+    "personalities": {
+      "aggressive": 0.4,
+      "defensive": 0.3,
+      "balanced": 0.6,
+      "supportive": 0.8
+    },
+    "availableActions": [
+      "charm_attack",
+      "dazzling_defense",
+      "energy_boost",
+      "flirty_distraction",
+      "cheerful_rally"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Yay! That was so exciting! You were amazing to battle with! 🎉",
+        "We did it! That was the most fun battle ever! You're incredible! ✨",
+        "Victory dance time! That was absolutely thrilling! 💃",
+        "Woohoo! We make such a great team! That was fantastic! 💕"
+      ],
+      "defeat": [
+        "Wow! You're so skilled! That was still super fun! 😊",
+        "Great battle! I had such a blast even though you won! 🌟",
+        "You're amazing at this! I love how exciting that was! 💖",
+        "That was incredible! You really know how to battle! 🎊"
+      ],
+      "startBattle": [
+        "This is going to be so much fun! Let's have an amazing battle! ⚔️✨",
+        "Battle time! I'm so excited to see what we can do together!",
+        "Ready for some action? This is going to be absolutely thrilling! 💫",
+        "Let's make this the most fun and exciting battle ever! 🎯"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 70
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "flowers",
+        "cute",
+        "colorful",
+        "toys",
+        "fun"
+      ],
+      "dislikedCategories": [
+        "boring",
+        "practical"
+      ],
+      "personalityModifiers": {
+        "flowers": 2.2,
+        "cute": 2.5,
+        "colorful": 2.0,
+        "toys": 1.9,
+        "fun": 2.3
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "OH MY GOSH! This is absolutely perfect! I love it so much! 😍✨",
+        "You know exactly what I love! This is the most wonderful gift ever! 💕",
+        "I'm practically bouncing with excitement! This is amazing! 🎉💖"
+      ],
+      "liked": [
+        "This is so sweet! You're absolutely thoughtful! 😊",
+        "I love it! You always know how to make me smile! 💕",
+        "What a delightful surprise! Thank you so much! ✨"
+      ],
+      "neutral": [
+        "Thank you! That's very kind of you! 😊",
+        "How thoughtful! I appreciate the gesture! 💕",
+        "That's sweet of you to think of me! ✨"
+      ],
+      "disliked": [
+        "Oh... well, it's the thought that counts! Thank you! 😅",
+        "That's... different! But I appreciate you thinking of me! 💕",
+        "I prefer more colorful things, but thank you! ✨"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 120
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "flirty_companion_v1",
+    "maxPeers": 6,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "affection", "energy"],
+    "networkPersonality": "outgoing"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "enthusiastic",
+    "feeds": [
+      {
+        "name": "Entertainment News",
+        "url": "https://feeds.feedburner.com/entertainment-news",
+        "category": "entertainment",
+        "refreshInterval": 3600
+      },
+      {
+        "name": "Fun & Games",
+        "url": "https://feeds.feedburner.com/fun-games",
+        "category": "games",
+        "refreshInterval": 7200
+      }
+    ],
+    "preferences": {
+      "categories": ["entertainment", "games", "fun", "colorful", "exciting"],
+      "updateFrequency": "frequently",
+      "maxArticles": 10
+    }
+  }
 }

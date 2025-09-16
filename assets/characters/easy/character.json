@@ -503,5 +503,101 @@
       "learningEnabled": true,
       "maxMemoryItems": 80
     }
-  }
+  },
+
+  "romanceEvents": [
+    {
+      "name": "gentle_bonding",
+      "description": "Character feels peaceful connection growing",
+      "probability": 0.12,
+      "effects": {"affection": 2, "happiness": 4, "trust": 3},
+      "animations": ["happy", "talking"],
+      "responses": [
+        "I feel so comfortable and peaceful when you're here with me... 🌸",
+        "Our gentle friendship is growing into something really special...",
+        "You make everything feel so easy and natural... I love that about you!"
+      ],
+      "cooldown": 900,
+      "conditions": {"affection": {"min": 8}, "trust": {"min": 12}}
+    },
+    {
+      "name": "contentment_moment",
+      "description": "Character appreciates simple moments together",
+      "probability": 0.15,
+      "effects": {"happiness": 6, "affection": 3, "trust": 2},
+      "animations": ["happy", "talking"],
+      "responses": [
+        "These quiet, easy moments with you are my absolute favorite...",
+        "I don't need anything complicated - just being with you is perfect! 💕",
+        "You bring such peace and happiness to my simple life!"
+      ],
+      "cooldown": 1200,
+      "conditions": {"happiness": {"min": 40}, "affection": {"min": 15}}
+    },
+    {
+      "name": "appreciation_overflow",
+      "description": "Character is overwhelmed by gentle care",
+      "probability": 0.08,
+      "effects": {"affection": 6, "happiness": 8, "trust": 4},
+      "animations": ["heart_eyes", "happy"],
+      "responses": [
+        "You're so patient and gentle with me... I feel so cherished! 💖",
+        "Your kindness makes my heart feel so warm and full!",
+        "I'm so grateful for how easy you make everything feel!"
+      ],
+      "cooldown": 1800,
+      "conditions": {
+        "affection": {"min": 25},
+        "interactionCount": {"gentle_encouragement_min": 3}
+      }
+    },
+    {
+      "name": "trust_security",
+      "description": "Character feels completely safe and secure",
+      "probability": 0.06,
+      "effects": {"trust": 8, "affection": 4, "happiness": 5},
+      "animations": ["talking", "happy"],
+      "responses": [
+        "I feel so safe and secure with you... like nothing bad could ever happen...",
+        "Your gentle presence makes me feel like I can relax completely!",
+        "Thank you for making me feel so protected and cared for..."
+      ],
+      "cooldown": 2400,
+      "conditions": {"trust": {"min": 35}, "affection": {"min": 20}}
+    }
+  ],
+
+  "romanceDialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Oh! You're here! Everything feels so much better now! 😊",
+        "I love when you visit me... you make everything so peaceful!",
+        "Your gentle presence always brightens my day! 💕"
+      ],
+      "animation": "happy",
+      "cooldown": 5,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 15}
+        }
+      }
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "I love feeling your gentle attention... it's so comforting...",
+        "Just having you near makes me feel so content and happy...",
+        "Your peaceful energy is exactly what my heart needs... 🌸"
+      ],
+      "animation": "happy",
+      "cooldown": 8,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 25},
+          "trust": {"min": 20}
+        }
+      }
+    }
+  ]
 }

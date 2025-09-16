@@ -8,7 +8,14 @@
     "happy": "animations/happy.gif",
     "sad": "animations/sad.gif",
     "hungry": "animations/hungry.gif",
-    "eating": "animations/eating.gif"
+    "eating": "animations/eating.gif",
+    "blushing": "animations/happy.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "flirty": "animations/happy.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/sad.gif",
+    "excited_romance": "animations/happy.gif"
   },
 
   "dialogs": [

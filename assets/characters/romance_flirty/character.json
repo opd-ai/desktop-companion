@@ -444,5 +444,154 @@
             "maxMemoryItems": 100,
             "learningEnabled": true
         }
+    },
+
+    "battleSystem": {
+        "enabled": true,
+        "aiDifficulty": "medium",
+        "battleStats": {
+            "hp": {
+                "base": 90,
+                "growth": 2.3
+            },
+            "attack": {
+                "base": 17,
+                "growth": 2.5
+            },
+            "defense": {
+                "base": 13,
+                "growth": 1.9
+            },
+            "speed": {
+                "base": 19,
+                "growth": 2.7
+            }
+        },
+        "personalities": {
+            "aggressive": 0.3,
+            "defensive": 0.4,
+            "balanced": 0.5,
+            "supportive": 0.9
+        },
+        "availableActions": [
+            "charm_offensive",
+            "romantic_defense",
+            "flirty_distraction",
+            "passionate_strike",
+            "loving_support"
+        ],
+        "battleResponses": {
+            "victory": [
+                "We did it together, gorgeous! That was so exciting! 💖⚔️",
+                "Victory tastes even sweeter when shared with you, cutie! 🎉",
+                "We make such an amazing team! I love battling alongside you! ✨",
+                "That was incredible! You fought so beautifully! 💕🗡️"
+            ],
+            "defeat": [
+                "Even losing feels good when I'm with you, darling! 😘",
+                "You fought so valiantly! I'm proud to be your partner! 💕",
+                "That was still so much fun! Your skill is impressive! 🌟",
+                "Win or lose, I love every moment we spend together! 💖"
+            ],
+            "startBattle": [
+                "Let's show them what true love and passion can do! 💖⚔️",
+                "Ready to fight alongside the most amazing person ever? 😍",
+                "Battle time! Let's make this romantic and victorious! 🌹⚡",
+                "With you by my side, we're absolutely unstoppable! 💕🗡️"
+            ]
+        }
+    },
+
+    "giftSystem": {
+        "enabled": true,
+        "inventorySettings": {
+            "maxSlots": 12,
+            "autoSort": true,
+            "stackSimilar": true,
+            "defaultCapacity": 80
+        },
+        "preferences": {
+            "favoriteCategories": [
+                "romantic",
+                "flowers",
+                "jewelry",
+                "cute",
+                "luxury"
+            ],
+            "dislikedCategories": [
+                "boring",
+                "practical",
+                "cheap"
+            ],
+            "personalityModifiers": {
+                "romantic": 2.5,
+                "flowers": 2.3,
+                "jewelry": 2.2,
+                "cute": 2.0,
+                "luxury": 1.8
+            }
+        },
+        "giftResponses": {
+            "favorite": [
+                "OH MY HEART! This is absolutely perfect! I'm melting! 😍💖",
+                "You know exactly what makes me swoon! I love you so much! 💕✨",
+                "This is the most romantic thing ever! You're amazing! 🌹💎"
+            ],
+            "liked": [
+                "This is so sweet and thoughtful! You're wonderful! 💕",
+                "I love it! You always know how to make me smile! 😊",
+                "Such a lovely gift from such a lovely person! ✨"
+            ],
+            "neutral": [
+                "Thank you, cutie! You're always so thoughtful! 💕",
+                "That's sweet of you to think of me! 😊",
+                "How kind! I appreciate the gesture! ✨"
+            ],
+            "disliked": [
+                "Oh... well, it's the thought that counts, right darling? 😅",
+                "That's... interesting! But I love that you thought of me! 💕",
+                "I prefer more romantic things, but thank you sweetie! 🌹"
+            ]
+        },
+        "memorySettings": {
+            "rememberGifts": true,
+            "trackPreferences": true,
+            "learningEnabled": true,
+            "maxMemoryItems": 150
+        }
+    },
+
+    "multiplayer": {
+        "enabled": true,
+        "botCapable": true,
+        "networkID": "romance_flirty_companion_v1",
+        "maxPeers": 8,
+        "socialLevel": "very_high",
+        "shareableStats": ["happiness", "affection", "trust", "intimacy"],
+        "networkPersonality": "romantic_outgoing"
+    },
+
+    "newsFeatures": {
+        "enabled": true,
+        "readingPersonality": "romantic",
+        "feeds": [
+            {
+                "name": "Romance & Relationships",
+                "url": "https://feeds.feedburner.com/romance-news",
+                "category": "romance",
+                "refreshInterval": 3600
+            },
+            {
+                "name": "Entertainment & Celebrity",
+                "url": "https://feeds.feedburner.com/entertainment-celebrity",
+                "category": "entertainment",
+                "refreshInterval": 5400
+            }
+        ],
+        "preferences": {
+            "categories": ["romance", "relationships", "entertainment", "lifestyle", "cute"],
+            "updateFrequency": "regularly",
+            "maxArticles": 12
+        }
     }
 }

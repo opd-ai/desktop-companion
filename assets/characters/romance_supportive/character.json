@@ -486,6 +486,62 @@
         }
     ],
 
+    "battleSystem": {
+        "enabled": true,
+        "aiDifficulty": "easy",
+        "battleStats": {
+            "hp": {
+                "base": 100,
+                "growth": 2.4
+            },
+            "attack": {
+                "base": 12,
+                "growth": 1.8
+            },
+            "defense": {
+                "base": 18,
+                "growth": 2.6
+            },
+            "speed": {
+                "base": 14,
+                "growth": 1.9
+            }
+        },
+        "personalities": {
+            "aggressive": 0.1,
+            "defensive": 0.8,
+            "balanced": 0.4,
+            "supportive": 1.0
+        },
+        "availableActions": [
+            "healing_light",
+            "protective_barrier",
+            "encouraging_boost",
+            "empathetic_shield",
+            "caring_recovery"
+        ],
+        "battleResponses": {
+            "victory": [
+                "We did it together! I'm so proud of how we supported each other! 💝🏆",
+                "Victory feels wonderful when shared with someone you care about! 🌟",
+                "That was amazing teamwork! You fought so bravely! 💪💕",
+                "I'm grateful we could face this challenge together and win! ✨"
+            ],
+            "defeat": [
+                "That's okay, sweetheart. What matters is that we tried our best! 💝",
+                "I'm proud of how hard you fought. You're so strong! 🌟",
+                "Win or lose, I'm honored to stand by your side! 💕",
+                "This just gives us a chance to grow stronger together! 💪"
+            ],
+            "startBattle": [
+                "Don't worry, I'll be right here supporting you every step! 💝⚔️",
+                "We can do this together! I believe in us completely! 🌟⚡",
+                "Remember, you're braver than you believe! Let's go! 💪🗡️",
+                "No matter what happens, I'm proud of you for trying! ✨⚔️"
+            ]
+        }
+    },
+
     "multiplayer": {
         "enabled": true,
         "botCapable": false,
