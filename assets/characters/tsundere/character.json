@@ -882,7 +882,11 @@
   },
   "newsFeatures": {
     "enabled": true,
-    "readingPersonality": "tsundere",
+    "readingPersonality": {
+      "interestLevel": 0.5,
+      "commentFrequency": 0.8,
+      "topicPreferences": ["lifestyle", "books", "culture"]
+    },
     "feeds": [
       {
         "name": "Lifestyle News",

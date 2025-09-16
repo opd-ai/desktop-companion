@@ -741,7 +741,11 @@
   },
   "newsFeatures": {
     "enabled": true,
-    "readingPersonality": "intimate",
+    "readingPersonality": {
+      "interestLevel": 0.7,
+      "commentFrequency": 0.6,
+      "topicPreferences": ["romance", "lifestyle", "relationships", "culture"]
+    },
     "feeds": [
       {
         "name": "Romantic Events",

@@ -641,7 +641,11 @@
   },
   "newsFeatures": {
     "enabled": true,
-    "readingPersonality": "balanced",
+    "readingPersonality": {
+      "interestLevel": 0.6,
+      "commentFrequency": 0.5,
+      "topicPreferences": ["general", "technology", "lifestyle"]
+    },
     "feeds": [
       {
         "name": "General News",

@@ -74,7 +74,11 @@
     "enabled": true,
     "updateInterval": 30,
     "maxStoredItems": 50,
-    "readingPersonality": "casual",
+    "readingPersonality": {
+      "interestLevel": 0.6,
+      "commentFrequency": 0.4,
+      "topicPreferences": ["tech", "gaming", "general"]
+    },
     "preferredCategories": [
       "tech",
       "gaming",

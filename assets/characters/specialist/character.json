@@ -624,7 +624,11 @@
   },
   "newsFeatures": {
     "enabled": true,
-    "readingPersonality": "drowsy",
+    "readingPersonality": {
+      "interestLevel": 0.3,
+      "commentFrequency": 0.2,
+      "topicPreferences": ["wellness", "peaceful", "sleep", "relaxation"]
+    },
     "feeds": [
       {
         "name": "Sleep & Wellness",

@@ -309,7 +309,11 @@
     "enabled": true,
     "updateInterval": 1800,
     "maxStoredItems": 40,
-    "readingPersonality": "analytical",
+    "readingPersonality": {
+      "interestLevel": 0.8,
+      "commentFrequency": 0.7,
+      "topicPreferences": ["tech", "ai", "science", "research"]
+    },
     "preferredCategories": [
       "tech",
       "ai",
