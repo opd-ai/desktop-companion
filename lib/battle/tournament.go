@@ -21,13 +21,13 @@ import (
 
 // Tournament system errors
 var (
-	ErrTournamentFull         = errors.New("tournament is full")
-	ErrTournamentNotStarted   = errors.New("tournament has not started")
-	ErrTournamentInProgress   = errors.New("tournament is in progress")
-	ErrInvalidTournamentSize  = errors.New("invalid tournament size")
-	ErrPlayerNotFound         = errors.New("player not found")
-	ErrMatchNotFound          = errors.New("match not found")
-	ErrInvalidMatchResult     = errors.New("invalid match result")
+	ErrTournamentFull        = errors.New("tournament is full")
+	ErrTournamentNotStarted  = errors.New("tournament has not started")
+	ErrTournamentInProgress  = errors.New("tournament is in progress")
+	ErrInvalidTournamentSize = errors.New("invalid tournament size")
+	ErrPlayerNotFound        = errors.New("player not found")
+	ErrMatchNotFound         = errors.New("match not found")
+	ErrInvalidMatchResult    = errors.New("invalid match result")
 )
 
 // TournamentFormat defines different tournament structures
@@ -64,14 +64,14 @@ const (
 type TournamentPlayer struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`
-	Rating       int       `json:"rating"`       // ELO rating
+	Rating       int       `json:"rating"` // ELO rating
 	MatchesWon   int       `json:"matchesWon"`
 	MatchesLost  int       `json:"matchesLost"`
 	MatchesDrawn int       `json:"matchesDrawn"`
-	Tournaments  int       `json:"tournaments"`  // Tournaments participated
-	Victories    int       `json:"victories"`    // Tournament wins
+	Tournaments  int       `json:"tournaments"` // Tournaments participated
+	Victories    int       `json:"victories"`   // Tournament wins
 	LastActive   time.Time `json:"lastActive"`
-	Personality  string    `json:"personality"`  // AI personality for bot players
+	Personality  string    `json:"personality"` // AI personality for bot players
 }
 
 // TournamentMatch represents a single match in a tournament
@@ -90,32 +90,32 @@ type TournamentMatch struct {
 
 // Tournament represents a competitive tournament
 type Tournament struct {
-	ID              string             `json:"id"`
-	Name            string             `json:"name"`
-	Format          TournamentFormat   `json:"format"`
-	Status          TournamentStatus   `json:"status"`
-	MaxPlayers      int                `json:"maxPlayers"`
-	Players         []*TournamentPlayer `json:"players"`
-	Matches         []*TournamentMatch  `json:"matches"`
-	CurrentRound    int                `json:"currentRound"`
-	WinnerID        string             `json:"winnerId"`
-	CreatedAt       time.Time          `json:"createdAt"`
-	StartedAt       time.Time          `json:"startedAt"`
-	CompletedAt     time.Time          `json:"completedAt"`
-	PrizeStructure  map[int]string     `json:"prizeStructure"` // Position -> Prize description
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	Format         TournamentFormat    `json:"format"`
+	Status         TournamentStatus    `json:"status"`
+	MaxPlayers     int                 `json:"maxPlayers"`
+	Players        []*TournamentPlayer `json:"players"`
+	Matches        []*TournamentMatch  `json:"matches"`
+	CurrentRound   int                 `json:"currentRound"`
+	WinnerID       string              `json:"winnerId"`
+	CreatedAt      time.Time           `json:"createdAt"`
+	StartedAt      time.Time           `json:"startedAt"`
+	CompletedAt    time.Time           `json:"completedAt"`
+	PrizeStructure map[int]string      `json:"prizeStructure"` // Position -> Prize description
 }
 
 // TournamentManager handles tournament creation and management
 type TournamentManager struct {
-	tournaments map[string]*Tournament     `json:"tournaments"`
+	tournaments map[string]*Tournament       `json:"tournaments"`
 	players     map[string]*TournamentPlayer `json:"players"`
-	nextMatchID int                        `json:"nextMatchId"`
-	nextTournID int                        `json:"nextTournId"`
+	nextMatchID int                          `json:"nextMatchId"`
+	nextTournID int                          `json:"nextTournId"`
 }
 
 // ELO rating constants for fair skill assessment
 const (
-	INITIAL_RATING     = 1200 // Starting ELO rating for new players
+	INITIAL_RATING    = 1200 // Starting ELO rating for new players
 	K_FACTOR          = 32   // Rating change factor
 	MIN_RATING        = 100  // Minimum possible rating
 	MAX_RATING        = 3000 // Maximum possible rating
@@ -204,24 +204,24 @@ func (tm *TournamentManager) isValidTournamentSize(format TournamentFormat, maxP
 // getDefaultPrizeStructure returns a default prize structure based on tournament size
 func (tm *TournamentManager) getDefaultPrizeStructure(maxPlayers int) map[int]string {
 	prizes := make(map[int]string)
-	
+
 	if maxPlayers >= 4 {
 		prizes[1] = "Tournament Champion"
 		prizes[2] = "Runner-up"
 	}
-	
+
 	if maxPlayers >= 8 {
 		prizes[3] = "Semi-finalist"
 		prizes[4] = "Semi-finalist"
 	}
-	
+
 	if maxPlayers >= 16 {
 		prizes[5] = "Quarter-finalist"
-		prizes[6] = "Quarter-finalist" 
+		prizes[6] = "Quarter-finalist"
 		prizes[7] = "Quarter-finalist"
 		prizes[8] = "Quarter-finalist"
 	}
-	
+
 	return prizes
 }
 
@@ -331,7 +331,7 @@ func (tm *TournamentManager) generateSingleEliminationBracket(tournament *Tourna
 // generateRoundRobinMatches creates all matches for round robin format
 func (tm *TournamentManager) generateRoundRobinMatches(tournament *Tournament) error {
 	players := tournament.Players
-	
+
 	round := 1
 	position := 0
 
@@ -358,7 +358,7 @@ func (tm *TournamentManager) generateRoundRobinMatches(tournament *Tournament) e
 func (tm *TournamentManager) generateSwissRound(tournament *Tournament) error {
 	// For now, implement simple Swiss pairing (pair players with similar records)
 	// This is a simplified version - full Swiss system would be more complex
-	
+
 	players := make([]*TournamentPlayer, len(tournament.Players))
 	copy(players, tournament.Players)
 
@@ -366,7 +366,7 @@ func (tm *TournamentManager) generateSwissRound(tournament *Tournament) error {
 	sort.Slice(players, func(i, j int) bool {
 		iWins := tm.getTournamentWins(tournament.ID, players[i].ID)
 		jWins := tm.getTournamentWins(tournament.ID, players[j].ID)
-		
+
 		if iWins == jWins {
 			return players[i].Rating > players[j].Rating
 		}
@@ -534,13 +534,13 @@ func (tm *TournamentManager) checkSingleEliminationProgress(tournament *Tourname
 	if currentRoundMatches > 0 && completedMatches == currentRoundMatches {
 		// Current round is complete
 		winners := tm.getRoundWinners(tournament, tournament.CurrentRound)
-		
+
 		if len(winners) == 1 {
 			// Tournament is complete
 			tournament.Status = STATUS_COMPLETED
 			tournament.WinnerID = winners[0]
 			tournament.CompletedAt = time.Now()
-			
+
 			// Update winner statistics
 			if winner := tm.players[winners[0]]; winner != nil {
 				winner.Victories++
@@ -556,13 +556,13 @@ func (tm *TournamentManager) checkSingleEliminationProgress(tournament *Tourname
 // getRoundWinners gets all winners from a specific round
 func (tm *TournamentManager) getRoundWinners(tournament *Tournament, round int) []string {
 	var winners []string
-	
+
 	for _, match := range tournament.Matches {
 		if match.Round == round && match.WinnerID != "" {
 			winners = append(winners, match.WinnerID)
 		}
 	}
-	
+
 	return winners
 }
 
@@ -604,7 +604,7 @@ func (tm *TournamentManager) checkRoundRobinProgress(tournament *Tournament) {
 		tournament.Status = STATUS_COMPLETED
 		tournament.WinnerID = tm.getRoundRobinWinner(tournament)
 		tournament.CompletedAt = time.Now()
-		
+
 		// Update winner statistics
 		if winner := tm.players[tournament.WinnerID]; winner != nil {
 			winner.Victories++
@@ -616,7 +616,7 @@ func (tm *TournamentManager) checkRoundRobinProgress(tournament *Tournament) {
 func (tm *TournamentManager) getRoundRobinWinner(tournament *Tournament) string {
 	// Calculate points for each player (3 for win, 1 for draw, 0 for loss)
 	points := make(map[string]int)
-	
+
 	for _, player := range tournament.Players {
 		points[player.ID] = 0
 	}
@@ -636,7 +636,7 @@ func (tm *TournamentManager) getRoundRobinWinner(tournament *Tournament) string 
 	// Find player with most points
 	var winnerID string
 	maxPoints := -1
-	
+
 	for playerID, playerPoints := range points {
 		if playerPoints > maxPoints {
 			maxPoints = playerPoints
@@ -671,7 +671,7 @@ func (tm *TournamentManager) checkSwissProgress(tournament *Tournament) {
 			tournament.Status = STATUS_COMPLETED
 			tournament.WinnerID = tm.getSwissWinner(tournament)
 			tournament.CompletedAt = time.Now()
-			
+
 			// Update winner statistics
 			if winner := tm.players[tournament.WinnerID]; winner != nil {
 				winner.Victories++
@@ -688,7 +688,7 @@ func (tm *TournamentManager) checkSwissProgress(tournament *Tournament) {
 func (tm *TournamentManager) getSwissWinner(tournament *Tournament) string {
 	// Winner is player with most wins, then highest rating as tiebreaker
 	winCounts := make(map[string]int)
-	
+
 	for _, player := range tournament.Players {
 		winCounts[player.ID] = tm.getTournamentWins(tournament.ID, player.ID)
 	}
@@ -697,7 +697,7 @@ func (tm *TournamentManager) getSwissWinner(tournament *Tournament) string {
 	var winnerID string
 	maxWins := -1
 	maxRating := -1
-	
+
 	for _, player := range tournament.Players {
 		wins := winCounts[player.ID]
 		if wins > maxWins || (wins == maxWins && player.Rating > maxRating) {
@@ -731,7 +731,7 @@ func (tm *TournamentManager) GetPlayer(playerID string) (*TournamentPlayer, erro
 // GetLeaderboard returns top players sorted by rating
 func (tm *TournamentManager) GetLeaderboard(limit int) []*TournamentPlayer {
 	players := make([]*TournamentPlayer, 0, len(tm.players))
-	
+
 	for _, player := range tm.players {
 		players = append(players, player)
 	}
@@ -744,20 +744,20 @@ func (tm *TournamentManager) GetLeaderboard(limit int) []*TournamentPlayer {
 	if limit > 0 && limit < len(players) {
 		return players[:limit]
 	}
-	
+
 	return players
 }
 
 // GetActiveTournaments returns all tournaments that are accepting registrations or in progress
 func (tm *TournamentManager) GetActiveTournaments() []*Tournament {
 	var active []*Tournament
-	
+
 	for _, tournament := range tm.tournaments {
 		if tournament.Status == STATUS_REGISTRATION || tournament.Status == STATUS_IN_PROGRESS {
 			active = append(active, tournament)
 		}
 	}
-	
+
 	return active
 }
 

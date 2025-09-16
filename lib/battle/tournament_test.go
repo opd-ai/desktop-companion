@@ -130,51 +130,51 @@ func TestCreateTournament(t *testing.T) {
 
 func TestTournament_SingleElimination(t *testing.T) {
 	tm := NewTournamentManager()
-	
+
 	// Create tournament
 	tournament, err := tm.CreateTournament("test", FORMAT_SINGLE_ELIMINATION, 4)
 	if err != nil {
 		t.Fatalf("Failed to create tournament: %v", err)
 	}
-	
+
 	// Register players
 	player1 := tm.RegisterPlayer("p1", "Player 1", string(PERSONALITY_BALANCED))
 	player2 := tm.RegisterPlayer("p2", "Player 2", string(PERSONALITY_BALANCED))
 	player3 := tm.RegisterPlayer("p3", "Player 3", string(PERSONALITY_BALANCED))
 	player4 := tm.RegisterPlayer("p4", "Player 4", string(PERSONALITY_BALANCED))
-	
+
 	// Join tournament
 	err = tm.JoinTournament(tournament.ID, player1.ID)
 	if err != nil {
 		t.Errorf("Failed to join tournament: %v", err)
 	}
-	
+
 	err = tm.JoinTournament(tournament.ID, player2.ID)
 	if err != nil {
 		t.Errorf("Failed to join tournament: %v", err)
 	}
-	
+
 	err = tm.JoinTournament(tournament.ID, player3.ID)
 	if err != nil {
 		t.Errorf("Failed to join tournament: %v", err)
 	}
-	
+
 	err = tm.JoinTournament(tournament.ID, player4.ID)
 	if err != nil {
 		t.Errorf("Failed to join tournament: %v", err)
 	}
-	
+
 	// Start tournament
 	err = tm.StartTournament(tournament.ID)
 	if err != nil {
 		t.Fatalf("Failed to start tournament: %v", err)
 	}
-	
+
 	// Check tournament status
 	if tournament.Status != STATUS_IN_PROGRESS {
 		t.Errorf("Expected tournament status to be in_progress, got %v", tournament.Status)
 	}
-	
+
 	// Check that matches were created
 	if len(tournament.Matches) == 0 {
 		t.Error("Expected matches to be created")
@@ -570,7 +570,7 @@ func TestRoundRobinTournament(t *testing.T) {
 	for i, match := range tournament.Matches {
 		result := RESULT_PLAYER1_WIN
 		winner := match.Player1ID
-		
+
 		// Make player 0 win most matches
 		if i%2 == 0 {
 			result = RESULT_PLAYER1_WIN
@@ -579,7 +579,7 @@ func TestRoundRobinTournament(t *testing.T) {
 			result = RESULT_PLAYER2_WIN
 			winner = match.Player2ID
 		}
-		
+
 		tm.ReportMatchResult(tournament.ID, match.ID, result, winner)
 	}
 
@@ -617,7 +617,7 @@ func BenchmarkCreateTournament(b *testing.B) {
 
 func BenchmarkJoinTournament(b *testing.B) {
 	tm := NewTournamentManager()
-	
+
 	tournament, err := tm.CreateTournament("Benchmark Tournament", FORMAT_SINGLE_ELIMINATION, 64)
 	if err != nil {
 		b.Fatalf("CreateTournament failed: %v", err)
@@ -640,7 +640,7 @@ func BenchmarkJoinTournament(b *testing.B) {
 
 func BenchmarkELORatingUpdate(b *testing.B) {
 	tm := NewTournamentManager()
-	
+
 	player1 := tm.RegisterPlayer("p1", "Player 1", string(PERSONALITY_BALANCED))
 	player2 := tm.RegisterPlayer("p2", "Player 2", string(PERSONALITY_BALANCED))
 
