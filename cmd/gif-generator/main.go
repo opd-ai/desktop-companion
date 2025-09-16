@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -14,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/opd-ai/desktop-companion/lib/character"
 	"github.com/opd-ai/desktop-companion/lib/comfyui"
 	"github.com/opd-ai/desktop-companion/lib/pipeline"
 )
@@ -51,8 +53,8 @@ func init() {
 	commands = map[string]Command{
 		"character": {
 			Name:        "character",
-			Description: "Generate assets for a single character",
-			Usage:       "gif-generator character --archetype ARCHETYPE [options]",
+			Description: "Generate assets for a character",
+			Usage:       "gif-generator character --file character.json [options] OR --archetype ARCHETYPE [options]",
 			Handler:     handleCharacterCommand,
 		},
 		"batch": {
@@ -187,20 +189,32 @@ func printUsage() {
 // handleCharacterCommand generates assets for a single character.
 func handleCharacterCommand(args []string) error {
 	fs := flag.NewFlagSet("character", flag.ExitOnError)
-	archetype := fs.String("archetype", "", "Character archetype (required)")
-	style := fs.String("style", "pixel_art", "Art style")
-	description := fs.String("description", "", "Character description")
+	characterFile := fs.String("file", "", "Character JSON file path")
+	archetype := fs.String("archetype", "", "Character archetype (alternative to --file)")
+	model := fs.String("model", "flux1d", "AI model to use (sdxl, flux1d, flux1s)")
+	style := fs.String("style", "pixel_art", "Art style (when using --archetype)")
+	description := fs.String("description", "", "Character description (when using --archetype)")
 	states := fs.String("states", "", "Comma-separated animation states (optional)")
-	output := fs.String("output", "", "Output directory (overrides global)")
+	output := fs.String("output", "", "Output directory (overrides default)")
+	validate := fs.Bool("validate", false, "Validate generated assets")
+	backup := fs.Bool("backup", false, "Backup existing assets before generation")
 
 	fs.Parse(args)
 
-	if *archetype == "" {
-		return fmt.Errorf("--archetype is required")
+	// Require either --file or --archetype
+	if *characterFile == "" && *archetype == "" {
+		return fmt.Errorf("either --file or --archetype is required")
+	}
+	if *characterFile != "" && *archetype != "" {
+		return fmt.Errorf("cannot specify both --file and --archetype")
 	}
 
 	if globalConfig.Verbose {
-		fmt.Printf("Generating assets for character: %s\n", *archetype)
+		if *characterFile != "" {
+			fmt.Printf("Generating assets from character file: %s\n", *characterFile)
+		} else {
+			fmt.Printf("Generating assets for character archetype: %s\n", *archetype)
+		}
 	}
 
 	// Load pipeline configuration
@@ -209,12 +223,29 @@ func handleCharacterCommand(args []string) error {
 		return fmt.Errorf("load pipeline config: %w", err)
 	}
 
-	// Create character configuration
-	charConfig := pipeline.DefaultCharacterConfig(*archetype)
-	charConfig.Character.Style = *style
-	if *description != "" {
-		charConfig.Character.Description = *description
+	var charConfig *pipeline.CharacterConfig
+
+	if *characterFile != "" {
+		// Load from character.json file
+		charConfig, err = loadCharacterConfigFromFile(*characterFile, *model)
+		if err != nil {
+			return fmt.Errorf("load character config from file: %w", err)
+		}
+	} else {
+		// Create from archetype
+		charConfig = pipeline.DefaultCharacterConfig(*archetype)
+		charConfig.Character.Style = *style
+		if *description != "" {
+			charConfig.Character.Description = *description
+		}
+		// Store model info in traits for archetype-based generation
+		if charConfig.Character.Traits == nil {
+			charConfig.Character.Traits = make(map[string]string)
+		}
+		charConfig.Character.Traits["model"] = *model
 	}
+
+	// Apply command-line overrides
 	if *states != "" {
 		charConfig.States = strings.Split(*states, ",")
 		for i, state := range charConfig.States {
@@ -227,10 +258,22 @@ func handleCharacterCommand(args []string) error {
 		charConfig.Deployment.OutputDir = globalConfig.OutputDir
 	}
 
+	// Apply validation and backup settings
+	// Note: These are applied to the deployment config since ValidationConfig doesn't have an Enabled field
+	charConfig.Deployment.ValidateBeforeDeploy = *validate
+	charConfig.Deployment.BackupExisting = *backup
+
 	if globalConfig.DryRun {
-		fmt.Printf("Would generate assets for character %s with style %s\n", *archetype, *style)
+		if *characterFile != "" {
+			fmt.Printf("Would generate assets from file: %s\n", *characterFile)
+		} else {
+			fmt.Printf("Would generate assets for character %s with style %s\n", *archetype, *style)
+		}
+		fmt.Printf("Model: %s\n", charConfig.Character.Traits["model"])
 		fmt.Printf("States: %v\n", charConfig.States)
 		fmt.Printf("Output: %s\n", charConfig.Deployment.OutputDir)
+		fmt.Printf("Validation: %t\n", charConfig.Deployment.ValidateBeforeDeploy)
+		fmt.Printf("Backup: %t\n", charConfig.Deployment.BackupExisting)
 		return nil
 	}
 
@@ -719,4 +762,89 @@ func printValidationSummary(results []*pipeline.CharacterValidationResult) {
 func deployAssets(source, target string, backup bool) error {
 	// This is a simplified deployment implementation
 	return fmt.Errorf("deployment not yet implemented - would copy from %s to %s", source, target)
+}
+
+// loadCharacterConfigFromFile loads a character.json file and creates a pipeline configuration
+func loadCharacterConfigFromFile(filePath, model string) (*pipeline.CharacterConfig, error) {
+	// Read the character.json file
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("read character file: %w", err)
+	}
+
+	// Parse character card
+	var card character.CharacterCard
+	if err := json.Unmarshal(data, &card); err != nil {
+		return nil, fmt.Errorf("parse character JSON: %w", err)
+	}
+
+	// Validate character card
+	if err := card.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid character card: %w", err)
+	}
+
+	// Check if character has asset generation configuration
+	if card.AssetGeneration == nil {
+		return nil, fmt.Errorf("character file does not contain assetGeneration configuration")
+	}
+
+	// Convert to pipeline configuration
+	charConfig := &pipeline.CharacterConfig{
+		Character: &pipeline.CharacterRequest{
+			Archetype:   card.Name,
+			Description: card.AssetGeneration.BasePrompt,
+			Style:       card.AssetGeneration.GenerationSettings.ArtStyle,
+			Traits:      make(map[string]string),
+			OutputConfig: &pipeline.OutputConfig{
+				Width:      card.AssetGeneration.GenerationSettings.Resolution.Width,
+				Height:     card.AssetGeneration.GenerationSettings.Resolution.Height,
+				Format:     "png",
+				Background: "transparent",
+			},
+		},
+		States: extractAnimationStates(card.AssetGeneration.AnimationMappings),
+		GIFConfig: &pipeline.ExtendedGIFConfig{
+			GIFConfig: pipeline.GIFConfig{
+				FrameCount:   card.AssetGeneration.GenerationSettings.AnimationSettings.FrameRate,
+				MaxFileSize:  card.AssetGeneration.GenerationSettings.AnimationSettings.MaxFileSize * 1024, // Convert KB to bytes
+				Transparency: card.AssetGeneration.GenerationSettings.AnimationSettings.TransparencyEnabled,
+			},
+			Width:        card.AssetGeneration.GenerationSettings.Resolution.Width,
+			Height:       card.AssetGeneration.GenerationSettings.Resolution.Height,
+			FrameRate:    card.AssetGeneration.GenerationSettings.AnimationSettings.FrameRate,
+			Colors:       256, // Default adaptive palette
+			Optimization: card.AssetGeneration.GenerationSettings.AnimationSettings.Optimization,
+		},
+		Validation: &pipeline.ValidationConfig{
+			MaxFileSize:          card.AssetGeneration.GenerationSettings.AnimationSettings.MaxFileSize * 1024,
+			MinFrameRate:         5, // Minimum acceptable frame rate
+			RequiredStates:       []string{"idle", "talking", "happy", "sad"}, // Core states
+			StyleConsistency:     true,
+			ArchetypeCompliance:  true,
+			TransparencyRequired: card.AssetGeneration.GenerationSettings.AnimationSettings.TransparencyEnabled,
+		},
+		Deployment: &pipeline.DeploymentConfig{
+			OutputDir:            filepath.Dir(filePath), // Output to same directory as character.json
+			BackupExisting:       card.AssetGeneration.BackupSettings.Enabled,
+			UpdateCharacterJSON:  true,
+			ValidateBeforeDeploy: true,
+		},
+	}
+
+	// Override model if specified
+	if model != "" {
+		// Store model info in traits for now (pipeline doesn't have direct model field)
+		charConfig.Character.Traits["model"] = model
+	}
+
+	return charConfig, nil
+}
+
+// extractAnimationStates extracts animation state names from the asset generation mappings
+func extractAnimationStates(mappings map[string]character.AnimationMapping) []string {
+	states := make([]string, 0, len(mappings))
+	for state := range mappings {
+		states = append(states, state)
+	}
+	return states
 }

@@ -47,6 +47,239 @@ Every character JSON file must have this basic structure:
 
 ---
 
+## Asset Generation System
+
+The asset generation system enables automatic creation of character animations using AI image generation models like SDXL and Flux.1d. This integrates with the gif-generator tool and ComfyUI pipeline.
+
+### Configuration Structure
+
+```json
+{
+  "assetGeneration": {
+    "basePrompt": "A cute anime character with blue hair and green eyes, digital art, transparent background",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly, neutral expression, slight smile",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking, mouth open, expressive face, animated gesture",
+        "stateDescription": "Speaking or interacting",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "smiling brightly, cheerful expression, positive energy",
+        "stateDescription": "Happy or excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "sad expression, downcast eyes, melancholy mood",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.0,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.0,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 500,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-01-01T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  }
+}
+```
+
+### Asset Generation Properties
+
+#### Core Configuration
+
+- **`basePrompt`** (string, required): Comprehensive text prompt optimized for SDXL/Flux.1d describing the character's visual appearance, art style, and key characteristics
+- **`animationMappings`** (object, required): State-specific prompt modifications for each animation
+- **`generationSettings`** (object, required): Technical parameters for AI image generation
+- **`assetMetadata`** (object, optional): Version tracking and generation history
+- **`backupSettings`** (object, optional): Asset backup configuration
+
+#### Animation Mappings
+
+Each animation state can have:
+
+- **`promptModifier`** (string): Text to modify the base prompt for this state
+- **`negativePrompt`** (string, optional): What to avoid in generation
+- **`stateDescription`** (string, optional): Human-readable description
+- **`frameCount`** (integer, optional): Number of frames (4-8, default varies by state)
+- **`customSettings`** (object, optional): Per-animation setting overrides
+
+#### Generation Settings
+
+**Model Selection**:
+- `"sdxl"`: Stable Diffusion XL
+- `"flux1d"`: Flux.1 Dev model (recommended)
+- `"flux1s"`: Flux.1 Schnell model (faster)
+
+**Art Styles**:
+- `"anime"`: Japanese anime/manga style
+- `"pixel_art"`: Retro pixel art style
+- `"realistic"`: Photorealistic style
+- `"cartoon"`: Western cartoon style
+- `"chibi"`: Cute chibi/super-deformed style
+
+**Quality Settings**:
+- **`steps`** (1-100): Diffusion steps, higher = better quality
+- **`cfgScale`** (1.0-20.0): Prompt adherence, typical 7.0-12.0
+- **`seed`** (integer, optional): For reproducible generation
+- **`sampler`** (string): Sampling method ("euler_a", "dpmpp_2m", etc.)
+- **`scheduler`** (string): Noise schedule ("normal", "karras", etc.)
+
+**Animation Settings**:
+- **`frameRate`** (5-30): Animation FPS
+- **`duration`** (1.0-10.0): Animation length in seconds
+- **`loopType`**: "seamless", "bounce", or "linear"
+- **`optimization`**: "size", "quality", or "balanced"
+- **`maxFileSize`** (integer): Maximum KB per GIF (default 500)
+- **`transparencyEnabled`** (boolean): Enable alpha channel
+- **`colorPalette`**: "adaptive", "web", or "grayscale"
+
+### ComfyUI Integration
+
+**Custom Workflow Support**:
+```json
+{
+  "comfyUISettings": {
+    "workflowTemplate": "character_animation_workflow.json",
+    "customNodes": ["ComfyUI-AnimateDiff", "ComfyUI-ControlNet"],
+    "batchSize": 4,
+    "vae": "vae-ft-mse-840000-ema-pruned.ckpt",
+    "controlNet": {
+      "model": "control_v11p_sd15_openpose",
+      "strength": 0.8,
+      "preprocessor": "openpose"
+    }
+  }
+}
+```
+
+### Usage Examples
+
+#### Basic Character Generation
+
+```bash
+# Generate assets for a character using assetGeneration configuration
+gif-generator --character assets/characters/default/character.json --model flux1d
+
+# Generate specific animation states only
+gif-generator --character assets/characters/default/character.json --states idle,talking,happy
+
+# Use custom output directory
+gif-generator --character assets/characters/default/character.json --output /tmp/generated_assets
+```
+
+#### Batch Processing
+
+```bash
+# Generate assets for all characters with assetGeneration configs
+gif-generator --batch --input assets/characters/ --model flux1d
+
+# Generate with validation and backup
+gif-generator --character character.json --validate --backup --model sdxl
+```
+
+### Asset Metadata and Versioning
+
+The system automatically tracks:
+- Generation timestamps
+- Model and settings used
+- File hashes for change detection
+- Quality validation results
+- Generation history
+
+```json
+{
+  "assetMetadata": {
+    "version": "1.0.0",
+    "generatedAt": "2024-01-01T12:00:00Z",
+    "generatedBy": "gif-generator v1.2.0",
+    "generationHistory": [
+      {
+        "timestamp": "2024-01-01T11:30:00Z",
+        "settings": { /* GenerationSettings */ },
+        "success": true,
+        "generatedFiles": ["idle.gif", "talking.gif"],
+        "duration": "00:02:34"
+      }
+    ],
+    "assetHashes": {
+      "idle.gif": "sha256:abc123...",
+      "talking.gif": "sha256:def456..."
+    },
+    "validationResults": {
+      "overallScore": 0.95,
+      "fileSizeValid": true,
+      "transparencyValid": true,
+      "consistencyScore": 0.90,
+      "validatedAt": "2024-01-01T12:05:00Z"
+    }
+  }
+}
+```
+
+### Backup and Safety
+
+The system provides automatic backup before asset regeneration:
+
+```json
+{
+  "backupSettings": {
+    "enabled": true,
+    "backupPath": "backups",
+    "maxBackups": 5,
+    "compressBackups": true
+  }
+}
+```
+
+- Backups are created with timestamps
+- Original assets are preserved
+- Configurable retention policy
+- Optional compression for storage efficiency
+
+### Backward Compatibility
+
+Characters without `assetGeneration` configurations continue to work unchanged. The system:
+- Validates existing animation file paths
+- Maintains all current functionality
+- Only generates assets when explicitly configured
+- Preserves manual asset workflows
+
+---
+
 ## Core Properties
 
 ### Required Fields

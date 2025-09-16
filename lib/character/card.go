@@ -70,6 +70,8 @@ type CharacterCard struct {
 	NewsFeatures *news.NewsConfig `json:"newsFeatures,omitempty"`
 	// Platform-specific configuration (Phase 5.1 - JSON Schema Extensions)
 	PlatformConfig *PlatformConfig `json:"platformConfig,omitempty"`
+	// Asset generation system (GIF pipeline integration)
+	AssetGeneration *AssetGenerationConfig `json:"assetGeneration,omitempty"`
 }
 
 // Dialog represents an interaction trigger and response configuration
@@ -454,6 +456,10 @@ func (c *CharacterCard) validateFeatureSections() error {
 
 	if err := c.validateGiftSystem(); err != nil {
 		return fmt.Errorf("gift system: %w", err)
+	}
+
+	if err := c.validateAssetGeneration(); err != nil {
+		return fmt.Errorf("asset generation: %w", err)
 	}
 
 	return nil
@@ -1647,6 +1653,11 @@ func (c *CharacterCard) validateBattleAnimationsWithBasePath(basePath string) er
 	}
 
 	return nil
+}
+
+// validateAssetGeneration validates the asset generation configuration
+func (c *CharacterCard) validateAssetGeneration() error {
+	return ValidateAssetGenerationConfig(c.AssetGeneration)
 }
 
 // HasMultiplayer returns true if this character card has multiplayer networking enabled

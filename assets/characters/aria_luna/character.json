@@ -1,0 +1,316 @@
+{
+  "name": "Aria Luna",
+  "description": "A mystical anime character with silver hair and celestial powers, perfect for desktop companionship",
+  "animations": {
+    "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
+    "happy": "animations/happy.gif",
+    "sad": "animations/sad.gif",
+    "hungry": "animations/hungry.gif",
+    "eating": "animations/eating.gif",
+    "blushing": "animations/blushing.gif",
+    "heart_eyes": "animations/heart_eyes.gif",
+    "shy": "animations/shy.gif",
+    "flirty": "animations/flirty.gif",
+    "romantic_idle": "animations/romantic_idle.gif",
+    "jealous": "animations/jealous.gif",
+    "excited_romance": "animations/excited_romance.gif",
+    "sleeping": "animations/sleeping.gif",
+    "magical": "animations/magical.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello there! ✨",
+        "The stars whisper your name... 🌟",
+        "What cosmic adventures await us today?",
+        "I sense great potential in you! 💫",
+        "Let me share some celestial wisdom with you."
+      ],
+      "animation": "talking",
+      "cooldown": 5
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "The moonlight dances around us...",
+        "I feel your presence like starlight",
+        "Your aura is quite fascinating ✨"
+      ],
+      "animation": "idle",
+      "cooldown": 8
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128,
+    "moodAnimationPreferences": {
+      "mystical": ["magical", "idle"],
+      "cheerful": ["happy", "heart_eyes"],
+      "contemplative": ["idle", "romantic_idle"]
+    }
+  },
+  "personality": {
+    "traits": {
+      "mystical": 0.9,
+      "wise": 0.8,
+      "gentle": 0.7,
+      "curious": 0.6,
+      "romantic": 0.5
+    },
+    "compatibility": {
+      "intellectual": 0.8,
+      "creative": 0.9,
+      "spiritual": 1.0
+    }
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "doubleclick",
+      "responses": [
+        "Your soul shines brighter than any constellation... 💝",
+        "The universe brought us together for a reason ✨",
+        "In your eyes, I see infinite galaxies 🌌"
+      ],
+      "animation": "blushing",
+      "cooldown": 15,
+      "requirements": {
+        "affection": {"min": 30},
+        "trust": {"min": 25}
+      },
+      "romanceLevel": "developing"
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "A beautiful anime girl with long flowing silver hair and bright purple eyes, wearing a flowing celestial robe with star patterns, ethereal and mystical appearance, digital art, transparent background, high quality, detailed character design suitable for desktop companion, magical aura, soft lighting",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, hair gently flowing, stars twinkling around her",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm and serene state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with gentle hand gestures, mouth slightly open, expressive face, animated pose, sparkles around hands, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together near heart, magical sparkles dancing around her, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek, muted colors, fewer sparkles, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression, warm lighting",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts and stars, romantic atmosphere",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "magical": {
+        "promptModifier": "casting magic spell, hands glowing with celestial energy, intense concentration, robes flowing dramatically, magical circles and symbols, powerful aura",
+        "negativePrompt": "mundane, normal, weak, static pose",
+        "stateDescription": "Using magical powers",
+        "frameCount": 10,
+        "customSettings": {
+          "qualitySettings": {
+            "steps": 30,
+            "cfgScale": 8.0
+          }
+        }
+      },
+      "sleeping": {
+        "promptModifier": "peaceful sleeping pose, eyes closed, serene expression, sitting or reclining position, soft glow, dream particles floating around",
+        "negativePrompt": "awake, alert, standing, active pose",
+        "stateDescription": "Resting or sleeping state",
+        "frameCount": 4
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      },
+      "comfyUISettings": {
+        "workflowTemplate": "anime_character_workflow.json",
+        "customNodes": ["ComfyUI-AnimateDiff-Evolved", "ComfyUI-Advanced-ControlNet"],
+        "batchSize": 4,
+        "vae": "vae-ft-mse-840000-ema-pruned.ckpt",
+        "controlNet": {
+          "model": "control_v11p_sd15_openpose",
+          "strength": 0.7,
+          "startStep": 0.0,
+          "endStep": 0.8,
+          "preprocessor": "openpose"
+        }
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T10:30:00Z",
+      "generatedBy": "gif-generator v1.0.0",
+      "generationHistory": [
+        {
+          "timestamp": "2024-12-19T10:30:00Z",
+          "settings": {
+            "model": "flux1d",
+            "artStyle": "anime",
+            "resolution": {
+              "width": 128,
+              "height": 128
+            },
+            "qualitySettings": {
+              "steps": 25,
+              "cfgScale": 7.5
+            }
+          },
+          "success": true,
+          "generatedFiles": ["idle.gif", "talking.gif", "happy.gif", "sad.gif", "blushing.gif", "heart_eyes.gif", "magical.gif", "sleeping.gif"],
+          "duration": "00:04:32"
+        }
+      ],
+      "assetHashes": {
+        "idle.gif": "sha256:abc123def456...",
+        "talking.gif": "sha256:def456ghi789...",
+        "happy.gif": "sha256:ghi789jkl012...",
+        "sad.gif": "sha256:jkl012mno345...",
+        "blushing.gif": "sha256:mno345pqr678...",
+        "heart_eyes.gif": "sha256:pqr678stu901...",
+        "magical.gif": "sha256:stu901vwx234...",
+        "sleeping.gif": "sha256:vwx234yzab567..."
+      },
+      "validationResults": {
+        "overallScore": 0.92,
+        "fileSizeValid": true,
+        "transparencyValid": true,
+        "consistencyScore": 0.88,
+        "animationQuality": {
+          "idle": 0.90,
+          "talking": 0.94,
+          "happy": 0.91,
+          "sad": 0.87,
+          "blushing": 0.93,
+          "heart_eyes": 0.89,
+          "magical": 0.96,
+          "sleeping": 0.85
+        },
+        "validatedAt": "2024-12-19T10:35:00Z"
+      }
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "stats": {
+    "affection": {
+      "max": 100,
+      "initial": 50,
+      "degradation_rate": 0.3
+    },
+    "trust": {
+      "max": 100,
+      "initial": 30,
+      "degradation_rate": 0.2
+    },
+    "mystical_energy": {
+      "max": 100,
+      "initial": 80,
+      "degradation_rate": 0.5
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+  "interactions": {
+    "meditate": {
+      "triggers": ["shift+click"],
+      "effects": {
+        "mystical_energy": 20,
+        "affection": 5
+      },
+      "animations": ["magical"],
+      "responses": [
+        "Let us commune with the cosmos together...",
+        "I feel the universe's energy flowing through us ✨",
+        "Your spiritual growth brings me joy 🌟"
+      ],
+      "cooldown": 180,
+      "requirements": {
+        "mystical_energy": {"min": 20}
+      }
+    },
+    "stargaze": {
+      "triggers": ["ctrl+click"],
+      "effects": {
+        "affection": 15,
+        "trust": 10
+      },
+      "animations": ["romantic_idle", "happy"],
+      "responses": [
+        "The stars are especially beautiful tonight... 🌌",
+        "Each constellation tells a story of love and wonder",
+        "Thank you for sharing this moment with me 💫"
+      ],
+      "cooldown": 240
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "Shooting Star",
+      "description": "A shooting star passes by, bringing magical energy",
+      "probability": 0.05,
+      "effects": {
+        "mystical_energy": 30,
+        "affection": 10
+      },
+      "animations": ["magical", "happy"],
+      "responses": [
+        "Look! A shooting star! Make a wish! ⭐",
+        "The cosmos smile upon us today! ✨",
+        "I felt that star's magic flow through me! 🌟"
+      ],
+      "cooldown": 1800
+    }
+  ]
+}
