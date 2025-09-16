@@ -1,4 +1,135 @@
-# Scripts Quick Reference
+# Desktop Companion Scripts - Quick Reference
+
+## 🚀 Master Entry Point
+
+```bash
+./scripts/dds-scripts.sh [CATEGORY] [COMMAND] [OPTIONS]
+```
+
+## 📋 Quick Commands
+
+```bash
+# Most common operations
+./scripts/dds-scripts.sh build            # Build all characters
+./scripts/dds-scripts.sh validate         # Validate all characters
+./scripts/dds-scripts.sh fix              # Fix validation issues
+./scripts/dds-scripts.sh android          # Check Android environment
+
+# Get help
+./scripts/dds-scripts.sh --help           # Main help
+./scripts/dds-scripts.sh build --help     # Category help
+```
+
+## 🗂️ Categories
+
+### BUILD
+```bash
+./scripts/dds-scripts.sh build characters          # Build character binaries
+./scripts/dds-scripts.sh build cross-platform      # CI/CD builds
+```
+
+### VALIDATION
+```bash
+./scripts/dds-scripts.sh validation characters     # Validate JSON files
+./scripts/dds-scripts.sh validation animations     # Validate animations  
+./scripts/dds-scripts.sh validation binaries       # Test built binaries
+./scripts/dds-scripts.sh validation pipeline       # Full pipeline test
+./scripts/dds-scripts.sh validation workflow       # GitHub Actions test
+```
+
+### ANDROID
+```bash
+./scripts/dds-scripts.sh android validate-env      # Check environment
+./scripts/dds-scripts.sh android test-apk default  # Test APK build
+```
+
+### CHARACTER MANAGEMENT
+```bash
+./scripts/dds-scripts.sh character fix-validation  # Fix JSON issues
+```
+
+### ASSET GENERATION
+```bash
+./scripts/dds-scripts.sh asset-generation generate # Generate all assets
+./scripts/dds-scripts.sh asset-generation simple   # Quick generation
+```
+
+### RELEASE
+```bash
+./scripts/dds-scripts.sh release validate          # Pre-release validation
+./scripts/dds-scripts.sh release benchmark         # Performance tests
+```
+
+## 🛠️ Direct Script Access
+
+For power users who prefer direct access:
+
+```bash
+# Build scripts
+./scripts/build/build-characters.sh
+./scripts/build/cross-platform-build.sh
+
+# Validation scripts  
+./scripts/validation/validate-characters.sh
+./scripts/validation/validate-animations.sh
+./scripts/validation/validate-binaries.sh
+./scripts/validation/validate-pipeline.sh
+./scripts/validation/validate-workflow.sh
+
+# Android scripts
+./scripts/android/validate-environment.sh
+./scripts/android/test-apk-build.sh
+
+# Character management
+./scripts/character-management/fix-validation-issues.sh
+
+# Asset generation
+./scripts/asset-generation/generate-character-assets.sh
+
+# Release preparation
+./scripts/release/pre-release-validation.sh
+```
+
+## 🔧 Configuration
+
+```bash
+./scripts/dds-scripts.sh config show               # Show current config
+./scripts/dds-scripts.sh config save config.env   # Save config
+./scripts/dds-scripts.sh config load config.env   # Load config
+```
+
+## 📚 Information Commands
+
+```bash
+./scripts/dds-scripts.sh --version                 # Version info
+./scripts/dds-scripts.sh --list-scripts            # All scripts
+./scripts/dds-scripts.sh --show-config             # Current config
+```
+
+## 🚨 Legacy Scripts (DEPRECATED)
+
+Legacy wrapper scripts in the root are deprecated:
+- `build-characters.sh` → Use `dds-scripts.sh build characters`
+- `validate-characters.sh` → Use `dds-scripts.sh validation characters`
+- `test-android-*.sh` → Use `dds-scripts.sh android test-apk`
+
+Run `./scripts/cleanup-legacy-wrappers.sh --dry-run` to see cleanup plan.
+
+## 🏗️ Project Structure
+
+```
+scripts/
+├── dds-scripts.sh                    # 🎯 Master entry point
+├── lib/                              # 📚 Shared utilities
+│   ├── common.sh                     # Logging, paths, utilities
+│   └── config.sh                     # Configuration management
+├── build/                            # 🔨 Build scripts
+├── validation/                       # ✅ Testing & validation
+├── android/                          # 📱 Android-specific
+├── character-management/             # 👤 Character operations
+├── asset-generation/                 # 🎨 Asset pipeline
+└── release/                          # 🚀 Release preparation
+```
 
 ## Master Script Usage
 
