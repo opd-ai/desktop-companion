@@ -7,24 +7,24 @@ import (
 
 func TestDefaultAssetGenerationConfig(t *testing.T) {
 	config := DefaultAssetGenerationConfig()
-	
+
 	if config == nil {
 		t.Fatal("DefaultAssetGenerationConfig returned nil")
 	}
-	
+
 	// Test required fields
 	if config.BasePrompt == "" {
 		t.Error("BasePrompt should not be empty")
 	}
-	
+
 	if config.GenerationSettings.Model == "" {
 		t.Error("Model should not be empty")
 	}
-	
+
 	if config.GenerationSettings.ArtStyle == "" {
 		t.Error("ArtStyle should not be empty")
 	}
-	
+
 	// Test animation mappings
 	expectedStates := []string{"idle", "talking", "happy", "sad"}
 	for _, state := range expectedStates {
@@ -32,13 +32,13 @@ func TestDefaultAssetGenerationConfig(t *testing.T) {
 			t.Errorf("Missing required animation state: %s", state)
 		}
 	}
-	
+
 	// Test resolution
 	res := config.GenerationSettings.Resolution
 	if res.Width <= 0 || res.Height <= 0 {
 		t.Error("Resolution dimensions must be positive")
 	}
-	
+
 	// Test backup settings
 	if !config.BackupSettings.Enabled {
 		t.Error("Backup should be enabled by default")
@@ -180,7 +180,7 @@ func TestValidateAssetGenerationConfig(t *testing.T) {
 			wantErr: true,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := ValidateAssetGenerationConfig(tt.config)
@@ -198,11 +198,11 @@ func TestAnimationMapping(t *testing.T) {
 		StateDescription: "Happy state",
 		FrameCount:       6,
 	}
-	
+
 	if mapping.PromptModifier == "" {
 		t.Error("PromptModifier should not be empty")
 	}
-	
+
 	if mapping.FrameCount <= 0 {
 		t.Error("FrameCount should be positive")
 	}
@@ -225,13 +225,13 @@ func TestGenerationSettings(t *testing.T) {
 		AnimationSettings: AnimationSettings{
 			FrameRate:           12,
 			Duration:            2.0,
-			LoopType:           "seamless",
-			Optimization:       "balanced",
-			MaxFileSize:        500,
+			LoopType:            "seamless",
+			Optimization:        "balanced",
+			MaxFileSize:         500,
 			TransparencyEnabled: true,
 		},
 	}
-	
+
 	// Test model validation
 	validModels := []string{"sdxl", "flux1d", "flux1s"}
 	found := false
@@ -244,7 +244,7 @@ func TestGenerationSettings(t *testing.T) {
 	if !found {
 		t.Errorf("Model %s should be valid", settings.Model)
 	}
-	
+
 	// Test art style validation
 	validStyles := []string{"anime", "pixel_art", "realistic", "cartoon", "chibi"}
 	found = false
@@ -275,19 +275,19 @@ func TestAssetMetadata(t *testing.T) {
 			"idle.gif": "sha256:abc123",
 		},
 	}
-	
+
 	if metadata.Version == "" {
 		t.Error("Version should not be empty")
 	}
-	
+
 	if metadata.GeneratedBy == "" {
 		t.Error("GeneratedBy should not be empty")
 	}
-	
+
 	if len(metadata.GenerationHistory) == 0 {
 		t.Error("GenerationHistory should not be empty")
 	}
-	
+
 	if len(metadata.AssetHashes) == 0 {
 		t.Error("AssetHashes should not be empty")
 	}
@@ -300,15 +300,15 @@ func TestBackupSettings(t *testing.T) {
 		MaxBackups:      5,
 		CompressBackups: true,
 	}
-	
+
 	if !settings.Enabled {
 		t.Error("Backup should be enabled")
 	}
-	
+
 	if settings.BackupPath == "" {
 		t.Error("BackupPath should not be empty")
 	}
-	
+
 	if settings.MaxBackups <= 0 {
 		t.Error("MaxBackups should be positive")
 	}
@@ -322,23 +322,23 @@ func TestControlNetSettings(t *testing.T) {
 		EndStep:      1.0,
 		Preprocessor: "openpose",
 	}
-	
+
 	if settings.Model == "" {
 		t.Error("Model should not be empty")
 	}
-	
+
 	if settings.Strength < 0.0 || settings.Strength > 1.0 {
 		t.Error("Strength should be between 0.0 and 1.0")
 	}
-	
+
 	if settings.StartStep < 0.0 || settings.StartStep > 1.0 {
 		t.Error("StartStep should be between 0.0 and 1.0")
 	}
-	
+
 	if settings.EndStep < 0.0 || settings.EndStep > 1.0 {
 		t.Error("EndStep should be between 0.0 and 1.0")
 	}
-	
+
 	if settings.StartStep >= settings.EndStep {
 		t.Error("StartStep should be less than EndStep")
 	}

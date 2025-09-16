@@ -43,12 +43,15 @@ func (f *fakeClient) SubmitWorkflow(ctx context.Context, wf *Workflow) (*Job, er
 		}
 	}
 }
+
 func (f *fakeClient) GetQueueStatus(ctx context.Context) (*QueueStatus, error) {
 	return &QueueStatus{}, nil
 }
+
 func (f *fakeClient) MonitorJob(ctx context.Context, jobID string) (<-chan JobProgress, error) {
 	return nil, errors.New("not implemented")
 }
+
 func (f *fakeClient) GetResult(ctx context.Context, jobID string) (*JobResult, error) {
 	return nil, errors.New("not implemented")
 }

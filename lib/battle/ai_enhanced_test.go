@@ -91,7 +91,6 @@ func TestEnhancedAIDecisionMaking(t *testing.T) {
 				nil, // No active combo
 				combos,
 			)
-
 			if err != nil {
 				t.Fatalf("GetOptimalDecision failed: %v", err)
 			}
@@ -156,7 +155,6 @@ func TestComboConitation(t *testing.T) {
 		activeCombo,
 		combos,
 	)
-
 	if err != nil {
 		t.Fatalf("GetOptimalDecision failed: %v", err)
 	}
@@ -229,7 +227,6 @@ func TestSpecialAbilityPriority(t *testing.T) {
 				nil,
 				[]ComboAttack{},
 			)
-
 			if err != nil {
 				t.Fatalf("GetOptimalDecision failed: %v", err)
 			}
@@ -295,7 +292,6 @@ func TestComboStarterEvaluation(t *testing.T) {
 		nil,                // No active combo
 		combos,
 	)
-
 	if err != nil {
 		t.Fatalf("GetOptimalDecision failed: %v", err)
 	}
@@ -317,7 +313,6 @@ func TestComboStarterEvaluation(t *testing.T) {
 		nil,
 		combos,
 	)
-
 	if err != nil {
 		t.Fatalf("GetOptimalDecision failed: %v", err)
 	}

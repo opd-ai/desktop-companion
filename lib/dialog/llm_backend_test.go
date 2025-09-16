@@ -2,9 +2,9 @@ package dialog
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"testing"
-	"fmt"
 )
 
 // TestLLMDialogBackend_Integration tests the complete LLM backend integration
@@ -165,7 +165,7 @@ func TestLLMDialogBackend_PersonalityExtraction(t *testing.T) {
 	context := DialogContext{
 		Trigger: "click",
 		PersonalityTraits: map[string]float64{
-			"shyness":     0.8,
+			"shyness":      0.8,
 			"friendliness": 0.9,
 			"intelligence": 0.7,
 		},

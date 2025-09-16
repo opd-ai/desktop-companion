@@ -472,9 +472,9 @@ func TestMakefileIntegration(t *testing.T) {
 				t.Errorf("Unexpected error for target %s: %v\nOutput: %s", tt.target, err, string(output))
 			}
 
-		if !tt.expectError {
-			t.Logf("Target %s output: %s", tt.target, string(output))
-		}
-	})
+			if !tt.expectError {
+				t.Logf("Target %s output: %s", tt.target, string(output))
+			}
+		})
 	}
 }

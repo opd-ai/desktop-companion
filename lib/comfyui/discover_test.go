@@ -13,8 +13,8 @@ func TestFileWorkflowDiscoverer_DiscoverTemplates(t *testing.T) {
 	dir := t.TempDir()
 	valid := `{"base_workflow":{"id":"wf1","nodes":{"n1":"foo"}},"parameters":{},"output_nodes":["out"]}`
 	invalid := `{not json}`
-	os.WriteFile(filepath.Join(dir, "valid.json"), []byte(valid), 0644)
-	os.WriteFile(filepath.Join(dir, "invalid.json"), []byte(invalid), 0644)
+	os.WriteFile(filepath.Join(dir, "valid.json"), []byte(valid), 0o644)
+	os.WriteFile(filepath.Join(dir, "invalid.json"), []byte(invalid), 0o644)
 	d := &FileWorkflowDiscoverer{}
 	ctx := context.Background()
 	tmpls, err := d.DiscoverTemplates(ctx, dir)
@@ -54,7 +54,7 @@ func TestFileWorkflowDiscoverer_ValidateTemplate(t *testing.T) {
 func TestFileWorkflowDiscoverer_ContextCancel(t *testing.T) {
 	dir := t.TempDir()
 	valid := `{"base_workflow":{"id":"wf1","nodes":{"n1":"foo"}},"parameters":{},"output_nodes":["out"]}`
-	os.WriteFile(filepath.Join(dir, "valid.json"), []byte(valid), 0644)
+	os.WriteFile(filepath.Join(dir, "valid.json"), []byte(valid), 0o644)
 	d := &FileWorkflowDiscoverer{}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()

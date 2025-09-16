@@ -17,27 +17,27 @@ import (
 // LLMConfigTemplate provides a template for LLM backend configuration
 // This can be customized per character type or archetype
 type LLMConfigTemplate struct {
-	ModelPath           string                 `json:"modelPath"`
-	MaxTokens           int                    `json:"maxTokens"`
-	Temperature         float64                `json:"temperature"`
-	TopP                float64                `json:"topP"`
-	TopK                int                    `json:"topK"`
-	RepeatPenalty       float64                `json:"repeatPenalty"`
-	ContextSize         int                    `json:"contextSize"`
-	PersonalityWeight   float64                `json:"personalityWeight"`
-	MoodInfluence       float64                `json:"moodInfluence"`
-	UseCharacterName    bool                   `json:"useCharacterName"`
-	UseSituation        bool                   `json:"useSituation"`
-	UseRelationship     bool                   `json:"useRelationship"`
-	SystemPrompt        string                 `json:"systemPrompt"`
-	PersonalityPrompt   string                 `json:"personalityPrompt"`
-	FallbackResponses   []string               `json:"fallbackResponses"`
-	Enabled             bool                   `json:"enabled"`
-	MockMode            bool                   `json:"mockMode"`
-	Debug               bool                   `json:"debug"`
-	MaxGenerationTime   int                    `json:"maxGenerationTime"`
-	HealthCheckInterval int                    `json:"healthCheckInterval"`
-	ConcurrentRequests  int                    `json:"concurrentRequests"`
+	ModelPath           string   `json:"modelPath"`
+	MaxTokens           int      `json:"maxTokens"`
+	Temperature         float64  `json:"temperature"`
+	TopP                float64  `json:"topP"`
+	TopK                int      `json:"topK"`
+	RepeatPenalty       float64  `json:"repeatPenalty"`
+	ContextSize         int      `json:"contextSize"`
+	PersonalityWeight   float64  `json:"personalityWeight"`
+	MoodInfluence       float64  `json:"moodInfluence"`
+	UseCharacterName    bool     `json:"useCharacterName"`
+	UseSituation        bool     `json:"useSituation"`
+	UseRelationship     bool     `json:"useRelationship"`
+	SystemPrompt        string   `json:"systemPrompt"`
+	PersonalityPrompt   string   `json:"personalityPrompt"`
+	FallbackResponses   []string `json:"fallbackResponses"`
+	Enabled             bool     `json:"enabled"`
+	MockMode            bool     `json:"mockMode"`
+	Debug               bool     `json:"debug"`
+	MaxGenerationTime   int      `json:"maxGenerationTime"`
+	HealthCheckInterval int      `json:"healthCheckInterval"`
+	ConcurrentRequests  int      `json:"concurrentRequests"`
 }
 
 // Character archetype templates
@@ -282,18 +282,18 @@ func processCharacterFile(inputFile, outputDir string, template LLMConfigTemplat
 	// Create backup if requested
 	if backupSuffix != "" {
 		backupFile := outputFile + backupSuffix
-		if err := ioutil.WriteFile(backupFile, data, 0644); err != nil {
+		if err := ioutil.WriteFile(backupFile, data, 0o644); err != nil {
 			return false, fmt.Errorf("failed to create backup: %w", err)
 		}
 	}
 
 	// Ensure output directory exists
-	if err := os.MkdirAll(filepath.Dir(outputFile), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outputFile), 0o755); err != nil {
 		return false, fmt.Errorf("failed to create output directory: %w", err)
 	}
 
 	// Write the updated file
-	if err := ioutil.WriteFile(outputFile, updatedData, 0644); err != nil {
+	if err := ioutil.WriteFile(outputFile, updatedData, 0o644); err != nil {
 		return false, fmt.Errorf("failed to write updated file: %w", err)
 	}
 

@@ -817,7 +817,7 @@ func loadCharacterConfigFromFile(filePath, model string) (*pipeline.CharacterCon
 		},
 		Validation: &pipeline.ValidationConfig{
 			MaxFileSize:          card.AssetGeneration.GenerationSettings.AnimationSettings.MaxFileSize * 1024,
-			MinFrameRate:         5, // Minimum acceptable frame rate
+			MinFrameRate:         5,                                           // Minimum acceptable frame rate
 			RequiredStates:       []string{"idle", "talking", "happy", "sad"}, // Core states
 			StyleConsistency:     true,
 			ArchetypeCompliance:  true,

@@ -291,7 +291,7 @@ func (c *pipelineController) DeployAssets(ctx context.Context, result *ProcessRe
 
 	// Create target directory
 	targetDir := c.config.Deployment.OutputDir
-	if err := os.MkdirAll(targetDir, 0755); err != nil {
+	if err := os.MkdirAll(targetDir, 0o755); err != nil {
 		return fmt.Errorf("create target directory: %w", err)
 	}
 
@@ -358,7 +358,7 @@ func (c *pipelineController) generateAssetForState(ctx context.Context, config *
 
 	// Save artifacts to temp directory
 	framesDir := filepath.Join(tempDir, state+"_frames")
-	if err := os.MkdirAll(framesDir, 0755); err != nil {
+	if err := os.MkdirAll(framesDir, 0o755); err != nil {
 		return nil, fmt.Errorf("create frames directory: %w", err)
 	}
 
@@ -555,12 +555,12 @@ func (c *pipelineController) createTempDir(character string) (string, error) {
 		baseDir = "temp/generation"
 	}
 
-	if err := os.MkdirAll(baseDir, 0755); err != nil {
+	if err := os.MkdirAll(baseDir, 0o755); err != nil {
 		return "", fmt.Errorf("create base temp directory: %w", err)
 	}
 
 	tempDir := filepath.Join(baseDir, fmt.Sprintf("%s_%d", character, time.Now().Unix()))
-	if err := os.MkdirAll(tempDir, 0755); err != nil {
+	if err := os.MkdirAll(tempDir, 0o755); err != nil {
 		return "", fmt.Errorf("create character temp directory: %w", err)
 	}
 
@@ -591,7 +591,7 @@ func (c *pipelineController) copyFile(src, dst string) error {
 		return fmt.Errorf("read source file: %w", err)
 	}
 
-	if err := os.WriteFile(dst, sourceData, 0644); err != nil {
+	if err := os.WriteFile(dst, sourceData, 0o644); err != nil {
 		return fmt.Errorf("write destination file: %w", err)
 	}
 

@@ -20,19 +20,19 @@ func TestLLMDialogSystem_FullIntegration(t *testing.T) {
 
 	// Configure LLM backend
 	llmConfig := LLMDialogConfig{
-		Enabled:             true,
-		MockMode:            true,
-		MaxTokens:           30,
-		Temperature:         0.8,
-		PersonalityWeight:   1.0,
-		MoodInfluence:       0.7,
-		UseCharacterName:    true,
-		UseSituation:        true,
-		UseRelationship:     true,
-		SystemPrompt:        "You are a friendly virtual companion.",
-		PersonalityPrompt:   "Be helpful and engaging.",
-		FallbackResponses:   []string{"I'm processing that...", "Let me think..."},
-		MaxGenerationTime:   5, // Short timeout for testing
+		Enabled:           true,
+		MockMode:          true,
+		MaxTokens:         30,
+		Temperature:       0.8,
+		PersonalityWeight: 1.0,
+		MoodInfluence:     0.7,
+		UseCharacterName:  true,
+		UseSituation:      true,
+		UseRelationship:   true,
+		SystemPrompt:      "You are a friendly virtual companion.",
+		PersonalityPrompt: "Be helpful and engaging.",
+		FallbackResponses: []string{"I'm processing that...", "Let me think..."},
+		MaxGenerationTime: 5, // Short timeout for testing
 	}
 	llmConfigJSON, _ := json.Marshal(llmConfig)
 
@@ -76,7 +76,7 @@ func TestLLMDialogSystem_FullIntegration(t *testing.T) {
 		Timestamp:     time.Now(),
 		PersonalityTraits: map[string]float64{
 			"friendliness": 0.8,
-			"helpfulness": 0.9,
+			"helpfulness":  0.9,
 		},
 		CurrentMood:       70.0,
 		RelationshipLevel: "friend",
@@ -343,7 +343,7 @@ func TestLLMDialogSystem_PerformanceImpact(t *testing.T) {
 		t.Errorf("Performance impact too high: %.2fx slower with LLM backend", ratio)
 	}
 
-	t.Logf("Performance: without LLM: %v, with LLM (disabled): %v (ratio: %.2f)", 
+	t.Logf("Performance: without LLM: %v, with LLM (disabled): %v (ratio: %.2f)",
 		duration1, duration2, ratio)
 }
 

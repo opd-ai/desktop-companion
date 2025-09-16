@@ -826,7 +826,6 @@ func TestMarkovChainBackend_ErrorHandling(t *testing.T) {
 
 		emptyContext := DialogContext{}
 		response, err := backend.GenerateResponse(emptyContext)
-
 		if err != nil {
 			t.Errorf("Empty context should not cause error: %v", err)
 		}
@@ -874,7 +873,6 @@ func TestMarkovChainBackend_ErrorHandling(t *testing.T) {
 
 		context := createTestDialogContextMarkov()
 		response, err := backend.GenerateResponse(context)
-
 		if err != nil {
 			t.Errorf("Minimal data should not cause error: %v", err)
 		}

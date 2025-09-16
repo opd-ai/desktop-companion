@@ -59,7 +59,7 @@ func TestGIFAssembler_Process_NotEnoughFrames(t *testing.T) {
 func TestGIFAssembler_Process_BadPNG(t *testing.T) {
 	dir := t.TempDir()
 	bad := dir + "/bad.png"
-	os.WriteFile(bad, []byte("not a png"), 0644)
+	os.WriteFile(bad, []byte("not a png"), 0o644)
 	proc := &GIFAssembler{}
 	cfg := GIFConfig{Width: 64, Height: 64, FrameCount: 1, FrameRate: 10, MaxFileSize: 500000, Transparency: true}
 	err := proc.Process(context.Background(), []string{bad}, dir+"/out.gif", cfg)

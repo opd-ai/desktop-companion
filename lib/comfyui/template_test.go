@@ -218,7 +218,7 @@ func TestListTemplates(t *testing.T) {
 
 	// Create non-JSON file to test filtering
 	nonJSONPath := filepath.Join(tmpDir, "not_a_template.txt")
-	if err := os.WriteFile(nonJSONPath, []byte("not json"), 0644); err != nil {
+	if err := os.WriteFile(nonJSONPath, []byte("not json"), 0o644); err != nil {
 		t.Fatalf("Create non-JSON file failed: %v", err)
 	}
 

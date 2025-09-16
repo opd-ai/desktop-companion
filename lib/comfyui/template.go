@@ -126,7 +126,7 @@ func (tm *templateManager) SaveTemplate(tmpl *TemplateWorkflow, path string) err
 
 	// Create directory if it doesn't exist
 	if dir := filepath.Dir(path); dir != "." {
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return fmt.Errorf("create template directory: %w", err)
 		}
 	}
@@ -136,7 +136,7 @@ func (tm *templateManager) SaveTemplate(tmpl *TemplateWorkflow, path string) err
 		return fmt.Errorf("marshal template JSON: %w", err)
 	}
 
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	if err := os.WriteFile(path, data, 0o644); err != nil {
 		return fmt.Errorf("write template file: %w", err)
 	}
 

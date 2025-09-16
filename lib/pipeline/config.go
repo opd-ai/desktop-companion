@@ -276,7 +276,7 @@ func SaveConfig(config *PipelineConfig, path string) error {
 
 	// Create directory if it doesn't exist
 	if dir := filepath.Dir(path); dir != "." {
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return fmt.Errorf("create config directory: %w", err)
 		}
 	}
@@ -286,7 +286,7 @@ func SaveConfig(config *PipelineConfig, path string) error {
 		return fmt.Errorf("marshal config JSON: %w", err)
 	}
 
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	if err := os.WriteFile(path, data, 0o644); err != nil {
 		return fmt.Errorf("write config file: %w", err)
 	}
 

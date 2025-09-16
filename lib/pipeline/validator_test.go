@@ -184,7 +184,7 @@ func TestValidateCharacterSet(t *testing.T) {
 	// Create character directory structure
 	characterDir := filepath.Join(tmpDir, "test_character")
 	animationsDir := filepath.Join(characterDir, "animations")
-	if err := os.MkdirAll(animationsDir, 0755); err != nil {
+	if err := os.MkdirAll(animationsDir, 0o755); err != nil {
 		t.Fatalf("Failed to create animations directory: %v", err)
 	}
 
@@ -231,7 +231,7 @@ func TestValidateCharacterSetMissingStates(t *testing.T) {
 	// Create character directory with only some assets
 	characterDir := filepath.Join(tmpDir, "incomplete_character")
 	animationsDir := filepath.Join(characterDir, "animations")
-	if err := os.MkdirAll(animationsDir, 0755); err != nil {
+	if err := os.MkdirAll(animationsDir, 0o755); err != nil {
 		t.Fatalf("Failed to create animations directory: %v", err)
 	}
 
@@ -282,7 +282,7 @@ func TestValidateBatch(t *testing.T) {
 	for _, char := range characters {
 		characterDir := filepath.Join(tmpDir, char)
 		animationsDir := filepath.Join(characterDir, "animations")
-		if err := os.MkdirAll(animationsDir, 0755); err != nil {
+		if err := os.MkdirAll(animationsDir, 0o755); err != nil {
 			t.Fatalf("Failed to create animations directory for %s: %v", char, err)
 		}
 

@@ -173,13 +173,13 @@ func (ff *FeedFetcher) ValidateFeedURL(url string) error {
 		"https://example.com/romance-news",
 		"https://example.com/lifestyle-news",
 	}
-	
+
 	for _, testURL := range testURLs {
 		if url == testURL {
 			return nil
 		}
 	}
-	
+
 	// Skip validation for localhost URLs used in testing
 	if strings.Contains(url, "localhost") || strings.Contains(url, "127.0.0.1") {
 		return nil

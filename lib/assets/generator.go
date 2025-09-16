@@ -19,30 +19,30 @@ import (
 // AssetGenerator orchestrates the generation of character animation assets
 // from assetGeneration configurations in character.json files.
 type AssetGenerator struct {
-	comfyClient     comfyui.Client
-	config          *GeneratorConfig
-	validator       *AssetValidator
-	backupManager   *BackupManager
+	comfyClient   comfyui.Client
+	config        *GeneratorConfig
+	validator     *AssetValidator
+	backupManager *BackupManager
 }
 
 // GeneratorConfig defines asset generator configuration.
 type GeneratorConfig struct {
 	// ComfyUI server configuration
 	ComfyUIURL string
-	
+
 	// Default generation settings
 	DefaultSettings *character.GenerationSettings
-	
+
 	// Workflow templates directory
 	WorkflowsPath string
-	
+
 	// Output and temporary directories
 	OutputDir string
 	TempDir   string
-	
+
 	// Quality validation settings
 	ValidateOutput bool
-	
+
 	// Backup settings
 	BackupExisting bool
 	BackupDir      string
@@ -53,20 +53,20 @@ func NewAssetGenerator(config *GeneratorConfig) (*AssetGenerator, error) {
 	if config == nil {
 		config = DefaultGeneratorConfig()
 	}
-	
+
 	// Create ComfyUI client
 	clientConfig := comfyui.DefaultConfig()
 	clientConfig.ServerURL = config.ComfyUIURL
-	
+
 	client, err := comfyui.New(clientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("create ComfyUI client: %w", err)
 	}
-	
+
 	// Create validator and backup manager
-	validator := NewAssetValidator(nil) // Use default validation config
+	validator := NewAssetValidator(nil)    // Use default validation config
 	backupManager := NewBackupManager(nil) // Use default backup config
-	
+
 	return &AssetGenerator{
 		comfyClient:   client,
 		config:        config,
@@ -95,11 +95,11 @@ func DefaultGeneratorConfig() *GeneratorConfig {
 			AnimationSettings: character.AnimationSettings{
 				FrameRate:           12,
 				Duration:            2.0,
-				LoopType:           "seamless",
-				Optimization:       "balanced",
-				MaxFileSize:        500,
+				LoopType:            "seamless",
+				Optimization:        "balanced",
+				MaxFileSize:         500,
 				TransparencyEnabled: true,
-				ColorPalette:       "adaptive",
+				ColorPalette:        "adaptive",
 			},
 		},
 		WorkflowsPath:  "templates/workflows",
@@ -113,19 +113,19 @@ func DefaultGeneratorConfig() *GeneratorConfig {
 type GenerateResult struct {
 	// Success indicates if generation completed successfully
 	Success bool
-	
+
 	// GeneratedAssets maps animation state to generated file path
 	GeneratedAssets map[string]string
-	
+
 	// BackupPath contains the path to backed up original assets (if any)
 	BackupPath string
-	
+
 	// Metadata tracks generation information
 	Metadata *character.AssetMetadata
-	
+
 	// Errors encountered during generation
 	Errors []GenerationError
-	
+
 	// Processing time
 	Duration time.Duration
 }
@@ -141,24 +141,24 @@ type GenerationError struct {
 // GenerateAssetsFromCharacter generates animation assets from a character configuration.
 func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *character.CharacterCard, basePath string) (*GenerateResult, error) {
 	startTime := time.Now()
-	
+
 	result := &GenerateResult{
 		GeneratedAssets: make(map[string]string),
-		Errors:         []GenerationError{},
+		Errors:          []GenerationError{},
 	}
-	
+
 	// Check if character has asset generation configuration
 	if card.AssetGeneration == nil {
 		return nil, fmt.Errorf("character does not have assetGeneration configuration")
 	}
-	
+
 	assetConfig := card.AssetGeneration
-	
+
 	// Validate asset generation configuration
 	if err := character.ValidateAssetGenerationConfig(assetConfig); err != nil {
 		return nil, fmt.Errorf("invalid assetGeneration config: %w", err)
 	}
-	
+
 	// Create backup if enabled
 	if assetConfig.BackupSettings.Enabled {
 		backupResult, err := g.backupManager.CreateBackup(basePath, card.Animations)
@@ -178,7 +178,7 @@ func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *
 			result.BackupPath = backupResult.BackupPath
 		}
 	}
-	
+
 	// Generate assets for each animation state
 	for state, mapping := range assetConfig.AnimationMappings {
 		select {
@@ -186,7 +186,7 @@ func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *
 			return result, ctx.Err()
 		default:
 		}
-		
+
 		assetPath, err := g.generateAnimationAsset(ctx, state, mapping, assetConfig, basePath)
 		if err != nil {
 			result.Errors = append(result.Errors, GenerationError{
@@ -197,10 +197,10 @@ func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *
 			})
 			continue
 		}
-		
+
 		result.GeneratedAssets[state] = assetPath
 	}
-	
+
 	// Validate generated assets if enabled
 	if g.config.ValidateOutput {
 		validationResults, err := g.validator.ValidateCharacterAssets(card, basePath)
@@ -224,7 +224,7 @@ func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *
 			}
 		}
 	}
-	
+
 	// Update character.json with generation metadata
 	result.Metadata = g.createAssetMetadata(assetConfig, result)
 	if err := g.updateCharacterMetadata(card, result.Metadata, basePath); err != nil {
@@ -234,10 +234,10 @@ func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *
 			Err:     err,
 		})
 	}
-	
+
 	result.Success = len(result.Errors) == 0
 	result.Duration = time.Since(startTime)
-	
+
 	return result, nil
 }
 
@@ -245,25 +245,25 @@ func (g *AssetGenerator) GenerateAssetsFromCharacter(ctx context.Context, card *
 func (g *AssetGenerator) generateAnimationAsset(ctx context.Context, state string, mapping character.AnimationMapping, config *character.AssetGenerationConfig, basePath string) (string, error) {
 	// Build the complete prompt
 	prompt := g.buildPrompt(config.BasePrompt, mapping)
-	
+
 	// Create ComfyUI workflow
 	workflow, err := g.createWorkflow(prompt, mapping, config)
 	if err != nil {
 		return "", fmt.Errorf("create workflow: %w", err)
 	}
-	
+
 	// Submit workflow to ComfyUI
 	job, err := g.comfyClient.SubmitWorkflow(ctx, workflow)
 	if err != nil {
 		return "", fmt.Errorf("submit workflow: %w", err)
 	}
-	
+
 	// Monitor job progress
 	progressChan, err := g.comfyClient.MonitorJob(ctx, job.ID)
 	if err != nil {
 		return "", fmt.Errorf("monitor job: %w", err)
 	}
-	
+
 	// Wait for completion
 	var finalProgress comfyui.JobProgress
 	for progress := range progressChan {
@@ -272,23 +272,23 @@ func (g *AssetGenerator) generateAnimationAsset(ctx context.Context, state strin
 			return "", fmt.Errorf("job failed: %w", progress.Err)
 		}
 	}
-	
+
 	if finalProgress.Status != "completed" {
 		return "", fmt.Errorf("job did not complete successfully, status: %s", finalProgress.Status)
 	}
-	
+
 	// Get job results
 	result, err := g.comfyClient.GetResult(ctx, job.ID)
 	if err != nil {
 		return "", fmt.Errorf("get result: %w", err)
 	}
-	
+
 	// Process and save the generated asset
 	outputPath := filepath.Join(basePath, "animations", fmt.Sprintf("%s.gif", state))
 	if err := g.processJobResult(result, outputPath, mapping, config); err != nil {
 		return "", fmt.Errorf("process result: %w", err)
 	}
-	
+
 	return outputPath, nil
 }
 
@@ -305,13 +305,13 @@ func (g *AssetGenerator) buildPrompt(basePrompt string, mapping character.Animat
 func (g *AssetGenerator) createWorkflow(prompt string, mapping character.AnimationMapping, config *character.AssetGenerationConfig) (*comfyui.Workflow, error) {
 	// This is a simplified workflow creation
 	// In a full implementation, this would load and customize workflow templates
-	
+
 	settings := config.GenerationSettings
 	if mapping.CustomSettings != nil {
 		// Apply custom settings override
 		settings = *mapping.CustomSettings
 	}
-	
+
 	workflow := &comfyui.Workflow{
 		ID: fmt.Sprintf("character_gen_%d", time.Now().Unix()),
 		Nodes: map[string]interface{}{
@@ -330,18 +330,18 @@ func (g *AssetGenerator) createWorkflow(prompt string, mapping character.Animati
 			"sampler": map[string]interface{}{
 				"class_type": "KSampler",
 				"inputs": map[string]interface{}{
-					"seed":       settings.QualitySettings.Seed,
-					"steps":      settings.QualitySettings.Steps,
-					"cfg":        settings.QualitySettings.CFGScale,
-					"sampler":    settings.QualitySettings.Sampler,
-					"scheduler":  settings.QualitySettings.Scheduler,
-					"width":      settings.Resolution.Width,
-					"height":     settings.Resolution.Height,
+					"seed":      settings.QualitySettings.Seed,
+					"steps":     settings.QualitySettings.Steps,
+					"cfg":       settings.QualitySettings.CFGScale,
+					"sampler":   settings.QualitySettings.Sampler,
+					"scheduler": settings.QualitySettings.Scheduler,
+					"width":     settings.Resolution.Width,
+					"height":    settings.Resolution.Height,
 				},
 			},
 		},
 	}
-	
+
 	return workflow, nil
 }
 
@@ -354,24 +354,24 @@ func (g *AssetGenerator) processJobResult(result *comfyui.JobResult, outputPath 
 	// 3. Assemble frames into a GIF
 	// 4. Apply optimization and compression
 	// 5. Validate the output
-	
+
 	if len(result.Artifacts) == 0 {
 		return fmt.Errorf("no artifacts generated")
 	}
-	
+
 	// For now, just save the first artifact
 	artifact := result.Artifacts[0]
-	
+
 	// Ensure output directory exists
 	if err := ensureDir(filepath.Dir(outputPath)); err != nil {
 		return fmt.Errorf("create output directory: %w", err)
 	}
-	
+
 	// Save the artifact
 	if err := saveArtifactToFile(artifact, outputPath); err != nil {
 		return fmt.Errorf("save artifact: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -392,7 +392,7 @@ func (g *AssetGenerator) createAssetMetadata(config *character.AssetGenerationCo
 		},
 		AssetHashes: make(map[string]string),
 	}
-	
+
 	// Add generated files to history
 	for _, path := range result.GeneratedAssets {
 		metadata.GenerationHistory[0].GeneratedFiles = append(
@@ -400,12 +400,12 @@ func (g *AssetGenerator) createAssetMetadata(config *character.AssetGenerationCo
 			filepath.Base(path),
 		)
 	}
-	
+
 	// Add error information if any
 	if len(result.Errors) > 0 {
 		metadata.GenerationHistory[0].Error = fmt.Sprintf("%d errors occurred during generation", len(result.Errors))
 	}
-	
+
 	return metadata
 }
 
@@ -415,22 +415,22 @@ func (g *AssetGenerator) updateCharacterMetadata(card *character.CharacterCard, 
 	if card.AssetGeneration != nil {
 		card.AssetGeneration.AssetMetadata = *metadata
 	}
-	
+
 	// TODO: Implement character.json file update logic
 	// This would involve:
 	// 1. Reading the existing character.json
 	// 2. Updating the assetGeneration.assetMetadata section
 	// 3. Writing the updated JSON back to disk
-	
+
 	return nil
 }
 
 // ensureDir creates a directory if it doesn't exist.
 func ensureDir(path string) error {
-	return os.MkdirAll(path, 0755)
+	return os.MkdirAll(path, 0o755)
 }
 
 // saveArtifactToFile saves a ComfyUI artifact to the specified file path.
 func saveArtifactToFile(artifact comfyui.Artifact, outputPath string) error {
-	return os.WriteFile(outputPath, artifact.Data, 0644)
+	return os.WriteFile(outputPath, artifact.Data, 0o644)
 }

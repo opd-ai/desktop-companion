@@ -132,7 +132,6 @@ func TestSpecialAbilityExecution(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := am.UseSpecialAbility(participantID, tt.abilityType, battleState)
-
 			if err != nil {
 				t.Fatalf("UseSpecialAbility failed: %v", err)
 			}
@@ -257,7 +256,6 @@ func TestComboStart(t *testing.T) {
 
 	// Try starting a combo with the first action of COMBO_STUN_ATTACK (ACTION_STUN)
 	combo, err := am.TrackComboAction(participantID, ACTION_STUN)
-
 	if err != nil {
 		t.Fatalf("TrackComboAction failed: %v", err)
 	}
@@ -389,7 +387,6 @@ func TestThreeHitCombo(t *testing.T) {
 
 	for i, action := range actions {
 		combo, err := am.TrackComboAction(participantID, action)
-
 		if err != nil {
 			t.Fatalf("Action %d failed: %v", i+1, err)
 		}

@@ -24,22 +24,22 @@ type ValidationConfig struct {
 	// File size limits
 	MaxFileSizeKB int
 	MinFileSizeKB int
-	
+
 	// Image dimension requirements
 	MinWidth  int
 	MaxWidth  int
 	MinHeight int
 	MaxHeight int
-	
+
 	// Animation requirements
 	MinFrames int
 	MaxFrames int
 	MinFPS    int
 	MaxFPS    int
-	
+
 	// Quality thresholds
 	MinQualityScore float64
-	
+
 	// Compatibility checks
 	RequireTransparency bool
 	AllowedFormats      []string
@@ -50,31 +50,31 @@ type ValidationResult struct {
 	// Overall validation status
 	Valid bool
 	Score float64
-	
+
 	// File validation
-	FileExists   bool
-	FileSizeOK   bool
-	FileSizeKB   int
-	FormatOK     bool
-	Format       string
-	
+	FileExists bool
+	FileSizeOK bool
+	FileSizeKB int
+	FormatOK   bool
+	Format     string
+
 	// Image validation
 	DimensionsOK bool
 	Width        int
 	Height       int
 	HasAlpha     bool
-	
+
 	// Animation validation (for GIFs)
-	IsAnimation   bool
-	FrameCount    int
-	FramesOK      bool
-	EstimatedFPS  float64
-	FPSOK         bool
-	LoopingOK     bool
-	
+	IsAnimation  bool
+	FrameCount   int
+	FramesOK     bool
+	EstimatedFPS float64
+	FPSOK        bool
+	LoopingOK    bool
+
 	// Quality metrics
 	QualityMetrics QualityMetrics
-	
+
 	// Issues found
 	Warnings []string
 	Errors   []string
@@ -83,16 +83,16 @@ type ValidationResult struct {
 // QualityMetrics contains computed quality metrics.
 type QualityMetrics struct {
 	// Visual quality
-	Sharpness    float64
-	Contrast     float64
-	Brightness   float64
-	ColorRange   float64
-	
+	Sharpness  float64
+	Contrast   float64
+	Brightness float64
+	ColorRange float64
+
 	// Animation quality (for GIFs)
-	FrameStability  float64
+	FrameStability   float64
 	MotionSmoothness float64
 	LoopSeamlessness float64
-	
+
 	// Compression efficiency
 	CompressionRatio float64
 	FileEfficiency   float64
@@ -111,17 +111,17 @@ func DefaultValidationConfig() *ValidationConfig {
 	return &ValidationConfig{
 		MaxFileSizeKB:       500,
 		MinFileSizeKB:       10,
-		MinWidth:           64,
-		MaxWidth:           512,
-		MinHeight:          64,
-		MaxHeight:          512,
-		MinFrames:          2,
-		MaxFrames:          30,
-		MinFPS:             5,
-		MaxFPS:             30,
-		MinQualityScore:    0.7,
+		MinWidth:            64,
+		MaxWidth:            512,
+		MinHeight:           64,
+		MaxHeight:           512,
+		MinFrames:           2,
+		MaxFrames:           30,
+		MinFPS:              5,
+		MaxFPS:              30,
+		MinQualityScore:     0.7,
 		RequireTransparency: true,
-		AllowedFormats:     []string{"gif", "png", "webp"},
+		AllowedFormats:      []string{"gif", "png", "webp"},
 	}
 }
 
@@ -131,7 +131,7 @@ func (v *AssetValidator) ValidateAsset(assetPath string) (*ValidationResult, err
 		Warnings: []string{},
 		Errors:   []string{},
 	}
-	
+
 	// Check file existence
 	info, err := os.Stat(assetPath)
 	if err != nil {
@@ -139,7 +139,7 @@ func (v *AssetValidator) ValidateAsset(assetPath string) (*ValidationResult, err
 		return result, nil
 	}
 	result.FileExists = true
-	
+
 	// Check file size
 	fileSizeKB := int(info.Size() / 1024)
 	result.FileSizeKB = fileSizeKB
@@ -150,7 +150,7 @@ func (v *AssetValidator) ValidateAsset(assetPath string) (*ValidationResult, err
 	} else {
 		result.FileSizeOK = true
 	}
-	
+
 	// Check file format
 	ext := strings.ToLower(filepath.Ext(assetPath)[1:])
 	result.Format = ext
@@ -163,7 +163,7 @@ func (v *AssetValidator) ValidateAsset(assetPath string) (*ValidationResult, err
 	if !result.FormatOK {
 		result.Errors = append(result.Errors, fmt.Sprintf("Unsupported format: %s", ext))
 	}
-	
+
 	// Validate image content based on format
 	switch ext {
 	case "gif":
@@ -177,11 +177,11 @@ func (v *AssetValidator) ValidateAsset(assetPath string) (*ValidationResult, err
 	default:
 		result.Warnings = append(result.Warnings, fmt.Sprintf("Cannot validate format: %s", ext))
 	}
-	
+
 	// Calculate overall score and validity
 	result.Score = v.calculateQualityScore(result)
 	result.Valid = len(result.Errors) == 0 && result.Score >= v.config.MinQualityScore
-	
+
 	return result, nil
 }
 
@@ -192,15 +192,15 @@ func (v *AssetValidator) validateGIF(assetPath string, result *ValidationResult)
 		return fmt.Errorf("open file: %w", err)
 	}
 	defer file.Close()
-	
+
 	gifImg, err := gif.DecodeAll(file)
 	if err != nil {
 		return fmt.Errorf("decode GIF: %w", err)
 	}
-	
+
 	result.IsAnimation = true
 	result.FrameCount = len(gifImg.Image)
-	
+
 	// Validate frame count
 	if result.FrameCount < v.config.MinFrames {
 		result.Errors = append(result.Errors, fmt.Sprintf("Too few frames: %d < %d", result.FrameCount, v.config.MinFrames))
@@ -209,13 +209,13 @@ func (v *AssetValidator) validateGIF(assetPath string, result *ValidationResult)
 	} else {
 		result.FramesOK = true
 	}
-	
+
 	// Get dimensions from first frame
 	if len(gifImg.Image) > 0 {
 		bounds := gifImg.Image[0].Bounds()
 		result.Width = bounds.Dx()
 		result.Height = bounds.Dy()
-		
+
 		// Validate dimensions
 		if result.Width < v.config.MinWidth || result.Width > v.config.MaxWidth {
 			result.Errors = append(result.Errors, fmt.Sprintf("Invalid width: %d (must be %d-%d)", result.Width, v.config.MinWidth, v.config.MaxWidth))
@@ -224,14 +224,14 @@ func (v *AssetValidator) validateGIF(assetPath string, result *ValidationResult)
 		} else {
 			result.DimensionsOK = true
 		}
-		
+
 		// Check for transparency (simplified check)
 		result.HasAlpha = v.hasTransparency(gifImg.Image[0])
 		if v.config.RequireTransparency && !result.HasAlpha {
 			result.Warnings = append(result.Warnings, "No transparency detected")
 		}
 	}
-	
+
 	// Estimate FPS from delays
 	if len(gifImg.Delay) > 0 {
 		totalDelay := 0
@@ -247,13 +247,13 @@ func (v *AssetValidator) validateGIF(assetPath string, result *ValidationResult)
 			}
 		}
 	}
-	
+
 	// Check looping (GIF LoopCount: 0 = infinite, >0 = finite)
 	result.LoopingOK = gifImg.LoopCount == 0 // Most desktop companions should loop infinitely
 	if !result.LoopingOK {
 		result.Warnings = append(result.Warnings, fmt.Sprintf("GIF loops %d times (infinite looping recommended)", gifImg.LoopCount))
 	}
-	
+
 	return nil
 }
 
@@ -264,21 +264,21 @@ func (v *AssetValidator) validatePNG(assetPath string, result *ValidationResult)
 		return fmt.Errorf("open file: %w", err)
 	}
 	defer file.Close()
-	
+
 	img, _, err := image.Decode(file)
 	if err != nil {
 		return fmt.Errorf("decode PNG: %w", err)
 	}
-	
+
 	result.IsAnimation = false
 	result.FrameCount = 1
 	result.FramesOK = true
-	
+
 	// Get dimensions
 	bounds := img.Bounds()
 	result.Width = bounds.Dx()
 	result.Height = bounds.Dy()
-	
+
 	// Validate dimensions
 	if result.Width < v.config.MinWidth || result.Width > v.config.MaxWidth {
 		result.Errors = append(result.Errors, fmt.Sprintf("Invalid width: %d (must be %d-%d)", result.Width, v.config.MinWidth, v.config.MaxWidth))
@@ -287,13 +287,13 @@ func (v *AssetValidator) validatePNG(assetPath string, result *ValidationResult)
 	} else {
 		result.DimensionsOK = true
 	}
-	
+
 	// Check for transparency
 	result.HasAlpha = v.hasImageTransparency(img)
 	if v.config.RequireTransparency && !result.HasAlpha {
 		result.Warnings = append(result.Warnings, "No transparency detected")
 	}
-	
+
 	return nil
 }
 
@@ -331,7 +331,7 @@ func (v *AssetValidator) hasImageTransparency(img image.Image) bool {
 func (v *AssetValidator) calculateQualityScore(result *ValidationResult) float64 {
 	score := 0.0
 	maxScore := 0.0
-	
+
 	// File validation (20% of score)
 	if result.FileExists {
 		score += 0.1
@@ -343,13 +343,13 @@ func (v *AssetValidator) calculateQualityScore(result *ValidationResult) float64
 		score += 0.05
 	}
 	maxScore += 0.2
-	
+
 	// Dimensions validation (20% of score)
 	if result.DimensionsOK {
 		score += 0.2
 	}
 	maxScore += 0.2
-	
+
 	// Animation validation (30% of score for animated content)
 	if result.IsAnimation {
 		if result.FramesOK {
@@ -366,13 +366,13 @@ func (v *AssetValidator) calculateQualityScore(result *ValidationResult) float64
 		maxScore += 0.3 // Static images get full score for this section
 		score += 0.3
 	}
-	
+
 	// Transparency (10% of score)
 	if !v.config.RequireTransparency || result.HasAlpha {
 		score += 0.1
 	}
 	maxScore += 0.1
-	
+
 	// Error penalty (20% of score)
 	errorPenalty := float64(len(result.Errors)) * 0.05
 	score += 0.2 - errorPenalty
@@ -380,14 +380,14 @@ func (v *AssetValidator) calculateQualityScore(result *ValidationResult) float64
 		score = 0
 	}
 	maxScore += 0.2
-	
+
 	return score / maxScore
 }
 
 // ValidateCharacterAssets validates all assets for a character configuration.
 func (v *AssetValidator) ValidateCharacterAssets(card *character.CharacterCard, basePath string) (map[string]*ValidationResult, error) {
 	results := make(map[string]*ValidationResult)
-	
+
 	// Validate existing animation files
 	for state, relativePath := range card.Animations {
 		fullPath := filepath.Join(basePath, relativePath)
@@ -397,56 +397,56 @@ func (v *AssetValidator) ValidateCharacterAssets(card *character.CharacterCard, 
 		}
 		results[state] = result
 	}
-	
+
 	return results, nil
 }
 
 // GenerateValidationReport creates a human-readable validation report.
 func (v *AssetValidator) GenerateValidationReport(results map[string]*ValidationResult) string {
 	var report strings.Builder
-	
+
 	totalAssets := len(results)
 	validAssets := 0
 	totalScore := 0.0
-	
+
 	report.WriteString("Asset Validation Report\n")
 	report.WriteString("=======================\n\n")
-	
+
 	for state, result := range results {
 		report.WriteString(fmt.Sprintf("Animation: %s\n", state))
 		report.WriteString(fmt.Sprintf("  Valid: %t\n", result.Valid))
 		report.WriteString(fmt.Sprintf("  Score: %.2f\n", result.Score))
 		report.WriteString(fmt.Sprintf("  Size: %dKB (%dx%d)\n", result.FileSizeKB, result.Width, result.Height))
-		
+
 		if result.IsAnimation {
 			report.WriteString(fmt.Sprintf("  Animation: %d frames at %.1f FPS\n", result.FrameCount, result.EstimatedFPS))
 		}
-		
+
 		if len(result.Errors) > 0 {
 			report.WriteString("  Errors:\n")
 			for _, err := range result.Errors {
 				report.WriteString(fmt.Sprintf("    - %s\n", err))
 			}
 		}
-		
+
 		if len(result.Warnings) > 0 {
 			report.WriteString("  Warnings:\n")
 			for _, warning := range result.Warnings {
 				report.WriteString(fmt.Sprintf("    - %s\n", warning))
 			}
 		}
-		
+
 		report.WriteString("\n")
-		
+
 		if result.Valid {
 			validAssets++
 		}
 		totalScore += result.Score
 	}
-	
+
 	avgScore := totalScore / float64(totalAssets)
 	report.WriteString(fmt.Sprintf("Summary: %d/%d assets valid (%.1f%% success rate)\n", validAssets, totalAssets, float64(validAssets)/float64(totalAssets)*100))
 	report.WriteString(fmt.Sprintf("Average Quality Score: %.2f\n", avgScore))
-	
+
 	return report.String()
 }
