@@ -24,7 +24,7 @@ func TestNewEquipmentManager(t *testing.T) {
 	if len(em.availableEquipment) == 0 {
 		t.Error("no default equipment loaded")
 	}
-	
+
 	// Verify we have expected equipment types
 	expectedEquipment := []string{"iron_sword", "wooden_bow", "leather_armor", "health_potion"}
 	for _, expectedID := range expectedEquipment {
