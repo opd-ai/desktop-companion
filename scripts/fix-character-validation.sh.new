@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# DEPRECATED: Legacy wrapper for fix-all-validation-issues.sh
+# DEPRECATED: Legacy wrapper for fix-character-validation.sh
 # This script is maintained for backward compatibility.
 # New usage: ./scripts/dds-scripts.sh character fix-validation
 # Direct usage: ./scripts/character-management/fix-validation-issues.sh
