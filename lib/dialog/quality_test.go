@@ -29,11 +29,11 @@ func TestScoreResponse(t *testing.T) {
 	qa := NewQualityAssessment(context)
 
 	tests := []struct {
-		name             string
-		response         DialogResponse
-		userInput        string
+		name              string
+		response          DialogResponse
+		userInput         string
 		personalityTraits map[string]float64
-		expectNonZero    bool
+		expectNonZero     bool
 	}{
 		{
 			name: "empty response",

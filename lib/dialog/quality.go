@@ -23,27 +23,27 @@ type MemoryEntry struct {
 	Confidence       float64   `json:"confidence"`
 }
 type QualityMetrics struct {
-	Coherence       float64 `json:"coherence"`        // How well the response makes sense in context (0-1)
-	Relevance       float64 `json:"relevance"`        // How relevant the response is to the input (0-1)
-	Engagement      float64 `json:"engagement"`       // How engaging the response is (0-1)
-	Personality     float64 `json:"personality"`      // How well it matches character personality (0-1)
-	OverallQuality  float64 `json:"overall_quality"`  // Weighted average of all metrics (0-1)
-	ResponseLength  int     `json:"response_length"`  // Length of response in words
-	TopicContinuity bool    `json:"topic_continuity"` // Whether response continues conversation topic
-	Updated         time.Time `json:"updated"`        // When metrics were calculated
+	Coherence       float64   `json:"coherence"`        // How well the response makes sense in context (0-1)
+	Relevance       float64   `json:"relevance"`        // How relevant the response is to the input (0-1)
+	Engagement      float64   `json:"engagement"`       // How engaging the response is (0-1)
+	Personality     float64   `json:"personality"`      // How well it matches character personality (0-1)
+	OverallQuality  float64   `json:"overall_quality"`  // Weighted average of all metrics (0-1)
+	ResponseLength  int       `json:"response_length"`  // Length of response in words
+	TopicContinuity bool      `json:"topic_continuity"` // Whether response continues conversation topic
+	Updated         time.Time `json:"updated"`          // When metrics were calculated
 }
 
 // ConversationSummary provides a high-level summary of conversation content and quality
 type ConversationSummary struct {
-	StartTime       time.Time       `json:"start_time"`
-	EndTime         time.Time       `json:"end_time"`
-	MessageCount    int             `json:"message_count"`
-	DominantTopic   string          `json:"dominant_topic"`
-	TopicDistribution map[string]int `json:"topic_distribution"`  // Count of messages per topic
-	EmotionalJourney []EmotionalState `json:"emotional_journey"` // Emotional state snapshots
-	AverageQuality  QualityMetrics  `json:"average_quality"`
-	HighlightMoments []string       `json:"highlight_moments"`   // Best or most important exchanges
-	Summary         string          `json:"summary"`             // Natural language summary
+	StartTime         time.Time        `json:"start_time"`
+	EndTime           time.Time        `json:"end_time"`
+	MessageCount      int              `json:"message_count"`
+	DominantTopic     string           `json:"dominant_topic"`
+	TopicDistribution map[string]int   `json:"topic_distribution"` // Count of messages per topic
+	EmotionalJourney  []EmotionalState `json:"emotional_journey"`  // Emotional state snapshots
+	AverageQuality    QualityMetrics   `json:"average_quality"`
+	HighlightMoments  []string         `json:"highlight_moments"` // Best or most important exchanges
+	Summary           string           `json:"summary"`           // Natural language summary
 }
 
 // QualityAssessment provides real-time dialog quality assessment and improvement suggestions
@@ -74,7 +74,7 @@ func (qa *QualityAssessment) ScoreResponse(response DialogResponse, userInput st
 
 	responseWords := strings.Fields(response.Text)
 	inputWords := strings.Fields(userInput)
-	
+
 	metrics.ResponseLength = len(responseWords)
 
 	// Score coherence (0-1): Does the response make grammatical and logical sense?
@@ -122,7 +122,7 @@ func (qa *QualityAssessment) scoreCoherence(text string) float64 {
 	for _, word := range strings.Fields(strings.ToLower(text)) {
 		wordCount[word]++
 	}
-	
+
 	repetitive := false
 	for _, count := range wordCount {
 		if count > 3 { // Same word repeated more than 3 times
@@ -130,7 +130,7 @@ func (qa *QualityAssessment) scoreCoherence(text string) float64 {
 			break
 		}
 	}
-	
+
 	if repetitive {
 		score -= 0.2
 	}
@@ -181,7 +181,7 @@ func (qa *QualityAssessment) scoreRelevance(response, input string, inputWords, 
 	// Check if response acknowledges key input concepts
 	lowerInput := strings.ToLower(input)
 	lowerResponse := strings.ToLower(response)
-	
+
 	keyTopics := []string{"weather", "feeling", "love", "happy", "sad", "food", "work", "play"}
 	for _, topic := range keyTopics {
 		if strings.Contains(lowerInput, topic) && strings.Contains(lowerResponse, topic) {
@@ -219,7 +219,7 @@ func (qa *QualityAssessment) scoreEngagement(text string, words []string) float6
 
 	// Check for engaging language elements
 	lowerText := strings.ToLower(text)
-	
+
 	// Emotional expressions
 	emotions := []string{"excited", "love", "amazing", "wonderful", "fantastic", "great"}
 	for _, emotion := range emotions {
@@ -357,9 +357,9 @@ func (qa *QualityAssessment) checkTopicContinuity(responseTopics []string) bool 
 func (qa *QualityAssessment) calculateOverallQuality(metrics QualityMetrics) float64 {
 	// Weighted average with emphasis on coherence and relevance
 	weights := map[string]float64{
-		"coherence":  0.3,
-		"relevance":  0.3,
-		"engagement": 0.2,
+		"coherence":   0.3,
+		"relevance":   0.3,
+		"engagement":  0.2,
 		"personality": 0.2,
 	}
 
@@ -452,7 +452,7 @@ func (qa *QualityAssessment) generateNaturalLanguageSummary(summary Conversation
 	// Basic conversation info
 	duration := summary.EndTime.Sub(summary.StartTime)
 	if duration > time.Minute {
-		parts = append(parts, fmt.Sprintf("Conversation lasted %v with %d exchanges", 
+		parts = append(parts, fmt.Sprintf("Conversation lasted %v with %d exchanges",
 			duration.Round(time.Minute), summary.MessageCount))
 	} else {
 		parts = append(parts, fmt.Sprintf("Brief conversation with %d exchanges", summary.MessageCount))

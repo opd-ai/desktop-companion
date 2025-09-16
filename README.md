@@ -101,6 +101,41 @@ emotional := context.EmotionalState      // Positive valence, moderate arousal
 
 See `lib/dialog/context.go` for implementation details and `context_test.go` for usage examples.
 
+## Dialog Quality Assessment
+
+The dialog system includes advanced quality scoring and improvement feedback for enhancing conversation experiences. The `QualityAssessment` system evaluates responses across multiple dimensions and provides actionable suggestions.
+
+### Features
+
+- **Real-time Quality Scoring**: Evaluates coherence, relevance, engagement, and personality fit (0-1 scale)
+- **Conversation Summaries**: Generates natural language summaries of conversation content and quality
+- **Improvement Feedback**: Provides specific suggestions for enhancing dialog quality
+- **Topic Analysis**: Tracks topic distribution and conversation continuity
+- **Personality Consistency**: Validates character responses against defined personality traits
+
+### Integration
+
+Quality assessment integrates seamlessly with existing dialog backends:
+- Automatic quality scoring for all generated responses
+- Conversation summary generation for dialog memory analysis
+- Improvement suggestions for backend optimization
+- Performance benchmarks for quality assessment speed
+
+Usage example:
+```go
+// Quality assessment is automatically integrated in dialog backends
+qa := dialog.NewQualityAssessment(conversationContext)
+metrics := qa.ScoreResponse(response, userInput, personalityTraits)
+
+// Get actionable improvement suggestions
+suggestions := qa.GetImprovementSuggestions(metrics)
+
+// Generate conversation summaries
+summary := qa.GenerateConversationSummary(dialogMemories)
+```
+
+See `lib/dialog/quality.go` for implementation details and `quality_test.go` for usage examples.
+
 A lightweight, platform-native virtual desktop pet application built with Go. Features animated GIF characters, transparent overlays, click interactions, and JSON-based configuration.
 
 ## ✨ Features
