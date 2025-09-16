@@ -6,9 +6,9 @@ This guide explains how to build the Desktop Dating Simulator (DDS) for Android 
 
 ### Required Software
 
-1. **Go 1.21+**
+1. **Go 1.24.5 or higher**
    ```bash
-   go version  # Should show 1.21 or higher
+   go version  # Should show 1.24.5 or higher
    ```
 
 2. **Fyne CLI Tool**

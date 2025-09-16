@@ -26,9 +26,22 @@ Every character JSON file must have this basic structure:
   "description": "Brief character description",
   "animations": { /* animation definitions */ },
   "dialogs": [ /* dialog interactions */ ],
-  "game_features": { /* game mechanics */ },
-  "romance_features": { /* romance system */ },
-  "random_events": [ /* optional events */ ]
+  "behavior": { /* character behavior settings */ },
+  "stats": { /* game stats configuration */ },
+  "gameRules": { /* game mechanics settings */ },
+  "interactions": { /* game interactions */ },
+  "progression": { /* age and evolution */ },
+  "randomEvents": [ /* game random events */ ],
+  "personality": { /* romance personality traits */ },
+  "romanceDialogs": [ /* romance-specific dialogs */ ],
+  "romanceEvents": [ /* romance random events */ ],
+  "dialogBackend": { /* AI dialog configuration */ },
+  "generalEvents": [ /* interactive dialog events */ },
+  "giftSystem": { /* gift system configuration */ },
+  "multiplayer": { /* networking configuration */ },
+  "battleSystem": { /* combat system settings */ },
+  "newsFeatures": { /* RSS/news integration */ },
+  "platformConfig": { /* platform-specific settings */ }
 }
 ```
 
@@ -45,9 +58,22 @@ Every character JSON file must have this basic structure:
 ### Optional Fields
 
 - **`dialogs`** (array): Interactive dialog options
-- **`game_features`** (object): Game mechanics and stats
-- **`romance_features`** (object): Romance system configuration
-- **`random_events`** (array): Special event definitions
+- **`behavior`** (object): Character behavior settings
+- **`stats`** (object): Game stats configuration (hunger, happiness, health, energy)
+- **`gameRules`** (object): Game mechanics settings (decay intervals, auto-save, etc.)
+- **`interactions`** (object): Game interactions (feed, play, pet)
+- **`progression`** (object): Age-based evolution configuration
+- **`randomEvents`** (array): Game random events
+- **`personality`** (object): Romance personality traits and preferences
+- **`romanceDialogs`** (array): Romance-specific dialog interactions
+- **`romanceEvents`** (array): Romance random events
+- **`dialogBackend`** (object): AI-powered dialog configuration
+- **`generalEvents`** (array): Interactive dialog event scenarios
+- **`giftSystem`** (object): Gift system configuration
+- **`multiplayer`** (object): Networking and multiplayer settings
+- **`battleSystem`** (object): Combat system configuration
+- **`newsFeatures`** (object): RSS/Atom news integration settings
+- **`platformConfig`** (object): Platform-specific behavior overrides
 
 ---
 

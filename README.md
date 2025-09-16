@@ -22,7 +22,7 @@ See [GIF_PLAN.md](GIF_PLAN.md) for technical details and troubleshooting.
 
 ## Android Build Testing
 
-Automated APK integrity testing is provided for CI/CD validation. The script `scripts/apk_integrity_test.go` checks APK existence, signature, and package name using Android SDK tools (`apksigner`, `aapt`).
+Automated APK integrity testing is provided for CI/CD validation. The script `scripts/apk_integrity/apk_integrity_test.go` checks APK existence, signature, and package name using Android SDK tools (`apksigner`, `aapt`).
 
 ### Usage
 
@@ -33,7 +33,7 @@ Automated APK integrity testing is provided for CI/CD validation. The script `sc
   ```
 3. The script will fail if the APK is missing, unsigned, or has the wrong package name.
 
-See `scripts/apk_integrity_test.go` for details.
+See `scripts/apk_integrity/apk_integrity_test.go` for details.
 
 ## Network Connection Recovery
 
@@ -194,7 +194,7 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
 
 ### Prerequisites
 
-- Go 1.21+ or higher
+- Go 1.24.5 or higher
 - C compiler (gcc/clang) for CGO dependencies
 - Platform-specific requirements:
   - **Linux**: X11 or Wayland display environment
@@ -376,6 +376,10 @@ This project follows the "lazy programmer" philosophy, using mature libraries in
 |---------|---------|---------|------------|
 | [fyne.io/fyne/v2](https://fyne.io/) | BSD-3-Clause | Cross-platform GUI | Only mature Go GUI with native transparency support |
 | [github.com/mmcdole/gofeed](https://github.com/mmcdole/gofeed) | MIT | RSS/Atom feed parsing | Mature RSS parser with 2.4k+ stars, handles multiple feed formats |
+| [github.com/jdkato/prose/v2](https://github.com/jdkato/prose) | MIT | Natural language processing | Advanced text analysis for dialog context enhancement |
+| [github.com/opd-ai/minilm](https://github.com/opd-ai/minilm) | MIT | Sentence embedding | Lightweight sentence similarity for dialog matching |
+| [github.com/sirupsen/logrus](https://github.com/sirupsen/logrus) | MIT | Structured logging | Production-grade logging with customizable output formats |
+| [nhooyr.io/websocket](https://nhooyr.io/websocket) | MIT | WebSocket client | ComfyUI real-time communication for GIF generation pipeline |
 | Go standard library | BSD-3-Clause | JSON parsing, GIF decoding, image processing, networking | Zero external dependencies, battle-tested |
 
 *Note: Full dependency list available in `go.mod` - all dependencies use permissive licenses compatible with commercial use.*

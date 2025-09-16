@@ -198,5 +198,5 @@ As outlined in the Phase 5.4 plan:
 
 All dependencies use permissive licenses (BSD-3-Clause) compatible with commercial use. The implementation uses only:
 - Go standard library
-- Fyne v2.4.5 (BSD-3-Clause)
+- Fyne v2.5.2 (BSD-3-Clause)
 - Existing platform detection system
