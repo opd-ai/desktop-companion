@@ -6,6 +6,7 @@ package dialog
 
 import (
 	"context"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -118,7 +119,7 @@ func (cc *ConversationContext) updateTopics(message string) {
 	for topicName, keywords := range topicKeywords {
 		confidence := 0.0
 		for _, keyword := range keywords {
-			if strings.Contains(lower, keyword) {
+			if containsWord(lower, keyword) {
 				confidence += 0.2 // Simple scoring
 			}
 		}
@@ -127,6 +128,14 @@ func (cc *ConversationContext) updateTopics(message string) {
 			cc.updateTopic(topicName, confidence, now)
 		}
 	}
+}
+
+// containsWord checks if a word exists as a complete word (not substring) in text
+func containsWord(text, word string) bool {
+	// Use word boundary regex to match complete words only
+	pattern := `\b` + regexp.QuoteMeta(word) + `\b`
+	matched, _ := regexp.MatchString(pattern, text)
+	return matched
 }
 
 // updateTopic updates or adds a topic with new confidence score

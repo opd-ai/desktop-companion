@@ -361,7 +361,7 @@ func TestGenerateBatchSummary(t *testing.T) {
 		t.Errorf("Expected success rate %.2f, got %.2f", expectedSuccessRate, summary.SuccessRate)
 	}
 
-	expectedAvgTime := 1.5 * time.Second // (2s + 1s) / 2
+	expectedAvgTime := time.Duration(1500) * time.Millisecond // (2s + 1s) / 2
 	if summary.AverageProcessingTime != expectedAvgTime {
 		t.Errorf("Expected average processing time %v, got %v", expectedAvgTime, summary.AverageProcessingTime)
 	}

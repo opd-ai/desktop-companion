@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func createTestGIF(path string, frames int, transparent bool) error {
+func createSimpleTestGIF(path string, frames int, transparent bool) error {
 	imgs := []*image.Paletted{}
 	delays := []int{}
 	for i := 0; i < frames; i++ {
@@ -32,7 +32,7 @@ func createTestGIF(path string, frames int, transparent bool) error {
 func TestValidateGIF_Success(t *testing.T) {
 	dir := t.TempDir()
 	p := dir + "/ok.gif"
-	if err := createTestGIF(p, 4, true); err != nil {
+	if err := createSimpleTestGIF(p, 4, true); err != nil {
 		t.Fatalf("create gif: %v", err)
 	}
 	cfg := GIFConfig{FrameCount: 4, MaxFileSize: 500000, Transparency: true}
@@ -44,7 +44,7 @@ func TestValidateGIF_Success(t *testing.T) {
 func TestValidateGIF_TooLarge(t *testing.T) {
 	dir := t.TempDir()
 	p := dir + "/big.gif"
-	if err := createTestGIF(p, 4, true); err != nil {
+	if err := createSimpleTestGIF(p, 4, true); err != nil {
 		t.Fatalf("create gif: %v", err)
 	}
 	cfg := GIFConfig{FrameCount: 4, MaxFileSize: 1, Transparency: true}
@@ -56,7 +56,7 @@ func TestValidateGIF_TooLarge(t *testing.T) {
 func TestValidateGIF_BadFrameCount(t *testing.T) {
 	dir := t.TempDir()
 	p := dir + "/badframe.gif"
-	if err := createTestGIF(p, 2, true); err != nil {
+	if err := createSimpleTestGIF(p, 2, true); err != nil {
 		t.Fatalf("create gif: %v", err)
 	}
 	cfg := GIFConfig{FrameCount: 4, MaxFileSize: 500000, Transparency: true}
@@ -68,7 +68,7 @@ func TestValidateGIF_BadFrameCount(t *testing.T) {
 func TestValidateGIF_NoTransparency(t *testing.T) {
 	dir := t.TempDir()
 	p := dir + "/notrans.gif"
-	if err := createTestGIF(p, 4, false); err != nil {
+	if err := createSimpleTestGIF(p, 4, false); err != nil {
 		t.Fatalf("create gif: %v", err)
 	}
 	cfg := GIFConfig{FrameCount: 4, MaxFileSize: 500000, Transparency: true}

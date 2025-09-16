@@ -285,103 +285,103 @@ func TestParameterValidation(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		parameter Parameter
+		parameter TemplateParameter
 		value     interface{}
 		wantErr   bool
 	}{
 		{
 			name:      "valid string",
-			parameter: Parameter{Type: "string"},
+			parameter: TemplateParameter{Type: "string"},
 			value:     "test string",
 			wantErr:   false,
 		},
 		{
 			name:      "invalid string type",
-			parameter: Parameter{Type: "string"},
+			parameter: TemplateParameter{Type: "string"},
 			value:     123,
 			wantErr:   true,
 		},
 		{
 			name:      "valid int",
-			parameter: Parameter{Type: "int"},
+			parameter: TemplateParameter{Type: "int"},
 			value:     42,
 			wantErr:   false,
 		},
 		{
 			name:      "valid int from float",
-			parameter: Parameter{Type: "int"},
+			parameter: TemplateParameter{Type: "int"},
 			value:     42.0,
 			wantErr:   false,
 		},
 		{
 			name:      "invalid int type",
-			parameter: Parameter{Type: "int"},
+			parameter: TemplateParameter{Type: "int"},
 			value:     "not a number",
 			wantErr:   true,
 		},
 		{
 			name:      "int below minimum",
-			parameter: Parameter{Type: "int", MinValue: floatPtr(10)},
+			parameter: TemplateParameter{Type: "int", MinValue: floatPtr(10)},
 			value:     5,
 			wantErr:   true,
 		},
 		{
 			name:      "int above maximum",
-			parameter: Parameter{Type: "int", MaxValue: floatPtr(100)},
+			parameter: TemplateParameter{Type: "int", MaxValue: floatPtr(100)},
 			value:     200,
 			wantErr:   true,
 		},
 		{
 			name:      "valid float",
-			parameter: Parameter{Type: "float"},
+			parameter: TemplateParameter{Type: "float"},
 			value:     3.14,
 			wantErr:   false,
 		},
 		{
 			name:      "valid float from int",
-			parameter: Parameter{Type: "float"},
+			parameter: TemplateParameter{Type: "float"},
 			value:     42,
 			wantErr:   false,
 		},
 		{
 			name:      "invalid float type",
-			parameter: Parameter{Type: "float"},
+			parameter: TemplateParameter{Type: "float"},
 			value:     "not a number",
 			wantErr:   true,
 		},
 		{
 			name:      "valid bool true",
-			parameter: Parameter{Type: "bool"},
+			parameter: TemplateParameter{Type: "bool"},
 			value:     true,
 			wantErr:   false,
 		},
 		{
 			name:      "valid bool false",
-			parameter: Parameter{Type: "bool"},
+			parameter: TemplateParameter{Type: "bool"},
 			value:     false,
 			wantErr:   false,
 		},
 		{
 			name:      "invalid bool type",
-			parameter: Parameter{Type: "bool"},
+			parameter: TemplateParameter{Type: "bool"},
 			value:     "not a bool",
 			wantErr:   true,
 		},
 		{
 			name:      "valid enum",
-			parameter: Parameter{Type: "enum", EnumValues: []string{"a", "b", "c"}},
+			parameter: TemplateParameter{Type: "enum", EnumValues: []string{"a", "b", "c"}},
 			value:     "b",
 			wantErr:   false,
 		},
 		{
 			name:      "invalid enum value",
-			parameter: Parameter{Type: "enum", EnumValues: []string{"a", "b", "c"}},
+			parameter: TemplateParameter{Type: "enum", EnumValues: []string{"a", "b", "c"}},
 			value:     "d",
 			wantErr:   true,
 		},
 		{
 			name:      "invalid enum type",
-			parameter: Parameter{Type: "enum", EnumValues: []string{"a", "b", "c"}},
+			parameter: TemplateParameter{Type: "enum", EnumValues: []string{"a", "b", "c"}},
 			value:     123,
 			wantErr:   true,
 		},
