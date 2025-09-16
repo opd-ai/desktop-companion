@@ -804,21 +804,6 @@
         "negativePrompt": "calm, sad, angry, static",
         "stateDescription": "Excited romantic state",
         "frameCount": 8
-      },
-      "attack": {
-        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
-        "stateDescription": "Attacking in battle",
-        "frameCount": 8
-      },
-      "defend": {
-        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
-        "stateDescription": "Defending in battle",
-        "frameCount": 6
-      },
-      "heal": {
-        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
-        "stateDescription": "Healing or supporting",
-        "frameCount": 7
       }
     },
     "generationSettings": {
@@ -876,6 +861,23 @@
         "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
+    }
+  ],
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 25
+      },
+      "responses": [
+        "Thank you! That really brightens my day.",
+        "You always know just what to say to make me smile.",
+        "I appreciate your kind words more than you know."
+      ],
+      "effects": {
+        "affection": 2
+      },
+      "animation": "happy"
     }
   ]
 }

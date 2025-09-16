@@ -26,7 +26,7 @@
       "responses": [
         "How can I help you today?",
         "I'm here if you need anything at all!",
-        "Is there something I can assist you with?", 
+        "Is there something I can assist you with?",
         "I love being useful to others!",
         "Your wellbeing is important to me."
       ],
@@ -109,63 +109,137 @@
   },
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 18, "happiness": 10},
-      "animations": ["caring"],
-      "responses": ["Thank you! This gives me energy to help others even more!"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 18,
+        "happiness": 10
+      },
+      "animations": [
+        "caring"
+      ],
+      "responses": [
+        "Thank you! This gives me energy to help others even more!"
+      ],
       "cooldown": 90,
-      "requirements": {"hunger": {"max": 82}}
+      "requirements": {
+        "hunger": {
+          "max": 82
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 15, "health": 10},
-      "animations": ["caring"],
-      "responses": ["Your kindness helps me be a better helper for everyone!"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 15,
+        "health": 10
+      },
+      "animations": [
+        "caring"
+      ],
+      "responses": [
+        "Your kindness helps me be a better helper for everyone!"
+      ],
       "cooldown": 45
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 12, "energy": -8},
-      "animations": ["helpful"],
-      "responses": ["This is fun! Playing together helps us work better as a team!"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 12,
+        "energy": -8
+      },
+      "animations": [
+        "helpful"
+      ],
+      "responses": [
+        "This is fun! Playing together helps us work better as a team!"
+      ],
       "cooldown": 150,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "help_request": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 6, "happiness": 8, "trust": 3},
-      "animations": ["helpful", "caring"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 6,
+        "happiness": 8,
+        "trust": 3
+      },
+      "animations": [
+        "helpful",
+        "caring"
+      ],
       "responses": [
         "I'm always happy to help! What do you need assistance with? 🤗",
         "That's what I'm here for! Let me support you in any way I can!",
         "Helping you brings me such joy! What can I do to make things easier?"
       ],
       "cooldown": 80,
-      "requirements": {"trust": {"min": 10}}
+      "requirements": {
+        "trust": {
+          "min": 10
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"affection": 7, "happiness": 9, "trust": 4},
-      "animations": ["heart_eyes", "excited_romance"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "affection": 7,
+        "happiness": 9,
+        "trust": 4
+      },
+      "animations": [
+        "heart_eyes",
+        "excited_romance"
+      ],
       "responses": [
         "Oh wow! A gift for me? You're so thoughtful! Let me help you even more! 🎁💕",
         "This is wonderful! Your kindness inspires me to be an even better helper!",
         "Thank you so much! Now I'm extra motivated to assist you with anything! 💝"
       ],
       "cooldown": 160,
-      "requirements": {"affection": {"min": 25}}
+      "requirements": {
+        "affection": {
+          "min": 25
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 8, "affection": 5, "intimacy": 4},
-      "animations": ["talking", "romantic_idle"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 8,
+        "affection": 5,
+        "intimacy": 4
+      },
+      "animations": [
+        "talking",
+        "romantic_idle"
+      ],
       "responses": [
         "I love these meaningful conversations! Sharing thoughts helps me understand how to help better!",
         "Thank you for trusting me with your thoughts! This deepens our connection beautifully!",
         "Deep talks like this help me become not just a helper, but a true companion!"
       ],
       "cooldown": 140,
-      "requirements": {"trust": {"min": 30}}
+      "requirements": {
+        "trust": {
+          "min": 30
+        }
+      }
     }
   },
   "personality": {
@@ -193,7 +267,12 @@
     "maxPeers": 8,
     "discoveryPort": 8082,
     "socialLevel": "moderate",
-    "shareableStats": ["happiness", "affection", "energy", "health"],
+    "shareableStats": [
+      "happiness",
+      "affection",
+      "energy",
+      "health"
+    ],
     "networkPersonality": "supportive",
     "botPersonality": {
       "chattiness": 0.6,
@@ -208,19 +287,28 @@
       "name": "welcome_new_peer",
       "trigger": "peer_joined",
       "botProbability": 0.9,
-      "responses": ["Welcome! Let me know if you need any help getting settled.", "Hi there! I'm here to help with anything you might need."]
+      "responses": [
+        "Welcome! Let me know if you need any help getting settled.",
+        "Hi there! I'm here to help with anything you might need."
+      ]
     },
     {
       "name": "offer_assistance",
       "trigger": "peer_struggling",
       "botProbability": 0.95,
-      "responses": ["I noticed you might need help. What can I do for you?", "Don't hesitate to ask if you need assistance!"]
+      "responses": [
+        "I noticed you might need help. What can I do for you?",
+        "Don't hesitate to ask if you need assistance!"
+      ]
     },
     {
       "name": "farewell_peer",
       "trigger": "peer_left",
       "botProbability": 0.8,
-      "responses": ["Take care! I hope I was able to help you today.", "Goodbye! Remember, I'm always here when you need support."]
+      "responses": [
+        "Take care! I hope I was able to help you today.",
+        "Goodbye! Remember, I'm always here when you need support."
+      ]
     }
   ],
   "dialogBackend": {
@@ -240,7 +328,7 @@
         "usePersonality": true,
         "trainingData": [
           "I'm always ready to lend a helping hand to anyone in need.",
-          "Supporting others brings me great joy and satisfaction.", 
+          "Supporting others brings me great joy and satisfaction.",
           "No task is too small if it helps make someone's day better.",
           "I believe in the power of kindness and mutual assistance.",
           "Working together, we can accomplish so much more.",
@@ -271,14 +359,21 @@
         ]
       }
     },
-    "fallbackChain": ["simple_random"]
+    "fallbackChain": [
+      "simple_random"
+    ]
   },
   "newsFeatures": {
     "enabled": true,
     "updateInterval": 2400,
     "maxStoredItems": 25,
     "readingPersonality": "supportive",
-    "preferredCategories": ["health", "productivity", "positive", "technology"],
+    "preferredCategories": [
+      "health",
+      "productivity",
+      "positive",
+      "technology"
+    ],
     "feeds": [
       {
         "url": "https://feeds.feedburner.com/lifehacker",
@@ -320,18 +415,34 @@
       "choices": [
         {
           "text": "Accept help offer",
-          "effects": {"happiness": 10, "affection": 5, "trust": 3},
-          "responses": ["Wonderful! I'm so happy I can help! Let's tackle this together! 🎯"],
+          "effects": {
+            "happiness": 10,
+            "affection": 5,
+            "trust": 3
+          },
+          "responses": [
+            "Wonderful! I'm so happy I can help! Let's tackle this together! 🎯"
+          ],
           "animation": "helpful"
         },
         {
           "text": "Thank for caring",
-          "effects": {"affection": 7, "happiness": 8, "trust": 4},
-          "responses": ["Caring about you is what I do best! I'm always here when you need me! 💕"],
+          "effects": {
+            "affection": 7,
+            "happiness": 8,
+            "trust": 4
+          },
+          "responses": [
+            "Caring about you is what I do best! I'm always here when you need me! 💕"
+          ],
           "animation": "caring"
         }
       ],
-      "requirements": {"trust": {"min": 15}},
+      "requirements": {
+        "trust": {
+          "min": 15
+        }
+      },
       "cooldown": 4800,
       "category": "conversation"
     },
@@ -346,18 +457,34 @@
       "choices": [
         {
           "text": "Learn something new",
-          "effects": {"happiness": 6, "trust": 5, "affection": 3},
-          "responses": ["Great! Learning together makes everything more fun! Here's what I discovered... 📖"],
+          "effects": {
+            "happiness": 6,
+            "trust": 5,
+            "affection": 3
+          },
+          "responses": [
+            "Great! Learning together makes everything more fun! Here's what I discovered... 📖"
+          ],
           "animation": "helpful"
         },
         {
           "text": "Share your own tips",
-          "effects": {"trust": 8, "affection": 4, "happiness": 5},
-          "responses": ["I'd love to learn from you too! Sharing knowledge goes both ways! 🤝"],
+          "effects": {
+            "trust": 8,
+            "affection": 4,
+            "happiness": 5
+          },
+          "responses": [
+            "I'd love to learn from you too! Sharing knowledge goes both ways! 🤝"
+          ],
           "animation": "caring"
         }
       ],
-      "requirements": {"affection": {"min": 20}},
+      "requirements": {
+        "affection": {
+          "min": 20
+        }
+      },
       "cooldown": 6000,
       "category": "conversation"
     },
@@ -372,18 +499,33 @@
       "choices": [
         {
           "text": "I'm doing well",
-          "effects": {"happiness": 8, "affection": 4},
-          "responses": ["That's wonderful to hear! I'm so glad you're taking care of yourself! 😊"],
+          "effects": {
+            "happiness": 8,
+            "affection": 4
+          },
+          "responses": [
+            "That's wonderful to hear! I'm so glad you're taking care of yourself! 😊"
+          ],
           "animation": "caring"
         },
         {
           "text": "I could use support",
-          "effects": {"trust": 7, "affection": 6, "happiness": 5},
-          "responses": ["I'm here for you! Let's work together to make things better! 💪"],
+          "effects": {
+            "trust": 7,
+            "affection": 6,
+            "happiness": 5
+          },
+          "responses": [
+            "I'm here for you! Let's work together to make things better! 💪"
+          ],
           "animation": "helpful"
         }
       ],
-      "requirements": {"trust": {"min": 25}},
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      },
       "cooldown": 5400,
       "category": "conversation"
     },
@@ -398,18 +540,34 @@
       "choices": [
         {
           "text": "Work on a challenge",
-          "effects": {"trust": 6, "happiness": 7, "energy": -3},
-          "responses": ["Excellent! Let's break this down step by step and find the best solution! 💡"],
+          "effects": {
+            "trust": 6,
+            "happiness": 7,
+            "energy": -3
+          },
+          "responses": [
+            "Excellent! Let's break this down step by step and find the best solution! 💡"
+          ],
           "animation": "helpful"
         },
         {
           "text": "Brainstorm ideas",
-          "effects": {"happiness": 9, "affection": 3, "trust": 4},
-          "responses": ["I love brainstorming! The best ideas come from working together! 🌟"],
+          "effects": {
+            "happiness": 9,
+            "affection": 3,
+            "trust": 4
+          },
+          "responses": [
+            "I love brainstorming! The best ideas come from working together! 🌟"
+          ],
           "animation": "excited"
         }
       ],
-      "requirements": {"trust": {"min": 30}},
+      "requirements": {
+        "trust": {
+          "min": 30
+        }
+      },
       "cooldown": 7200,
       "category": "game"
     }
@@ -534,19 +692,29 @@
       },
       {
         "name": "Reliable Assistant",
-        "requirement": {"affection": 30, "trust": 25},
+        "requirement": {
+          "affection": 30,
+          "trust": 25
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Trusted Support",
-        "requirement": {"affection": 55, "trust": 45},
+        "requirement": {
+          "affection": 55,
+          "trust": 45
+        },
         "size": 136,
         "animations": {}
       },
       {
         "name": "Devoted Companion",
-        "requirement": {"affection": 80, "trust": 70, "intimacy": 25},
+        "requirement": {
+          "affection": 80,
+          "trust": 70,
+          "intimacy": 25
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -557,39 +725,61 @@
       {
         "name": "First Helper",
         "requirement": {
-          "trust": {"min": 15}
+          "trust": {
+            "min": 15
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 8}
+          "statBoosts": {
+            "happiness": 8
+          }
         }
       },
       {
         "name": "Reliable Support",
         "requirement": {
-          "affection": {"min": 40}
+          "affection": {
+            "min": 40
+          }
         },
         "reward": {
-          "statBoosts": {"trust": 10}
+          "statBoosts": {
+            "trust": 10
+          }
         }
       },
       {
         "name": "Devoted Assistant",
         "requirement": {
-          "affection": {"min": 65},
-          "trust": {"min": 55}
+          "affection": {
+            "min": 65
+          },
+          "trust": {
+            "min": 55
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 15, "affection": 12}
+          "statBoosts": {
+            "happiness": 15,
+            "affection": 12
+          }
         }
       },
       {
         "name": "Ultimate Helper",
         "requirement": {
-          "affection": {"min": 85},
-          "trust": {"min": 75}
+          "affection": {
+            "min": 85
+          },
+          "trust": {
+            "min": 75
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 25, "trust": 20}
+          "statBoosts": {
+            "happiness": 25,
+            "trust": 20
+          }
         }
       }
     ]
@@ -599,29 +789,57 @@
       "name": "caring_warmth",
       "description": "Character feels warm caring connection",
       "probability": 0.06,
-      "effects": {"affection": 5, "happiness": 7, "trust": 3},
-      "animations": ["caring", "blushing"],
+      "effects": {
+        "affection": 5,
+        "happiness": 7,
+        "trust": 3
+      },
+      "animations": [
+        "caring",
+        "blushing"
+      ],
       "responses": [
         "Taking care of you fills my heart with such warmth! You mean so much to me! 💕",
         "I feel so lucky to be able to help and care for someone as wonderful as you!",
         "Your trust in me creates the most beautiful bond! I cherish our connection! 🌟"
       ],
       "cooldown": 2100,
-      "conditions": {"affection": {"min": 25}, "trust": {"min": 20}}
+      "conditions": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 20
+        }
+      }
     },
     {
       "name": "supportive_devotion",
       "description": "Character expresses devoted support",
       "probability": 0.08,
-      "effects": {"trust": 6, "affection": 4, "intimacy": 2},
-      "animations": ["romantic_idle", "heart_eyes"],
+      "effects": {
+        "trust": 6,
+        "affection": 4,
+        "intimacy": 2
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
       "responses": [
         "Supporting you isn't just what I do... it's who I am when I'm with you! 💙",
         "Your happiness has become intertwined with mine in the most beautiful way!",
         "I find myself caring for you in ways that feel deeper than just friendship! ✨"
       ],
       "cooldown": 2700,
-      "conditions": {"trust": {"min": 30}, "affection": {"min": 35}}
+      "conditions": {
+        "trust": {
+          "min": 30
+        },
+        "affection": {
+          "min": 35
+        }
+      }
     }
   ],
   "romanceDialogs": [
@@ -636,8 +854,173 @@
       "cooldown": 10,
       "requirements": {
         "stats": {
-          "affection": {"min": 40}
+          "affection": {
+            "min": 40
+          }
         }
+      }
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "A helpful anime character with kind features and bright eyes, assistant-style outfit, eager-to-help expression, supportive pose, digital art, transparent background, high quality character design for helpful multiplayer bot",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "excited": {
+        "promptModifier": "energetic bouncing motion, wide smile, enthusiastic pose, dynamic expression",
+        "stateDescription": "Excited and energetic state",
+        "frameCount": 8
+      },
+      "helpful": {
+        "promptModifier": "expressive pose and animation for helpful state, character showing helpful emotion or action",
+        "stateDescription": "Character in helpful state",
+        "frameCount": 6
+      },
+      "caring": {
+        "promptModifier": "attentive and loving expression, reaching out gesture, caring pose, protective stance",
+        "stateDescription": "Showing care and concern",
+        "frameCount": 5
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
       }
     }
   ]

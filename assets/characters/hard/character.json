@@ -999,20 +999,15 @@
         "stateDescription": "Excited romantic state",
         "frameCount": 8
       },
-      "attack": {
-        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
-        "stateDescription": "Attacking in battle",
-        "frameCount": 8
-      },
-      "defend": {
-        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
-        "stateDescription": "Defending in battle",
+      "demanding": {
+        "promptModifier": "authoritative pose, pointing gesture, expectant expression, commanding presence",
+        "stateDescription": "Making demands or requests",
         "frameCount": 6
       },
-      "heal": {
-        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
-        "stateDescription": "Healing or supporting",
-        "frameCount": 7
+      "critical": {
+        "promptModifier": "stern or disapproving expression, arms crossed, serious demeanor, demanding pose",
+        "stateDescription": "Critical or demanding state",
+        "frameCount": 5
       }
     },
     "generationSettings": {

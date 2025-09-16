@@ -1025,20 +1025,15 @@
         "stateDescription": "Excited romantic state",
         "frameCount": 8
       },
-      "attack": {
-        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
-        "stateDescription": "Attacking in battle",
-        "frameCount": 8
+      "caring": {
+        "promptModifier": "attentive and loving expression, reaching out gesture, caring pose, protective stance",
+        "stateDescription": "Showing care and concern",
+        "frameCount": 5
       },
-      "defend": {
-        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
-        "stateDescription": "Defending in battle",
+      "comforting": {
+        "promptModifier": "gentle caring expression, open arms, nurturing pose, warm and supportive demeanor",
+        "stateDescription": "Providing comfort and support",
         "frameCount": 6
-      },
-      "heal": {
-        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
-        "stateDescription": "Healing or supporting",
-        "frameCount": 7
       }
     },
     "generationSettings": {
@@ -1102,5 +1097,35 @@
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
-  }
+  },
+  "romanceEvents": [
+    {
+      "name": "supportive_comfort",
+      "description": "Character offers emotional support during difficult times",
+      "trigger": "mood_low",
+      "requirements": {
+        "affection": 30
+      },
+      "effects": {
+        "affection": 5,
+        "happiness": 10
+      },
+      "dialog": "I notice you seem down. I'm here for you, always. 💙",
+      "animation": "comforting"
+    },
+    {
+      "name": "relationship_milestone",
+      "description": "Character celebrates relationship growth",
+      "trigger": "relationship_progress",
+      "requirements": {
+        "affection": 60
+      },
+      "effects": {
+        "affection": 8,
+        "happiness": 15
+      },
+      "dialog": "Look how far we've come together. I'm so proud of us. ✨",
+      "animation": "excited_romance"
+    }
+  ]
 }

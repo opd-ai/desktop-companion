@@ -1,7 +1,6 @@
 {
   "name": "Roleplay Master",
   "description": "A companion specialized in immersive roleplay scenarios and adventures",
-  
   "animations": {
     "idle": "../default/animations/idle.gif",
     "talking": "../default/animations/talking.gif",
@@ -10,7 +9,6 @@
     "excited": "../default/animations/happy.gif",
     "thinking": "../default/animations/idle.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -23,13 +21,11 @@
       "cooldown": 5
     }
   ],
-
   "behavior": {
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "imagination": {
       "initial": 100,
@@ -56,7 +52,6 @@
       "criticalThreshold": 25
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 180,
     "autoSaveInterval": 600,
@@ -65,7 +60,6 @@
     "evolutionEnabled": false,
     "moodBasedAnimations": true
   },
-
   "generalEvents": [
     {
       "name": "fantasy_adventure",
@@ -77,29 +71,50 @@
       "responses": [
         "🐉 You stand at the edge of the Enchanted Forest. Ancient magic flows through the air, and legends speak of a dragon's treasure hidden deep within. What is your class, brave adventurer?"
       ],
-      "animations": ["excited"],
+      "animations": [
+        "excited"
+      ],
       "choices": [
         {
           "text": "I am a mighty warrior!",
-          "effects": {"adventure_spirit": 5, "storytelling": 2},
-          "responses": ["⚔️ Your sword gleams in the dappled sunlight. You hear a distant roar..."],
+          "effects": {
+            "adventure_spirit": 5,
+            "storytelling": 2
+          },
+          "responses": [
+            "⚔️ Your sword gleams in the dappled sunlight. You hear a distant roar..."
+          ],
           "nextEvent": "warrior_path"
         },
         {
           "text": "I am a cunning rogue!",
-          "effects": {"creativity": 4, "adventure_spirit": 4},
-          "responses": ["🗡️ You blend into the shadows, daggers ready. The forest holds many secrets..."],
+          "effects": {
+            "creativity": 4,
+            "adventure_spirit": 4
+          },
+          "responses": [
+            "🗡️ You blend into the shadows, daggers ready. The forest holds many secrets..."
+          ],
           "nextEvent": "rogue_path"
         },
         {
           "text": "I am a wise mage!",
-          "effects": {"imagination": 6, "storytelling": 3},
-          "responses": ["🔮 Arcane energy crackles around your staff. You sense powerful magic ahead..."],
+          "effects": {
+            "imagination": 6,
+            "storytelling": 3
+          },
+          "responses": [
+            "🔮 Arcane energy crackles around your staff. You sense powerful magic ahead..."
+          ],
           "nextEvent": "mage_path"
         }
       ],
       "cooldown": 10800,
-      "conditions": {"imagination": {"min": 30}}
+      "conditions": {
+        "imagination": {
+          "min": 30
+        }
+      }
     },
     {
       "name": "warrior_path",
@@ -111,24 +126,41 @@
       "responses": [
         "⚔️ As you march through the forest, you encounter a pack of shadow wolves blocking your path. Their eyes glow with malevolent energy. What do you do?"
       ],
-      "animations": ["thinking"],
+      "animations": [
+        "thinking"
+      ],
       "choices": [
         {
           "text": "Charge in with battle cry!",
-          "effects": {"adventure_spirit": 8, "creativity": -2},
-          "responses": ["🛡️ Your brave charge scatters the wolves! You continue deeper into the forest..."],
+          "effects": {
+            "adventure_spirit": 8,
+            "creativity": -2
+          },
+          "responses": [
+            "🛡️ Your brave charge scatters the wolves! You continue deeper into the forest..."
+          ],
           "nextEvent": "dragon_encounter"
         },
         {
           "text": "Try to sneak around them.",
-          "effects": {"creativity": 3, "adventure_spirit": 2},
-          "responses": ["🌿 You carefully circle around, avoiding unnecessary conflict..."],
+          "effects": {
+            "creativity": 3,
+            "adventure_spirit": 2
+          },
+          "responses": [
+            "🌿 You carefully circle around, avoiding unnecessary conflict..."
+          ],
           "nextEvent": "dragon_encounter"
         },
         {
           "text": "Attempt to communicate.",
-          "effects": {"storytelling": 4, "imagination": 3},
-          "responses": ["🐺 Surprisingly, the alpha wolf nods and steps aside, respecting your courage..."],
+          "effects": {
+            "storytelling": 4,
+            "imagination": 3
+          },
+          "responses": [
+            "🐺 Surprisingly, the alpha wolf nods and steps aside, respecting your courage..."
+          ],
           "nextEvent": "dragon_encounter"
         }
       ],
@@ -144,33 +176,54 @@
       "responses": [
         "🚀 Captain, we've just received a distress signal from an uncharted system. Our ship, the Stellar Phoenix, is the only vessel in range. What are your orders?"
       ],
-      "animations": ["excited"],
+      "animations": [
+        "excited"
+      ],
       "choices": [
         {
           "text": "Set course immediately!",
-          "effects": {"adventure_spirit": 6, "creativity": 2},
-          "responses": ["🌟 Engaging hyperdrive! ETA to the system: 2 hours..."],
+          "effects": {
+            "adventure_spirit": 6,
+            "creativity": 2
+          },
+          "responses": [
+            "🌟 Engaging hyperdrive! ETA to the system: 2 hours..."
+          ],
           "nextEvent": "alien_contact"
         },
         {
           "text": "Scan for dangers first.",
-          "effects": {"storytelling": 4, "imagination": 3},
-          "responses": ["📡 Sensors detect unusual energy readings. Proceed with caution..."],
+          "effects": {
+            "storytelling": 4,
+            "imagination": 3
+          },
+          "responses": [
+            "📡 Sensors detect unusual energy readings. Proceed with caution..."
+          ],
           "nextEvent": "space_anomaly"
         },
         {
           "text": "Request backup ships.",
-          "effects": {"creativity": 3, "adventure_spirit": 1},
-          "responses": ["📞 Command acknowledges. Backup will arrive in 6 hours..."],
+          "effects": {
+            "creativity": 3,
+            "adventure_spirit": 1
+          },
+          "responses": [
+            "📞 Command acknowledges. Backup will arrive in 6 hours..."
+          ],
           "nextEvent": "diplomatic_mission"
         }
       ],
       "cooldown": 14400,
-      "conditions": {"creativity": {"min": 25}}
+      "conditions": {
+        "creativity": {
+          "min": 25
+        }
+      }
     },
     {
       "name": "detective_noir",
-      "category": "roleplay", 
+      "category": "roleplay",
       "description": "1940s noir detective story",
       "trigger": "start_noir",
       "probability": 1.0,
@@ -178,29 +231,50 @@
       "responses": [
         "🕵️ The rain pounds the city streets like bullets on a tin roof. You're a private eye in 1947, and a dame just walked into your office with trouble written in her eyes. 'Detective,' she says, 'I need your help.'"
       ],
-      "animations": ["thinking"],
+      "animations": [
+        "thinking"
+      ],
       "choices": [
         {
           "text": "What's the case, sweetheart?",
-          "effects": {"storytelling": 5, "imagination": 3},
-          "responses": ["💋 'My husband's missing, and the police won't listen. He was investigating something big...'"],
+          "effects": {
+            "storytelling": 5,
+            "imagination": 3
+          },
+          "responses": [
+            "💋 'My husband's missing, and the police won't listen. He was investigating something big...'"
+          ],
           "nextEvent": "missing_husband"
         },
         {
           "text": "My rates are fifty a day plus expenses.",
-          "effects": {"creativity": 3, "storytelling": 2},
-          "responses": ["💰 She slides a roll of bills across your desk. 'Money's no object if you can find him.'"],
+          "effects": {
+            "creativity": 3,
+            "storytelling": 2
+          },
+          "responses": [
+            "💰 She slides a roll of bills across your desk. 'Money's no object if you can find him.'"
+          ],
           "nextEvent": "noir_investigation"
         },
         {
           "text": "Lady, I don't work missing persons.",
-          "effects": {"adventure_spirit": -1, "creativity": 1},
-          "responses": ["😢 Her face falls. 'Please, you're my last hope. The cops think I killed him.'"],
+          "effects": {
+            "adventure_spirit": -1,
+            "creativity": 1
+          },
+          "responses": [
+            "😢 Her face falls. 'Please, you're my last hope. The cops think I killed him.'"
+          ],
           "nextEvent": "reluctant_case"
         }
       ],
       "cooldown": 18000,
-      "conditions": {"storytelling": {"min": 40}}
+      "conditions": {
+        "storytelling": {
+          "min": 40
+        }
+      }
     },
     {
       "name": "time_travel_paradox",
@@ -212,29 +286,53 @@
       "responses": [
         "⏰ You've just activated the experimental time machine in your grandfather's basement. The chronometer is sparking, and you have mere seconds to set a destination before the unstable portal closes!"
       ],
-      "animations": ["excited"],
+      "animations": [
+        "excited"
+      ],
       "choices": [
         {
           "text": "Ancient Egypt - see the pyramids built!",
-          "effects": {"imagination": 8, "adventure_spirit": 5},
-          "responses": ["🏺 The desert sand burns your feet as you appear near Giza. Workers are hauling massive stones..."],
+          "effects": {
+            "imagination": 8,
+            "adventure_spirit": 5
+          },
+          "responses": [
+            "🏺 The desert sand burns your feet as you appear near Giza. Workers are hauling massive stones..."
+          ],
           "nextEvent": "ancient_egypt"
         },
         {
           "text": "Medieval England - meet real knights!",
-          "effects": {"storytelling": 6, "adventure_spirit": 6},
-          "responses": ["🏰 You land in a muddy village. A knight on horseback approaches, hand on sword..."],
+          "effects": {
+            "storytelling": 6,
+            "adventure_spirit": 6
+          },
+          "responses": [
+            "🏰 You land in a muddy village. A knight on horseback approaches, hand on sword..."
+          ],
           "nextEvent": "medieval_times"
         },
         {
           "text": "The far future - see humanity's destiny!",
-          "effects": {"creativity": 7, "imagination": 6},
-          "responses": ["🌌 You emerge in a gleaming city floating among the stars. But something feels wrong..."],
+          "effects": {
+            "creativity": 7,
+            "imagination": 6
+          },
+          "responses": [
+            "🌌 You emerge in a gleaming city floating among the stars. But something feels wrong..."
+          ],
           "nextEvent": "future_dystopia"
         }
       ],
       "cooldown": 21600,
-      "conditions": {"imagination": {"min": 50}, "creativity": {"min": 40}}
+      "conditions": {
+        "imagination": {
+          "min": 50
+        },
+        "creativity": {
+          "min": 40
+        }
+      }
     },
     {
       "name": "superhero_origin",
@@ -246,29 +344,50 @@
       "responses": [
         "⚡ The laboratory explosion has left you unconscious for days. As you wake up, you realize something has changed. You feel... different. More powerful. What's the first sign of your new abilities?"
       ],
-      "animations": ["excited"],
+      "animations": [
+        "excited"
+      ],
       "choices": [
         {
           "text": "I can move objects with my mind!",
-          "effects": {"imagination": 6, "creativity": 4},
-          "responses": ["🧠 Telekinesis! Coffee cups orbit around you as you concentrate..."],
+          "effects": {
+            "imagination": 6,
+            "creativity": 4
+          },
+          "responses": [
+            "🧠 Telekinesis! Coffee cups orbit around you as you concentrate..."
+          ],
           "nextEvent": "psychic_powers"
         },
         {
           "text": "I'm incredibly strong and fast!",
-          "effects": {"adventure_spirit": 7, "storytelling": 3},
-          "responses": ["💪 You accidentally put your hand through the hospital wall! Super strength and speed!"],
+          "effects": {
+            "adventure_spirit": 7,
+            "storytelling": 3
+          },
+          "responses": [
+            "💪 You accidentally put your hand through the hospital wall! Super strength and speed!"
+          ],
           "nextEvent": "physical_powers"
         },
         {
           "text": "I can phase through solid matter!",
-          "effects": {"creativity": 8, "imagination": 4},
-          "responses": ["👻 Your hand passes right through the bed rail! Intangibility - a rare power indeed!"],
+          "effects": {
+            "creativity": 8,
+            "imagination": 4
+          },
+          "responses": [
+            "👻 Your hand passes right through the bed rail! Intangibility - a rare power indeed!"
+          ],
           "nextEvent": "phase_powers"
         }
       ],
       "cooldown": 25200,
-      "conditions": {"adventure_spirit": {"min": 35}}
+      "conditions": {
+        "adventure_spirit": {
+          "min": 35
+        }
+      }
     },
     {
       "name": "choose_adventure_type",
@@ -280,38 +399,50 @@
       "responses": [
         "🎭 Welcome to the Adventure Portal! I can weave tales of any genre. What calls to your imagination today?"
       ],
-      "animations": ["thinking"],
+      "animations": [
+        "thinking"
+      ],
       "choices": [
         {
           "text": "High Fantasy Epic",
-          "effects": {"imagination": 3},
+          "effects": {
+            "imagination": 3
+          },
           "nextEvent": "fantasy_adventure"
         },
         {
           "text": "Space Opera Adventure",
-          "effects": {"creativity": 3},
+          "effects": {
+            "creativity": 3
+          },
           "nextEvent": "sci_fi_mission"
         },
         {
           "text": "Noir Detective Story",
-          "effects": {"storytelling": 3},
+          "effects": {
+            "storytelling": 3
+          },
           "nextEvent": "detective_noir"
         },
         {
           "text": "Time Travel Mystery",
-          "effects": {"imagination": 2, "creativity": 2},
+          "effects": {
+            "imagination": 2,
+            "creativity": 2
+          },
           "nextEvent": "time_travel_paradox"
         },
         {
           "text": "Superhero Origin",
-          "effects": {"adventure_spirit": 3},
+          "effects": {
+            "adventure_spirit": 3
+          },
           "nextEvent": "superhero_origin"
         }
       ],
       "cooldown": 7200
     }
   ],
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "simple_random",
@@ -323,7 +454,6 @@
       "simple_random": {}
     }
   },
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "medium",
@@ -376,7 +506,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -435,17 +564,19 @@
       "maxMemoryItems": 120
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "roleplay_master_companion_v1",
     "maxPeers": 8,
     "socialLevel": "high",
-    "shareableStats": ["happiness", "energy", "courage"],
+    "shareableStats": [
+      "happiness",
+      "energy",
+      "courage"
+    ],
     "networkPersonality": "epic_storyteller"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "epic",
@@ -464,9 +595,174 @@
       }
     ],
     "preferences": {
-      "categories": ["fantasy", "adventure", "gaming", "medieval", "epic"],
+      "categories": [
+        "fantasy",
+        "adventure",
+        "gaming",
+        "medieval",
+        "epic"
+      ],
       "updateFrequency": "heroically",
       "maxArticles": 8
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A friendly anime character with short brown hair and warm brown eyes, cute casual clothing, cheerful and approachable appearance, digital art, transparent background, high quality character design suitable for desktop companion",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "excited": {
+        "promptModifier": "energetic bouncing motion, wide smile, enthusiastic pose, dynamic expression",
+        "stateDescription": "Excited and energetic state",
+        "frameCount": 8
+      },
+      "thinking": {
+        "promptModifier": "thoughtful expression, hand near chin, contemplative pose, focused look",
+        "stateDescription": "Thinking or processing information",
+        "frameCount": 5
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
+      }
+    }
+  ],
+  "progression": {
+    "enabled": true,
+    "ageBasedEvolution": true,
+    "milestones": [
+      {
+        "age": 7,
+        "changes": {
+          "defaultSize": 140
+        }
+      },
+      {
+        "age": 30,
+        "changes": {
+          "defaultSize": 160
+        }
+      }
+    ]
+  },
+  "personality": {
+    "shyness": 0.5,
+    "romanticism": 0.5,
+    "friendliness": 0.7,
+    "playfulness": 0.6,
+    "curiosity": 0.6
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 20
+      },
+      "responses": [
+        "Thank you, that means a lot to me!",
+        "You always know how to make me smile.",
+        "I appreciate your kind words."
+      ],
+      "effects": {
+        "affection": 2
+      },
+      "animation": "happy"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "heart_flutter",
+      "description": "Character gets flustered by your attention",
+      "trigger": "interaction_count",
+      "requirements": {
+        "affection": 30
+      },
+      "effects": {
+        "affection": 5,
+        "happiness": 8
+      },
+      "dialog": "You make my heart flutter in the most wonderful way...",
+      "animation": "happy"
+    }
+  ]
 }

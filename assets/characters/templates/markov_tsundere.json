@@ -34,8 +34,19 @@
     "Don't make me say embarrassing things! You should just know!",
     "I'm only putting up with you because... because I have to!"
   ],
-  "requiredWords": ["hmph", "idiot", "embarrassing", "fine", "whatever"],
-  "forbiddenWords": ["love", "adore", "precious", "darling"],
+  "requiredWords": [
+    "hmph",
+    "idiot",
+    "embarrassing",
+    "fine",
+    "whatever"
+  ],
+  "forbiddenWords": [
+    "love",
+    "adore",
+    "precious",
+    "darling"
+  ],
   "fallbackPhrases": [
     "It's not like I care or anything...",
     "Hmph! You're so annoying sometimes...",
@@ -43,5 +54,37 @@
     "I-I wasn't waiting for you!",
     "Fine, whatever you say...",
     "*looks away stubbornly* I don't need you!"
-  ]
+  ],
+  "assetGeneration": {
+    "basePrompt": "anime style character, cute companion, simple design",
+    "animationMappings": {
+      "idle": "standing still, breathing animation, gentle movements",
+      "talking": "mouth moving, animated speech, expressive gestures",
+      "happy": "cheerful expression, bright eyes, positive energy",
+      "sad": "downcast expression, melancholy mood, subtle movements"
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "resolution": "128x128",
+      "style": "anime",
+      "fps": 12,
+      "duration": 2.5,
+      "seamlessLoop": true,
+      "transparentBackground": true,
+      "steps": 25,
+      "cfgScale": 7.5,
+      "sampler": "euler_a"
+    },
+    "assetMetadata": {
+      "version": "1.0",
+      "characterType": "template",
+      "artStyle": "anime",
+      "generatedBy": "pipeline_integration"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "maxBackups": 3,
+      "backupOnGenerate": true
+    }
+  }
 }

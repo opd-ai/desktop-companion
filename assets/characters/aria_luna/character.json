@@ -100,44 +100,90 @@
     "basePrompt": "A beautiful anime girl with long flowing silver hair and bright purple eyes, wearing a flowing celestial robe with star patterns, ethereal and mystical appearance, digital art, transparent background, high quality, detailed character design suitable for desktop companion, magical aura, soft lighting",
     "animationMappings": {
       "idle": {
-        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, hair gently flowing, stars twinkling around her",
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
         "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
-        "stateDescription": "Default calm and serene state",
+        "stateDescription": "Default calm state",
         "frameCount": 6
       },
       "talking": {
-        "promptModifier": "speaking with gentle hand gestures, mouth slightly open, expressive face, animated pose, sparkles around hands, welcoming expression",
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
         "negativePrompt": "silent, static, angry expression, dark mood",
         "stateDescription": "Speaking or interacting with user",
         "frameCount": 8
       },
       "happy": {
-        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together near heart, magical sparkles dancing around her, radiant expression",
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
         "negativePrompt": "sad, angry, neutral expression, dark colors",
         "stateDescription": "Joyful and excited state",
         "frameCount": 6
       },
       "sad": {
-        "promptModifier": "downcast eyes, gentle frown, hand touching cheek, muted colors, fewer sparkles, melancholic but still beautiful",
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
         "negativePrompt": "happy, cheerful, bright colors, aggressive",
         "stateDescription": "Sad or disappointed state",
         "frameCount": 4
       },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
       "blushing": {
-        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression, warm lighting",
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
         "negativePrompt": "confident, bold, angry, dark mood",
         "stateDescription": "Shy and blushing romantic state",
         "frameCount": 5
       },
       "heart_eyes": {
-        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts and stars, romantic atmosphere",
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
         "negativePrompt": "normal eyes, angry, sad, dark mood",
         "stateDescription": "In love or adoring state",
         "frameCount": 6
       },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "sleeping": {
+        "promptModifier": "peaceful sleeping pose, eyes closed, serene expression, sitting or reclining position, soft glow",
+        "stateDescription": "Resting or sleeping state",
+        "frameCount": 4
+      },
       "magical": {
-        "promptModifier": "casting magic spell, hands glowing with celestial energy, intense concentration, robes flowing dramatically, magical circles and symbols, powerful aura",
-        "negativePrompt": "mundane, normal, weak, static pose",
+        "promptModifier": "casting magic spell, hands glowing with celestial energy, intense concentration, robes flowing dramatically, magical circles and symbols",
         "stateDescription": "Using magical powers",
         "frameCount": 10,
         "customSettings": {
@@ -146,12 +192,6 @@
             "cfgScale": 8.0
           }
         }
-      },
-      "sleeping": {
-        "promptModifier": "peaceful sleeping pose, eyes closed, serene expression, sitting or reclining position, soft glow, dream particles floating around",
-        "negativePrompt": "awake, alert, standing, active pose",
-        "stateDescription": "Resting or sleeping state",
-        "frameCount": 4
       }
     },
     "generationSettings": {
@@ -176,84 +216,12 @@
         "maxFileSize": 450,
         "transparencyEnabled": true,
         "colorPalette": "adaptive"
-      },
-      "comfyUISettings": {
-        "workflowTemplate": "anime_character_workflow.json",
-        "customNodes": [
-          "ComfyUI-AnimateDiff-Evolved",
-          "ComfyUI-Advanced-ControlNet"
-        ],
-        "batchSize": 4,
-        "vae": "vae-ft-mse-840000-ema-pruned.ckpt",
-        "controlNet": {
-          "model": "control_v11p_sd15_openpose",
-          "strength": 0.7,
-          "startStep": 0.0,
-          "endStep": 0.8,
-          "preprocessor": "openpose"
-        }
       }
     },
     "assetMetadata": {
       "version": "1.0.0",
-      "generatedAt": "2024-12-19T10:30:00Z",
-      "generatedBy": "gif-generator v1.0.0",
-      "generationHistory": [
-        {
-          "timestamp": "2024-12-19T10:30:00Z",
-          "settings": {
-            "model": "flux1d",
-            "artStyle": "anime",
-            "resolution": {
-              "width": 128,
-              "height": 128
-            },
-            "qualitySettings": {
-              "steps": 25,
-              "cfgScale": 7.5
-            }
-          },
-          "success": true,
-          "generatedFiles": [
-            "idle.gif",
-            "talking.gif",
-            "happy.gif",
-            "sad.gif",
-            "blushing.gif",
-            "heart_eyes.gif",
-            "magical.gif",
-            "sleeping.gif"
-          ],
-          "duration": 272000000000
-        }
-      ],
-      "assetHashes": {
-        "idle.gif": "sha256:abc123def456...",
-        "talking.gif": "sha256:def456ghi789...",
-        "happy.gif": "sha256:ghi789jkl012...",
-        "sad.gif": "sha256:jkl012mno345...",
-        "blushing.gif": "sha256:mno345pqr678...",
-        "heart_eyes.gif": "sha256:pqr678stu901...",
-        "magical.gif": "sha256:stu901vwx234...",
-        "sleeping.gif": "sha256:vwx234yzab567..."
-      },
-      "validationResults": {
-        "overallScore": 0.92,
-        "fileSizeValid": true,
-        "transparencyValid": true,
-        "consistencyScore": 0.88,
-        "animationQuality": {
-          "idle": 0.9,
-          "talking": 0.94,
-          "happy": 0.91,
-          "sad": 0.87,
-          "blushing": 0.93,
-          "heart_eyes": 0.89,
-          "magical": 0.96,
-          "sleeping": 0.85
-        },
-        "validatedAt": "2024-12-19T10:35:00Z"
-      }
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
     },
     "backupSettings": {
       "enabled": true,

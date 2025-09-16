@@ -37,7 +37,9 @@
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.6,
     "memoryEnabled": true,
     "learningEnabled": false,
@@ -64,7 +66,11 @@
           "Every conversation with you is a precious gift to me.",
           "I love how comfortable I feel when we talk together."
         ],
-        "forbiddenWords": ["hate", "stupid", "boring"],
+        "forbiddenWords": [
+          "hate",
+          "stupid",
+          "boring"
+        ],
         "fallbackPhrases": [
           "I'm happy to see you!",
           "Thank you for being here with me.",
@@ -79,5 +85,279 @@
         "preferRomanceDialogs": false
       }
     }
-  }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "categories": [
+      "food",
+      "toys",
+      "accessories"
+    ],
+    "preferences": {
+      "food": [
+        "apple",
+        "cookie",
+        "candy"
+      ],
+      "toys": [
+        "ball",
+        "puzzle",
+        "game"
+      ],
+      "accessories": [
+        "bow",
+        "hat",
+        "collar"
+      ]
+    },
+    "reactions": {
+      "love": [
+        "This is perfect! Thank you so much! 💕"
+      ],
+      "like": [
+        "Oh, this is nice! Thank you!"
+      ],
+      "neutral": [
+        "Thank you for thinking of me."
+      ],
+      "dislike": [
+        "Well... it is the thought that counts."
+      ]
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "networkID": "dialog_backend_example",
+    "maxPeers": 8,
+    "socialLevel": "moderate",
+    "networkPersonality": {
+      "chattiness": 0.6,
+      "helpfulness": 0.7,
+      "friendliness": 0.8,
+      "activityLevel": 0.5
+    }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "rssFeeds": [
+      "https://feeds.bbci.co.uk/news/technology/rss.xml"
+    ],
+    "readingPersonality": {
+      "interestLevel": 0.6,
+      "commentFrequency": 0.4,
+      "topicPreferences": [
+        "technology",
+        "science",
+        "general"
+      ]
+    },
+    "updateInterval": 3600
+  },
+  "battleSystem": {
+    "enabled": true,
+    "combatStats": {
+      "attack": 50,
+      "defense": 50,
+      "speed": 50,
+      "magic": 50
+    },
+    "specialAbilities": [
+      "basic_attack",
+      "heal"
+    ],
+    "battlePersonality": {
+      "aggression": 0.5,
+      "strategy": 0.6,
+      "riskTaking": 0.4
+    }
+  },
+  "assetGeneration": {
+    "basePrompt": "An intelligent anime character with thoughtful features and curious eyes, smart casual outfit, contemplative expression showing intelligence, digital art, transparent background, high quality character design for AI-powered dialog system",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "thinking": {
+        "promptModifier": "thoughtful expression, hand near chin, contemplative pose, focused look",
+        "stateDescription": "Thinking or processing information",
+        "frameCount": 5
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "generalEvents": [
+    {
+      "name": "daily_checkin",
+      "category": "conversation",
+      "trigger": "time_based",
+      "interactive": true,
+      "description": "Character checks in on how you are doing",
+      "content": {
+        "dialog": "How has your day been going?",
+        "choices": [
+          {
+            "text": "Great!",
+            "effects": {
+              "happiness": 5
+            },
+            "response": "That is wonderful to hear!"
+          },
+          {
+            "text": "Could be better",
+            "effects": {
+              "affection": 2
+            },
+            "response": "I am here if you need someone to talk to."
+          }
+        ]
+      },
+      "cooldown": 14400
+    }
+  ],
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
+      }
+    }
+  ],
+  "progression": {
+    "enabled": true,
+    "ageBasedEvolution": true,
+    "milestones": [
+      {
+        "age": 7,
+        "changes": {
+          "defaultSize": 140
+        }
+      },
+      {
+        "age": 30,
+        "changes": {
+          "defaultSize": 160
+        }
+      }
+    ]
+  },
+  "personality": {
+    "shyness": 0.5,
+    "romanticism": 0.5,
+    "friendliness": 0.7,
+    "playfulness": 0.6,
+    "curiosity": 0.6
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 20
+      },
+      "responses": [
+        "Thank you, that means a lot to me!",
+        "You always know how to make me smile.",
+        "I appreciate your kind words."
+      ],
+      "effects": {
+        "affection": 2
+      },
+      "animation": "happy"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "heart_flutter",
+      "description": "Character gets flustered by your attention",
+      "trigger": "interaction_count",
+      "requirements": {
+        "affection": 30
+      },
+      "effects": {
+        "affection": 5,
+        "happiness": 8
+      },
+      "dialog": "You make my heart flutter in the most wonderful way...",
+      "animation": "happy"
+    }
+  ]
 }

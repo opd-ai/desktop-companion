@@ -913,21 +913,6 @@
         "negativePrompt": "calm, sad, angry, static",
         "stateDescription": "Excited romantic state",
         "frameCount": 8
-      },
-      "attack": {
-        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
-        "stateDescription": "Attacking in battle",
-        "frameCount": 8
-      },
-      "defend": {
-        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
-        "stateDescription": "Defending in battle",
-        "frameCount": 6
-      },
-      "heal": {
-        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
-        "stateDescription": "Healing or supporting",
-        "frameCount": 7
       }
     },
     "generationSettings": {

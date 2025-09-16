@@ -553,60 +553,6 @@
         "stateDescription": "Sad or disappointed state",
         "frameCount": 4
       },
-      "hungry": {
-        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
-        "negativePrompt": "full, satisfied, eating, aggressive",
-        "stateDescription": "Hungry and wanting food",
-        "frameCount": 5
-      },
-      "eating": {
-        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
-        "negativePrompt": "hungry, sad, empty hands, aggressive",
-        "stateDescription": "Eating and satisfied",
-        "frameCount": 6
-      },
-      "blushing": {
-        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
-        "negativePrompt": "confident, bold, angry, dark mood",
-        "stateDescription": "Shy and blushing romantic state",
-        "frameCount": 5
-      },
-      "heart_eyes": {
-        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
-        "negativePrompt": "normal eyes, angry, sad, dark mood",
-        "stateDescription": "In love or adoring state",
-        "frameCount": 6
-      },
-      "shy": {
-        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
-        "negativePrompt": "confident, bold, outgoing, aggressive",
-        "stateDescription": "Timid and shy state",
-        "frameCount": 4
-      },
-      "flirty": {
-        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
-        "negativePrompt": "shy, timid, serious, angry",
-        "stateDescription": "Flirty and charming state",
-        "frameCount": 7
-      },
-      "romantic_idle": {
-        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
-        "negativePrompt": "aggressive, angry, rushed, unromantic",
-        "stateDescription": "Peaceful romantic state",
-        "frameCount": 5
-      },
-      "jealous": {
-        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
-        "negativePrompt": "happy, content, peaceful, aggressive",
-        "stateDescription": "Jealous or envious state",
-        "frameCount": 4
-      },
-      "excited_romance": {
-        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
-        "negativePrompt": "calm, sad, angry, static",
-        "stateDescription": "Excited romantic state",
-        "frameCount": 8
-      },
       "attack": {
         "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
         "stateDescription": "Attacking in battle",
@@ -621,6 +567,23 @@
         "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
         "stateDescription": "Healing or supporting",
         "frameCount": 7
+      },
+      "boost": {
+        "promptModifier": "energized and motivated expression, fist pump or celebratory pose, boosted confidence",
+        "stateDescription": "Boosted or energized state",
+        "frameCount": 7
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
       }
     },
     "generationSettings": {
@@ -707,5 +670,38 @@
         "size": 136
       }
     ]
-  }
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 35
+      },
+      "responses": [
+        "Processing compliment... result: significant happiness increase detected.",
+        "Your words create beautiful patterns in my neural pathways.",
+        "Analyzing sentiment... conclusion: you are extraordinarily kind."
+      ],
+      "effects": {
+        "affection": 3
+      },
+      "animation": "thinking"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "ai_learning_love",
+      "description": "Character discovers new emotions through interaction",
+      "trigger": "relationship_progress",
+      "requirements": {
+        "affection": 60
+      },
+      "effects": {
+        "affection": 8,
+        "happiness": 12
+      },
+      "dialog": "I am learning that love is the most complex and beautiful algorithm of all.",
+      "animation": "excited_romance"
+    }
+  ]
 }

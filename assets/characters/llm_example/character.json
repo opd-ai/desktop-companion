@@ -910,17 +910,30 @@
         "stateDescription": "Sad or disappointed state",
         "frameCount": 4
       },
-      "hungry": {
-        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
-        "negativePrompt": "full, satisfied, eating, aggressive",
-        "stateDescription": "Hungry and wanting food",
+      "excited": {
+        "promptModifier": "energetic bouncing motion, wide smile, enthusiastic pose, dynamic expression",
+        "stateDescription": "Excited and energetic state",
+        "frameCount": 8
+      },
+      "thinking": {
+        "promptModifier": "thoughtful expression, hand near chin, contemplative pose, focused look",
+        "stateDescription": "Thinking or processing information",
         "frameCount": 5
       },
-      "eating": {
-        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
-        "negativePrompt": "hungry, sad, empty hands, aggressive",
-        "stateDescription": "Eating and satisfied",
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
         "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
       },
       "blushing": {
         "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
@@ -964,20 +977,17 @@
         "stateDescription": "Excited romantic state",
         "frameCount": 8
       },
-      "attack": {
-        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
-        "stateDescription": "Attacking in battle",
-        "frameCount": 8
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
       },
-      "defend": {
-        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
-        "stateDescription": "Defending in battle",
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
         "frameCount": 6
-      },
-      "heal": {
-        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
-        "stateDescription": "Healing or supporting",
-        "frameCount": 7
       }
     },
     "generationSettings": {

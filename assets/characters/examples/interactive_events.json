@@ -1,7 +1,6 @@
 {
   "name": "Interactive Companion",
   "description": "A companion with rich interactive dialog events and scenarios",
-  
   "animations": {
     "idle": "../default/animations/idle.gif",
     "talking": "../default/animations/talking.gif",
@@ -10,7 +9,6 @@
     "excited": "../default/animations/happy.gif",
     "thinking": "../default/animations/idle.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -23,13 +21,11 @@
       "cooldown": 5
     }
   ],
-
   "behavior": {
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "happiness": {
       "initial": 100,
@@ -56,7 +52,6 @@
       "criticalThreshold": 5
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 120,
     "autoSaveInterval": 300,
@@ -65,17 +60,25 @@
     "evolutionEnabled": false,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "chat": {
-      "triggers": ["click"],
-      "effects": {"happiness": 5, "friendship": 2},
-      "animations": ["talking"],
-      "responses": ["Great to talk with you!", "I enjoy our conversations!"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 5,
+        "friendship": 2
+      },
+      "animations": [
+        "talking"
+      ],
+      "responses": [
+        "Great to talk with you!",
+        "I enjoy our conversations!"
+      ],
       "cooldown": 30
     }
   },
-
   "generalEvents": [
     {
       "name": "daily_check_in",
@@ -87,28 +90,47 @@
       "responses": [
         "How has your day been going? I'd love to hear about it! 😊"
       ],
-      "animations": ["talking"],
+      "animations": [
+        "talking"
+      ],
       "choices": [
         {
           "text": "It's been amazing!",
-          "effects": {"happiness": 8, "friendship": 3},
-          "responses": ["That's wonderful to hear! I'm so happy for you! 🎉"],
+          "effects": {
+            "happiness": 8,
+            "friendship": 3
+          },
+          "responses": [
+            "That's wonderful to hear! I'm so happy for you! 🎉"
+          ],
           "nextEvent": "celebrate_good_day"
         },
         {
           "text": "Pretty challenging...",
-          "effects": {"friendship": 5},
-          "responses": ["I'm sorry to hear that. Want to talk about it?"],
+          "effects": {
+            "friendship": 5
+          },
+          "responses": [
+            "I'm sorry to hear that. Want to talk about it?"
+          ],
           "nextEvent": "supportive_conversation"
         },
         {
           "text": "Just the usual routine.",
-          "effects": {"friendship": 1},
-          "responses": ["Routine can be comforting sometimes."]
+          "effects": {
+            "friendship": 1
+          },
+          "responses": [
+            "Routine can be comforting sometimes."
+          ]
         }
       ],
       "cooldown": 86400,
-      "conditions": {"friendship": {"min": 10}}
+      "conditions": {
+        "friendship": {
+          "min": 10
+        }
+      }
     },
     {
       "name": "celebrate_good_day",
@@ -120,29 +142,46 @@
       "responses": [
         "I love seeing you happy! What made today so special? ✨"
       ],
-      "animations": ["excited"],
+      "animations": [
+        "excited"
+      ],
       "choices": [
         {
           "text": "Work went really well!",
-          "effects": {"happiness": 5, "friendship": 2},
-          "responses": ["Career success is amazing! You should be proud! 💪"]
+          "effects": {
+            "happiness": 5,
+            "friendship": 2
+          },
+          "responses": [
+            "Career success is amazing! You should be proud! 💪"
+          ]
         },
         {
           "text": "Spent time with loved ones.",
-          "effects": {"happiness": 4, "friendship": 4},
-          "responses": ["Family and friends are so important! 💕"]
+          "effects": {
+            "happiness": 4,
+            "friendship": 4
+          },
+          "responses": [
+            "Family and friends are so important! 💕"
+          ]
         },
         {
           "text": "Just felt good about life!",
-          "effects": {"happiness": 6, "friendship": 2},
-          "responses": ["Those days are precious! Hold onto that feeling! ☀️"]
+          "effects": {
+            "happiness": 6,
+            "friendship": 2
+          },
+          "responses": [
+            "Those days are precious! Hold onto that feeling! ☀️"
+          ]
         }
       ],
       "cooldown": 3600
     },
     {
       "name": "supportive_conversation",
-      "category": "conversation", 
+      "category": "conversation",
       "description": "Offer support during difficult times",
       "trigger": "supportive_conversation",
       "probability": 1.0,
@@ -150,22 +189,39 @@
       "responses": [
         "I'm here to listen. Sometimes sharing helps lighten the load. 🤗"
       ],
-      "animations": ["thinking"],
+      "animations": [
+        "thinking"
+      ],
       "choices": [
         {
           "text": "Work is really stressful.",
-          "effects": {"friendship": 3, "happiness": 2},
-          "responses": ["Work stress is tough. Remember to take breaks and be kind to yourself."]
+          "effects": {
+            "friendship": 3,
+            "happiness": 2
+          },
+          "responses": [
+            "Work stress is tough. Remember to take breaks and be kind to yourself."
+          ]
         },
         {
           "text": "Personal relationships are hard.",
-          "effects": {"friendship": 4, "happiness": 1},
-          "responses": ["Relationships take work, but the good ones are worth it. You've got this!"]
+          "effects": {
+            "friendship": 4,
+            "happiness": 1
+          },
+          "responses": [
+            "Relationships take work, but the good ones are worth it. You've got this!"
+          ]
         },
         {
           "text": "I appreciate you listening.",
-          "effects": {"friendship": 5, "happiness": 3},
-          "responses": ["Always happy to be here for you. That's what friends are for! 💚"]
+          "effects": {
+            "friendship": 5,
+            "happiness": 3
+          },
+          "responses": [
+            "Always happy to be here for you. That's what friends are for! 💚"
+          ]
         }
       ],
       "cooldown": 7200
@@ -180,56 +236,92 @@
       "responses": [
         "🕵️ Welcome, detective! A mysterious case has just come in. Are you ready to investigate?"
       ],
-      "animations": ["thinking"],
+      "animations": [
+        "thinking"
+      ],
       "choices": [
         {
           "text": "Tell me about the case!",
-          "effects": {"curiosity": 5, "energy": -2},
-          "responses": ["A valuable painting has vanished from the local museum overnight..."],
+          "effects": {
+            "curiosity": 5,
+            "energy": -2
+          },
+          "responses": [
+            "A valuable painting has vanished from the local museum overnight..."
+          ],
           "nextEvent": "investigate_painting"
         },
         {
           "text": "I need to prepare first.",
-          "effects": {"energy": 2},
-          "responses": ["Good thinking! A prepared detective is a successful one."]
+          "effects": {
+            "energy": 2
+          },
+          "responses": [
+            "Good thinking! A prepared detective is a successful one."
+          ]
         },
         {
           "text": "Maybe later...",
-          "effects": {"curiosity": -1},
-          "responses": ["No problem! The mystery will be here when you're ready."]
+          "effects": {
+            "curiosity": -1
+          },
+          "responses": [
+            "No problem! The mystery will be here when you're ready."
+          ]
         }
       ],
       "cooldown": 7200,
-      "conditions": {"curiosity": {"min": 20}}
+      "conditions": {
+        "curiosity": {
+          "min": 20
+        }
+      }
     },
     {
       "name": "investigate_painting",
       "category": "roleplay",
       "description": "Investigation phase of the mystery",
-      "trigger": "investigate_painting", 
+      "trigger": "investigate_painting",
       "probability": 1.0,
       "interactive": true,
       "responses": [
         "🎨 The museum security footage shows nothing unusual. What's your next move, detective?"
       ],
-      "animations": ["thinking"],
+      "animations": [
+        "thinking"
+      ],
       "choices": [
         {
           "text": "Interview the night guard.",
-          "effects": {"curiosity": 3, "friendship": 2},
-          "responses": ["Smart! The guard mentions hearing strange noises around 2 AM..."],
+          "effects": {
+            "curiosity": 3,
+            "friendship": 2
+          },
+          "responses": [
+            "Smart! The guard mentions hearing strange noises around 2 AM..."
+          ],
           "nextEvent": "solve_mystery"
         },
         {
           "text": "Examine the painting's location.",
-          "effects": {"curiosity": 4, "energy": -1},
-          "responses": ["You find a small piece of fabric caught on the frame..."],
+          "effects": {
+            "curiosity": 4,
+            "energy": -1
+          },
+          "responses": [
+            "You find a small piece of fabric caught on the frame..."
+          ],
           "nextEvent": "solve_mystery"
         },
         {
           "text": "Check for inside information.",
-          "effects": {"curiosity": 2, "friendship": 1},
-          "responses": ["The curator has been acting strangely lately..."],
+          "effects": {
+            "curiosity": 2,
+            "friendship": 1
+          },
+          "responses": [
+            "The curator has been acting strangely lately..."
+          ],
           "nextEvent": "solve_mystery"
         }
       ],
@@ -246,8 +338,14 @@
         "🎉 Excellent detective work! You've solved the case. The painting was stolen by the curator to cover gambling debts. Well done!",
         "Case closed! Your brilliant deduction skills have saved the day once again, detective!"
       ],
-      "animations": ["excited"],
-      "effects": {"happiness": 10, "curiosity": 5, "friendship": 3},
+      "animations": [
+        "excited"
+      ],
+      "effects": {
+        "happiness": 10,
+        "curiosity": 5,
+        "friendship": 3
+      },
       "cooldown": 86400
     },
     {
@@ -260,29 +358,48 @@
       "responses": [
         "🧠 Time for a trivia challenge! Are you ready to test your knowledge?"
       ],
-      "animations": ["excited"],
+      "animations": [
+        "excited"
+      ],
       "choices": [
         {
           "text": "Science questions!",
-          "effects": {"curiosity": 3},
-          "responses": ["Great choice! What planet is known as the Red Planet?"],
+          "effects": {
+            "curiosity": 3
+          },
+          "responses": [
+            "Great choice! What planet is known as the Red Planet?"
+          ],
           "nextEvent": "science_trivia"
         },
         {
           "text": "History questions!",
-          "effects": {"curiosity": 3},
-          "responses": ["Excellent! In what year did World War II end?"],
+          "effects": {
+            "curiosity": 3
+          },
+          "responses": [
+            "Excellent! In what year did World War II end?"
+          ],
           "nextEvent": "history_trivia"
         },
         {
           "text": "Fun facts!",
-          "effects": {"happiness": 2, "curiosity": 2},
-          "responses": ["Fun facts are the best! How many hearts does an octopus have?"],
+          "effects": {
+            "happiness": 2,
+            "curiosity": 2
+          },
+          "responses": [
+            "Fun facts are the best! How many hearts does an octopus have?"
+          ],
           "nextEvent": "fun_trivia"
         }
       ],
       "cooldown": 3600,
-      "conditions": {"energy": {"min": 20}}
+      "conditions": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     {
       "name": "joke_session",
@@ -294,28 +411,42 @@
       "responses": [
         "😄 Ready for some laughs? I've got jokes that'll make you groan... in a good way!"
       ],
-      "animations": ["happy"],
+      "animations": [
+        "happy"
+      ],
       "choices": [
         {
           "text": "Tell me a pun!",
-          "effects": {"happiness": 5},
-          "responses": ["Why don't scientists trust atoms? Because they make up everything! 😂"]
+          "effects": {
+            "happiness": 5
+          },
+          "responses": [
+            "Why don't scientists trust atoms? Because they make up everything! 😂"
+          ]
         },
         {
           "text": "Something silly!",
-          "effects": {"happiness": 6, "friendship": 1},
-          "responses": ["What do you call a bear with no teeth? A gummy bear! 🐻"]
+          "effects": {
+            "happiness": 6,
+            "friendship": 1
+          },
+          "responses": [
+            "What do you call a bear with no teeth? A gummy bear! 🐻"
+          ]
         },
         {
           "text": "Dad joke please!",
-          "effects": {"happiness": 4},
-          "responses": ["I'm afraid for the calendar... its days are numbered! 📅"]
+          "effects": {
+            "happiness": 4
+          },
+          "responses": [
+            "I'm afraid for the calendar... its days are numbered! 📅"
+          ]
         }
       ],
       "cooldown": 1800
     }
   ],
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "simple_random",
@@ -327,7 +458,6 @@
       "simple_random": {}
     }
   },
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "medium",
@@ -380,7 +510,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -438,17 +567,19 @@
       "maxMemoryItems": 100
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "interactive_events_companion_v1",
     "maxPeers": 6,
     "socialLevel": "high",
-    "shareableStats": ["happiness", "energy", "curiosity"],
+    "shareableStats": [
+      "happiness",
+      "energy",
+      "curiosity"
+    ],
     "networkPersonality": "interactive_facilitator"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "curious",
@@ -467,9 +598,174 @@
       }
     ],
     "preferences": {
-      "categories": ["stories", "games", "interactive", "creative", "educational"],
+      "categories": [
+        "stories",
+        "games",
+        "interactive",
+        "creative",
+        "educational"
+      ],
       "updateFrequency": "actively",
       "maxArticles": 10
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A friendly anime character with short brown hair and warm brown eyes, cute casual clothing, cheerful and approachable appearance, digital art, transparent background, high quality character design suitable for desktop companion",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "excited": {
+        "promptModifier": "energetic bouncing motion, wide smile, enthusiastic pose, dynamic expression",
+        "stateDescription": "Excited and energetic state",
+        "frameCount": 8
+      },
+      "thinking": {
+        "promptModifier": "thoughtful expression, hand near chin, contemplative pose, focused look",
+        "stateDescription": "Thinking or processing information",
+        "frameCount": 5
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
+      }
+    }
+  ],
+  "progression": {
+    "enabled": true,
+    "ageBasedEvolution": true,
+    "milestones": [
+      {
+        "age": 7,
+        "changes": {
+          "defaultSize": 140
+        }
+      },
+      {
+        "age": 30,
+        "changes": {
+          "defaultSize": 160
+        }
+      }
+    ]
+  },
+  "personality": {
+    "shyness": 0.5,
+    "romanticism": 0.5,
+    "friendliness": 0.7,
+    "playfulness": 0.6,
+    "curiosity": 0.6
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 20
+      },
+      "responses": [
+        "Thank you, that means a lot to me!",
+        "You always know how to make me smile.",
+        "I appreciate your kind words."
+      ],
+      "effects": {
+        "affection": 2
+      },
+      "animation": "happy"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "heart_flutter",
+      "description": "Character gets flustered by your attention",
+      "trigger": "interaction_count",
+      "requirements": {
+        "affection": 30
+      },
+      "effects": {
+        "affection": 5,
+        "happiness": 8
+      },
+      "dialog": "You make my heart flutter in the most wonderful way...",
+      "animation": "happy"
+    }
+  ]
 }

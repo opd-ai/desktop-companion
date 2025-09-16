@@ -671,66 +671,9 @@
         "stateDescription": "Eating and satisfied",
         "frameCount": 6
       },
-      "blushing": {
-        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
-        "negativePrompt": "confident, bold, angry, dark mood",
-        "stateDescription": "Shy and blushing romantic state",
-        "frameCount": 5
-      },
-      "heart_eyes": {
-        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
-        "negativePrompt": "normal eyes, angry, sad, dark mood",
-        "stateDescription": "In love or adoring state",
-        "frameCount": 6
-      },
-      "shy": {
-        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
-        "negativePrompt": "confident, bold, outgoing, aggressive",
-        "stateDescription": "Timid and shy state",
-        "frameCount": 4
-      },
-      "flirty": {
-        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
-        "negativePrompt": "shy, timid, serious, angry",
-        "stateDescription": "Flirty and charming state",
-        "frameCount": 7
-      },
-      "romantic_idle": {
-        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
-        "negativePrompt": "aggressive, angry, rushed, unromantic",
-        "stateDescription": "Peaceful romantic state",
-        "frameCount": 5
-      },
-      "jealous": {
-        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
-        "negativePrompt": "happy, content, peaceful, aggressive",
-        "stateDescription": "Jealous or envious state",
-        "frameCount": 4
-      },
-      "excited_romance": {
-        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
-        "negativePrompt": "calm, sad, angry, static",
-        "stateDescription": "Excited romantic state",
-        "frameCount": 8
-      },
-      "attack": {
-        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
-        "stateDescription": "Attacking in battle",
-        "frameCount": 8
-      },
-      "defend": {
-        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
-        "stateDescription": "Defending in battle",
-        "frameCount": 6
-      },
-      "heal": {
-        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
-        "stateDescription": "Healing or supporting",
-        "frameCount": 7
-      },
       "sleeping": {
-        "promptModifier": "very sleepy expression, eyes drooping or closed, yawning, tired but content pose",
-        "stateDescription": "Sleepy and tired state",
+        "promptModifier": "peaceful sleeping pose, eyes closed, serene expression, sitting or reclining position, soft glow",
+        "stateDescription": "Resting or sleeping state",
         "frameCount": 4
       }
     },
@@ -789,6 +732,40 @@
         "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
+    }
+  ],
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 25
+      },
+      "responses": [
+        "*yawns sleepily* That's... really sweet of you...",
+        "You make even my dreams feel more peaceful...",
+        "Mmm... you're like a warm blanket for my heart..."
+      ],
+      "effects": {
+        "affection": 2,
+        "energy": 5
+      },
+      "animation": "content"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "sleepy_cuddles",
+      "description": "Character wants to rest together",
+      "trigger": "energy_low",
+      "requirements": {
+        "affection": 40
+      },
+      "effects": {
+        "affection": 5,
+        "energy": 15
+      },
+      "dialog": "Would you... stay close while I rest? You make me feel so safe...",
+      "animation": "sleepy_happy"
     }
   ]
 }

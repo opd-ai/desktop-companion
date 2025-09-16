@@ -45,17 +45,36 @@
       "windowMode": "overlay",
       "interactions": {
         "pet": {
-          "triggers": ["click"],
-          "effects": {"happiness": 10},
-          "animations": ["happy"],
-          "responses": ["You petted me!", "That feels nice!"],
+          "triggers": [
+            "click"
+          ],
+          "effects": {
+            "happiness": 10
+          },
+          "animations": [
+            "happy"
+          ],
+          "responses": [
+            "You petted me!",
+            "That feels nice!"
+          ],
           "cooldown": 5
         },
         "feed": {
-          "triggers": ["rightclick"],
-          "effects": {"hunger": 20, "happiness": 5},
-          "animations": ["eating"],
-          "responses": ["Yummy!", "Thanks for the food!"],
+          "triggers": [
+            "rightclick"
+          ],
+          "effects": {
+            "hunger": 20,
+            "happiness": 5
+          },
+          "animations": [
+            "eating"
+          ],
+          "responses": [
+            "Yummy!",
+            "Thanks for the food!"
+          ],
           "cooldown": 10
         }
       }
@@ -77,19 +96,38 @@
       },
       "interactions": {
         "pet": {
-          "triggers": ["tap"],
-          "effects": {"happiness": 15},
-          "animations": ["happy"],
-          "responses": ["You tapped me!", "That feels wonderful!"],
+          "triggers": [
+            "tap"
+          ],
+          "effects": {
+            "happiness": 15
+          },
+          "animations": [
+            "happy"
+          ],
+          "responses": [
+            "You tapped me!",
+            "That feels wonderful!"
+          ],
           "cooldown": 3,
           "hapticPattern": "light",
           "touchFeedback": true
         },
         "feed": {
-          "triggers": ["longpress"],
-          "effects": {"hunger": 25, "happiness": 8},
-          "animations": ["eating"],
-          "responses": ["Delicious!", "Thanks for feeding me!"],
+          "triggers": [
+            "longpress"
+          ],
+          "effects": {
+            "hunger": 25,
+            "happiness": 8
+          },
+          "animations": [
+            "eating"
+          ],
+          "responses": [
+            "Delicious!",
+            "Thanks for feeding me!"
+          ],
           "cooldown": 8,
           "hapticPattern": "medium",
           "touchFeedback": true,
@@ -122,25 +160,47 @@
   },
   "interactions": {
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 20, "energy": -10},
-      "animations": ["happy"],
-      "responses": ["Let's play!", "This is fun!", "Cross-platform gaming is the best! 🎮"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 20,
+        "energy": -10
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "Let's play!",
+        "This is fun!",
+        "Cross-platform gaming is the best! 🎮"
+      ],
       "cooldown": 15
     },
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 25, "happiness": 5},
-      "animations": ["eating", "happy"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 25,
+        "happiness": 5
+      },
+      "animations": [
+        "eating",
+        "happy"
+      ],
       "responses": [
         "Thanks! This works great on any platform! 🍽️",
         "Yummy! Cross-platform dining! 😋"
       ],
       "cooldown": 40,
-      "requirements": {"hunger": {"max": 75}}
+      "requirements": {
+        "hunger": {
+          "max": 75
+        }
+      }
     }
   },
-
   "generalEvents": [
     {
       "name": "platform_adaptation",
@@ -154,26 +214,41 @@
       "choices": [
         {
           "text": "Show platform features",
-          "effects": {"happiness": 8, "energy": -3},
-          "responses": ["Check out these cross-platform features! So versatile! 🌟"],
+          "effects": {
+            "happiness": 8,
+            "energy": -3
+          },
+          "responses": [
+            "Check out these cross-platform features! So versatile! 🌟"
+          ],
           "animation": "happy"
         },
         {
           "text": "Test compatibility",
-          "effects": {"happiness": 6, "energy": -5},
-          "responses": ["Running compatibility tests... Everything looks great! ✅"],
+          "effects": {
+            "happiness": 6,
+            "energy": -5
+          },
+          "responses": [
+            "Running compatibility tests... Everything looks great! ✅"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"happiness": {"min": 30}},
+      "requirements": {
+        "happiness": {
+          "min": 30
+        }
+      },
       "cooldown": 5400
     }
   ],
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.6,
     "backends": {
       "markov_chain": {
@@ -207,8 +282,19 @@
           "Technology should adapt to you, not the other way around!",
           "Isn't it amazing how we can connect regardless of what device you use?"
         ],
-        "forbiddenWords": ["incompatible", "limited", "platform-specific", "exclusive"],
-        "requiredWords": ["platform", "compatible", "flexible", "adaptive", "seamless"],
+        "forbiddenWords": [
+          "incompatible",
+          "limited",
+          "platform-specific",
+          "exclusive"
+        ],
+        "requiredWords": [
+          "platform",
+          "compatible",
+          "flexible",
+          "adaptive",
+          "seamless"
+        ],
         "fallbackPhrases": [
           "I work great on any platform you prefer!",
           "Cross-platform compatibility is my specialty!",
@@ -220,7 +306,6 @@
       }
     }
   },
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "medium",
@@ -273,7 +358,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -332,17 +416,18 @@
       "maxMemoryItems": 100
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "cross_platform_companion_v1",
     "maxPeers": 8,
     "socialLevel": "high",
-    "shareableStats": ["happiness", "energy"],
+    "shareableStats": [
+      "happiness",
+      "energy"
+    ],
     "networkPersonality": "adaptive_universal"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "tech_savvy",
@@ -361,9 +446,164 @@
       }
     ],
     "preferences": {
-      "categories": ["technology", "design", "compatibility", "universal", "modern"],
+      "categories": [
+        "technology",
+        "design",
+        "compatibility",
+        "universal",
+        "modern"
+      ],
       "updateFrequency": "efficiently",
       "maxArticles": 10
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A friendly anime character with short brown hair and warm brown eyes, cute casual clothing, cheerful and approachable appearance, digital art, transparent background, high quality character design suitable for desktop companion",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
+      }
+    }
+  ],
+  "progression": {
+    "enabled": true,
+    "ageBasedEvolution": true,
+    "milestones": [
+      {
+        "age": 7,
+        "changes": {
+          "defaultSize": 140
+        }
+      },
+      {
+        "age": 30,
+        "changes": {
+          "defaultSize": 160
+        }
+      }
+    ]
+  },
+  "personality": {
+    "shyness": 0.5,
+    "romanticism": 0.5,
+    "friendliness": 0.7,
+    "playfulness": 0.6,
+    "curiosity": 0.6
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 20
+      },
+      "responses": [
+        "Thank you, that means a lot to me!",
+        "You always know how to make me smile.",
+        "I appreciate your kind words."
+      ],
+      "effects": {
+        "affection": 2
+      },
+      "animation": "happy"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "heart_flutter",
+      "description": "Character gets flustered by your attention",
+      "trigger": "interaction_count",
+      "requirements": {
+        "affection": 30
+      },
+      "effects": {
+        "affection": 5,
+        "happiness": 8
+      },
+      "dialog": "You make my heart flutter in the most wonderful way...",
+      "animation": "happy"
+    }
+  ]
 }

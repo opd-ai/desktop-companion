@@ -7,7 +7,7 @@
     "happy": "animations/celebrating.gif",
     "sad": "animations/idle.gif",
     "excited": "animations/celebrating.gif",
-    "organizing": "animations/organizing.gif", 
+    "organizing": "animations/organizing.gif",
     "celebrating": "animations/celebrating.gif",
     "attack": "animations/organizing.gif",
     "defend": "animations/idle.gif",
@@ -109,63 +109,140 @@
   },
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 20, "happiness": 8, "energy": 5},
-      "animations": ["celebrating"],
-      "responses": ["Thanks! I need lots of energy to organize great events!"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 20,
+        "happiness": 8,
+        "energy": 5
+      },
+      "animations": [
+        "celebrating"
+      ],
+      "responses": [
+        "Thanks! I need lots of energy to organize great events!"
+      ],
       "cooldown": 75,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 12, "health": 8},
-      "animations": ["celebrating"],
-      "responses": ["Your support motivates me to plan even better activities!"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 12,
+        "health": 8
+      },
+      "animations": [
+        "celebrating"
+      ],
+      "responses": [
+        "Your support motivates me to plan even better activities!"
+      ],
       "cooldown": 40
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 18, "energy": -12},
-      "animations": ["organizing"],
-      "responses": ["This is perfect practice for our next group game session!"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 18,
+        "energy": -12
+      },
+      "animations": [
+        "organizing"
+      ],
+      "responses": [
+        "This is perfect practice for our next group game session!"
+      ],
       "cooldown": 100,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "organize_event": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 7, "happiness": 10, "trust": 4, "energy": -6},
-      "animations": ["organizing", "celebrating"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 7,
+        "happiness": 10,
+        "trust": 4,
+        "energy": -6
+      },
+      "animations": [
+        "organizing",
+        "celebrating"
+      ],
       "responses": [
         "Event organization initiated! This is going to be amazing! Let's coordinate! 🎉",
         "Perfect! I love planning activities that bring everyone together!",
         "Collaboration time! Together we can create the most wonderful experiences! ✨"
       ],
       "cooldown": 85,
-      "requirements": {"trust": {"min": 12}}
+      "requirements": {
+        "trust": {
+          "min": 12
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"affection": 9, "happiness": 8, "trust": 5},
-      "animations": ["heart_eyes", "excited_romance"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "affection": 9,
+        "happiness": 8,
+        "trust": 5
+      },
+      "animations": [
+        "heart_eyes",
+        "excited_romance"
+      ],
       "responses": [
         "A gift! This will be perfect for our next group celebration! Thank you! 🎁🎉",
         "How thoughtful! I'll incorporate this into our next amazing event!",
         "Wonderful! Gifts like this make group activities even more special! 💝"
       ],
       "cooldown": 170,
-      "requirements": {"affection": {"min": 22}}
+      "requirements": {
+        "affection": {
+          "min": 22
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 8, "affection": 6, "intimacy": 4, "energy": -7},
-      "animations": ["talking", "romantic_idle"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 8,
+        "affection": 6,
+        "intimacy": 4,
+        "energy": -7
+      },
+      "animations": [
+        "talking",
+        "romantic_idle"
+      ],
       "responses": [
         "I love these meaningful conversations! Understanding each other makes our collaborations magical!",
         "Deep discussions help me plan better events that truly connect with everyone!",
         "Thank you for sharing! These intimate talks inspire my best organizational ideas!"
       ],
       "cooldown": 135,
-      "requirements": {"trust": {"min": 28}}
+      "requirements": {
+        "trust": {
+          "min": 28
+        }
+      }
     }
   },
   "personality": {
@@ -193,7 +270,11 @@
     "maxPeers": 12,
     "discoveryPort": 8083,
     "socialLevel": "high",
-    "shareableStats": ["happiness", "energy", "affection"],
+    "shareableStats": [
+      "happiness",
+      "energy",
+      "affection"
+    ],
     "networkPersonality": "organizing",
     "botPersonality": {
       "chattiness": 0.8,
@@ -208,19 +289,28 @@
       "name": "organize_welcome_event",
       "trigger": "peer_joined",
       "botProbability": 0.85,
-      "responses": ["Welcome to our group! Let's plan something fun together!", "Perfect timing! I was just organizing our next group activity!"]
+      "responses": [
+        "Welcome to our group! Let's plan something fun together!",
+        "Perfect timing! I was just organizing our next group activity!"
+      ]
     },
     {
       "name": "suggest_group_activity",
       "trigger": "multiple_peers_present",
       "botProbability": 0.9,
-      "responses": ["With this many people here, we should do a group activity!", "This is perfect! Who wants to join a collaborative event?"]
+      "responses": [
+        "With this many people here, we should do a group activity!",
+        "This is perfect! Who wants to join a collaborative event?"
+      ]
     },
     {
       "name": "farewell_event",
       "trigger": "peer_left",
       "botProbability": 0.7,
-      "responses": ["Thanks for participating! Hope to see you at our next event!", "You were great to have in the group! Come back anytime!"]
+      "responses": [
+        "Thanks for participating! Hope to see you at our next event!",
+        "You were great to have in the group! Come back anytime!"
+      ]
     }
   ],
   "dialogBackend": {
@@ -271,14 +361,21 @@
         ]
       }
     },
-    "fallbackChain": ["simple_random"]
+    "fallbackChain": [
+      "simple_random"
+    ]
   },
   "newsFeatures": {
     "enabled": true,
     "updateInterval": 2200,
     "maxStoredItems": 30,
     "readingPersonality": "collaborative",
-    "preferredCategories": ["events", "community", "entertainment", "lifestyle"],
+    "preferredCategories": [
+      "events",
+      "community",
+      "entertainment",
+      "lifestyle"
+    ],
     "feeds": [
       {
         "url": "https://feeds.feedburner.com/eventbrite-blog",
@@ -320,18 +417,34 @@
       "choices": [
         {
           "text": "Plan a celebration",
-          "effects": {"happiness": 12, "affection": 5, "energy": -4},
-          "responses": ["Yes! Celebrations are my specialty! Let's create something magical! 🎉"],
+          "effects": {
+            "happiness": 12,
+            "affection": 5,
+            "energy": -4
+          },
+          "responses": [
+            "Yes! Celebrations are my specialty! Let's create something magical! 🎉"
+          ],
           "animation": "celebrating"
         },
         {
           "text": "Organize group games",
-          "effects": {"happiness": 10, "trust": 6, "energy": -6},
-          "responses": ["Perfect! Group games bring out everyone's playful side! 🎮"],
+          "effects": {
+            "happiness": 10,
+            "trust": 6,
+            "energy": -6
+          },
+          "responses": [
+            "Perfect! Group games bring out everyone's playful side! 🎮"
+          ],
           "animation": "organizing"
         }
       ],
-      "requirements": {"affection": {"min": 18}},
+      "requirements": {
+        "affection": {
+          "min": 18
+        }
+      },
       "cooldown": 5000,
       "category": "conversation"
     },
@@ -346,18 +459,34 @@
       "choices": [
         {
           "text": "Accept challenge",
-          "effects": {"trust": 8, "happiness": 7, "energy": -8},
-          "responses": ["Excellent! Challenges like this make us better collaborators! 💪"],
+          "effects": {
+            "trust": 8,
+            "happiness": 7,
+            "energy": -8
+          },
+          "responses": [
+            "Excellent! Challenges like this make us better collaborators! 💪"
+          ],
           "animation": "organizing"
         },
         {
           "text": "Suggest team approach",
-          "effects": {"affection": 7, "happiness": 9, "trust": 5},
-          "responses": ["Teamwork approach! That's exactly the spirit I love to see! 🌟"],
+          "effects": {
+            "affection": 7,
+            "happiness": 9,
+            "trust": 5
+          },
+          "responses": [
+            "Teamwork approach! That's exactly the spirit I love to see! 🌟"
+          ],
           "animation": "celebrating"
         }
       ],
-      "requirements": {"trust": {"min": 25}},
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      },
       "cooldown": 6200,
       "category": "game"
     },
@@ -372,18 +501,34 @@
       "choices": [
         {
           "text": "Plan a ceremony",
-          "effects": {"happiness": 11, "affection": 6, "trust": 4},
-          "responses": ["A ceremony! Perfect way to honor our community spirit! 🎭"],
+          "effects": {
+            "happiness": 11,
+            "affection": 6,
+            "trust": 4
+          },
+          "responses": [
+            "A ceremony! Perfect way to honor our community spirit! 🎭"
+          ],
           "animation": "celebrating"
         },
         {
           "text": "Organize appreciation",
-          "effects": {"affection": 9, "trust": 7, "happiness": 8},
-          "responses": ["Appreciation events are so meaningful! Everyone deserves recognition! 💕"],
+          "effects": {
+            "affection": 9,
+            "trust": 7,
+            "happiness": 8
+          },
+          "responses": [
+            "Appreciation events are so meaningful! Everyone deserves recognition! 💕"
+          ],
           "animation": "heart_eyes"
         }
       ],
-      "requirements": {"trust": {"min": 30}},
+      "requirements": {
+        "trust": {
+          "min": 30
+        }
+      },
       "cooldown": 7800,
       "category": "conversation"
     },
@@ -398,18 +543,34 @@
       "choices": [
         {
           "text": "Start art project",
-          "effects": {"happiness": 9, "affection": 5, "energy": -5},
-          "responses": ["Art projects are magical when we create together! 🎨"],
+          "effects": {
+            "happiness": 9,
+            "affection": 5,
+            "energy": -5
+          },
+          "responses": [
+            "Art projects are magical when we create together! 🎨"
+          ],
           "animation": "organizing"
         },
         {
           "text": "Collaborative storytelling",
-          "effects": {"trust": 6, "affection": 8, "happiness": 7},
-          "responses": ["Storytelling together creates the most amazing narratives! 📚"],
+          "effects": {
+            "trust": 6,
+            "affection": 8,
+            "happiness": 7
+          },
+          "responses": [
+            "Storytelling together creates the most amazing narratives! 📚"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"affection": {"min": 35}},
+      "requirements": {
+        "affection": {
+          "min": 35
+        }
+      },
       "cooldown": 6800,
       "category": "conversation"
     }
@@ -534,19 +695,29 @@
       },
       {
         "name": "Event Organizer",
-        "requirement": {"affection": 28, "trust": 22},
+        "requirement": {
+          "affection": 28,
+          "trust": 22
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Community Builder",
-        "requirement": {"affection": 52, "trust": 42},
+        "requirement": {
+          "affection": 52,
+          "trust": 42
+        },
         "size": 136,
         "animations": {}
       },
       {
         "name": "Master Coordinator",
-        "requirement": {"affection": 78, "trust": 68, "intimacy": 28},
+        "requirement": {
+          "affection": 78,
+          "trust": 68,
+          "intimacy": 28
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -557,39 +728,61 @@
       {
         "name": "First Event",
         "requirement": {
-          "affection": {"min": 18}
+          "affection": {
+            "min": 18
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 12}
+          "statBoosts": {
+            "happiness": 12
+          }
         }
       },
       {
         "name": "Group Coordinator",
         "requirement": {
-          "trust": {"min": 35}
+          "trust": {
+            "min": 35
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 15}
+          "statBoosts": {
+            "energy": 15
+          }
         }
       },
       {
         "name": "Community Leader",
         "requirement": {
-          "affection": {"min": 60},
-          "trust": {"min": 50}
+          "affection": {
+            "min": 60
+          },
+          "trust": {
+            "min": 50
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 20, "affection": 12}
+          "statBoosts": {
+            "happiness": 20,
+            "affection": 12
+          }
         }
       },
       {
         "name": "Master Event Planner",
         "requirement": {
-          "affection": {"min": 85},
-          "trust": {"min": 75}
+          "affection": {
+            "min": 85
+          },
+          "trust": {
+            "min": 75
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 30, "energy": 20}
+          "statBoosts": {
+            "happiness": 30,
+            "energy": 20
+          }
         }
       }
     ]
@@ -599,29 +792,57 @@
       "name": "collaborative_connection",
       "description": "Character feels deep connection through collaboration",
       "probability": 0.07,
-      "effects": {"affection": 5, "happiness": 7, "trust": 4},
-      "animations": ["celebrating", "blushing"],
+      "effects": {
+        "affection": 5,
+        "happiness": 7,
+        "trust": 4
+      },
+      "animations": [
+        "celebrating",
+        "blushing"
+      ],
       "responses": [
         "Working together with you creates the most beautiful harmony! Our collaboration is magical! 💕",
         "Planning events with you feels like creating art together! You inspire my best ideas!",
         "Our coordination is more than just teamwork... there's something special between us! ✨"
       ],
       "cooldown": 2200,
-      "conditions": {"affection": {"min": 25}, "trust": {"min": 20}}
+      "conditions": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 20
+        }
+      }
     },
     {
       "name": "organizational_romance",
       "description": "Character discovers romantic feelings through shared planning",
       "probability": 0.06,
-      "effects": {"intimacy": 3, "affection": 6, "trust": 3},
-      "animations": ["romantic_idle", "heart_eyes"],
+      "effects": {
+        "intimacy": 3,
+        "affection": 6,
+        "trust": 3
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
       "responses": [
         "Every event we plan together feels like we're building something beautiful beyond friendship! 💖",
         "I find myself organizing my heart around you... is this what love feels like?",
         "Our collaborative spirit has evolved into something deeper and more meaningful! 🌟"
       ],
       "cooldown": 2800,
-      "conditions": {"intimacy": {"min": 15}, "affection": {"min": 35}}
+      "conditions": {
+        "intimacy": {
+          "min": 15
+        },
+        "affection": {
+          "min": 35
+        }
+      }
     }
   ],
   "romanceDialogs": [
@@ -636,8 +857,173 @@
       "cooldown": 11,
       "requirements": {
         "stats": {
-          "affection": {"min": 38}
+          "affection": {
+            "min": 38
+          }
         }
+      }
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "An organized anime character with confident features and attentive eyes, moderator-style outfit, responsible and coordinating expression, leadership pose, digital art, transparent background, high quality character design for group management bot",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "excited": {
+        "promptModifier": "energetic bouncing motion, wide smile, enthusiastic pose, dynamic expression",
+        "stateDescription": "Excited and energetic state",
+        "frameCount": 8
+      },
+      "organizing": {
+        "promptModifier": "expressive pose and animation for organizing state, character showing organizing emotion or action",
+        "stateDescription": "Character in organizing state",
+        "frameCount": 6
+      },
+      "celebrating": {
+        "promptModifier": "expressive pose and animation for celebrating state, character showing celebrating emotion or action",
+        "stateDescription": "Character in celebrating state",
+        "frameCount": 6
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
       }
     }
   ]

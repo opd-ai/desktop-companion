@@ -1,7 +1,6 @@
 {
   "name": "Tamagotchi Pet",
   "description": "A virtual pet that needs care and attention",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -10,7 +9,6 @@
     "hungry": "animations/hungry.gif",
     "eating": "animations/eating.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -34,13 +32,11 @@
       "cooldown": 3
     }
   ],
-
   "behavior": {
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -67,7 +63,6 @@
       "criticalThreshold": 25
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 60,
     "autoSaveInterval": 300,
@@ -76,50 +71,96 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 25, "happiness": 5},
-      "animations": ["eating", "happy"],
-      "responses": ["Yum! Thank you!", "That was delicious!", "I feel much better now!"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 25,
+        "happiness": 5
+      },
+      "animations": [
+        "eating",
+        "happy"
+      ],
+      "responses": [
+        "Yum! Thank you!",
+        "That was delicious!",
+        "I feel much better now!"
+      ],
       "cooldown": 30,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 20, "energy": -15},
-      "animations": ["happy"],
-      "responses": ["This is fun!", "I love playing with you!", "Let's play more!"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 20,
+        "energy": -15
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "This is fun!",
+        "I love playing with you!",
+        "Let's play more!"
+      ],
       "cooldown": 45,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 10, "health": 2},
-      "animations": ["happy"],
-      "responses": ["That feels nice!", "I love attention!", "Pet me more!"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 10,
+        "health": 2
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "That feels nice!",
+        "I love attention!",
+        "Pet me more!"
+      ],
       "cooldown": 15
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Baby",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 64,
         "animations": {}
       },
       {
         "name": "Child",
-        "requirement": {"age": 86400},
+        "requirement": {
+          "age": 86400
+        },
         "size": 96,
         "animations": {}
       },
       {
         "name": "Adult",
-        "requirement": {"age": 259200},
+        "requirement": {
+          "age": 259200
+        },
         "size": 128,
         "animations": {}
       }
@@ -128,27 +169,41 @@
       {
         "name": "Well Fed",
         "requirement": {
-          "hunger": {"maintainAbove": 80},
-          "maintainAbove": {"duration": 86400}
+          "hunger": {
+            "maintainAbove": 80
+          },
+          "maintainAbove": {
+            "duration": 86400
+          }
         },
         "reward": {
-          "statBoosts": {"hunger": 10}
+          "statBoosts": {
+            "hunger": 10
+          }
         }
       },
       {
         "name": "Happy Pet",
         "requirement": {
-          "happiness": {"maintainAbove": 90},
-          "maintainAbove": {"duration": 43200}
+          "happiness": {
+            "maintainAbove": 90
+          },
+          "maintainAbove": {
+            "duration": 43200
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 10}
+          "statBoosts": {
+            "happiness": 10
+          }
         }
       },
       {
         "name": "Healthy",
         "requirement": {
-          "health": {"min": 95}
+          "health": {
+            "min": 95
+          }
         }
       }
     ]
@@ -201,6 +256,253 @@
         ]
       }
     },
-    "fallbackChain": ["simple_random"]
-  }
+    "fallbackChain": [
+      "simple_random"
+    ]
+  },
+  "giftSystem": {
+    "enabled": true,
+    "categories": [
+      "food",
+      "toys",
+      "accessories"
+    ],
+    "preferences": {
+      "food": [
+        "apple",
+        "cookie",
+        "candy"
+      ],
+      "toys": [
+        "ball",
+        "puzzle",
+        "game"
+      ],
+      "accessories": [
+        "bow",
+        "hat",
+        "collar"
+      ]
+    },
+    "reactions": {
+      "love": [
+        "This is perfect! Thank you so much! 💕"
+      ],
+      "like": [
+        "Oh, this is nice! Thank you!"
+      ],
+      "neutral": [
+        "Thank you for thinking of me."
+      ],
+      "dislike": [
+        "Well... it is the thought that counts."
+      ]
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "networkID": "tamagotchi_pet",
+    "maxPeers": 8,
+    "socialLevel": "moderate",
+    "networkPersonality": {
+      "chattiness": 0.6,
+      "helpfulness": 0.7,
+      "friendliness": 0.8,
+      "activityLevel": 0.5
+    }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "rssFeeds": [
+      "https://feeds.bbci.co.uk/news/technology/rss.xml"
+    ],
+    "readingPersonality": {
+      "interestLevel": 0.6,
+      "commentFrequency": 0.4,
+      "topicPreferences": [
+        "technology",
+        "science",
+        "general"
+      ]
+    },
+    "updateInterval": 3600
+  },
+  "battleSystem": {
+    "enabled": true,
+    "combatStats": {
+      "attack": 50,
+      "defense": 50,
+      "speed": 50,
+      "magic": 50
+    },
+    "specialAbilities": [
+      "basic_attack",
+      "heal"
+    ],
+    "battlePersonality": {
+      "aggression": 0.5,
+      "strategy": 0.6,
+      "riskTaking": 0.4
+    }
+  },
+  "assetGeneration": {
+    "basePrompt": "A friendly anime character with short brown hair and warm brown eyes, cute casual clothing, cheerful and approachable appearance, digital art, transparent background, high quality character design suitable for desktop companion",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "generalEvents": [
+    {
+      "name": "daily_checkin",
+      "category": "conversation",
+      "trigger": "time_based",
+      "interactive": true,
+      "description": "Character checks in on how you are doing",
+      "content": {
+        "dialog": "How has your day been going?",
+        "choices": [
+          {
+            "text": "Great!",
+            "effects": {
+              "happiness": 5
+            },
+            "response": "That is wonderful to hear!"
+          },
+          {
+            "text": "Could be better",
+            "effects": {
+              "affection": 2
+            },
+            "response": "I am here if you need someone to talk to."
+          }
+        ]
+      },
+      "cooldown": 14400
+    }
+  ],
+  "randomEvents": [
+    {
+      "name": "mood_boost",
+      "description": "Character feels a sudden burst of happiness",
+      "probability": 0.05,
+      "cooldown": 3600,
+      "animation": "happy",
+      "responses": [
+        "I feel so happy right now!"
+      ],
+      "effects": {
+        "happiness": 10
+      }
+    }
+  ],
+  "personality": {
+    "shyness": 0.5,
+    "romanticism": 0.5,
+    "friendliness": 0.7,
+    "playfulness": 0.6,
+    "curiosity": 0.6
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "compliment",
+      "requirements": {
+        "affection": 20
+      },
+      "responses": [
+        "Thank you, that means a lot to me!",
+        "You always know how to make me smile.",
+        "I appreciate your kind words."
+      ],
+      "effects": {
+        "affection": 2
+      },
+      "animation": "happy"
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "heart_flutter",
+      "description": "Character gets flustered by your attention",
+      "trigger": "interaction_count",
+      "requirements": {
+        "affection": 30
+      },
+      "effects": {
+        "affection": 5,
+        "happiness": 8
+      },
+      "dialog": "You make my heart flutter in the most wonderful way...",
+      "animation": "happy"
+    }
+  ]
 }
