@@ -265,25 +265,23 @@
       "trigger": "time_based",
       "interactive": true,
       "description": "Character checks in on how you are doing",
-      "content": {
-        "dialog": "How has your day been going?",
-        "choices": [
-          {
-            "text": "Great!",
-            "effects": {
-              "happiness": 5
-            },
-            "response": "That is wonderful to hear!"
+      "dialog": "How has your day been going?",
+      "choices": [
+        {
+          "text": "Great!",
+          "effects": {
+            "happiness": 5
           },
-          {
-            "text": "Could be better",
-            "effects": {
-              "affection": 2
-            },
-            "response": "I am here if you need someone to talk to."
-          }
-        ]
-      },
+          "response": "That is wonderful to hear!"
+        },
+        {
+          "text": "Could be better",
+          "effects": {
+            "affection": 2
+          },
+          "response": "I am here if you need someone to talk to."
+        }
+      ],
       "cooldown": 14400
     }
   ],
