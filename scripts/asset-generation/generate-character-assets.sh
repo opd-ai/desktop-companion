@@ -195,18 +195,29 @@ generate_character_assets() {
     # Prepare generation command
     local generation_cmd=(
         "$GIF_GENERATOR_BINARY"
-        "--character" "$character_file"
-        "--output-dir" "$character_dir"
+    )
+    
+    # Add global flags first (before command)
+    if [[ "${DDS_VERBOSE:-false}" == "true" ]]; then
+        generation_cmd+=("--verbose")
+    fi
+    
+    if [[ "${DDS_DRY_RUN:-false}" == "true" ]]; then
+        generation_cmd+=("--dry-run")
+    fi
+    
+    # Add the command
+    generation_cmd+=("character")
+    
+    # Add command-specific options
+    generation_cmd+=(
+        "--file" "$character_file"
+        "--output" "$character_dir"
         "--style" "$DEFAULT_STYLE"
-        "--model" "$DEFAULT_MODEL"
     )
     
     if [[ "$QUICK_MODE" == "true" ]]; then
         generation_cmd+=("--quick")
-    fi
-    
-    if [[ "${DDS_VERBOSE:-false}" == "true" ]]; then
-        generation_cmd+=("--verbose")
     fi
     
     # Execute generation

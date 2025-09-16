@@ -102,11 +102,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Parse global flags
-	parseGlobalFlags()
+	// Parse global flags and find command
+	commandIdx := parseGlobalFlags()
 
-	command := os.Args[1]
-	args := os.Args[2:]
+	if commandIdx >= len(os.Args) {
+		printUsage()
+		os.Exit(1)
+	}
+
+	command := os.Args[commandIdx]
+	args := os.Args[commandIdx+1:]
 
 	if cmd, exists := commands[command]; exists {
 		if err := cmd.Handler(args); err != nil {
@@ -119,39 +124,56 @@ func main() {
 	}
 }
 
-// parseGlobalFlags parses global command-line flags.
-func parseGlobalFlags() {
+// parseGlobalFlags parses global command-line flags and returns the index of the first non-flag argument.
+func parseGlobalFlags() int {
 	// Note: This is a simplified flag parsing approach.
 	// A production CLI would use a more sophisticated library like cobra or cli.
-	for i, arg := range os.Args {
+
+	for i := 1; i < len(os.Args); i++ {
+		arg := os.Args[i]
 		switch arg {
 		case "--config":
 			if i+1 < len(os.Args) {
 				globalConfig.ConfigPath = os.Args[i+1]
+				i++ // Skip the value
 			}
 		case "--comfyui-url":
 			if i+1 < len(os.Args) {
 				globalConfig.ComfyUIURL = os.Args[i+1]
+				i++ // Skip the value
 			}
 		case "--output":
 			if i+1 < len(os.Args) {
 				globalConfig.OutputDir = os.Args[i+1]
+				i++ // Skip the value
 			}
 		case "--temp-dir":
 			if i+1 < len(os.Args) {
 				globalConfig.TempDir = os.Args[i+1]
+				i++ // Skip the value
 			}
 		case "--parallel":
 			if i+1 < len(os.Args) {
 				fmt.Sscanf(os.Args[i+1], "%d", &globalConfig.Parallel)
+				i++ // Skip the value
 			}
 		case "--verbose", "-v":
 			globalConfig.Verbose = true
 		case "--dry-run":
 			globalConfig.DryRun = true
+		default:
+			// This is not a global flag, must be the command
+			setDefaults()
+			return i
 		}
 	}
 
+	// If we get here, there were only flags and no command
+	setDefaults()
+	return len(os.Args)
+}
+
+func setDefaults() {
 	// Set defaults
 	if globalConfig.ConfigPath == "" {
 		globalConfig.ConfigPath = "config.json"
