@@ -496,7 +496,11 @@ var embeddedCharacterData = `{
     "enabled": true,
     "updateInterval": 3600,
     "maxStoredItems": 25,
-    "readingPersonality": "contemplative",
+    "readingPersonality": {
+      "interestLevel": 0.7,
+      "commentFrequency": 0.5,
+      "topicPreferences": ["science", "philosophy", "nature", "spirituality"]
+    },
     "preferredCategories": [
       "science",
       "astronomy",

@@ -440,7 +440,11 @@ var embeddedCharacterData = `{
     "enabled": true,
     "updateInterval": 3600,
     "maxStoredItems": 20,
-    "readingPersonality": "gentle",
+    "readingPersonality": {
+      "interestLevel": 0.5,
+      "commentFrequency": 0.3,
+      "topicPreferences": ["lifestyle", "positive", "health", "mindfulness"]
+    },
     "preferredCategories": [
       "lifestyle",
       "positive",

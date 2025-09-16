@@ -452,7 +452,11 @@ var embeddedCharacterData = `{
     "enabled": true,
     "updateInterval": 1800,
     "maxStoredItems": 30,
-    "readingPersonality": "casual",
+    "readingPersonality": {
+      "interestLevel": 0.6,
+      "commentFrequency": 0.4,
+      "topicPreferences": ["general", "lifestyle", "positive"]
+    },
     "preferredCategories": [
       "general",
       "lifestyle",
