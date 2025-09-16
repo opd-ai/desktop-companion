@@ -11,12 +11,12 @@
     "attack": "animations/sad.gif",
     "defend": "animations/idle.gif",
     "heal": "animations/happy.gif",
-    "heart_eyes": "animations/heart_eyes.gif",
-    "shy": "animations/shy.gif",
-    "excited": "animations/excited.gif",
-    "thinking": "animations/thinking.gif",
-    "peaceful": "animations/peaceful.gif",
-    "supportive": "animations/supportive.gif"
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "excited": "animations/happy.gif",
+    "thinking": "animations/idle.gif",
+    "peaceful": "animations/idle.gif",
+    "supportive": "animations/happy.gif"
   },
   "dialogs": [
     {

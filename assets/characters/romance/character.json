@@ -15,11 +15,11 @@
     "romantic_idle": "../default/animations/idle.gif",
     "jealous": "../default/animations/sad.gif",
     "excited_romance": "../default/animations/happy.gif",
-    "attack": "animations/attack.gif",
-    "defend": "animations/defend.gif",
-    "heal": "animations/heal.gif",
-    "excited": "animations/excited.gif",
-    "thinking": "animations/thinking.gif"
+    "attack": "animations/sad.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif",
+    "excited": "animations/happy.gif",
+    "thinking": "animations/idle.gif"
   },
   "dialogs": [
     {
