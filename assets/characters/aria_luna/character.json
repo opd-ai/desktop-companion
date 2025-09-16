@@ -68,7 +68,7 @@
   },
   "romanceDialogs": [
     {
-      "trigger": "doubleclick",
+      "trigger": "rightclick",
       "responses": [
         "Your soul shines brighter than any constellation... 💝",
         "The universe brought us together for a reason ✨",
@@ -199,7 +199,7 @@
           },
           "success": true,
           "generatedFiles": ["idle.gif", "talking.gif", "happy.gif", "sad.gif", "blushing.gif", "heart_eyes.gif", "magical.gif", "sleeping.gif"],
-          "duration": "00:04:32"
+          "duration": 272000000000
         }
       ],
       "assetHashes": {
@@ -281,7 +281,7 @@
       }
     },
     "stargaze": {
-      "triggers": ["ctrl+click"],
+      "triggers": ["ctrl+shift+click"],
       "effects": {
         "affection": 15,
         "trust": 10
