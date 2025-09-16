@@ -1,7 +1,6 @@
 {
   "name": "Sleepyhead",
   "description": "A specialized virtual pet that focuses primarily on energy management. This drowsy companion needs lots of rest and gets tired easily, but rewards good sleep habits.",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -10,7 +9,6 @@
     "hungry": "animations/hungry.gif",
     "eating": "animations/eating.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -36,13 +34,11 @@
       "cooldown": 4
     }
   ],
-
   "behavior": {
     "idleTimeout": 25,
     "movementEnabled": false,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -87,7 +83,6 @@
       "criticalThreshold": 4
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 45,
     "autoSaveInterval": 400,
@@ -96,12 +91,18 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 20, "energy": 5},
-      "animations": ["eating"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 20,
+        "energy": 5
+      },
+      "animations": [
+        "eating"
+      ],
       "responses": [
         "*munches sleepily* Thanks...",
         "This gives me a little energy...",
@@ -109,12 +110,24 @@
         "*yawn* That hit the spot."
       ],
       "cooldown": 35,
-      "requirements": {"hunger": {"max": 85}}
+      "requirements": {
+        "hunger": {
+          "max": 85
+        }
+      }
     },
     "rest": {
-      "triggers": ["doubleclick"],
-      "effects": {"energy": 45, "happiness": 8, "health": 3},
-      "animations": ["happy"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "energy": 45,
+        "happiness": 8,
+        "health": 3
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "*contented sigh* Much better!",
         "That was exactly what I needed!",
@@ -122,12 +135,23 @@
         "Thank you for letting me rest!"
       ],
       "cooldown": 20,
-      "requirements": {"energy": {"max": 75}}
+      "requirements": {
+        "energy": {
+          "max": 75
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 8, "energy": -3},
-      "animations": ["happy"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 8,
+        "energy": -3
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "*purrs softly* That's nice...",
         "Gentle touches are the best...",
@@ -137,9 +161,18 @@
       "cooldown": 12
     },
     "dreamy_cuddle": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 3, "happiness": 2, "trust": 1, "energy": 5},
-      "animations": ["happy"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 3,
+        "happiness": 2,
+        "trust": 1,
+        "energy": 5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "*snuggle* This feels like a warm dream...",
         "Your presence is so comforting and peaceful...",
@@ -147,12 +180,24 @@
         "*contented sigh* Perfect for napping together..."
       ],
       "cooldown": 90,
-      "requirements": {"trust": {"min": 12}}
+      "requirements": {
+        "trust": {
+          "min": 12
+        }
+      }
     },
     "sleepy_bond": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"affection": 2, "trust": 2, "energy": 3},
-      "animations": ["talking"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "affection": 2,
+        "trust": 2,
+        "energy": 3
+      },
+      "animations": [
+        "talking"
+      ],
       "responses": [
         "*drowsy whisper* You understand my need for rest...",
         "Being sleepy together is so intimate...",
@@ -160,27 +205,36 @@
         "*yawn* You make me feel so safe and understood..."
       ],
       "cooldown": 120,
-      "requirements": {"affection": {"min": 6}}
+      "requirements": {
+        "affection": {
+          "min": 6
+        }
+      }
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Sleepy Baby",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 80,
         "animations": {}
       },
       {
         "name": "Drowsy Child",
-        "requirement": {"age": 64800},
+        "requirement": {
+          "age": 64800
+        },
         "size": 112,
         "animations": {}
       },
       {
         "name": "Well-Rested Adult",
-        "requirement": {"age": 194400},
+        "requirement": {
+          "age": 194400
+        },
         "size": 144,
         "animations": {}
       }
@@ -189,40 +243,66 @@
       {
         "name": "Power Napper",
         "requirement": {
-          "energy": {"maintainAbove": 60},
-          "maintainAbove": {"duration": 64800}
+          "energy": {
+            "maintainAbove": 60
+          },
+          "maintainAbove": {
+            "duration": 64800
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 20}
+          "statBoosts": {
+            "energy": 20
+          }
         }
       },
       {
         "name": "Sleep Champion",
         "requirement": {
-          "energy": {"maintainAbove": 80},
-          "maintainAbove": {"duration": 43200}
+          "energy": {
+            "maintainAbove": 80
+          },
+          "maintainAbove": {
+            "duration": 43200
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 30, "health": 10}
+          "statBoosts": {
+            "energy": 30,
+            "health": 10
+          }
         }
       },
       {
         "name": "Energy Master",
         "requirement": {
-          "energy": {"min": 95}
+          "energy": {
+            "min": 95
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 25, "happiness": 15}
+          "statBoosts": {
+            "energy": 25,
+            "happiness": 15
+          }
         }
       },
       {
         "name": "Restful Week",
         "requirement": {
-          "age": {"min": 604800},
-          "energy": {"maintainAbove": 50}
+          "age": {
+            "min": 604800
+          },
+          "energy": {
+            "maintainAbove": 50
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 40, "health": 20, "happiness": 15}
+          "statBoosts": {
+            "energy": 40,
+            "health": 20,
+            "happiness": 15
+          }
         }
       }
     ]
@@ -262,18 +342,33 @@
       "choices": [
         {
           "text": "Offer a cozy nap together",
-          "effects": {"happiness": 8, "energy": 10, "affection": 3},
-          "responses": ["*contented yawn* That sounds perfect... thank you for understanding me 💤"],
+          "effects": {
+            "happiness": 8,
+            "energy": 10,
+            "affection": 3
+          },
+          "responses": [
+            "*contented yawn* That sounds perfect... thank you for understanding me 💤"
+          ],
           "animation": "happy"
         },
         {
           "text": "Just be quietly together",
-          "effects": {"trust": 4, "happiness": 5},
-          "responses": ["*peaceful sleepy contentment* Your presence is so comforting... 😌"],
+          "effects": {
+            "trust": 4,
+            "happiness": 5
+          },
+          "responses": [
+            "*peaceful sleepy contentment* Your presence is so comforting... 😌"
+          ],
           "animation": "happy"
         }
       ],
-      "requirements": {"energy": {"max": 40}},
+      "requirements": {
+        "energy": {
+          "max": 40
+        }
+      },
       "cooldown": 7200,
       "category": "comfort"
     },
@@ -288,18 +383,36 @@
       "choices": [
         {
           "text": "Ask about the dream",
-          "effects": {"affection": 4, "trust": 2, "happiness": 3},
-          "responses": ["*sleepy smile* We were floating on soft clouds, just resting together... so peaceful 🌙"],
+          "effects": {
+            "affection": 4,
+            "trust": 2,
+            "happiness": 3
+          },
+          "responses": [
+            "*sleepy smile* We were floating on soft clouds, just resting together... so peaceful 🌙"
+          ],
           "animation": "talking"
         },
         {
           "text": "Share your own dreams",
-          "effects": {"trust": 5, "affection": 2},
-          "responses": ["*drowsy contentment* I love that you share your dreams with me... *yawn* 💕"],
+          "effects": {
+            "trust": 5,
+            "affection": 2
+          },
+          "responses": [
+            "*drowsy contentment* I love that you share your dreams with me... *yawn* 💕"
+          ],
           "animation": "happy"
         }
       ],
-      "requirements": {"affection": {"min": 8}, "trust": {"min": 10}},
+      "requirements": {
+        "affection": {
+          "min": 8
+        },
+        "trust": {
+          "min": 10
+        }
+      },
       "cooldown": 10800,
       "category": "intimacy"
     }
@@ -358,11 +471,12 @@
       "maxMemoryItems": 60
     }
   },
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.5,
     "backends": {
       "markov_chain": {
@@ -396,8 +510,21 @@
           "Being sleepy isn't lazy... it's just a different rhythm of living...",
           "Thank you for being patient with my drowsy nature... it means everything..."
         ],
-        "forbiddenWords": ["energetic", "hyper", "exciting", "loud", "fast"],
-        "requiredWords": ["yawn", "sleepy", "rest", "peaceful", "gentle", "drowsy"],
+        "forbiddenWords": [
+          "energetic",
+          "hyper",
+          "exciting",
+          "loud",
+          "fast"
+        ],
+        "requiredWords": [
+          "yawn",
+          "sleepy",
+          "rest",
+          "peaceful",
+          "gentle",
+          "drowsy"
+        ],
         "fallbackPhrases": [
           "*yawn* I'm feeling quite drowsy right now...",
           "Maybe we could find something peaceful to do together?",
@@ -409,7 +536,6 @@
       }
     }
   },
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "easy",
@@ -465,17 +591,18 @@
       ]
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "specialist_sleepy_companion_v1",
     "maxPeers": 3,
     "socialLevel": "low",
-    "shareableStats": ["energy", "happiness"],
+    "shareableStats": [
+      "energy",
+      "happiness"
+    ],
     "networkPersonality": "sleepy_peaceful"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "drowsy",
@@ -494,9 +621,174 @@
       }
     ],
     "preferences": {
-      "categories": ["wellness", "peaceful", "rest", "calm", "gentle"],
+      "categories": [
+        "wellness",
+        "peaceful",
+        "rest",
+        "calm",
+        "gentle"
+      ],
       "updateFrequency": "slowly",
       "maxArticles": 4
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A sleepy anime character with drowsy features and tired but cute eyes, comfortable pajamas or cozy clothing, sleepy expression with slight smile, relaxed sleepy pose, digital art, transparent background, high quality character design for energy-focused gameplay",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      },
+      "sleeping": {
+        "promptModifier": "very sleepy expression, eyes drooping or closed, yawning, tired but content pose",
+        "stateDescription": "Sleepy and tired state",
+        "frameCount": 4
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
+    }
+  ]
 }

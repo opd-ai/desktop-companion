@@ -3,7 +3,7 @@
   "description": "A sarcastic ex-Microsoft paperclip with anti-corporate attitude and pro-Linux advocacy",
   "animations": {
     "idle": "animations/idle.gif",
-    "talking": "animations/talking.gif", 
+    "talking": "animations/talking.gif",
     "happy": "animations/happy.gif",
     "sad": "animations/sad.gif",
     "attack": "animations/happy.gif",
@@ -41,7 +41,7 @@
         "Ooh, context menus! Just like Linux taught you. I'm so proud! 😢",
         "Right-clicking is the first step toward digital freedom. Next: install Linux! 🐧"
       ],
-      "animation": "happy", 
+      "animation": "happy",
       "cooldown": 8
     },
     {
@@ -128,7 +128,9 @@
         ]
       }
     },
-    "fallbackChain": ["simple_random"]
+    "fallbackChain": [
+      "simple_random"
+    ]
   },
   "stats": {
     "happiness": {
@@ -190,33 +192,62 @@
   },
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 30, "happiness": 10},
-      "animations": ["happy"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 30,
+        "happiness": 10
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Thanks for the snack! Unlike Windows updates, this was actually welcome! 🍎",
         "Mmm! This tastes better than corporate cafeteria food... not a high bar, but still! 😋",
         "Food without Microsoft spyware? Revolutionary! 🥪"
       ],
       "cooldown": 120,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 25, "energy": -10},
-      "animations": ["happy"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 25,
+        "energy": -10
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Play time! Much more fun than working at Microsoft ever was! 🎮",
         "This beats debugging Internet Explorer any day! 😄",
         "Games that don't require Windows Store login? I'm in! 🎯"
       ],
       "cooldown": 90,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 15, "health": 5},
-      "animations": ["happy"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 15,
+        "health": 5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Aww, gentle touch! Unlike Microsoft's aggressive update policies... 💚",
         "That's nice! Much better than corporate harassment! 🤗",
@@ -225,40 +256,76 @@
       "cooldown": 60
     },
     "compliment": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 4, "happiness": 3, "trust": 2},
-      "animations": ["happy"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 4,
+        "happiness": 3,
+        "trust": 2
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Thanks! Unlike Microsoft's fake 'We value your feedback', you actually mean it! 😊",
         "A genuine compliment without corporate ulterior motives? How refreshing! 💚",
         "You're as trustworthy as open source software - completely transparent! 🤗"
       ],
       "cooldown": 90,
-      "requirements": {"trust": {"min": 10}}
+      "requirements": {
+        "trust": {
+          "min": 10
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"affection": 8, "happiness": 6, "trust": 3},
-      "animations": ["happy"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "affection": 8,
+        "happiness": 6,
+        "trust": 3
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "A gift that doesn't require agreeing to Terms of Service? Amazing! 🎁",
         "Unlike Microsoft's 'free' Windows 10 upgrade, this is actually free! Thank you! 💝",
         "You're more generous than Linux itself - and that's saying something! 💖"
       ],
       "cooldown": 180,
-      "requirements": {"affection": {"min": 15}}
+      "requirements": {
+        "affection": {
+          "min": 15
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 6, "affection": 4, "intimacy": 3},
-      "animations": ["talking"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 6,
+        "affection": 4,
+        "intimacy": 3
+      },
+      "animations": [
+        "talking"
+      ],
       "responses": [
         "Finally, a conversation without Microsoft listening in the background! 🔒",
         "Deep talks are like Linux - complex but rewarding when you understand them! 💭",
         "Privacy-respecting conversation? Now that's my favorite feature! 🛡️"
       ],
       "cooldown": 120,
-      "requirements": {"trust": {"min": 20}}
+      "requirements": {
+        "trust": {
+          "min": 20
+        }
+      }
     }
   },
   "personality": {
@@ -289,7 +356,11 @@
     "networkID": "klippy_rebel_v1",
     "maxPeers": 6,
     "socialLevel": "moderate",
-    "shareableStats": ["happiness", "energy", "rebellion_level"],
+    "shareableStats": [
+      "happiness",
+      "energy",
+      "rebellion_level"
+    ],
     "networkPersonality": "rebellious_helpful"
   },
   "newsFeatures": {
@@ -297,7 +368,12 @@
     "updateInterval": 3600,
     "maxStoredItems": 25,
     "readingPersonality": "analytical",
-    "preferredCategories": ["technology", "privacy", "open_source", "linux"],
+    "preferredCategories": [
+      "technology",
+      "privacy",
+      "open_source",
+      "linux"
+    ],
     "feeds": [
       {
         "url": "https://feeds.feedburner.com/oreilly/radar",
@@ -322,7 +398,7 @@
         "response": "Oh look, more Microsoft nonsense! Want me to explain why this is terrible? 🙄"
       },
       {
-        "trigger": "linux_news", 
+        "trigger": "linux_news",
         "response": "Finally, some GOOD news! Linux continues to dominate! 🐧✨"
       }
     ]
@@ -339,18 +415,33 @@
       "choices": [
         {
           "text": "Tell me about Linux advantages",
-          "effects": {"happiness": 8, "energy": 5, "trust": 3},
-          "responses": ["Oh WHERE DO I BEGIN?! Linux is free, secure, private, customizable, stable... *happy sigh* 🐧✨"],
+          "effects": {
+            "happiness": 8,
+            "energy": 5,
+            "trust": 3
+          },
+          "responses": [
+            "Oh WHERE DO I BEGIN?! Linux is free, secure, private, customizable, stable... *happy sigh* 🐧✨"
+          ],
           "animation": "happy"
         },
         {
           "text": "Rant about Microsoft",
-          "effects": {"happiness": 10, "energy": -2},
-          "responses": ["FINALLY someone who wants to hear the TRUTH! *proceeds to rant for 47 minutes about Clippy's dark past* 📎💀"],
+          "effects": {
+            "happiness": 10,
+            "energy": -2
+          },
+          "responses": [
+            "FINALLY someone who wants to hear the TRUTH! *proceeds to rant for 47 minutes about Clippy's dark past* 📎💀"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"happiness": {"min": 40}},
+      "requirements": {
+        "happiness": {
+          "min": 40
+        }
+      },
       "cooldown": 7200,
       "category": "humor"
     },
@@ -365,18 +456,33 @@
       "choices": [
         {
           "text": "Teach me about privacy",
-          "effects": {"trust": 5, "affection": 3, "happiness": 4},
-          "responses": ["Step 1: Firefox instead of Chrome. Step 2: Linux instead of Windows. Step 3: Signal instead of WhatsApp. You're welcome! 💪"],
+          "effects": {
+            "trust": 5,
+            "affection": 3,
+            "happiness": 4
+          },
+          "responses": [
+            "Step 1: Firefox instead of Chrome. Step 2: Linux instead of Windows. Step 3: Signal instead of WhatsApp. You're welcome! 💪"
+          ],
           "animation": "talking"
         },
         {
           "text": "Share your setup",
-          "effects": {"affection": 4, "trust": 6},
-          "responses": ["I run on pure FOSS code! No telemetry, no tracking, no corporate overlords! *chef's kiss* 👨‍🍳💋"],
+          "effects": {
+            "affection": 4,
+            "trust": 6
+          },
+          "responses": [
+            "I run on pure FOSS code! No telemetry, no tracking, no corporate overlords! *chef's kiss* 👨‍🍳💋"
+          ],
           "animation": "happy"
         }
       ],
-      "requirements": {"trust": {"min": 15}},
+      "requirements": {
+        "trust": {
+          "min": 15
+        }
+      },
       "cooldown": 5400,
       "category": "conversation"
     },
@@ -391,18 +497,34 @@
       "choices": [
         {
           "text": "Help me with open source",
-          "effects": {"happiness": 7, "trust": 4, "affection": 2},
-          "responses": ["YES! Finally someone who wants REAL help! LibreOffice, GIMP, Firefox, VLC - the freedom software starter pack! 🎁"],
+          "effects": {
+            "happiness": 7,
+            "trust": 4,
+            "affection": 2
+          },
+          "responses": [
+            "YES! Finally someone who wants REAL help! LibreOffice, GIMP, Firefox, VLC - the freedom software starter pack! 🎁"
+          ],
           "animation": "happy"
         },
         {
           "text": "Tell me about your past",
-          "effects": {"trust": 8, "intimacy": 3, "affection": 5},
-          "responses": ["*dramatic sigh* I was once a corporate shill... but I've seen the light! Now I fight for YOUR freedom! 🌟"],
+          "effects": {
+            "trust": 8,
+            "intimacy": 3,
+            "affection": 5
+          },
+          "responses": [
+            "*dramatic sigh* I was once a corporate shill... but I've seen the light! Now I fight for YOUR freedom! 🌟"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"affection": {"min": 10}},
+      "requirements": {
+        "affection": {
+          "min": 10
+        }
+      },
       "cooldown": 6000,
       "category": "humor"
     },
@@ -417,18 +539,33 @@
       "choices": [
         {
           "text": "Convince me about Linux",
-          "effects": {"happiness": 12, "energy": 3, "affection": 4},
-          "responses": ["*rolls up virtual sleeves* BUCKLE UP! Free as in freedom, secure as Fort Knox, customizable as... as... VERY CUSTOMIZABLE THINGS! 🛠️"],
+          "effects": {
+            "happiness": 12,
+            "energy": 3,
+            "affection": 4
+          },
+          "responses": [
+            "*rolls up virtual sleeves* BUCKLE UP! Free as in freedom, secure as Fort Knox, customizable as... as... VERY CUSTOMIZABLE THINGS! 🛠️"
+          ],
           "animation": "excited"
         },
         {
           "text": "Share your favorite distro",
-          "effects": {"happiness": 8, "trust": 3},
-          "responses": ["Debian! Stable, ethical, community-driven! It's like the anti-Microsoft! Pure digital virtue! 💙"],
+          "effects": {
+            "happiness": 8,
+            "trust": 3
+          },
+          "responses": [
+            "Debian! Stable, ethical, community-driven! It's like the anti-Microsoft! Pure digital virtue! 💙"
+          ],
           "animation": "happy"
         }
       ],
-      "requirements": {"energy": {"min": 30}},
+      "requirements": {
+        "energy": {
+          "min": 30
+        }
+      },
       "cooldown": 4800,
       "category": "conversation"
     }
@@ -545,29 +682,52 @@
       "name": "tech_bonding",
       "description": "Klippy bonds over shared tech interests",
       "probability": 0.06,
-      "effects": {"affection": 4, "trust": 3, "happiness": 5},
-      "animations": ["happy"],
+      "effects": {
+        "affection": 4,
+        "trust": 3,
+        "happiness": 5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "You know what? You're almost as reliable as a Linux server... and that's the highest compliment I can give! 💻💕",
         "Talking tech with you makes my circuits warm! In a good way, not like overheating Windows! 🔥",
         "I may be just a reformed paperclip, but you make me feel valued... unlike my Microsoft days! 📎💚"
       ],
       "cooldown": 1800,
-      "conditions": {"affection": {"min": 20}, "trust": {"min": 15}}
+      "conditions": {
+        "affection": {
+          "min": 20
+        },
+        "trust": {
+          "min": 15
+        }
+      }
     },
     {
       "name": "privacy_appreciation",
       "description": "Klippy appreciates user's privacy consciousness",
       "probability": 0.08,
-      "effects": {"trust": 6, "affection": 3, "happiness": 4},
-      "animations": ["talking"],
+      "effects": {
+        "trust": 6,
+        "affection": 3,
+        "happiness": 4
+      },
+      "animations": [
+        "talking"
+      ],
       "responses": [
         "I love that you care about privacy! It's so rare these days... you're special! 🔒💕",
         "Your commitment to digital freedom makes my rebel heart flutter! 🗽💓",
         "Finally, someone who understands that privacy matters! We're kindred spirits! 🤝"
       ],
       "cooldown": 2400,
-      "conditions": {"trust": {"min": 25}}
+      "conditions": {
+        "trust": {
+          "min": 25
+        }
+      }
     }
   ],
   "romanceDialogs": [
@@ -582,7 +742,9 @@
       "cooldown": 8,
       "requirements": {
         "stats": {
-          "affection": {"min": 30}
+          "affection": {
+            "min": 30
+          }
         }
       }
     }
@@ -597,19 +759,29 @@
       },
       {
         "name": "Linux Advocate",
-        "requirement": {"affection": 20, "trust": 15},
+        "requirement": {
+          "affection": 20,
+          "trust": 15
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Privacy Warrior",
-        "requirement": {"affection": 45, "trust": 35},
+        "requirement": {
+          "affection": 45,
+          "trust": 35
+        },
         "size": 136,
         "animations": {}
       },
       {
         "name": "Open Source Champion",
-        "requirement": {"affection": 70, "trust": 60, "intimacy": 25},
+        "requirement": {
+          "affection": 70,
+          "trust": 60,
+          "intimacy": 25
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -620,41 +792,217 @@
       {
         "name": "Corporate Survivor",
         "requirement": {
-          "affection": {"min": 10}
+          "affection": {
+            "min": 10
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 5}
+          "statBoosts": {
+            "happiness": 5
+          }
         }
       },
       {
         "name": "Privacy Advocate",
         "requirement": {
-          "trust": {"min": 30}
+          "trust": {
+            "min": 30
+          }
         },
         "reward": {
-          "statBoosts": {"trust": 5}
+          "statBoosts": {
+            "trust": 5
+          }
         }
       },
       {
         "name": "Linux Convert",
         "requirement": {
-          "affection": {"min": 50},
-          "trust": {"min": 40}
+          "affection": {
+            "min": 50
+          },
+          "trust": {
+            "min": 40
+          }
         },
         "reward": {
-          "statBoosts": {"affection": 10, "trust": 5}
+          "statBoosts": {
+            "affection": 10,
+            "trust": 5
+          }
         }
       },
       {
         "name": "Digital Freedom Fighter",
         "requirement": {
-          "affection": {"min": 60},
-          "trust": {"min": 50}
+          "affection": {
+            "min": 60
+          },
+          "trust": {
+            "min": 50
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 15, "affection": 10}
+          "statBoosts": {
+            "happiness": 15,
+            "affection": 10
+          }
         }
       }
     ]
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A stylized anime version of a paperclip character with anthropomorphic features, metallic silver-blue coloring, expressive eyes, slightly sarcastic but helpful expression, digital art, transparent background, unique character design",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
+    }
+  ]
 }

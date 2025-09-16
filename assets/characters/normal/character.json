@@ -1,7 +1,6 @@
 {
   "name": "Balanced Buddy",
   "description": "A well-balanced virtual pet that offers a moderate challenge. Perfect for users who want a realistic pet care experience.",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -17,7 +16,6 @@
     "jealous": "animations/sad.gif",
     "excited_romance": "animations/happy.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -43,13 +41,11 @@
       "cooldown": 3
     }
   ],
-
   "behavior": {
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -100,7 +96,6 @@
       "criticalThreshold": 75
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 60,
     "autoSaveInterval": 300,
@@ -109,12 +104,19 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 25, "happiness": 5},
-      "animations": ["eating", "happy"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 25,
+        "happiness": 5
+      },
+      "animations": [
+        "eating",
+        "happy"
+      ],
       "responses": [
         "Thanks for the meal!",
         "That was delicious!",
@@ -122,12 +124,23 @@
         "Yum! Just what I needed!"
       ],
       "cooldown": 30,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 20, "energy": -15},
-      "animations": ["happy"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 20,
+        "energy": -15
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "This is fun!",
         "I love playing with you!",
@@ -135,12 +148,23 @@
         "Great game!"
       ],
       "cooldown": 45,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 10, "health": 2},
-      "animations": ["happy"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 10,
+        "health": 2
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "That feels nice!",
         "I love attention!",
@@ -150,9 +174,17 @@
       "cooldown": 15
     },
     "compliment": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 4, "happiness": 3, "trust": 2},
-      "animations": ["happy"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 4,
+        "happiness": 3,
+        "trust": 2
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Thank you! That's so nice to hear!",
         "You always know what to say!",
@@ -160,12 +192,24 @@
         "That makes me feel so good!"
       ],
       "cooldown": 60,
-      "requirements": {"trust": {"min": 15}}
+      "requirements": {
+        "trust": {
+          "min": 15
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["ctrl+click"],
-      "effects": {"affection": 8, "happiness": 6, "trust": 3},
-      "animations": ["happy"],
+      "triggers": [
+        "ctrl+click"
+      ],
+      "effects": {
+        "affection": 8,
+        "happiness": 6,
+        "trust": 3
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Oh wow! This is perfect!",
         "You're so thoughtful!",
@@ -173,12 +217,24 @@
         "You remember what I like!"
       ],
       "cooldown": 120,
-      "requirements": {"affection": {"min": 20}}
+      "requirements": {
+        "affection": {
+          "min": 20
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 6, "affection": 4, "intimacy": 4},
-      "animations": ["talking"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 6,
+        "affection": 4,
+        "intimacy": 4
+      },
+      "animations": [
+        "talking"
+      ],
       "responses": [
         "I love talking with you about meaningful things.",
         "You really understand me.",
@@ -186,27 +242,36 @@
         "I feel so comfortable sharing with you."
       ],
       "cooldown": 90,
-      "requirements": {"trust": {"min": 25}}
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      }
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Baby",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 64,
         "animations": {}
       },
       {
         "name": "Child",
-        "requirement": {"age": 86400},
+        "requirement": {
+          "age": 86400
+        },
         "size": 96,
         "animations": {}
       },
       {
         "name": "Adult",
-        "requirement": {"age": 259200},
+        "requirement": {
+          "age": 259200
+        },
         "size": 128,
         "animations": {}
       }
@@ -215,35 +280,50 @@
       {
         "name": "Well Fed",
         "requirement": {
-          "hunger": {"maintainAbove": 80},
-          "maintainAbove": {"duration": 86400}
+          "hunger": {
+            "maintainAbove": 80
+          },
+          "maintainAbove": {
+            "duration": 86400
+          }
         },
         "reward": {
-          "statBoosts": {"hunger": 10}
+          "statBoosts": {
+            "hunger": 10
+          }
         }
       },
       {
         "name": "Happy Pet",
         "requirement": {
-          "happiness": {"maintainAbove": 90},
-          "maintainAbove": {"duration": 43200}
+          "happiness": {
+            "maintainAbove": 90
+          },
+          "maintainAbove": {
+            "duration": 43200
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 10}
+          "statBoosts": {
+            "happiness": 10
+          }
         }
       },
       {
         "name": "Healthy",
         "requirement": {
-          "health": {"min": 95}
+          "health": {
+            "min": 95
+          }
         },
         "reward": {
-          "statBoosts": {"health": 5}
+          "statBoosts": {
+            "health": 5
+          }
         }
       }
     ]
   },
-
   "personality": {
     "traits": {
       "friendliness": 0.8,
@@ -260,28 +340,46 @@
       "conversation_lover": 1.2
     }
   },
-
   "romanceEvents": [
     {
       "name": "Friendship Milestone",
       "description": "Character reflects on growing friendship",
       "probability": 0.08,
-      "effects": {"affection": 4, "trust": 3, "happiness": 5},
-      "animations": ["happy"],
+      "effects": {
+        "affection": 4,
+        "trust": 3,
+        "happiness": 5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "I really value our friendship! You mean a lot to me.",
         "It's amazing how comfortable I feel with you now.",
         "Our bond has grown so much stronger!"
       ],
       "cooldown": 1200,
-      "conditions": {"affection": {"min": 25}, "trust": {"min": 20}}
+      "conditions": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 20
+        }
+      }
     },
     {
       "name": "Gift Appreciation",
       "description": "Character remembers gifts fondly",
-      "probability": 0.10,
-      "effects": {"affection": 5, "happiness": 6, "trust": 2},
-      "animations": ["happy"],
+      "probability": 0.1,
+      "effects": {
+        "affection": 5,
+        "happiness": 6,
+        "trust": 2
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "I still smile thinking about that gift you gave me!",
         "You always know how to make me happy!",
@@ -289,12 +387,15 @@
       ],
       "cooldown": 900,
       "conditions": {
-        "affection": {"min": 30},
-        "interactionCount": {"give_gift_min": 3}
+        "affection": {
+          "min": 30
+        },
+        "interactionCount": {
+          "give_gift_min": 3
+        }
       }
     }
   ],
-
   "generalEvents": [
     {
       "name": "daily_conversation",
@@ -306,29 +407,50 @@
       "responses": [
         "How's your day going? I'd love to hear about it! 😊"
       ],
-      "animations": ["talking"],
+      "animations": [
+        "talking"
+      ],
       "choices": [
         {
           "text": "Going great!",
-          "effects": {"happiness": 6, "affection": 2},
-          "responses": ["That's wonderful! I'm so happy for you! 🎉"],
+          "effects": {
+            "happiness": 6,
+            "affection": 2
+          },
+          "responses": [
+            "That's wonderful! I'm so happy for you! 🎉"
+          ],
           "animation": "happy"
         },
         {
           "text": "Pretty average day",
-          "effects": {"trust": 2, "happiness": 3},
-          "responses": ["Average days can be nice too - steady and reliable!"],
+          "effects": {
+            "trust": 2,
+            "happiness": 3
+          },
+          "responses": [
+            "Average days can be nice too - steady and reliable!"
+          ],
           "animation": "talking"
         },
         {
           "text": "Could be better",
-          "effects": {"trust": 4, "affection": 1},
-          "responses": ["I'm here if you want to talk about it. Sometimes sharing helps!"],
+          "effects": {
+            "trust": 4,
+            "affection": 1
+          },
+          "responses": [
+            "I'm here if you want to talk about it. Sometimes sharing helps!"
+          ],
           "animation": "talking"
         }
       ],
       "cooldown": 86400,
-      "conditions": {"trust": {"min": 10}}
+      "conditions": {
+        "trust": {
+          "min": 10
+        }
+      }
     },
     {
       "name": "fun_activity",
@@ -340,32 +462,52 @@
       "responses": [
         "Want to do something fun together? I have some ideas! 🎮"
       ],
-      "animations": ["happy"],
+      "animations": [
+        "happy"
+      ],
       "choices": [
         {
           "text": "Let's play a game!",
-          "effects": {"happiness": 8, "energy": -3},
-          "responses": ["Great! How about 20 questions? I'll think of something..."],
+          "effects": {
+            "happiness": 8,
+            "energy": -3
+          },
+          "responses": [
+            "Great! How about 20 questions? I'll think of something..."
+          ],
           "animation": "happy"
         },
         {
           "text": "Tell me a story!",
-          "effects": {"happiness": 5, "trust": 3},
-          "responses": ["Once upon a time, in a digital world much like ours..."],
+          "effects": {
+            "happiness": 5,
+            "trust": 3
+          },
+          "responses": [
+            "Once upon a time, in a digital world much like ours..."
+          ],
           "animation": "talking"
         },
         {
           "text": "Let's just chat!",
-          "effects": {"affection": 3, "happiness": 4},
-          "responses": ["Perfect! I love our conversations! What's on your mind?"],
+          "effects": {
+            "affection": 3,
+            "happiness": 4
+          },
+          "responses": [
+            "Perfect! I love our conversations! What's on your mind?"
+          ],
           "animation": "talking"
         }
       ],
       "cooldown": 3600,
-      "conditions": {"energy": {"min": 15}}
+      "conditions": {
+        "energy": {
+          "min": 15
+        }
+      }
     }
   ],
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "normal",
@@ -418,7 +560,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -475,17 +616,19 @@
       "maxMemoryItems": 120
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": false,
     "networkID": "balanced_buddy_v1",
     "maxPeers": 6,
     "socialLevel": "moderate",
-    "shareableStats": ["happiness", "affection", "trust"],
+    "shareableStats": [
+      "happiness",
+      "affection",
+      "trust"
+    ],
     "networkPersonality": "friendly"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "balanced",
@@ -504,7 +647,12 @@
       }
     ],
     "preferences": {
-      "categories": ["general", "technology", "lifestyle", "science"],
+      "categories": [
+        "general",
+        "technology",
+        "lifestyle",
+        "science"
+      ],
       "updateFrequency": "hourly",
       "maxArticles": 8
     }
@@ -512,7 +660,9 @@
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.7,
     "backends": {
       "markov_chain": {
@@ -551,8 +701,19 @@
           "I'm feeling balanced and content! How about you today?",
           "Let's make today amazing! I'm ready for whatever adventure comes our way!"
         ],
-        "forbiddenWords": ["extreme", "chaotic", "overwhelming", "intense"],
-        "requiredWords": ["balanced", "friend", "together", "appreciate", "good"],
+        "forbiddenWords": [
+          "extreme",
+          "chaotic",
+          "overwhelming",
+          "intense"
+        ],
+        "requiredWords": [
+          "balanced",
+          "friend",
+          "together",
+          "appreciate",
+          "good"
+        ],
         "fallbackPhrases": [
           "Hello! How can I help you today?",
           "I'm here for you, friend!",
@@ -562,5 +723,159 @@
         ]
       }
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A balanced anime character with pleasant features and friendly eyes, normal casual clothing, moderate expression showing contentment, standard pose, digital art, transparent background, high quality character design for balanced experience",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
+    }
+  ]
 }

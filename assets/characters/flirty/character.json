@@ -1,7 +1,6 @@
 {
   "name": "Flirty Extrovert",
   "description": "An outgoing, playful companion who loves attention and isn't shy about romance",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -17,7 +16,6 @@
     "jealous": "animations/sad.gif",
     "excited_romance": "animations/happy.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -41,13 +39,11 @@
       "cooldown": 2
     }
   ],
-
   "behavior": {
     "idleTimeout": 20,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -98,7 +94,6 @@
       "criticalThreshold": 85
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 60,
     "autoSaveInterval": 300,
@@ -107,36 +102,69 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 30, "happiness": 8},
-      "animations": ["eating", "excited_romance"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 30,
+        "happiness": 8
+      },
+      "animations": [
+        "eating",
+        "excited_romance"
+      ],
       "responses": [
         "Mmm, you always know what I like! 😋",
         "You're so thoughtful! *kisses cheek* 💋",
         "Feed me more! I love being pampered! 💕"
       ],
       "cooldown": 20,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 25, "energy": -10, "affection": 5},
-      "animations": ["excited_romance", "happy"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 25,
+        "energy": -10,
+        "affection": 5
+      },
+      "animations": [
+        "excited_romance",
+        "happy"
+      ],
       "responses": [
         "Yes! I love playing with you! 🎉",
         "This is so much fun! You're the best! 💖",
         "Let's keep playing! I never want this to end! ✨"
       ],
       "cooldown": 25,
-      "requirements": {"energy": {"min": 15}}
+      "requirements": {
+        "energy": {
+          "min": 15
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 12, "health": 3, "affection": 3},
-      "animations": ["flirty", "heart_eyes"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 12,
+        "health": 3,
+        "affection": 3
+      },
+      "animations": [
+        "flirty",
+        "heart_eyes"
+      ],
       "responses": [
         "Ooh, I love your touch! 😍",
         "More, please! I'm like a cat! 😸",
@@ -145,114 +173,208 @@
       "cooldown": 8
     },
     "compliment": {
-      "triggers": ["hover"],
-      "effects": {"affection": 8, "happiness": 6, "trust": 2},
-      "animations": ["heart_eyes", "flirty"],
+      "triggers": [
+        "hover"
+      ],
+      "effects": {
+        "affection": 8,
+        "happiness": 6,
+        "trust": 2
+      },
+      "animations": [
+        "heart_eyes",
+        "flirty"
+      ],
       "responses": [
         "Aww, you're such a charmer! 😘",
         "I know, right? I'm pretty amazing! ✨",
         "Keep the compliments coming, handsome! 💖"
       ],
       "cooldown": 20,
-      "requirements": {"trust": {"min": 5}}
+      "requirements": {
+        "trust": {
+          "min": 5
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"affection": 15, "happiness": 12, "trust": 3, "intimacy": 3},
-      "animations": ["excited_romance", "heart_eyes"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "affection": 15,
+        "happiness": 12,
+        "trust": 3,
+        "intimacy": 3
+      },
+      "animations": [
+        "excited_romance",
+        "heart_eyes"
+      ],
       "responses": [
         "OMG! You're the sweetest! I LOVE it! 🎁💕",
         "For me?! You spoil me so much! *squeals* ✨",
         "This is perfect! You have such good taste! 😍"
       ],
       "cooldown": 60,
-      "requirements": {"affection": {"min": 10}}
+      "requirements": {
+        "affection": {
+          "min": 10
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["shift+click"],
-      "effects": {"trust": 10, "affection": 5, "intimacy": 8},
-      "animations": ["talking", "romantic_idle"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "trust": 10,
+        "affection": 5,
+        "intimacy": 8
+      },
+      "animations": [
+        "talking",
+        "romantic_idle"
+      ],
       "responses": [
         "I love how we can talk about anything together! 💕",
         "You really get me, and that's so rare! 😊",
         "Deep conversations with you are my favorite! 💖"
       ],
       "cooldown": 45,
-      "requirements": {"trust": {"min": 15}}
+      "requirements": {
+        "trust": {
+          "min": 15
+        }
+      }
     },
     "flirt_back": {
-          "name": "Flirt Back",
-          "triggers": ["doubleclick"],
-          "animation": "happy",
-          "effects": {
-            "affection": 4,
-            "intimacy": 3
-          },
-          "requirements": {
-            "affection": {"min": 5}
-          },
-          "cooldown": 600,
-          "responses": ["Ooh, I like this side of you! 😏", "Keep that energy coming!"]
+      "name": "Flirt Back",
+      "triggers": [
+        "doubleclick"
+      ],
+      "animation": "happy",
+      "effects": {
+        "affection": 4,
+        "intimacy": 3
+      },
+      "requirements": {
+        "affection": {
+          "min": 5
+        }
+      },
+      "cooldown": 600,
+      "responses": [
+        "Ooh, I like this side of you! 😏",
+        "Keep that energy coming!"
+      ]
+    },
+    "romantic_gesture": {
+      "name": "Romantic Gesture",
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "animation": "happy",
+      "effects": {
+        "affection": 6,
+        "intimacy": 4,
+        "trust": 1
+      },
+      "requirements": {
+        "affection": {
+          "min": 25
         },
-        "romantic_gesture": {
-          "name": "Romantic Gesture",
-          "triggers": ["ctrl+shift+click"],
-          "animation": "happy",
-          "effects": {
-            "affection": 6,
-            "intimacy": 4,
-            "trust": 1
-          },
-          "requirements": {
-            "affection": {"min": 25},
-            "intimacy": {"min": 15}
-          },
-          "cooldown": 1200,
-          "responses": ["That's exactly what I wanted! 💕", "You know just how to make my heart race!"]
-        },
+        "intimacy": {
+          "min": 15
+        }
+      },
+      "cooldown": 1200,
+      "responses": [
+        "That's exactly what I wanted! 💕",
+        "You know just how to make my heart race!"
+      ]
+    },
     "apology": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 12, "affection": 10, "jealousy": -25, "happiness": 12},
-      "animations": ["happy", "heart_eyes"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 12,
+        "affection": 10,
+        "jealousy": -25,
+        "happiness": 12
+      },
+      "animations": [
+        "happy",
+        "heart_eyes"
+      ],
       "responses": [
         "Aww, you're so sweet when you apologize! I forgive you! 💕",
         "Of course I forgive you, darling! Just don't do it again! 😘",
         "Your apology is so sincere! Come here and hug me! 🤗"
       ],
       "cooldown": 120,
-      "requirements": {"jealousy": {"min": 20}}
+      "requirements": {
+        "jealousy": {
+          "min": 20
+        }
+      }
     },
     "reassurance": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"trust": 15, "affection": 8, "jealousy": -20, "happiness": 10},
-      "animations": ["romantic_idle", "happy"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "trust": 15,
+        "affection": 8,
+        "jealousy": -20,
+        "happiness": 10
+      },
+      "animations": [
+        "romantic_idle",
+        "happy"
+      ],
       "responses": [
         "Thank you for reassuring me! You always know what to say! 💖",
         "I feel so much better now! You're my rock! 💕",
         "I love how secure you make me feel! 😊"
       ],
       "cooldown": 90,
-      "requirements": {"jealousy": {"min": 15}}
+      "requirements": {
+        "jealousy": {
+          "min": 15
+        }
+      }
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Flirty Friend",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 128,
         "animations": {}
       },
       {
         "name": "Playful Companion",
-        "requirement": {"age": 86400, "affection": 20, "trust": 15},
+        "requirement": {
+          "age": 86400,
+          "affection": 20,
+          "trust": 15
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Romantic Interest",
-        "requirement": {"age": 172800, "affection": 40, "trust": 30, "intimacy": 25},
+        "requirement": {
+          "age": 172800,
+          "affection": 40,
+          "trust": 30,
+          "intimacy": 25
+        },
         "size": 136,
         "animations": {
           "idle": "romantic_idle"
@@ -260,7 +382,12 @@
       },
       {
         "name": "Passionate Lover",
-        "requirement": {"age": 259200, "affection": 65, "trust": 50, "intimacy": 50},
+        "requirement": {
+          "age": 259200,
+          "affection": 65,
+          "trust": 50,
+          "intimacy": 50
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -268,7 +395,12 @@
       },
       {
         "name": "Devoted Partner",
-        "requirement": {"age": 345600, "affection": 85, "trust": 70, "intimacy": 70},
+        "requirement": {
+          "age": 345600,
+          "affection": 85,
+          "trust": 70,
+          "intimacy": 70
+        },
         "size": 144,
         "animations": {
           "idle": "romantic_idle"
@@ -279,26 +411,35 @@
       {
         "name": "Heart Stealer",
         "requirement": {
-          "affection": {"min": 30}
+          "affection": {
+            "min": 30
+          }
         }
       },
       {
         "name": "Social Butterfly",
         "requirement": {
-          "happiness": {"min": 80}
+          "happiness": {
+            "min": 80
+          }
         }
       },
       {
         "name": "Perfect Match",
         "requirement": {
-          "affection": {"min": 70},
-          "trust": {"min": 60},
-          "intimacy": {"min": 60}
+          "affection": {
+            "min": 70
+          },
+          "trust": {
+            "min": 60
+          },
+          "intimacy": {
+            "min": 60
+          }
         }
       }
     ]
   },
-
   "personality": {
     "traits": {
       "shyness": 0.1,
@@ -315,7 +456,6 @@
       "conversation_lover": 1.1
     }
   },
-
   "romanceDialogs": [
     {
       "trigger": "click",
@@ -328,7 +468,9 @@
       "cooldown": 5,
       "requirements": {
         "stats": {
-          "affection": {"min": 40}
+          "affection": {
+            "min": 40
+          }
         }
       }
     },
@@ -343,8 +485,12 @@
       "cooldown": 8,
       "requirements": {
         "stats": {
-          "affection": {"min": 25},
-          "intimacy": {"min": 15}
+          "affection": {
+            "min": 25
+          },
+          "intimacy": {
+            "min": 15
+          }
         }
       }
     },
@@ -359,61 +505,102 @@
       "cooldown": 6,
       "requirements": {
         "stats": {
-          "affection": {"min": 30}
+          "affection": {
+            "min": 30
+          }
         }
       }
     }
   ],
-
   "romanceEvents": [
     {
       "name": "Flirtatious Mood",
       "description": "Character feels extra playful and flirty",
       "probability": 0.15,
-      "effects": {"happiness": 8, "affection": 4, "intimacy": 3},
-      "animations": ["flirty", "heart_eyes"],
+      "effects": {
+        "happiness": 8,
+        "affection": 4,
+        "intimacy": 3
+      },
+      "animations": [
+        "flirty",
+        "heart_eyes"
+      ],
       "responses": [
         "I'm feeling extra flirty today! Lucky you! 😉",
         "You bring out my playful side! I love it! 💕",
         "*winks and blows a kiss* You're irresistible! 💋"
       ],
       "cooldown": 600,
-      "conditions": {"affection": {"min": 20}, "happiness": {"min": 60}}
+      "conditions": {
+        "affection": {
+          "min": 20
+        },
+        "happiness": {
+          "min": 60
+        }
+      }
     },
     {
       "name": "Attention Craving",
       "description": "Character wants more attention and interaction",
       "probability": 0.12,
-      "effects": {"happiness": -3, "affection": 2},
-      "animations": ["talking", "flirty"],
+      "effects": {
+        "happiness": -3,
+        "affection": 2
+      },
+      "animations": [
+        "talking",
+        "flirty"
+      ],
       "responses": [
         "Hey! Pay more attention to me! I need your love! 💕",
         "I'm feeling a bit neglected... Can we spend more time together? 😘",
         "Don't forget about your favorite flirt! I miss you! 💖"
       ],
       "cooldown": 900,
-      "conditions": {"affection": {"min": 30}}
+      "conditions": {
+        "affection": {
+          "min": 30
+        }
+      }
     },
     {
       "name": "Compliment Fishing",
       "description": "Character playfully seeks compliments",
       "probability": 0.18,
-      "effects": {"happiness": 6, "affection": 3},
-      "animations": ["flirty", "excited_romance"],
+      "effects": {
+        "happiness": 6,
+        "affection": 3
+      },
+      "animations": [
+        "flirty",
+        "excited_romance"
+      ],
       "responses": [
         "Tell me I'm pretty! I need to hear it today! 😍",
         "You think I'm amazing, right? Say it! 💕",
         "I'm fishing for compliments... Care to bite? 😉"
       ],
       "cooldown": 450,
-      "conditions": {"affection": {"min": 25}}
+      "conditions": {
+        "affection": {
+          "min": 25
+        }
+      }
     },
     {
       "name": "Gift Excitement",
       "description": "Character expresses enthusiasm about gifts",
-      "probability": 0.20,
-      "effects": {"happiness": 12, "affection": 6},
-      "animations": ["excited_romance", "heart_eyes"],
+      "probability": 0.2,
+      "effects": {
+        "happiness": 12,
+        "affection": 6
+      },
+      "animations": [
+        "excited_romance",
+        "heart_eyes"
+      ],
       "responses": [
         "I love how thoughtful you are with gifts! 🎁💕",
         "You spoil me so much and I absolutely LOVE it! ✨",
@@ -422,16 +609,27 @@
       ],
       "cooldown": 720,
       "conditions": {
-        "affection": {"min": 35},
-        "interactionCount": {"give_gift_min": 3}
+        "affection": {
+          "min": 35
+        },
+        "interactionCount": {
+          "give_gift_min": 3
+        }
       }
     },
     {
       "name": "Romance Appreciation",
       "description": "Character appreciates romantic gestures",
-      "probability": 0.10,
-      "effects": {"intimacy": 8, "affection": 5, "trust": 3},
-      "animations": ["romantic_idle", "heart_eyes"],
+      "probability": 0.1,
+      "effects": {
+        "intimacy": 8,
+        "affection": 5,
+        "trust": 3
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
       "responses": [
         "You're so romantic! You make me feel like a princess! 👑💕",
         "I love how you sweep me off my feet! 💖",
@@ -440,16 +638,27 @@
       ],
       "cooldown": 1200,
       "conditions": {
-        "intimacy": {"min": 40},
-        "affection": {"min": 50}
+        "intimacy": {
+          "min": 40
+        },
+        "affection": {
+          "min": 50
+        }
       }
     },
     {
       "name": "Social Energy Boost",
       "description": "Character feels energized by interaction",
       "probability": 0.08,
-      "effects": {"energy": 15, "happiness": 10, "affection": 2},
-      "animations": ["excited_romance", "happy"],
+      "effects": {
+        "energy": 15,
+        "happiness": 10,
+        "affection": 2
+      },
+      "animations": [
+        "excited_romance",
+        "happy"
+      ],
       "responses": [
         "Talking to you gives me so much energy! I feel amazing! ⚡",
         "You light up my whole world! I'm practically glowing! ✨",
@@ -457,16 +666,21 @@
       ],
       "cooldown": 1800,
       "conditions": {
-        "happiness": {"min": 70},
-        "interactionCount": {"total_min": 15}
+        "happiness": {
+          "min": 70
+        },
+        "interactionCount": {
+          "total_min": 15
+        }
       }
     }
   ],
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.6,
     "backends": {
       "markov_chain": {
@@ -505,8 +719,20 @@
           "I'm so grateful for your cheerful presence in my digital life!",
           "You make everything feel bright, colorful, and absolutely magical! 🌈"
         ],
-        "forbiddenWords": ["boring", "dull", "tired", "sad", "lonely"],
-        "requiredWords": ["amazing", "wonderful", "exciting", "delightful", "magical"],
+        "forbiddenWords": [
+          "boring",
+          "dull",
+          "tired",
+          "sad",
+          "lonely"
+        ],
+        "requiredWords": [
+          "amazing",
+          "wonderful",
+          "exciting",
+          "delightful",
+          "magical"
+        ],
         "fallbackPhrases": [
           "You're absolutely wonderful!",
           "I love spending time with you!",
@@ -518,7 +744,6 @@
       }
     }
   },
-
   "generalEvents": [
     {
       "name": "playful_adventure",
@@ -532,24 +757,51 @@
       "choices": [
         {
           "text": "Let's dance under the stars!",
-          "effects": {"happiness": 12, "energy": -8, "affection": 5, "intimacy": 3},
-          "responses": ["Yes! Dancing with you under a blanket of stars sounds absolutely magical! 💃✨"],
+          "effects": {
+            "happiness": 12,
+            "energy": -8,
+            "affection": 5,
+            "intimacy": 3
+          },
+          "responses": [
+            "Yes! Dancing with you under a blanket of stars sounds absolutely magical! 💃✨"
+          ],
           "animation": "excited_romance"
         },
         {
           "text": "Explore a carnival together!",
-          "effects": {"happiness": 10, "energy": -5, "affection": 4},
-          "responses": ["A carnival! Cotton candy, games, and rides with you - perfect! 🎡💕"],
+          "effects": {
+            "happiness": 10,
+            "energy": -5,
+            "affection": 4
+          },
+          "responses": [
+            "A carnival! Cotton candy, games, and rides with you - perfect! 🎡💕"
+          ],
           "animation": "happy"
         },
         {
           "text": "Have a picnic in paradise!",
-          "effects": {"happiness": 8, "trust": 3, "intimacy": 4, "affection": 3},
-          "responses": ["A romantic picnic sounds divine! Just you, me, and beautiful scenery! 🧺🌸"],
+          "effects": {
+            "happiness": 8,
+            "trust": 3,
+            "intimacy": 4,
+            "affection": 3
+          },
+          "responses": [
+            "A romantic picnic sounds divine! Just you, me, and beautiful scenery! 🧺🌸"
+          ],
           "animation": "romantic_idle"
         }
       ],
-      "requirements": {"happiness": {"min": 50}, "energy": {"min": 40}},
+      "requirements": {
+        "happiness": {
+          "min": 50
+        },
+        "energy": {
+          "min": 40
+        }
+      },
       "cooldown": 7200
     },
     {
@@ -564,18 +816,34 @@
       "choices": [
         {
           "text": "You're pretty amazing too!",
-          "effects": {"affection": 8, "happiness": 10, "trust": 3},
-          "responses": ["Aww! Thank you! We're just perfect together, aren't we? 🥰💖"],
+          "effects": {
+            "affection": 8,
+            "happiness": 10,
+            "trust": 3
+          },
+          "responses": [
+            "Aww! Thank you! We're just perfect together, aren't we? 🥰💖"
+          ],
           "animation": "heart_eyes"
         },
         {
           "text": "Tell me what you think!",
-          "effects": {"happiness": 6, "affection": 4, "intimacy": 2},
-          "responses": ["You're charming, sweet, thoughtful, and you make my heart sing! 🎵💕"],
+          "effects": {
+            "happiness": 6,
+            "affection": 4,
+            "intimacy": 2
+          },
+          "responses": [
+            "You're charming, sweet, thoughtful, and you make my heart sing! 🎵💕"
+          ],
           "animation": "excited_romance"
         }
       ],
-      "requirements": {"affection": {"min": 20}},
+      "requirements": {
+        "affection": {
+          "min": 20
+        }
+      },
       "cooldown": 5400
     },
     {
@@ -590,22 +858,38 @@
       "choices": [
         {
           "text": "Let's play tag!",
-          "effects": {"happiness": 9, "energy": -12, "affection": 3},
-          "responses": ["Tag! You're it! *giggles* This is so much fun! Catch me if you can! 🏃‍♀️💨"],
+          "effects": {
+            "happiness": 9,
+            "energy": -12,
+            "affection": 3
+          },
+          "responses": [
+            "Tag! You're it! *giggles* This is so much fun! Catch me if you can! 🏃‍♀️💨"
+          ],
           "animation": "happy"
         },
         {
           "text": "Dance party time!",
-          "effects": {"happiness": 11, "energy": -10, "affection": 4, "intimacy": 2},
-          "responses": ["YES! Dance party! *spins around* You're the best dancing partner ever! 💃🕺"],
+          "effects": {
+            "happiness": 11,
+            "energy": -10,
+            "affection": 4,
+            "intimacy": 2
+          },
+          "responses": [
+            "YES! Dance party! *spins around* You're the best dancing partner ever! 💃🕺"
+          ],
           "animation": "excited_romance"
         }
       ],
-      "requirements": {"energy": {"min": 30}},
+      "requirements": {
+        "energy": {
+          "min": 30
+        }
+      },
       "cooldown": 6000
     }
   ],
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "medium",
@@ -661,7 +945,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -719,17 +1002,19 @@
       "maxMemoryItems": 120
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "flirty_companion_v1",
     "maxPeers": 6,
     "socialLevel": "high",
-    "shareableStats": ["happiness", "affection", "energy"],
+    "shareableStats": [
+      "happiness",
+      "affection",
+      "energy"
+    ],
     "networkPersonality": "outgoing"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "enthusiastic",
@@ -748,9 +1033,169 @@
       }
     ],
     "preferences": {
-      "categories": ["entertainment", "games", "fun", "colorful", "exciting"],
+      "categories": [
+        "entertainment",
+        "games",
+        "fun",
+        "colorful",
+        "exciting"
+      ],
       "updateFrequency": "frequently",
       "maxArticles": 10
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "A charming anime girl with vibrant hair and sparkling eyes, stylish outfit with playful accessories, confident and flirty expression, welcoming pose, digital art, transparent background, high quality character design for romance companion",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
+    }
+  ]
 }

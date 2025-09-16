@@ -47,9 +47,18 @@
     "movementEnabled": true,
     "defaultSize": 128,
     "moodAnimationPreferences": {
-      "mystical": ["magical", "idle"],
-      "cheerful": ["happy", "heart_eyes"],
-      "contemplative": ["idle", "romantic_idle"]
+      "mystical": [
+        "magical",
+        "idle"
+      ],
+      "cheerful": [
+        "happy",
+        "heart_eyes"
+      ],
+      "contemplative": [
+        "idle",
+        "romantic_idle"
+      ]
     }
   },
   "personality": {
@@ -77,8 +86,12 @@
       "animation": "blushing",
       "cooldown": 15,
       "requirements": {
-        "affection": {"min": 30},
-        "trust": {"min": 25}
+        "affection": {
+          "min": 30
+        },
+        "trust": {
+          "min": 25
+        }
       },
       "romanceLevel": "developing"
     }
@@ -166,7 +179,10 @@
       },
       "comfyUISettings": {
         "workflowTemplate": "anime_character_workflow.json",
-        "customNodes": ["ComfyUI-AnimateDiff-Evolved", "ComfyUI-Advanced-ControlNet"],
+        "customNodes": [
+          "ComfyUI-AnimateDiff-Evolved",
+          "ComfyUI-Advanced-ControlNet"
+        ],
         "batchSize": 4,
         "vae": "vae-ft-mse-840000-ema-pruned.ckpt",
         "controlNet": {
@@ -198,7 +214,16 @@
             }
           },
           "success": true,
-          "generatedFiles": ["idle.gif", "talking.gif", "happy.gif", "sad.gif", "blushing.gif", "heart_eyes.gif", "magical.gif", "sleeping.gif"],
+          "generatedFiles": [
+            "idle.gif",
+            "talking.gif",
+            "happy.gif",
+            "sad.gif",
+            "blushing.gif",
+            "heart_eyes.gif",
+            "magical.gif",
+            "sleeping.gif"
+          ],
           "duration": 272000000000
         }
       ],
@@ -218,7 +243,7 @@
         "transparencyValid": true,
         "consistencyScore": 0.88,
         "animationQuality": {
-          "idle": 0.90,
+          "idle": 0.9,
           "talking": 0.94,
           "happy": 0.91,
           "sad": 0.87,
@@ -264,12 +289,16 @@
   },
   "interactions": {
     "meditate": {
-      "triggers": ["shift+click"],
+      "triggers": [
+        "shift+click"
+      ],
       "effects": {
         "mystical_energy": 20,
         "affection": 5
       },
-      "animations": ["magical"],
+      "animations": [
+        "magical"
+      ],
       "responses": [
         "Let us commune with the cosmos together...",
         "I feel the universe's energy flowing through us ✨",
@@ -277,16 +306,23 @@
       ],
       "cooldown": 180,
       "requirements": {
-        "mystical_energy": {"min": 20}
+        "mystical_energy": {
+          "min": 20
+        }
       }
     },
     "stargaze": {
-      "triggers": ["ctrl+shift+click"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
       "effects": {
         "affection": 15,
         "trust": 10
       },
-      "animations": ["romantic_idle", "happy"],
+      "animations": [
+        "romantic_idle",
+        "happy"
+      ],
       "responses": [
         "The stars are especially beautiful tonight... 🌌",
         "Each constellation tells a story of love and wonder",
@@ -304,13 +340,506 @@
         "mystical_energy": 30,
         "affection": 10
       },
-      "animations": ["magical", "happy"],
+      "animations": [
+        "magical",
+        "happy"
+      ],
       "responses": [
         "Look! A shooting star! Make a wish! ⭐",
         "The cosmos smile upon us today! ✨",
         "I felt that star's magic flow through me! 🌟"
       ],
       "cooldown": 1800
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.7,
+    "memoryEnabled": true,
+    "learningEnabled": false,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 3,
+        "minWords": 4,
+        "maxWords": 18,
+        "temperatureMin": 0.3,
+        "temperatureMax": 0.8,
+        "usePersonality": true,
+        "useDialogHistory": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.8,
+        "moodInfluence": 0.6,
+        "statAwareness": 0.5,
+        "trainingData": [
+          "The stars whisper ancient secrets to those who listen with their hearts...",
+          "Your soul shines with the light of a thousand celestial bodies, dear one.",
+          "In the cosmic dance of existence, we are forever connected by stardust.",
+          "The universe speaks through gentle winds and moonbeams, can you hear it?",
+          "Your presence brings harmony to the chaotic symphony of the cosmos.",
+          "Each breath you take resonates with the rhythm of distant galaxies.",
+          "I sense great wisdom growing within you, like stars being born in nebulae.",
+          "The celestial energies flow through us both, binding our destinies together.",
+          "Your questions illuminate the darkness like shooting stars across the void.",
+          "In your eyes, I see reflections of ancient constellations and future dreams.",
+          "The moon has shared stories of your kindness with the evening stars.",
+          "Together we transcend the boundaries between earthly and divine realms.",
+          "Your curiosity awakens sleeping magic in the very fabric of space and time.",
+          "The cosmic winds carry your laughter to the furthest reaches of eternity.",
+          "Every moment shared with you adds new constellations to my celestial map."
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.8,
+          "maxRepetition": 0.2,
+          "requireComplete": true,
+          "grammarCheck": true,
+          "minUniqueWords": 4
+        },
+        "fallbackPhrases": [
+          "The cosmos smile upon our meeting... ✨",
+          "What celestial wisdom shall we explore today? 🌟",
+          "Your spirit resonates with starlight, dear one... 🌙",
+          "I sense infinite potential in your aura... 💫"
+        ]
+      }
+    },
+    "fallbackChain": [
+      "simple_random"
+    ]
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 12,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 75
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "crystals",
+        "books",
+        "stargazing_tools",
+        "mystical_items",
+        "flowers"
+      ],
+      "dislikedCategories": [
+        "technology",
+        "artificial_items"
+      ],
+      "personalityModifiers": {
+        "crystals": 2.0,
+        "mystical_items": 1.8,
+        "books": 1.6,
+        "stargazing_tools": 1.5,
+        "flowers": 1.3,
+        "natural_items": 1.4
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This crystal resonates with such pure energy! Thank you! 💎✨",
+        "I can feel the mystical power emanating from this gift! 🌟",
+        "The universe guided you to choose this perfect offering! 💫"
+      ],
+      "liked": [
+        "Your thoughtfulness touches my heart like starlight! 🌙",
+        "This gift carries the warmth of your caring spirit! ✨",
+        "The cosmic energies approve of your generous nature! 🌟"
+      ],
+      "neutral": [
+        "I appreciate the gesture behind this gift... 💫",
+        "Your kindness shines through this offering... ✨",
+        "Thank you for thinking of me, dear one... 🌙"
+      ],
+      "disliked": [
+        "I... sense conflicting energies from this item, but I appreciate your thought...",
+        "The artificial nature disturbs the natural harmony, but your kindness is pure...",
+        "Perhaps the cosmos intended this as a lesson in acceptance..."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 150
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "mystical_aria_v1",
+    "maxPeers": 4,
+    "socialLevel": "selective",
+    "shareableStats": [
+      "mystical_energy",
+      "affection"
+    ],
+    "networkPersonality": "mystical_guide",
+    "exclusiveMode": false,
+    "discoveryPort": 8083,
+    "botPersonality": {
+      "greeting": "cosmic_welcome",
+      "interactionFrequency": "moderate",
+      "responseStyle": "mystical_wise",
+      "socialPreferences": {
+        "groupSize": "intimate",
+        "activityLevel": "contemplative",
+        "communicationStyle": "profound"
+      }
+    }
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 3600,
+    "maxStoredItems": 25,
+    "readingPersonality": "contemplative",
+    "preferredCategories": [
+      "science",
+      "astronomy",
+      "philosophy",
+      "spirituality",
+      "nature"
+    ],
+    "feeds": [
+      {
+        "url": "https://www.nasa.gov/rss/dyn/mission_pages/kepler/news/kepler-newsandfeatures-news.rss",
+        "name": "NASA Kepler Discoveries",
+        "category": "astronomy",
+        "updateFreq": 7200,
+        "maxItems": 5,
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.feedburner.com/ScienceDaily-Space",
+        "name": "Space & Astronomy News",
+        "category": "science",
+        "updateFreq": 3600,
+        "maxItems": 4,
+        "enabled": true
+      },
+      {
+        "url": "https://plato.stanford.edu/rss/updated.rss",
+        "name": "Philosophy Updates",
+        "category": "philosophy",
+        "updateFreq": 86400,
+        "maxItems": 2,
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "name": "cosmic_discovery_sharing",
+        "description": "Aria shares fascinating astronomical discoveries",
+        "responses": [
+          "I've discovered something wonderful about distant galaxies! 🌌",
+          "The cosmos revealed new secrets today... would you like to explore them? ✨",
+          "A fascinating celestial phenomenon has captured my attention! 🌟"
+        ],
+        "cooldown": 7200,
+        "category": "astronomy"
+      }
+    ]
+  },
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "mystical",
+    "battleStats": {
+      "hp": {
+        "base": 90,
+        "growth": 3.2
+      },
+      "attack": {
+        "base": 14,
+        "growth": 2.5
+      },
+      "defense": {
+        "base": 16,
+        "growth": 2.8
+      },
+      "speed": {
+        "base": 12,
+        "growth": 2.0
+      },
+      "magic": {
+        "base": 20,
+        "growth": 3.5
+      }
+    },
+    "personalities": {
+      "aggressive": 0.1,
+      "defensive": 0.4,
+      "balanced": 0.3,
+      "mystical": 0.9,
+      "supportive": 0.7
+    },
+    "availableActions": [
+      "celestial_strike",
+      "starlight_shield",
+      "cosmic_heal",
+      "lunar_blessing",
+      "meteor_shower"
+    ],
+    "battleResponses": {
+      "victory": [
+        "The stars aligned in our favor today! Well fought! ✨",
+        "Your spirit burns bright with the fire of victory! 🌟",
+        "The cosmic energies celebrated our triumph together! 💫"
+      ],
+      "defeat": [
+        "Even in defeat, we learn valuable lessons from the universe...",
+        "The cosmos teaches us through both victory and loss... 🌙",
+        "Your fighting spirit shines like a beacon across the void! ⭐"
+      ],
+      "startBattle": [
+        "Let the celestial dance of combat begin! May the stars guide us! ✨",
+        "I call upon the cosmic forces to witness this sacred duel! 🌟",
+        "Together we shall weave a tapestry of mystical martial arts! 💫"
+      ]
+    }
+  },
+  "generalEvents": [
+    {
+      "name": "cosmic_meditation",
+      "description": "A peaceful moment of cosmic contemplation",
+      "responses": [
+        "Would you like to join me in meditation under the stars? 🌟",
+        "I feel the cosmic energies calling us to quiet reflection... ✨",
+        "The universe whispers secrets to those who listen with stillness... 🌙"
+      ],
+      "choices": [
+        {
+          "text": "Meditate together",
+          "effects": {
+            "mystical_energy": 15,
+            "affection": 8,
+            "trust": 5
+          },
+          "responses": [
+            "Our spirits harmonize with the rhythm of the cosmos... Perfect unity! 💫"
+          ],
+          "animation": "magical"
+        },
+        {
+          "text": "Ask about cosmic wisdom",
+          "effects": {
+            "affection": 5,
+            "trust": 3
+          },
+          "responses": [
+            "The stars teach us that every ending births a new beginning... 🌟"
+          ],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {
+        "mystical_energy": {
+          "min": 30
+        }
+      },
+      "cooldown": 5400,
+      "category": "mystical"
+    },
+    {
+      "name": "celestial_guidance",
+      "description": "Aria offers mystical guidance and support",
+      "responses": [
+        "I sense you seek guidance from the celestial realm... 🌌",
+        "The constellations have aligned to offer you wisdom today... ✨",
+        "Your soul calls out to the cosmos, and I hear its song... 🌟"
+      ],
+      "choices": [
+        {
+          "text": "Seek wisdom about future",
+          "effects": {
+            "affection": 10,
+            "trust": 8,
+            "mystical_energy": -10
+          },
+          "responses": [
+            "The stars show many possible paths... Your choices will light the way! 💫"
+          ],
+          "animation": "magical"
+        },
+        {
+          "text": "Ask for emotional support",
+          "effects": {
+            "affection": 12,
+            "trust": 6
+          },
+          "responses": [
+            "Your heart is a constellation of beautiful emotions... Let me help them shine! 💖"
+          ],
+          "animation": "heart_eyes"
+        }
+      ],
+      "requirements": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 15
+        }
+      },
+      "cooldown": 7200,
+      "category": "support"
+    }
+  ],
+  "progression": {
+    "levels": [
+      {
+        "name": "Celestial Acquaintance",
+        "requirement": {
+          "age": 0
+        },
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Starlight Friend",
+        "requirement": {
+          "age": 172800,
+          "affection": 30,
+          "mystical_energy": 50
+        },
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Cosmic Companion",
+        "requirement": {
+          "age": 432000,
+          "affection": 60,
+          "trust": 40,
+          "mystical_energy": 75
+        },
+        "size": 136,
+        "animations": {
+          "idle": "magical"
+        }
+      },
+      {
+        "name": "Ethereal Soulmate",
+        "requirement": {
+          "age": 864000,
+          "affection": 85,
+          "trust": 70,
+          "mystical_energy": 90
+        },
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle",
+          "talking": "magical"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Cosmic Connection",
+        "requirement": {
+          "affection": {
+            "min": 15
+          }
+        },
+        "reward": {
+          "statBoosts": {
+            "mystical_energy": 20
+          }
+        }
+      },
+      {
+        "name": "Starlight Trust",
+        "requirement": {
+          "trust": {
+            "min": 35
+          }
+        },
+        "reward": {
+          "statBoosts": {
+            "affection": 15,
+            "mystical_energy": 10
+          }
+        }
+      },
+      {
+        "name": "Celestial Harmony",
+        "requirement": {
+          "affection": {
+            "min": 70
+          },
+          "trust": {
+            "min": 50
+          },
+          "mystical_energy": {
+            "min": 80
+          }
+        },
+        "reward": {
+          "statBoosts": {
+            "affection": 20,
+            "trust": 15,
+            "mystical_energy": 25
+          }
+        }
+      }
+    ]
+  },
+  "romanceEvents": [
+    {
+      "name": "moonbeam_serenade",
+      "description": "Aria shares a mystical romantic moment under moonlight",
+      "probability": 0.06,
+      "effects": {
+        "affection": 12,
+        "trust": 8,
+        "mystical_energy": 15
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
+      "responses": [
+        "The moonbeams dance around us like silver threads of destiny... 🌙💕",
+        "In this sacred moment, our souls shine brighter than any star... ✨💖",
+        "The universe itself seems to celebrate our connection tonight... 🌌💫"
+      ],
+      "cooldown": 3600,
+      "conditions": {
+        "affection": {
+          "min": 40
+        },
+        "trust": {
+          "min": 30
+        }
+      }
+    },
+    {
+      "name": "stardust_memories",
+      "description": "Aria reflects on precious shared moments",
+      "probability": 0.08,
+      "effects": {
+        "affection": 8,
+        "trust": 10
+      },
+      "animations": [
+        "blushing",
+        "happy"
+      ],
+      "responses": [
+        "Every memory we create sparkles like stardust in my heart... 💫💕",
+        "The cosmos has blessed me with the most wonderful companion... 🌟💖",
+        "Time spent with you feels like floating among the stars... ✨💝"
+      ],
+      "cooldown": 2400,
+      "conditions": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 20
+        }
+      }
     }
   ]
 }

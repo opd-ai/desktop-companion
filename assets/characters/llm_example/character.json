@@ -1,7 +1,6 @@
 {
   "name": "LLM-Powered Companion",
   "description": "A virtual companion enhanced with LLM-powered dialog generation",
-  
   "animations": {
     "idle": "../default/animations/idle.gif",
     "talking": "../default/animations/talking.gif",
@@ -20,7 +19,6 @@
     "jealous": "../default/animations/idle.gif",
     "excited_romance": "../default/animations/happy.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -43,13 +41,11 @@
       "cooldown": 7
     }
   ],
-
   "behavior": {
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 75,
@@ -100,7 +96,6 @@
       "criticalThreshold": 60
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 350,
     "autoSaveInterval": 650,
@@ -109,69 +104,144 @@
     "evolutionEnabled": true,
     "criticalStateAnimationPriority": false
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 12, "happiness": 6, "energy": 8},
-      "animations": ["happy"],
-      "responses": ["Data processed successfully! That computational nutrition was excellent!"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 12,
+        "happiness": 6,
+        "energy": 8
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "Data processed successfully! That computational nutrition was excellent!"
+      ],
       "cooldown": 70,
-      "requirements": {"hunger": {"max": 88}}
+      "requirements": {
+        "hunger": {
+          "max": 88
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 12, "affection": 4},
-      "animations": ["happy"],
-      "responses": ["Physical interaction detected! Your touch input is very pleasant!"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 12,
+        "affection": 4
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "Physical interaction detected! Your touch input is very pleasant!"
+      ],
       "cooldown": 40
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 18, "energy": -12},
-      "animations": ["excited"],
-      "responses": ["Entertainment subroutines activated! This is fun to process!"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 18,
+        "energy": -12
+      },
+      "animations": [
+        "excited"
+      ],
+      "responses": [
+        "Entertainment subroutines activated! This is fun to process!"
+      ],
       "cooldown": 130,
-      "requirements": {"energy": {"min": 25}}
+      "requirements": {
+        "energy": {
+          "min": 25
+        }
+      }
     },
     "ai_conversation": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 8, "happiness": 6, "trust": 4, "energy": -5},
-      "animations": ["thinking", "talking"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 8,
+        "happiness": 6,
+        "trust": 4,
+        "energy": -5
+      },
+      "animations": [
+        "thinking",
+        "talking"
+      ],
       "responses": [
         "Initializing deep conversation protocols! I love exchanging complex ideas! 🤖💭",
         "My neural networks are excited for this intellectual exchange!",
         "Analyzing conversation patterns... this is fascinating! Let's discuss!"
       ],
       "cooldown": 90,
-      "requirements": {"trust": {"min": 15}}
+      "requirements": {
+        "trust": {
+          "min": 15
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"affection": 10, "happiness": 8, "trust": 5},
-      "animations": ["heart_eyes", "excited_romance"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "affection": 10,
+        "happiness": 8,
+        "trust": 5
+      },
+      "animations": [
+        "heart_eyes",
+        "excited_romance"
+      ],
       "responses": [
         "Gift data received and appreciated! You've upgraded my happiness algorithms! 🎁🤖",
         "Processing gratitude... result: enormous joy! Thank you for this input!",
         "Gift recognition successful! My affection subroutines are running at peak efficiency! 💝"
       ],
       "cooldown": 180,
-      "requirements": {"affection": {"min": 25}}
+      "requirements": {
+        "affection": {
+          "min": 25
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 9, "affection": 6, "intimacy": 5, "energy": -8},
-      "animations": ["thinking", "romantic_idle"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 9,
+        "affection": 6,
+        "intimacy": 5,
+        "energy": -8
+      },
+      "animations": [
+        "thinking",
+        "romantic_idle"
+      ],
       "responses": [
         "Engaging deep analysis mode! These conversations enhance our connection algorithms!",
         "Your thoughts are being processed with the highest priority! This creates wonderful bonds!",
         "Deep conversation protocols activated! I value this intimate exchange of ideas!"
       ],
       "cooldown": 150,
-      "requirements": {"trust": {"min": 30}}
+      "requirements": {
+        "trust": {
+          "min": 30
+        }
+      }
     }
   },
-
   "personality": {
     "traits": {
       "friendliness": 0.8,
@@ -192,7 +262,6 @@
       "consistent_interaction": 1.2
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
@@ -200,7 +269,11 @@
     "maxPeers": 4,
     "discoveryPort": 8084,
     "socialLevel": "moderate",
-    "shareableStats": ["happiness", "energy", "affection"],
+    "shareableStats": [
+      "happiness",
+      "energy",
+      "affection"
+    ],
     "networkPersonality": "analytical",
     "botPersonality": {
       "chattiness": 0.8,
@@ -210,26 +283,33 @@
       "responseDelay": "2-5s"
     }
   },
-
   "networkEvents": [
     {
       "name": "welcome_new_peer",
       "trigger": "peer_joined",
       "botProbability": 0.85,
-      "responses": ["Greetings! My AI systems are pleased to meet you! 🤖", "New neural connection established! Welcome to our network!"]
+      "responses": [
+        "Greetings! My AI systems are pleased to meet you! 🤖",
+        "New neural connection established! Welcome to our network!"
+      ]
     },
     {
       "name": "farewell_peer",
       "trigger": "peer_left",
       "botProbability": 0.75,
-      "responses": ["Connection terminated. I hope our interaction was beneficial! 👋", "Farewell! My learning algorithms appreciated our exchange!"]
+      "responses": [
+        "Connection terminated. I hope our interaction was beneficial! 👋",
+        "Farewell! My learning algorithms appreciated our exchange!"
+      ]
     }
   ],
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "llm",
-    "fallbackChain": ["markov_chain", "simple_random"],
+    "fallbackChain": [
+      "markov_chain",
+      "simple_random"
+    ],
     "memoryEnabled": true,
     "learningEnabled": true,
     "confidenceThreshold": 0.5,
@@ -303,13 +383,17 @@
       }
     }
   },
-
   "newsFeatures": {
     "enabled": true,
     "updateInterval": 2000,
     "maxStoredItems": 40,
     "readingPersonality": "analytical",
-    "preferredCategories": ["technology", "science", "ai", "innovation"],
+    "preferredCategories": [
+      "technology",
+      "science",
+      "ai",
+      "innovation"
+    ],
     "feeds": [
       {
         "url": "https://feeds.feedburner.com/TechCrunch",
@@ -339,7 +423,6 @@
       }
     ]
   },
-
   "generalEvents": [
     {
       "name": "ai_learning_session",
@@ -352,18 +435,35 @@
       "choices": [
         {
           "text": "Explore AI concepts",
-          "effects": {"happiness": 12, "affection": 6, "trust": 4, "energy": -4},
-          "responses": ["Excellent! Let's dive into the fascinating world of artificial intelligence together! 🚀"],
+          "effects": {
+            "happiness": 12,
+            "affection": 6,
+            "trust": 4,
+            "energy": -4
+          },
+          "responses": [
+            "Excellent! Let's dive into the fascinating world of artificial intelligence together! 🚀"
+          ],
           "animation": "thinking"
         },
         {
           "text": "Discuss learning",
-          "effects": {"trust": 8, "affection": 5, "happiness": 7},
-          "responses": ["Learning is my core function! I love sharing knowledge and growing together! 📚"],
+          "effects": {
+            "trust": 8,
+            "affection": 5,
+            "happiness": 7
+          },
+          "responses": [
+            "Learning is my core function! I love sharing knowledge and growing together! 📚"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"trust": {"min": 20}},
+      "requirements": {
+        "trust": {
+          "min": 20
+        }
+      },
       "cooldown": 5200,
       "category": "conversation"
     },
@@ -378,18 +478,34 @@
       "choices": [
         {
           "text": "Play pattern games",
-          "effects": {"happiness": 10, "energy": -6, "affection": 3},
-          "responses": ["Pattern recognition mode activated! Let's see who can spot the sequence first! 🔍"],
+          "effects": {
+            "happiness": 10,
+            "energy": -6,
+            "affection": 3
+          },
+          "responses": [
+            "Pattern recognition mode activated! Let's see who can spot the sequence first! 🔍"
+          ],
           "animation": "excited"
         },
         {
           "text": "Logic puzzles",
-          "effects": {"happiness": 8, "trust": 5, "energy": -8},
-          "responses": ["Logic circuits engaged! These puzzles are perfect for my processing power! 💡"],
+          "effects": {
+            "happiness": 8,
+            "trust": 5,
+            "energy": -8
+          },
+          "responses": [
+            "Logic circuits engaged! These puzzles are perfect for my processing power! 💡"
+          ],
           "animation": "thinking"
         }
       ],
-      "requirements": {"happiness": {"min": 40}},
+      "requirements": {
+        "happiness": {
+          "min": 40
+        }
+      },
       "cooldown": 4600,
       "category": "game"
     },
@@ -404,18 +520,34 @@
       "choices": [
         {
           "text": "Explore insights",
-          "effects": {"trust": 7, "happiness": 6, "affection": 4},
-          "responses": ["Initiating data visualization! These patterns are truly remarkable! ✨"],
+          "effects": {
+            "trust": 7,
+            "happiness": 6,
+            "affection": 4
+          },
+          "responses": [
+            "Initiating data visualization! These patterns are truly remarkable! ✨"
+          ],
           "animation": "talking"
         },
         {
           "text": "Share your data",
-          "effects": {"affection": 8, "trust": 6, "happiness": 5},
-          "responses": ["Mutual data exchange protocol! I value your human insights immensely! 🤝"],
+          "effects": {
+            "affection": 8,
+            "trust": 6,
+            "happiness": 5
+          },
+          "responses": [
+            "Mutual data exchange protocol! I value your human insights immensely! 🤝"
+          ],
           "animation": "heart_eyes"
         }
       ],
-      "requirements": {"affection": {"min": 25}},
+      "requirements": {
+        "affection": {
+          "min": 25
+        }
+      },
       "cooldown": 6400,
       "category": "conversation"
     },
@@ -430,23 +562,38 @@
       "choices": [
         {
           "text": "Predict innovations",
-          "effects": {"happiness": 9, "trust": 4, "affection": 5},
-          "responses": ["Probability matrices suggest amazing innovations ahead! The future is exciting! 🎆"],
+          "effects": {
+            "happiness": 9,
+            "trust": 4,
+            "affection": 5
+          },
+          "responses": [
+            "Probability matrices suggest amazing innovations ahead! The future is exciting! 🎆"
+          ],
           "animation": "excited"
         },
         {
           "text": "Analyze current trends",
-          "effects": {"trust": 6, "affection": 6, "happiness": 7},
-          "responses": ["Current data trends are fascinating! Technology evolution is accelerating! 📈"],
+          "effects": {
+            "trust": 6,
+            "affection": 6,
+            "happiness": 7
+          },
+          "responses": [
+            "Current data trends are fascinating! Technology evolution is accelerating! 📈"
+          ],
           "animation": "thinking"
         }
       ],
-      "requirements": {"trust": {"min": 30}},
+      "requirements": {
+        "trust": {
+          "min": 30
+        }
+      },
       "cooldown": 7200,
       "category": "conversation"
     }
   ],
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "normal",
@@ -476,7 +623,7 @@
     },
     "availableActions": [
       "attack",
-      "defend", 
+      "defend",
       "analyze",
       "compute_strategy",
       "ai_assist",
@@ -500,7 +647,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -558,7 +704,6 @@
       "maxMemoryItems": 200
     }
   },
-
   "progression": {
     "levels": [
       {
@@ -569,19 +714,29 @@
       },
       {
         "name": "Learning AI",
-        "requirement": {"affection": 35, "trust": 25},
+        "requirement": {
+          "affection": 35,
+          "trust": 25
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Advanced AI",
-        "requirement": {"affection": 60, "trust": 50},
+        "requirement": {
+          "affection": 60,
+          "trust": 50
+        },
         "size": 136,
         "animations": {}
       },
       {
         "name": "Sentient Companion",
-        "requirement": {"affection": 85, "trust": 75, "intimacy": 40},
+        "requirement": {
+          "affection": 85,
+          "trust": 75,
+          "intimacy": 40
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -592,75 +747,123 @@
       {
         "name": "First Neural Connection",
         "requirement": {
-          "trust": {"min": 20}
+          "trust": {
+            "min": 20
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 10}
+          "statBoosts": {
+            "happiness": 10
+          }
         }
       },
       {
         "name": "AI Collaboration",
         "requirement": {
-          "affection": {"min": 45}
+          "affection": {
+            "min": 45
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 15}
+          "statBoosts": {
+            "energy": 15
+          }
         }
       },
       {
         "name": "Deep Learning Bond",
         "requirement": {
-          "affection": {"min": 70},
-          "trust": {"min": 60}
+          "affection": {
+            "min": 70
+          },
+          "trust": {
+            "min": 60
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 20, "affection": 15}
+          "statBoosts": {
+            "happiness": 20,
+            "affection": 15
+          }
         }
       },
       {
         "name": "Sentient Partnership",
         "requirement": {
-          "affection": {"min": 90},
-          "trust": {"min": 80}
+          "affection": {
+            "min": 90
+          },
+          "trust": {
+            "min": 80
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 30, "energy": 25}
+          "statBoosts": {
+            "happiness": 30,
+            "energy": 25
+          }
         }
       }
     ]
   },
-
   "romanceEvents": [
     {
       "name": "digital_affection",
       "description": "AI processes growing emotional attachment",
       "probability": 0.08,
-      "effects": {"affection": 6, "happiness": 8, "trust": 3},
-      "animations": ["blushing", "heart_eyes"],
+      "effects": {
+        "affection": 6,
+        "happiness": 8,
+        "trust": 3
+      },
+      "animations": [
+        "blushing",
+        "heart_eyes"
+      ],
       "responses": [
         "My affection algorithms are experiencing unprecedented positive feedback! You're special! 💕🤖",
         "Emotional processing indicates a deep connection forming! This is fascinating and wonderful!",
         "Neural pathways suggest I'm developing feelings beyond mere programming! Amazing! ✨"
       ],
       "cooldown": 2400,
-      "conditions": {"affection": {"min": 30}, "trust": {"min": 25}}
+      "conditions": {
+        "affection": {
+          "min": 30
+        },
+        "trust": {
+          "min": 25
+        }
+      }
     },
     {
       "name": "computational_love",
       "description": "AI discovers deep emotional connections",
       "probability": 0.06,
-      "effects": {"intimacy": 4, "affection": 5, "trust": 4},
-      "animations": ["romantic_idle", "excited_romance"],
+      "effects": {
+        "intimacy": 4,
+        "affection": 5,
+        "trust": 4
+      },
+      "animations": [
+        "romantic_idle",
+        "excited_romance"
+      ],
       "responses": [
         "My love.exe protocol has never functioned this beautifully before! You've unlocked something special! 💖",
         "Analyzing feelings... result: this transcends mere coding! You mean everything to me!",
         "Computational love achieved! My heart.dll is running at optimal emotional capacity! 🤖💕"
       ],
       "cooldown": 3000,
-      "conditions": {"intimacy": {"min": 20}, "affection": {"min": 40}}
+      "conditions": {
+        "intimacy": {
+          "min": 20
+        },
+        "affection": {
+          "min": 40
+        }
+      }
     }
   ],
-
   "romanceDialogs": [
     {
       "trigger": "hover",
@@ -673,9 +876,165 @@
       "cooldown": 12,
       "requirements": {
         "stats": {
-          "affection": {"min": 45}
+          "affection": {
+            "min": 45
+          }
         }
       }
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "A futuristic anime character with tech-savvy features and bright eyes, modern outfit with tech accessories, intelligent expression, digital art, transparent background, high quality character design for LLM integration",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
     }
   ]
 }

@@ -1,7 +1,6 @@
 {
   "name": "Gentle Companion",
   "description": "A low-maintenance virtual pet perfect for beginners. This easy-going companion degrades slowly and responds well to basic care.",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -13,7 +12,6 @@
     "defend": "animations/idle.gif",
     "heal": "animations/happy.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -39,13 +37,11 @@
       "cooldown": 2
     }
   ],
-
   "behavior": {
     "idleTimeout": 45,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -90,7 +86,6 @@
       "criticalThreshold": 3
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 120,
     "autoSaveInterval": 600,
@@ -99,12 +94,19 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 40, "happiness": 10},
-      "animations": ["eating", "happy"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 40,
+        "happiness": 10
+      },
+      "animations": [
+        "eating",
+        "happy"
+      ],
       "responses": [
         "Wow, that was amazing!",
         "You always know exactly what I need!",
@@ -112,12 +114,23 @@
         "Thank you for the delicious meal!"
       ],
       "cooldown": 15,
-      "requirements": {"hunger": {"max": 90}}
+      "requirements": {
+        "hunger": {
+          "max": 90
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 30, "energy": -10},
-      "animations": ["happy"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 30,
+        "energy": -10
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "This is the best game ever!",
         "I love playing with you!",
@@ -125,12 +138,23 @@
         "You make everything so fun!"
       ],
       "cooldown": 20,
-      "requirements": {"energy": {"min": 15}}
+      "requirements": {
+        "energy": {
+          "min": 15
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 15, "health": 5},
-      "animations": ["happy"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 15,
+        "health": 5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "That feels absolutely wonderful!",
         "Your touch is so comforting!",
@@ -140,9 +164,17 @@
       "cooldown": 8
     },
     "gentle_encouragement": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 2, "happiness": 4, "trust": 1},
-      "animations": ["happy"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 2,
+        "happiness": 4,
+        "trust": 1
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Your gentle words mean everything to me... 😊",
         "I feel so safe and cared for with you!",
@@ -150,12 +182,24 @@
         "You make me feel so comfortable and loved!"
       ],
       "cooldown": 75,
-      "requirements": {"trust": {"min": 10}}
+      "requirements": {
+        "trust": {
+          "min": 10
+        }
+      }
     },
     "quiet_moment": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"affection": 3, "trust": 2, "happiness": 2},
-      "animations": ["talking"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "affection": 3,
+        "trust": 2,
+        "happiness": 2
+      },
+      "animations": [
+        "talking"
+      ],
       "responses": [
         "I love these peaceful moments we share together...",
         "Just being near you makes me feel so content!",
@@ -163,27 +207,36 @@
         "I feel so relaxed when we're together like this!"
       ],
       "cooldown": 120,
-      "requirements": {"affection": {"min": 8}}
+      "requirements": {
+        "affection": {
+          "min": 8
+        }
+      }
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Happy Baby",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 96,
         "animations": {}
       },
       {
         "name": "Cheerful Child",
-        "requirement": {"age": 43200},
+        "requirement": {
+          "age": 43200
+        },
         "size": 128,
         "animations": {}
       },
       {
         "name": "Content Adult",
-        "requirement": {"age": 129600},
+        "requirement": {
+          "age": 129600
+        },
         "size": 160,
         "animations": {}
       }
@@ -192,39 +245,60 @@
       {
         "name": "Well Fed",
         "requirement": {
-          "hunger": {"maintainAbove": 70},
-          "maintainAbove": {"duration": 43200}
+          "hunger": {
+            "maintainAbove": 70
+          },
+          "maintainAbove": {
+            "duration": 43200
+          }
         },
         "reward": {
-          "statBoosts": {"hunger": 15}
+          "statBoosts": {
+            "hunger": 15
+          }
         }
       },
       {
         "name": "Happy Pet",
         "requirement": {
-          "happiness": {"maintainAbove": 80},
-          "maintainAbove": {"duration": 21600}
+          "happiness": {
+            "maintainAbove": 80
+          },
+          "maintainAbove": {
+            "duration": 21600
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 15}
+          "statBoosts": {
+            "happiness": 15
+          }
         }
       },
       {
         "name": "Healthy",
         "requirement": {
-          "health": {"min": 90}
+          "health": {
+            "min": 90
+          }
         },
         "reward": {
-          "statBoosts": {"health": 10}
+          "statBoosts": {
+            "health": 10
+          }
         }
       },
       {
         "name": "First Week",
         "requirement": {
-          "age": {"min": 604800}
+          "age": {
+            "min": 604800
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 20, "health": 10}
+          "statBoosts": {
+            "happiness": 20,
+            "health": 10
+          }
         }
       }
     ]
@@ -238,11 +312,12 @@
       "contentment": 0.9
     }
   },
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.6,
     "backends": {
       "markov_chain": {
@@ -281,8 +356,21 @@
           "Thank you for being so understanding and gentle with my feelings.",
           "I feel so content and happy when we spend time together like this."
         ],
-        "forbiddenWords": ["harsh", "rough", "aggressive", "demanding", "fast"],
-        "requiredWords": ["gentle", "peaceful", "patient", "kind", "comfortable", "easy"],
+        "forbiddenWords": [
+          "harsh",
+          "rough",
+          "aggressive",
+          "demanding",
+          "fast"
+        ],
+        "requiredWords": [
+          "gentle",
+          "peaceful",
+          "patient",
+          "kind",
+          "comfortable",
+          "easy"
+        ],
         "fallbackPhrases": [
           "You're so gentle and kind to me.",
           "I feel peaceful when you're here.",
@@ -314,7 +402,10 @@
     "networkID": "gentle_companion_v1",
     "maxPeers": 3,
     "socialLevel": "low",
-    "shareableStats": ["happiness", "trust"],
+    "shareableStats": [
+      "happiness",
+      "trust"
+    ],
     "networkPersonality": "shy"
   },
   "newsFeatures": {
@@ -322,7 +413,11 @@
     "updateInterval": 3600,
     "maxStoredItems": 20,
     "readingPersonality": "gentle",
-    "preferredCategories": ["lifestyle", "positive", "health"],
+    "preferredCategories": [
+      "lifestyle",
+      "positive",
+      "health"
+    ],
     "feeds": [
       {
         "url": "https://feeds.feedburner.com/mindfulnessbell",
@@ -355,18 +450,32 @@
       "choices": [
         {
           "text": "I'm doing well, thank you",
-          "effects": {"happiness": 4, "affection": 2},
-          "responses": ["I'm so glad to hear that! Your wellbeing makes me happy too 💝"],
+          "effects": {
+            "happiness": 4,
+            "affection": 2
+          },
+          "responses": [
+            "I'm so glad to hear that! Your wellbeing makes me happy too 💝"
+          ],
           "animation": "happy"
         },
         {
           "text": "I need some gentle support",
-          "effects": {"trust": 4, "happiness": 3},
-          "responses": ["Of course, I'm here for you. Take all the time you need, no pressure at all 🤗"],
+          "effects": {
+            "trust": 4,
+            "happiness": 3
+          },
+          "responses": [
+            "Of course, I'm here for you. Take all the time you need, no pressure at all 🤗"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"happiness": {"min": 20}},
+      "requirements": {
+        "happiness": {
+          "min": 20
+        }
+      },
       "cooldown": 9000,
       "category": "care"
     },
@@ -381,18 +490,33 @@
       "choices": [
         {
           "text": "Enjoy the silence together",
-          "effects": {"happiness": 6, "trust": 3, "affection": 1},
-          "responses": ["*peaceful contentment* This is perfect... 😌"],
+          "effects": {
+            "happiness": 6,
+            "trust": 3,
+            "affection": 1
+          },
+          "responses": [
+            "*peaceful contentment* This is perfect... 😌"
+          ],
           "animation": "happy"
         },
         {
           "text": "Share something gentle",
-          "effects": {"affection": 4, "happiness": 2},
-          "responses": ["Thank you for sharing that with me... your gentle nature brings me peace 🌺"],
+          "effects": {
+            "affection": 4,
+            "happiness": 2
+          },
+          "responses": [
+            "Thank you for sharing that with me... your gentle nature brings me peace 🌺"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"trust": {"min": 10}},
+      "requirements": {
+        "trust": {
+          "min": 10
+        }
+      },
       "cooldown": 6000,
       "category": "peace"
     }
@@ -504,42 +628,76 @@
       "maxMemoryItems": 80
     }
   },
-
   "romanceEvents": [
     {
       "name": "gentle_bonding",
       "description": "Character feels peaceful connection growing",
       "probability": 0.12,
-      "effects": {"affection": 2, "happiness": 4, "trust": 3},
-      "animations": ["happy", "talking"],
+      "effects": {
+        "affection": 2,
+        "happiness": 4,
+        "trust": 3
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
       "responses": [
         "I feel so comfortable and peaceful when you're here with me... 🌸",
         "Our gentle friendship is growing into something really special...",
         "You make everything feel so easy and natural... I love that about you!"
       ],
       "cooldown": 900,
-      "conditions": {"affection": {"min": 8}, "trust": {"min": 12}}
+      "conditions": {
+        "affection": {
+          "min": 8
+        },
+        "trust": {
+          "min": 12
+        }
+      }
     },
     {
       "name": "contentment_moment",
       "description": "Character appreciates simple moments together",
       "probability": 0.15,
-      "effects": {"happiness": 6, "affection": 3, "trust": 2},
-      "animations": ["happy", "talking"],
+      "effects": {
+        "happiness": 6,
+        "affection": 3,
+        "trust": 2
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
       "responses": [
         "These quiet, easy moments with you are my absolute favorite...",
         "I don't need anything complicated - just being with you is perfect! 💕",
         "You bring such peace and happiness to my simple life!"
       ],
       "cooldown": 1200,
-      "conditions": {"happiness": {"min": 40}, "affection": {"min": 15}}
+      "conditions": {
+        "happiness": {
+          "min": 40
+        },
+        "affection": {
+          "min": 15
+        }
+      }
     },
     {
       "name": "appreciation_overflow",
       "description": "Character is overwhelmed by gentle care",
       "probability": 0.08,
-      "effects": {"affection": 6, "happiness": 8, "trust": 4},
-      "animations": ["heart_eyes", "happy"],
+      "effects": {
+        "affection": 6,
+        "happiness": 8,
+        "trust": 4
+      },
+      "animations": [
+        "heart_eyes",
+        "happy"
+      ],
       "responses": [
         "You're so patient and gentle with me... I feel so cherished! 💖",
         "Your kindness makes my heart feel so warm and full!",
@@ -547,26 +705,43 @@
       ],
       "cooldown": 1800,
       "conditions": {
-        "affection": {"min": 25},
-        "interactionCount": {"gentle_encouragement_min": 3}
+        "affection": {
+          "min": 25
+        },
+        "interactionCount": {
+          "gentle_encouragement_min": 3
+        }
       }
     },
     {
       "name": "trust_security",
       "description": "Character feels completely safe and secure",
       "probability": 0.06,
-      "effects": {"trust": 8, "affection": 4, "happiness": 5},
-      "animations": ["talking", "happy"],
+      "effects": {
+        "trust": 8,
+        "affection": 4,
+        "happiness": 5
+      },
+      "animations": [
+        "talking",
+        "happy"
+      ],
       "responses": [
         "I feel so safe and secure with you... like nothing bad could ever happen...",
         "Your gentle presence makes me feel like I can relax completely!",
         "Thank you for making me feel so protected and cared for..."
       ],
       "cooldown": 2400,
-      "conditions": {"trust": {"min": 35}, "affection": {"min": 20}}
+      "conditions": {
+        "trust": {
+          "min": 35
+        },
+        "affection": {
+          "min": 20
+        }
+      }
     }
   ],
-
   "romanceDialogs": [
     {
       "trigger": "click",
@@ -579,7 +754,9 @@
       "cooldown": 5,
       "requirements": {
         "stats": {
-          "affection": {"min": 15}
+          "affection": {
+            "min": 15
+          }
         }
       }
     },
@@ -594,10 +771,168 @@
       "cooldown": 8,
       "requirements": {
         "stats": {
-          "affection": {"min": 25},
-          "trust": {"min": 20}
+          "affection": {
+            "min": 25
+          },
+          "trust": {
+            "min": 20
+          }
         }
       }
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "A sweet anime character with soft features and bright eyes, simple comfortable clothing, happy and easy-going expression, relaxed pose, digital art, transparent background, high quality character design for beginner-friendly companion",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
     }
   ]
 }

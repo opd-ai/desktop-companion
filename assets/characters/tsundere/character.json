@@ -1,7 +1,6 @@
 {
   "name": "Tsundere Companion",
   "description": "A shy, initially defensive companion who slowly reveals their romantic side",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -17,7 +16,6 @@
     "jealous": "animations/sad.gif",
     "excited_romance": "animations/happy.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -41,13 +39,11 @@
       "cooldown": 5
     }
   ],
-
   "behavior": {
     "idleTimeout": 45,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -98,7 +94,6 @@
       "criticalThreshold": 70
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 60,
     "autoSaveInterval": 300,
@@ -107,36 +102,69 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 25, "happiness": 3},
-      "animations": ["eating", "shy"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 25,
+        "happiness": 3
+      },
+      "animations": [
+        "eating",
+        "shy"
+      ],
       "responses": [
         "I-I wasn't hungry anyway... but this is okay.",
         "Don't think I owe you anything for this!",
         "It's... not bad, I guess."
       ],
       "cooldown": 45,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 15, "energy": -15, "affection": 2},
-      "animations": ["happy", "shy"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 15,
+        "energy": -15,
+        "affection": 2
+      },
+      "animations": [
+        "happy",
+        "shy"
+      ],
       "responses": [
         "I only played because I was bored!",
         "This is... kind of fun. But don't get used to it!",
         "I-I didn't enjoy that or anything!"
       ],
       "cooldown": 60,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 8, "health": 2, "affection": 1},
-      "animations": ["blushing", "shy"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 8,
+        "health": 2,
+        "affection": 1
+      },
+      "animations": [
+        "blushing",
+        "shy"
+      ],
       "responses": [
         "H-hey! Don't just touch me like that!",
         "That... that's not entirely unpleasant...",
@@ -145,92 +173,167 @@
       "cooldown": 25
     },
     "compliment": {
-      "triggers": ["hover"],
-      "effects": {"affection": 3, "happiness": 5, "trust": 1},
-      "animations": ["blushing", "shy"],
+      "triggers": [
+        "hover"
+      ],
+      "effects": {
+        "affection": 3,
+        "happiness": 5,
+        "trust": 1
+      },
+      "animations": [
+        "blushing",
+        "shy"
+      ],
       "responses": [
         "Y-you really think so? ...Not that I care!",
         "I already knew that! You don't need to tell me!",
         "That's... nice to hear... B-but don't let it go to your head!"
       ],
       "cooldown": 80,
-      "requirements": {"trust": {"min": 15}}
+      "requirements": {
+        "trust": {
+          "min": 15
+        }
+      }
     },
     "give_gift": {
-          "name": "Give Gift",
-          "triggers": ["shift+click"],
-          "animation": "happy",
-          "effects": {
-            "affection": 3,
-            "trust": 2
-          },
-          "requirements": {
-            "affection": {"min": 15}
-          },
-          "cooldown": 2700,
-          "responses": ["T-thanks... I guess...", "You didn't have to... but thank you."]
-        },
+      "name": "Give Gift",
+      "triggers": [
+        "shift+click"
+      ],
+      "animation": "happy",
+      "effects": {
+        "affection": 3,
+        "trust": 2
+      },
+      "requirements": {
+        "affection": {
+          "min": 15
+        }
+      },
+      "cooldown": 2700,
+      "responses": [
+        "T-thanks... I guess...",
+        "You didn't have to... but thank you."
+      ]
+    },
     "deep_conversation": {
-      "triggers": ["shift+click"],
-      "effects": {"trust": 6, "affection": 4, "intimacy": 3},
-      "animations": ["talking", "shy"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "trust": 6,
+        "affection": 4,
+        "intimacy": 3
+      },
+      "animations": [
+        "talking",
+        "shy"
+      ],
       "responses": [
         "I... I don't usually talk about this with people...",
         "You actually listen to me. That's... rare.",
         "Maybe you're not as bad as I thought..."
       ],
       "cooldown": 120,
-      "requirements": {"trust": {"min": 25}}
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      }
     },
     "apology": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 10, "affection": 6, "jealousy": -20, "happiness": 8},
-      "animations": ["shy", "blushing"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 10,
+        "affection": 6,
+        "jealousy": -20,
+        "happiness": 8
+      },
+      "animations": [
+        "shy",
+        "blushing"
+      ],
       "responses": [
         "F-fine! I accept your apology... This time!",
         "You better not make me worry like that again!",
         "I... I forgive you. But don't think this makes us even!"
       ],
       "cooldown": 200,
-      "requirements": {"jealousy": {"min": 40}}
+      "requirements": {
+        "jealousy": {
+          "min": 40
+        }
+      }
     },
     "reassurance": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"trust": 8, "affection": 5, "jealousy": -15, "happiness": 6},
-      "animations": ["romantic_idle", "shy"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "trust": 8,
+        "affection": 5,
+        "jealousy": -15,
+        "happiness": 6
+      },
+      "animations": [
+        "romantic_idle",
+        "shy"
+      ],
       "responses": [
         "I... I needed to hear that. Thank you...",
         "You really mean that? ...Okay, I believe you.",
         "I'm sorry for doubting you... I just get scared sometimes."
       ],
       "cooldown": 150,
-      "requirements": {"jealousy": {"min": 25}}
+      "requirements": {
+        "jealousy": {
+          "min": 25
+        }
+      }
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Distant Stranger",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 120,
         "animations": {}
       },
       {
         "name": "Reluctant Acquaintance",
-        "requirement": {"age": 172800, "affection": 10, "trust": 15},
+        "requirement": {
+          "age": 172800,
+          "affection": 10,
+          "trust": 15
+        },
         "size": 128,
         "animations": {}
       },
       {
         "name": "Tsundere Friend",
-        "requirement": {"age": 345600, "affection": 25, "trust": 30},
+        "requirement": {
+          "age": 345600,
+          "affection": 25,
+          "trust": 30
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Shy Romantic",
-        "requirement": {"age": 518400, "affection": 45, "trust": 50, "intimacy": 20},
+        "requirement": {
+          "age": 518400,
+          "affection": 45,
+          "trust": 50,
+          "intimacy": 20
+        },
         "size": 136,
         "animations": {
           "idle": "romantic_idle"
@@ -238,7 +341,12 @@
       },
       {
         "name": "Devoted Partner",
-        "requirement": {"age": 691200, "affection": 70, "trust": 70, "intimacy": 50},
+        "requirement": {
+          "age": 691200,
+          "affection": 70,
+          "trust": 70,
+          "intimacy": 50
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -249,29 +357,38 @@
       {
         "name": "Ice Breaker",
         "requirement": {
-          "trust": {"min": 20}
+          "trust": {
+            "min": 20
+          }
         }
       },
       {
         "name": "Melting Heart",
         "requirement": {
-          "affection": {"min": 30}
+          "affection": {
+            "min": 30
+          }
         }
       },
       {
         "name": "True Feelings",
         "requirement": {
-          "affection": {"min": 60},
-          "trust": {"min": 60}
+          "affection": {
+            "min": 60
+          },
+          "trust": {
+            "min": 60
+          }
         }
       }
     ]
   },
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.7,
     "backends": {
       "markov_chain": {
@@ -310,8 +427,19 @@
           "Your smile is... not completely terrible, I suppose...",
           "Fine! I admit it! You're... important to me... there, happy now?!"
         ],
-        "forbiddenWords": ["easy", "simple", "direct", "obvious"],
-        "requiredWords": ["tsundere", "baka", "not", "maybe", "suppose"],
+        "forbiddenWords": [
+          "easy",
+          "simple",
+          "direct",
+          "obvious"
+        ],
+        "requiredWords": [
+          "tsundere",
+          "baka",
+          "not",
+          "maybe",
+          "suppose"
+        ],
         "fallbackPhrases": [
           "I-it's not like I care...",
           "Baka! You don't understand!",
@@ -323,7 +451,6 @@
       }
     }
   },
-
   "generalEvents": [
     {
       "name": "tsundere_confession",
@@ -335,27 +462,48 @@
       "responses": [
         "I... I have something to tell you... but don't get weird about it! 😤"
       ],
-      "animations": ["shy"],
+      "animations": [
+        "shy"
+      ],
       "choices": [
         {
           "text": "I'm listening",
-          "effects": {"trust": 8, "affection": 5, "intimacy": 3},
-          "responses": ["I... I might actually care about you... j-just a little! Don't let it go to your head!"],
+          "effects": {
+            "trust": 8,
+            "affection": 5,
+            "intimacy": 3
+          },
+          "responses": [
+            "I... I might actually care about you... j-just a little! Don't let it go to your head!"
+          ],
           "animation": "blushing"
         },
         {
           "text": "Take your time",
-          "effects": {"trust": 6, "affection": 3, "happiness": 4},
-          "responses": ["You're being patient with me... that's... nice... I guess..."],
+          "effects": {
+            "trust": 6,
+            "affection": 3,
+            "happiness": 4
+          },
+          "responses": [
+            "You're being patient with me... that's... nice... I guess..."
+          ],
           "animation": "shy"
         }
       ],
-      "requirements": {"trust": {"min": 30}, "affection": {"min": 25}},
+      "requirements": {
+        "trust": {
+          "min": 30
+        },
+        "affection": {
+          "min": 25
+        }
+      },
       "cooldown": 7200
     },
     {
       "name": "defensive_moment",
-      "category": "conversation", 
+      "category": "conversation",
       "description": "Classic tsundere defense mechanism",
       "trigger": "daily_check",
       "probability": 1.0,
@@ -363,22 +511,39 @@
       "responses": [
         "I-it's not like I was waiting for you or anything! I just... happened to be here! 😤"
       ],
-      "animations": ["talking"],
+      "animations": [
+        "talking"
+      ],
       "choices": [
         {
           "text": "I'm glad you're here",
-          "effects": {"affection": 4, "happiness": 6, "trust": 2},
-          "responses": ["Don't say embarrassing things like that! ...but I'm glad too... I guess..."],
+          "effects": {
+            "affection": 4,
+            "happiness": 6,
+            "trust": 2
+          },
+          "responses": [
+            "Don't say embarrassing things like that! ...but I'm glad too... I guess..."
+          ],
           "animation": "blushing"
         },
         {
           "text": "What a coincidence!",
-          "effects": {"happiness": 3, "affection": 2},
-          "responses": ["R-right! Just a coincidence! Nothing more!"],
+          "effects": {
+            "happiness": 3,
+            "affection": 2
+          },
+          "responses": [
+            "R-right! Just a coincidence! Nothing more!"
+          ],
           "animation": "talking"
         }
       ],
-      "requirements": {"affection": {"min": 10}},
+      "requirements": {
+        "affection": {
+          "min": 10
+        }
+      },
       "cooldown": 5400
     },
     {
@@ -393,18 +558,34 @@
       "choices": [
         {
           "text": "Thank you for helping",
-          "effects": {"affection": 6, "trust": 3, "happiness": 5},
-          "responses": ["D-don't thank me! I only did it because... because... just don't make a big deal out of it!"],
+          "effects": {
+            "affection": 6,
+            "trust": 3,
+            "happiness": 5
+          },
+          "responses": [
+            "D-don't thank me! I only did it because... because... just don't make a big deal out of it!"
+          ],
           "animation": "blushing"
         },
         {
           "text": "You're very kind",
-          "effects": {"affection": 4, "happiness": 7, "trust": 2},
-          "responses": ["K-kind?! I'm not kind! I'm just... practical! Someone has to look out for you!"],
+          "effects": {
+            "affection": 4,
+            "happiness": 7,
+            "trust": 2
+          },
+          "responses": [
+            "K-kind?! I'm not kind! I'm just... practical! Someone has to look out for you!"
+          ],
           "animation": "shy"
         }
       ],
-      "requirements": {"trust": {"min": 20}},
+      "requirements": {
+        "trust": {
+          "min": 20
+        }
+      },
       "cooldown": 8100
     },
     {
@@ -419,18 +600,39 @@
       "choices": [
         {
           "text": "You're my favorite",
-          "effects": {"affection": 8, "jealousy": -10, "happiness": 9, "trust": 4},
-          "responses": ["R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... 💕"],
+          "effects": {
+            "affection": 8,
+            "jealousy": -10,
+            "happiness": 9,
+            "trust": 4
+          },
+          "responses": [
+            "R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... 💕"
+          ],
           "animation": "heart_eyes"
         },
         {
           "text": "I only need you",
-          "effects": {"affection": 10, "jealousy": -15, "trust": 6, "intimacy": 3},
-          "responses": ["You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... 💖"],
+          "effects": {
+            "affection": 10,
+            "jealousy": -15,
+            "trust": 6,
+            "intimacy": 3
+          },
+          "responses": [
+            "You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... 💖"
+          ],
           "animation": "blushing"
         }
       ],
-      "requirements": {"affection": {"min": 35}, "jealousy": {"min": 20}},
+      "requirements": {
+        "affection": {
+          "min": 35
+        },
+        "jealousy": {
+          "min": 20
+        }
+      },
       "cooldown": 10800
     },
     {
@@ -445,24 +647,47 @@
       "choices": [
         {
           "text": "Quiz me on literature",
-          "effects": {"happiness": 5, "trust": 3, "intimacy": 2},
-          "responses": ["Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! 📖"],
+          "effects": {
+            "happiness": 5,
+            "trust": 3,
+            "intimacy": 2
+          },
+          "responses": [
+            "Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! 📖"
+          ],
           "animation": "talking"
         },
         {
           "text": "Teach me something new",
-          "effects": {"affection": 5, "happiness": 6, "trust": 4},
-          "responses": ["You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... 🤓"],
+          "effects": {
+            "affection": 5,
+            "happiness": 6,
+            "trust": 4
+          },
+          "responses": [
+            "You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... 🤓"
+          ],
           "animation": "happy"
         },
         {
           "text": "Let's learn together",
-          "effects": {"affection": 7, "happiness": 4, "intimacy": 4, "trust": 3},
-          "responses": ["T-together?! That's... not a terrible idea... We could compare what we know... maybe... 📚💕"],
+          "effects": {
+            "affection": 7,
+            "happiness": 4,
+            "intimacy": 4,
+            "trust": 3
+          },
+          "responses": [
+            "T-together?! That's... not a terrible idea... We could compare what we know... maybe... 📚💕"
+          ],
           "animation": "shy"
         }
       ],
-      "requirements": {"trust": {"min": 25}},
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      },
       "cooldown": 7200
     },
     {
@@ -477,28 +702,48 @@
       "choices": [
         {
           "text": "Tell me a joke",
-          "effects": {"happiness": 8, "affection": 3},
-          "responses": ["Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! 😂"],
+          "effects": {
+            "happiness": 8,
+            "affection": 3
+          },
+          "responses": [
+            "Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! 😂"
+          ],
           "animation": "happy"
         },
         {
           "text": "Make me smile",
-          "effects": {"happiness": 6, "affection": 4, "trust": 2},
-          "responses": ["S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! 😊"],
+          "effects": {
+            "happiness": 6,
+            "affection": 4,
+            "trust": 2
+          },
+          "responses": [
+            "S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! 😊"
+          ],
           "animation": "blushing"
         },
         {
           "text": "Tell me about yourself",
-          "effects": {"trust": 5, "intimacy": 3, "affection": 2},
-          "responses": ["About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! 💕"],
+          "effects": {
+            "trust": 5,
+            "intimacy": 3,
+            "affection": 2
+          },
+          "responses": [
+            "About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! 💕"
+          ],
           "animation": "shy"
         }
       ],
-      "requirements": {"happiness": {"min": 20}},
+      "requirements": {
+        "happiness": {
+          "min": 20
+        }
+      },
       "cooldown": 6000
     }
   ],
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "hard",
@@ -554,7 +799,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -612,17 +856,18 @@
       "maxMemoryItems": 100
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": false,
     "networkID": "tsundere_companion_v1",
     "maxPeers": 3,
     "socialLevel": "selective",
-    "shareableStats": ["affection", "trust"],
+    "shareableStats": [
+      "affection",
+      "trust"
+    ],
     "networkPersonality": "shy"
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "tsundere",
@@ -641,12 +886,16 @@
       }
     ],
     "preferences": {
-      "categories": ["lifestyle", "books", "culture", "quiet"],
+      "categories": [
+        "lifestyle",
+        "books",
+        "culture",
+        "quiet"
+      ],
       "updateFrequency": "twice_daily",
       "maxArticles": 6
     }
   },
-
   "personality": {
     "traits": {
       "shyness": 0.9,
@@ -663,7 +912,6 @@
       "conversation_lover": 1.4
     }
   },
-
   "romanceDialogs": [
     {
       "trigger": "click",
@@ -676,7 +924,10 @@
       "cooldown": 8,
       "requirements": {
         "stats": {
-          "affection": {"min": 20, "max": 50}
+          "affection": {
+            "min": 20,
+            "max": 50
+          }
         }
       }
     },
@@ -691,8 +942,12 @@
       "cooldown": 10,
       "requirements": {
         "stats": {
-          "affection": {"min": 60},
-          "trust": {"min": 50}
+          "affection": {
+            "min": 60
+          },
+          "trust": {
+            "min": 50
+          }
         }
       }
     },
@@ -707,62 +962,114 @@
       "cooldown": 15,
       "requirements": {
         "stats": {
-          "affection": {"min": 15},
-          "intimacy": {"min": 10}
+          "affection": {
+            "min": 15
+          },
+          "intimacy": {
+            "min": 10
+          }
         }
       }
     }
   ],
-
   "romanceEvents": [
     {
       "name": "Tsundere Defense Mechanism",
       "description": "Character pushes away but immediately regrets it",
       "probability": 0.08,
-      "effects": {"trust": -2, "affection": 3, "happiness": -5},
-      "animations": ["sad", "shy"],
+      "effects": {
+        "trust": -2,
+        "affection": 3,
+        "happiness": -5
+      },
+      "animations": [
+        "sad",
+        "shy"
+      ],
       "responses": [
         "I... I didn't mean to be so harsh just now...",
         "Why do I always push people away when they get close?",
         "I'm sorry... I don't know how to handle these feelings..."
       ],
       "cooldown": 1200,
-      "conditions": {"affection": {"min": 20}, "trust": {"min": 15}}
+      "conditions": {
+        "affection": {
+          "min": 20
+        },
+        "trust": {
+          "min": 15
+        }
+      }
     },
     {
       "name": "Jealous Outburst",
       "description": "Character becomes irrationally jealous",
       "probability": 0.12,
-      "effects": {"jealousy": 20, "trust": -3, "happiness": -8},
-      "animations": ["jealous", "sad"],
+      "effects": {
+        "jealousy": 20,
+        "trust": -3,
+        "happiness": -8
+      },
+      "animations": [
+        "jealous",
+        "sad"
+      ],
       "responses": [
         "You're not talking to anyone else, right?!",
         "I-I don't care if you have other friends! But...",
         "Promise me I'm special to you... please?"
       ],
       "cooldown": 1800,
-      "conditions": {"affection": {"min": 30}, "jealousy": {"max": 60}}
+      "conditions": {
+        "affection": {
+          "min": 30
+        },
+        "jealousy": {
+          "max": 60
+        }
+      }
     },
     {
       "name": "Vulnerable Moment",
       "description": "Character shows their true feelings",
       "probability": 0.06,
-      "effects": {"intimacy": 5, "trust": 4, "affection": 2},
-      "animations": ["romantic_idle", "blushing"],
+      "effects": {
+        "intimacy": 5,
+        "trust": 4,
+        "affection": 2
+      },
+      "animations": [
+        "romantic_idle",
+        "blushing"
+      ],
       "responses": [
         "I... I'm glad you're here with me...",
         "You're the first person who's been patient with me...",
         "I'm scared of getting hurt, but... I trust you."
       ],
       "cooldown": 2400,
-      "conditions": {"trust": {"min": 40}, "affection": {"min": 35}}
+      "conditions": {
+        "trust": {
+          "min": 40
+        },
+        "affection": {
+          "min": 35
+        }
+      }
     },
     {
       "name": "Gift Appreciation Conflict",
       "description": "Character struggles to accept kindness",
-      "probability": 0.10,
-      "effects": {"affection": 6, "happiness": 4, "trust": 3},
-      "animations": ["blushing", "shy"],
+      "probability": 0.1,
+      "effects": {
+        "affection": 6,
+        "happiness": 4,
+        "trust": 3
+      },
+      "animations": [
+        "blushing",
+        "shy"
+      ],
       "responses": [
         "I-I don't deserve such nice things from you...",
         "Why are you so kind to someone like me?",
@@ -770,16 +1077,27 @@
       ],
       "cooldown": 900,
       "conditions": {
-        "affection": {"min": 25},
-        "interactionCount": {"give_gift_min": 2}
+        "affection": {
+          "min": 25
+        },
+        "interactionCount": {
+          "give_gift_min": 2
+        }
       }
     },
     {
       "name": "Progress Recognition",
       "description": "Character acknowledges relationship growth",
       "probability": 0.05,
-      "effects": {"trust": 8, "affection": 5, "happiness": 10},
-      "animations": ["happy", "romantic_idle"],
+      "effects": {
+        "trust": 8,
+        "affection": 5,
+        "happiness": 10
+      },
+      "animations": [
+        "happy",
+        "romantic_idle"
+      ],
       "responses": [
         "I can't believe how much I've changed since meeting you...",
         "You've helped me become a better person...",
@@ -787,9 +1105,167 @@
       ],
       "cooldown": 3600,
       "conditions": {
-        "relationshipLevel": {"min": 3},
-        "trust": {"min": 45}
+        "relationshipLevel": {
+          "min": 3
+        },
+        "trust": {
+          "min": 45
+        }
       }
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "A cute anime girl with twin tails and orange/red hair, bright eyes, school uniform or casual dress, tsundere expression with slight blush, arms crossed or hands on hips, digital art, transparent background, high quality anime character design",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
     }
   ]
 }

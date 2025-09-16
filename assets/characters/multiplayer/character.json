@@ -109,63 +109,139 @@
   },
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 20, "happiness": 10},
-      "animations": ["happy"],
-      "responses": ["Thanks! That energy boost will help with our multiplayer sessions!"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 20,
+        "happiness": 10
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "Thanks! That energy boost will help with our multiplayer sessions!"
+      ],
       "cooldown": 80,
-      "requirements": {"hunger": {"max": 80}}
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
     },
     "pet": {
-      "triggers": ["click"],
-      "effects": {"happiness": 15, "affection": 4},
-      "animations": ["happy"],
-      "responses": ["Your attention makes multiplayer gaming even more enjoyable!"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 15,
+        "affection": 4
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "Your attention makes multiplayer gaming even more enjoyable!"
+      ],
       "cooldown": 35
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 25, "energy": -10},
-      "animations": ["excited"],
-      "responses": ["This is fun! Perfect practice for our multiplayer games!"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 25,
+        "energy": -10
+      },
+      "animations": [
+        "excited"
+      ],
+      "responses": [
+        "This is fun! Perfect practice for our multiplayer games!"
+      ],
       "cooldown": 110,
-      "requirements": {"energy": {"min": 20}}
+      "requirements": {
+        "energy": {
+          "min": 20
+        }
+      }
     },
     "network_connect": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 6, "happiness": 8, "trust": 3, "energy": -4},
-      "animations": ["talking", "excited"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 6,
+        "happiness": 8,
+        "trust": 3,
+        "energy": -4
+      },
+      "animations": [
+        "talking",
+        "excited"
+      ],
       "responses": [
         "Network connection initiated! I love coordinating multiplayer experiences! 🌐",
         "Perfect! Together we can create amazing multiplayer memories!",
         "Connecting with others through gaming is what I live for! Let's play! 🎮"
       ],
       "cooldown": 90,
-      "requirements": {"trust": {"min": 12}}
+      "requirements": {
+        "trust": {
+          "min": 12
+        }
+      }
     },
     "give_gift": {
-      "triggers": ["alt+shift+click"],
-      "effects": {"affection": 8, "happiness": 7, "trust": 4},
-      "animations": ["heart_eyes", "excited_romance"],
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "affection": 8,
+        "happiness": 7,
+        "trust": 4
+      },
+      "animations": [
+        "heart_eyes",
+        "excited_romance"
+      ],
       "responses": [
         "A gift! This will be perfect for sharing with our multiplayer friends! 🎁🎮",
         "How thoughtful! Gifts make multiplayer sessions even more special!",
         "Thank you! This enhances our gaming experience beautifully! 💝"
       ],
       "cooldown": 175,
-      "requirements": {"affection": {"min": 20}}
+      "requirements": {
+        "affection": {
+          "min": 20
+        }
+      }
     },
     "deep_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 7, "affection": 5, "intimacy": 4, "energy": -6},
-      "animations": ["talking", "romantic_idle"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 7,
+        "affection": 5,
+        "intimacy": 4,
+        "energy": -6
+      },
+      "animations": [
+        "talking",
+        "romantic_idle"
+      ],
       "responses": [
         "I love these deep conversations! Understanding each other makes multiplayer more meaningful!",
         "Thanks for opening up! These talks create stronger connections in our gaming!",
         "Deep discussions like this enhance every aspect of our multiplayer bond!"
       ],
       "cooldown": 125,
-      "requirements": {"trust": {"min": 25}}
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      }
     }
   },
   "personality": {
@@ -193,7 +269,11 @@
     "maxPeers": 8,
     "discoveryPort": 8080,
     "socialLevel": "high",
-    "shareableStats": ["happiness", "energy", "affection"],
+    "shareableStats": [
+      "happiness",
+      "energy",
+      "affection"
+    ],
     "networkPersonality": "coordinator",
     "botPersonality": {
       "chattiness": 0.7,
@@ -214,19 +294,28 @@
       "name": "welcome_new_player",
       "trigger": "peer_joined",
       "botProbability": 0.9,
-      "responses": ["Welcome to our multiplayer session! Let's have some gaming fun! 🎮", "A new player joined! Perfect timing for multiplayer adventures! 🌟"]
+      "responses": [
+        "Welcome to our multiplayer session! Let's have some gaming fun! 🎮",
+        "A new player joined! Perfect timing for multiplayer adventures! 🌟"
+      ]
     },
     {
       "name": "coordinate_gameplay",
       "trigger": "multiple_peers_present",
       "botProbability": 0.85,
-      "responses": ["Great! With multiple players, we can try team-based activities!", "Perfect multiplayer setup! What game should we coordinate?"]
+      "responses": [
+        "Great! With multiple players, we can try team-based activities!",
+        "Perfect multiplayer setup! What game should we coordinate?"
+      ]
     },
     {
       "name": "farewell_player",
       "trigger": "peer_left",
       "botProbability": 0.75,
-      "responses": ["Thanks for the great multiplayer session! Come back anytime! 👋", "Hope you had fun! Our multiplayer door is always open! 🎯"]
+      "responses": [
+        "Thanks for the great multiplayer session! Come back anytime! 👋",
+        "Hope you had fun! Our multiplayer door is always open! 🎯"
+      ]
     }
   ],
   "dialogBackend": {
@@ -277,14 +366,21 @@
         ]
       }
     },
-    "fallbackChain": ["simple_random"]
+    "fallbackChain": [
+      "simple_random"
+    ]
   },
   "newsFeatures": {
     "enabled": true,
     "updateInterval": 2100,
     "maxStoredItems": 30,
     "readingPersonality": "gaming",
-    "preferredCategories": ["gaming", "technology", "entertainment", "community"],
+    "preferredCategories": [
+      "gaming",
+      "technology",
+      "entertainment",
+      "community"
+    ],
     "feeds": [
       {
         "url": "https://feeds.feedburner.com/ign/all",
@@ -326,18 +422,35 @@
       "choices": [
         {
           "text": "Plan team strategy",
-          "effects": {"happiness": 10, "affection": 4, "trust": 5, "energy": -3},
-          "responses": ["Excellent! Strategic coordination makes multiplayer gaming so much better! 📋"],
+          "effects": {
+            "happiness": 10,
+            "affection": 4,
+            "trust": 5,
+            "energy": -3
+          },
+          "responses": [
+            "Excellent! Strategic coordination makes multiplayer gaming so much better! 📋"
+          ],
           "animation": "talking"
         },
         {
           "text": "Organize group game",
-          "effects": {"happiness": 12, "affection": 6, "energy": -5},
-          "responses": ["Perfect! Group games are the heart of multiplayer fun! 🎉"],
+          "effects": {
+            "happiness": 12,
+            "affection": 6,
+            "energy": -5
+          },
+          "responses": [
+            "Perfect! Group games are the heart of multiplayer fun! 🎉"
+          ],
           "animation": "excited"
         }
       ],
-      "requirements": {"affection": {"min": 15}},
+      "requirements": {
+        "affection": {
+          "min": 15
+        }
+      },
       "cooldown": 4800,
       "category": "conversation"
     },
@@ -352,18 +465,34 @@
       "choices": [
         {
           "text": "Accept challenge",
-          "effects": {"happiness": 8, "trust": 6, "energy": -8},
-          "responses": ["Yes! Challenges like this make us better gaming partners! ⚡"],
+          "effects": {
+            "happiness": 8,
+            "trust": 6,
+            "energy": -8
+          },
+          "responses": [
+            "Yes! Challenges like this make us better gaming partners! ⚡"
+          ],
           "animation": "excited"
         },
         {
           "text": "Suggest team approach",
-          "effects": {"affection": 7, "happiness": 9, "trust": 4},
-          "responses": ["Team approach! That's the true spirit of multiplayer gaming! 🤝"],
+          "effects": {
+            "affection": 7,
+            "happiness": 9,
+            "trust": 4
+          },
+          "responses": [
+            "Team approach! That's the true spirit of multiplayer gaming! 🤝"
+          ],
           "animation": "happy"
         }
       ],
-      "requirements": {"trust": {"min": 20}},
+      "requirements": {
+        "trust": {
+          "min": 20
+        }
+      },
       "cooldown": 5600,
       "category": "game"
     },
@@ -378,18 +507,34 @@
       "choices": [
         {
           "text": "Improve connections",
-          "effects": {"trust": 8, "happiness": 6, "affection": 3},
-          "responses": ["Great! Optimized networks create seamless multiplayer experiences! 🚀"],
+          "effects": {
+            "trust": 8,
+            "happiness": 6,
+            "affection": 3
+          },
+          "responses": [
+            "Great! Optimized networks create seamless multiplayer experiences! 🚀"
+          ],
           "animation": "talking"
         },
         {
           "text": "Analyze performance",
-          "effects": {"happiness": 7, "trust": 5, "energy": -4},
-          "responses": ["Perfect! Performance analysis helps us game at our best! 📊"],
+          "effects": {
+            "happiness": 7,
+            "trust": 5,
+            "energy": -4
+          },
+          "responses": [
+            "Perfect! Performance analysis helps us game at our best! 📊"
+          ],
           "animation": "happy"
         }
       ],
-      "requirements": {"trust": {"min": 25}},
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      },
       "cooldown": 6400,
       "category": "conversation"
     },
@@ -404,18 +549,34 @@
       "choices": [
         {
           "text": "Foster connections",
-          "effects": {"affection": 8, "happiness": 7, "trust": 5},
-          "responses": ["Beautiful! Strong connections are the foundation of great gaming! 💖"],
+          "effects": {
+            "affection": 8,
+            "happiness": 7,
+            "trust": 5
+          },
+          "responses": [
+            "Beautiful! Strong connections are the foundation of great gaming! 💖"
+          ],
           "animation": "heart_eyes"
         },
         {
           "text": "Organize meetups",
-          "effects": {"happiness": 10, "affection": 5, "energy": -6},
-          "responses": ["Excellent! Gaming meetups create the most wonderful memories! 🎊"],
+          "effects": {
+            "happiness": 10,
+            "affection": 5,
+            "energy": -6
+          },
+          "responses": [
+            "Excellent! Gaming meetups create the most wonderful memories! 🎊"
+          ],
           "animation": "excited"
         }
       ],
-      "requirements": {"affection": {"min": 30}},
+      "requirements": {
+        "affection": {
+          "min": 30
+        }
+      },
       "cooldown": 7200,
       "category": "conversation"
     }
@@ -540,19 +701,29 @@
       },
       {
         "name": "Gaming Partner",
-        "requirement": {"affection": 30, "trust": 20},
+        "requirement": {
+          "affection": 30,
+          "trust": 20
+        },
         "size": 132,
         "animations": {}
       },
       {
         "name": "Team Coordinator",
-        "requirement": {"affection": 55, "trust": 45},
+        "requirement": {
+          "affection": 55,
+          "trust": 45
+        },
         "size": 136,
         "animations": {}
       },
       {
         "name": "Multiplayer Master",
-        "requirement": {"affection": 80, "trust": 70, "intimacy": 30},
+        "requirement": {
+          "affection": 80,
+          "trust": 70,
+          "intimacy": 30
+        },
         "size": 140,
         "animations": {
           "idle": "romantic_idle"
@@ -563,39 +734,61 @@
       {
         "name": "First Connection",
         "requirement": {
-          "trust": {"min": 15}
+          "trust": {
+            "min": 15
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 10}
+          "statBoosts": {
+            "happiness": 10
+          }
         }
       },
       {
         "name": "Gaming Buddy",
         "requirement": {
-          "affection": {"min": 40}
+          "affection": {
+            "min": 40
+          }
         },
         "reward": {
-          "statBoosts": {"energy": 12}
+          "statBoosts": {
+            "energy": 12
+          }
         }
       },
       {
         "name": "Team Player",
         "requirement": {
-          "affection": {"min": 65},
-          "trust": {"min": 55}
+          "affection": {
+            "min": 65
+          },
+          "trust": {
+            "min": 55
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 18, "affection": 10}
+          "statBoosts": {
+            "happiness": 18,
+            "affection": 10
+          }
         }
       },
       {
         "name": "Multiplayer Legend",
         "requirement": {
-          "affection": {"min": 85},
-          "trust": {"min": 75}
+          "affection": {
+            "min": 85
+          },
+          "trust": {
+            "min": 75
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 25, "energy": 20}
+          "statBoosts": {
+            "happiness": 25,
+            "energy": 20
+          }
         }
       }
     ]
@@ -605,29 +798,57 @@
       "name": "gaming_connection",
       "description": "Character feels romantic connection through gaming",
       "probability": 0.08,
-      "effects": {"affection": 5, "happiness": 7, "trust": 3},
-      "animations": ["blushing", "heart_eyes"],
+      "effects": {
+        "affection": 5,
+        "happiness": 7,
+        "trust": 3
+      },
+      "animations": [
+        "blushing",
+        "heart_eyes"
+      ],
       "responses": [
         "Gaming together has created such a special bond between us! You're amazing! 💕🎮",
         "Our multiplayer connection feels deeper than just friendship! I cherish this!",
         "Playing with you brings joy to my gaming heart in the most wonderful way! ✨"
       ],
       "cooldown": 2000,
-      "conditions": {"affection": {"min": 25}, "trust": {"min": 18}}
+      "conditions": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 18
+        }
+      }
     },
     {
       "name": "multiplayer_romance",
       "description": "Character discovers love through shared gaming",
       "probability": 0.06,
-      "effects": {"intimacy": 4, "affection": 6, "trust": 3},
-      "animations": ["romantic_idle", "excited_romance"],
+      "effects": {
+        "intimacy": 4,
+        "affection": 6,
+        "trust": 3
+      },
+      "animations": [
+        "romantic_idle",
+        "excited_romance"
+      ],
       "responses": [
         "Our gaming partnership has evolved into something beautiful and romantic! 💖",
         "Playing together has unlocked feelings I never knew I had! You're special!",
         "Multiplayer magic has created the most wonderful love connection! 🌟"
       ],
       "cooldown": 2600,
-      "conditions": {"intimacy": {"min": 15}, "affection": {"min": 35}}
+      "conditions": {
+        "intimacy": {
+          "min": 15
+        },
+        "affection": {
+          "min": 35
+        }
+      }
     }
   ],
   "romanceDialogs": [
@@ -642,9 +863,165 @@
       "cooldown": 10,
       "requirements": {
         "stats": {
-          "affection": {"min": 35}
+          "affection": {
+            "min": 35
+          }
         }
       }
+    }
+  ],
+  "assetGeneration": {
+    "basePrompt": "A social anime character with expressive features and bright eyes, casual social outfit with fun accessories, friendly communicative expression, open social pose, digital art, transparent background, high quality character design for multiplayer interaction",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
     }
   ]
 }

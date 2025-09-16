@@ -1,644 +1,1102 @@
 {
-    "name": "Romance Slow Burn",
-    "description": "A romantic companion who values deep emotional connection and meaningful relationship development over time",
-    
-    "animations": {
-        "idle": "../default/animations/idle.gif",
-        "talking": "../default/animations/talking.gif",
-        "happy": "../default/animations/happy.gif",
-        "sad": "../default/animations/sad.gif",
-        "hungry": "../default/animations/hungry.gif",
-        "eating": "../default/animations/eating.gif",
-        "blushing": "../default/animations/happy.gif",
-        "heart_eyes": "../default/animations/happy.gif",
-        "shy": "../default/animations/sad.gif",
-        "flirty": "../default/animations/happy.gif",
-        "romantic_idle": "../default/animations/idle.gif",
-        "jealous": "../default/animations/sad.gif",
-        "excited_romance": "../default/animations/happy.gif"
+  "name": "Romance Slow Burn",
+  "description": "A romantic companion who values deep emotional connection and meaningful relationship development over time",
+  "animations": {
+    "idle": "../default/animations/idle.gif",
+    "talking": "../default/animations/talking.gif",
+    "happy": "../default/animations/happy.gif",
+    "sad": "../default/animations/sad.gif",
+    "hungry": "../default/animations/hungry.gif",
+    "eating": "../default/animations/eating.gif",
+    "blushing": "../default/animations/happy.gif",
+    "heart_eyes": "../default/animations/happy.gif",
+    "shy": "../default/animations/sad.gif",
+    "flirty": "../default/animations/happy.gif",
+    "romantic_idle": "../default/animations/idle.gif",
+    "jealous": "../default/animations/sad.gif",
+    "excited_romance": "../default/animations/happy.gif"
+  },
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hello there... 💕",
+        "I'm so glad you're here with me.",
+        "Your presence makes my heart flutter, though I'm still getting used to these feelings...",
+        "Every time I see you, I feel something beautiful growing inside me."
+      ],
+      "animation": "talking",
+      "cooldown": 8
     },
-
-    "dialogs": [
-        {
-            "trigger": "click",
-            "responses": [
-                "Hello there... 💕",
-                "I'm so glad you're here with me.",
-                "Your presence makes my heart flutter, though I'm still getting used to these feelings...",
-                "Every time I see you, I feel something beautiful growing inside me."
-            ],
-            "animation": "talking",
-            "cooldown": 8
-        },
-        {
-            "trigger": "hover",
-            "responses": [
-                "*blushes softly* You make me feel so warm...",
-                "I love when you're close to me like this.",
-                "Your gentle presence means everything to me."
-            ],
-            "animation": "blushing",
-            "cooldown": 12
-        },
-        {
-            "trigger": "rightclick",
-            "responses": [
-                "What would you like to do together today?",
-                "I'm always happy to spend quality time with you.",
-                "Let's create some beautiful memories together."
-            ],
-            "animation": "happy",
-            "cooldown": 10
-        }
-    ],
-
-    "stats": {
-        "hunger": {"min": 0, "max": 100, "initial": 70, "critical": 20},
-        "happiness": {"min": 0, "max": 100, "initial": 60, "critical": 15},
-        "energy": {"min": 0, "max": 100, "initial": 80, "critical": 20},
-        "affection": {"min": 0, "max": 100, "initial": 25, "critical": 0},
-        "trust": {"min": 0, "max": 100, "initial": 15, "critical": 0},
-        "intimacy": {"min": 0, "max": 100, "initial": 5, "critical": 0},
-        "jealousy": {"min": 0, "max": 100, "initial": 10, "critical": 70}
+    {
+      "trigger": "hover",
+      "responses": [
+        "*blushes softly* You make me feel so warm...",
+        "I love when you're close to me like this.",
+        "Your gentle presence means everything to me."
+      ],
+      "animation": "blushing",
+      "cooldown": 12
     },
-
-    "gameRules": {
-        "statsDecayInterval": 75,
-        "autoSaveInterval": 300,
-        "criticalStateAnimationPriority": true,
-        "deathEnabled": false,
-        "evolutionEnabled": true,
-        "moodBasedAnimations": true
-    },
-
-    "interactions": {
-        "feed": {
-            "triggers": ["rightclick"],
-            "effects": {"hunger": 22, "happiness": 4, "trust": 2},
-            "animations": ["eating", "happy"],
-            "responses": [
-                "Thank you for taking care of me... it means so much.",
-                "Your thoughtfulness touches my heart.",
-                "I feel so loved when you care for me like this."
-            ],
-            "cooldown": 45,
-            "requirements": {"hunger": {"max": 80}}
-        },
-        "play": {
-            "triggers": ["doubleclick"],
-            "effects": {"happiness": 15, "energy": -18, "affection": 3, "trust": 2},
-            "animations": ["happy"],
-            "responses": [
-                "This is wonderful... I love spending time with you like this.",
-                "Playing together makes me feel so close to you.",
-                "These moments of joy mean everything to me."
-            ],
-            "cooldown": 60,
-            "requirements": {"energy": {"min": 25}}
-        },
-        "gift": {
-            "triggers": ["ctrl+click"],
-            "effects": {"affection": 12, "happiness": 8, "trust": 4},
-            "animations": ["heart_eyes", "excited_romance"],
-            "responses": [
-                "Oh my... this is beautiful! You remembered what I like! 🎁",
-                "Your gifts always come straight from the heart.",
-                "I'll treasure this always, just like I treasure you."
-            ],
-            "cooldown": 180,
-            "requirements": {"affection": {"min": 20}}
-        },
-        "deep_conversation": {
-            "triggers": ["shift+click"],
-            "effects": {"trust": 10, "affection": 4, "intimacy": 6},
-            "animations": ["talking", "romantic_idle"],
-            "responses": [
-                "I love how we can talk about meaningful things together...",
-                "These deep conversations help me understand my feelings for you.",
-                "You really listen to me, and that builds such trust between us."
-            ],
-            "cooldown": 120,
-            "requirements": {"trust": {"min": 25}}
-        },
-        "intimate_moment": {
-            "triggers": ["alt+shift+click"],
-            "effects": {"intimacy": 10, "affection": 6, "trust": 3},
-            "animations": ["romantic_idle", "blushing"],
-            "responses": [
-                "This feels so right... thank you for being patient with me.",
-                "I never knew intimacy could feel this safe and beautiful.",
-                "With you, I feel like I can be completely myself."
-            ],
-            "cooldown": 360,
-            "requirements": {"trust": {"min": 40}, "affection": {"min": 35}, "intimacy": {"min": 20}}
-        },
-        "commitment_talk": {
-            "triggers": ["ctrl+shift+click"],
-            "effects": {"trust": 15, "affection": 10, "intimacy": 8},
-            "animations": ["romantic_idle", "heart_eyes"],
-            "responses": [
-                "I've been thinking about our future together... and it feels wonderful.",
-                "You make me believe in forever, one day at a time.",
-                "I'm ready to take this step with you, when you are."
-            ],
-            "cooldown": 720,
-            "requirements": {"trust": {"min": 60}, "affection": {"min": 50}, "intimacy": {"min": 40}}
-        },
-        "apology": {
-            "triggers": ["ctrl+shift+click"],
-            "effects": {"trust": 12, "affection": 5, "jealousy": -15, "happiness": 6},
-            "animations": ["talking", "happy"],
-            "responses": [
-                "I appreciate your sincerity... apologies mean a lot to me.",
-                "Thank you for caring enough to make things right.",
-                "Your honesty helps me trust you even more."
-            ],
-            "cooldown": 240,
-            "requirements": {"jealousy": {"min": 25}}
-        },
-        "reassurance": {
-            "triggers": ["alt+shift+click"],
-            "effects": {"trust": 15, "affection": 6, "jealousy": -20, "happiness": 8},
-            "animations": ["romantic_idle", "happy"],
-            "responses": [
-                "Your reassurance means everything to me... I needed to hear that.",
-                "Thank you for helping me feel secure in what we have.",
-                "With your patience, I'm learning to trust completely."
-            ],
-            "cooldown": 300,
-            "requirements": {"jealousy": {"min": 20}}
-        }
-    },
-
-    "progression": {
-        "levels": [
-            {
-                "name": "Romantic Acquaintance",
-                "requirement": {"age": 0},
-                "size": 126,
-                "animations": {}
-            },
-            {
-                "name": "Sweet Friend",
-                "requirement": {"age": 86400, "affection": 20, "trust": 15},
-                "size": 130,
-                "animations": {}
-            },
-            {
-                "name": "Cherished Companion",
-                "requirement": {"age": 172800, "affection": 35, "trust": 30},
-                "size": 134,
-                "animations": {}
-            },
-            {
-                "name": "Beloved Partner",
-                "requirement": {"age": 259200, "affection": 55, "trust": 50, "intimacy": 35},
-                "size": 138,
-                "animations": {
-                    "idle": "romantic_idle"
-                }
-            },
-            {
-                "name": "Soulmate",
-                "requirement": {"age": 345600, "affection": 75, "trust": 70, "intimacy": 60},
-                "size": 142,
-                "animations": {
-                    "idle": "romantic_idle"
-                }
-            }
-        ],
-        "achievements": [
-            {
-                "name": "First Blush",
-                "requirement": {
-                    "affection": {"min": 15}
-                }
-            },
-            {
-                "name": "Growing Trust",
-                "requirement": {
-                    "trust": {"min": 40}
-                }
-            },
-            {
-                "name": "Deep Connection",
-                "requirement": {
-                    "trust": {"min": 60},
-                    "affection": {"min": 50}
-                }
-            },
-            {
-                "name": "Intimate Bond",
-                "requirement": {
-                    "intimacy": {"min": 50}
-                }
-            },
-            {
-                "name": "True Love",
-                "requirement": {
-                    "affection": {"min": 80},
-                    "trust": {"min": 75},
-                    "intimacy": {"min": 65}
-                }
-            }
-        ]
-    },
-
-    "personality": {
-        "traits": {
-            "shyness": 0.5,
-            "romanticism": 0.8,
-            "jealousy_prone": 0.2,
-            "trust_difficulty": 0.6,
-            "affection_responsiveness": 0.7,
-            "flirtiness": 0.4
-        },
-        "compatibility": {
-            "consistent_interaction": 1.8,
-            "variety_preference": 0.9,
-            "gift_appreciation": 1.6,
-            "conversation_lover": 1.9
-        }
-    },
-
-    "romanceDialogs": [
-        {
-            "trigger": "click",
-            "responses": [
-                "You make my heart feel so full... I'm still discovering what that means.",
-                "I find myself thinking about you more and more each day.",
-                "These feelings are new to me, but they feel so right with you."
-            ],
-            "animation": "talking",
-            "cooldown": 12,
-            "requirements": {
-                "stats": {
-                    "affection": {"min": 25},
-                    "trust": {"min": 20}
-                }
-            }
-        },
-        {
-            "trigger": "click",
-            "responses": [
-                "I love you... saying that used to frighten me, but not anymore.",
-                "You've shown me what real love feels like, patient and true.",
-                "Every day with you, I fall a little deeper in love."
-            ],
-            "animation": "romantic_idle",
-            "cooldown": 15,
-            "requirements": {
-                "stats": {
-                    "affection": {"min": 60},
-                    "trust": {"min": 55},
-                    "intimacy": {"min": 45}
-                }
-            }
-        },
-        {
-            "trigger": "hover",
-            "responses": [
-                "*heart flutters softly* Your presence always calms me...",
-                "I feel so safe when you're near me like this.",
-                "Even just being close to you makes me happy."
-            ],
-            "animation": "blushing",
-            "cooldown": 18,
-            "requirements": {
-                "stats": {
-                    "trust": {"min": 30},
-                    "intimacy": {"min": 15}
-                }
-            }
-        }
-    ],
-
-    "romanceEvents": [
-        {
-            "name": "Growing Feelings Recognition",
-            "description": "Character acknowledges developing romantic feelings",
-            "probability": 0.08,
-            "effects": {"affection": 4, "trust": 3, "happiness": 6},
-            "animations": ["talking", "blushing"],
-            "responses": [
-                "I think... I think what I'm feeling for you is more than friendship.",
-                "These feelings are scary but wonderful at the same time.",
-                "You're becoming so important to me, in ways I never expected."
-            ],
-            "cooldown": 1800,
-            "conditions": {"affection": {"min": 30}, "trust": {"min": 25}}
-        },
-        {
-            "name": "Trust Milestone",
-            "description": "Character reflects on growing trust",
-            "probability": 0.06,
-            "effects": {"trust": 5, "affection": 3, "happiness": 5},
-            "animations": ["talking", "happy"],
-            "responses": [
-                "I'm learning to trust you more each day... it feels wonderful.",
-                "Thank you for being so patient with my heart.",
-                "You make vulnerability feel safe instead of scary."
-            ],
-            "cooldown": 2400,
-            "conditions": {"trust": {"min": 35}}
-        },
-        {
-            "name": "Intimate Realization",
-            "description": "Character embraces deeper intimacy",
-            "probability": 0.04,
-            "effects": {"intimacy": 8, "affection": 5, "trust": 4},
-            "animations": ["romantic_idle", "heart_eyes"],
-            "responses": [
-                "I never knew intimacy could feel this beautiful and safe.",
-                "With you, I'm learning what it means to truly connect.",
-                "Every barrier I had is melting away because of your love."
-            ],
-            "cooldown": 3600,
-            "conditions": {
-                "trust": {"min": 50},
-                "affection": {"min": 45},
-                "intimacy": {"min": 30}
-            }
-        },
-        {
-            "name": "Future Dreams",
-            "description": "Character shares hopes for the relationship",
-            "probability": 0.03,
-            "effects": {"affection": 8, "trust": 6, "intimacy": 5, "happiness": 10},
-            "animations": ["romantic_idle", "heart_eyes"],
-            "responses": [
-                "I find myself dreaming about our future together...",
-                "You've made me believe in happily ever after.",
-                "I want to build something beautiful and lasting with you."
-            ],
-            "cooldown": 4800,
-            "conditions": {
-                "trust": {"min": 65},
-                "affection": {"min": 60},
-                "intimacy": {"min": 45}
-            }
-        }
-    ],
-
-    "generalEvents": [
-        {
-            "name": "romantic_moment",
-            "description": "A tender romantic interaction",
-            "trigger": "rightclick",
-            "responses": [
-                "Being with you feels like coming home... 💕",
-                "These quiet moments together are when I feel most connected to you... 💖",
-                "Your love is teaching me to be brave with my heart... ✨"
-            ],
-            "choices": [
-                {
-                    "text": "Share a gentle moment",
-                    "effects": {"affection": 6, "happiness": 5, "trust": 3},
-                    "responses": ["This is perfect... just you and me, no rush, just love... 💝"],
-                    "animation": "romantic_idle"
-                },
-                {
-                    "text": "Express your growing feelings",
-                    "effects": {"affection": 8, "trust": 4, "intimacy": 3},
-                    "responses": ["Thank you for showing me what real love looks like... patient and true... 🌟"],
-                    "animation": "heart_eyes"
-                }
-            ],
-            "requirements": {"affection": {"min": 25}, "trust": {"min": 20}},
-            "cooldown": 9600,
-            "category": "romance"
-        },
-        {
-            "name": "deep_connection",
-            "description": "A moment of profound emotional connection",
-            "trigger": "longpress",
-            "responses": [
-                "Sometimes I can't believe how deeply I feel for you... it's beautiful and a little overwhelming... 💞",
-                "You've changed my whole world just by being patient with my heart... 🌹"
-            ],
-            "choices": [
-                {
-                    "text": "Acknowledge the connection",
-                    "effects": {"trust": 8, "affection": 6, "intimacy": 5},
-                    "responses": ["I feel it too... this connection we have is something truly special... 💫"],
-                    "animation": "romantic_idle"
-                }
-            ],
-            "requirements": {"trust": {"min": 40}, "affection": {"min": 35}},
-            "cooldown": 12000,
-            "category": "romance"
-        }
-    ],
-
-    "dialogBackend": {
-        "enabled": true,
-        "defaultBackend": "markov_chain",
-        "fallbackChain": ["simple_random"],
-        "confidenceThreshold": 0.6,
-        "backends": {
-            "markov_chain": {
-                "chainOrder": 2,
-                "minWords": 4,
-                "maxWords": 16,
-                "temperatureMin": 0.4,
-                "temperatureMax": 0.7,
-                "useDialogHistory": true,
-                "usePersonality": true,
-                "triggerSpecific": true,
-                "personalityBoost": 0.6,
-                "moodInfluence": 0.4,
-                "statAwareness": 0.5,
-                "relationshipWeight": 0.9,
-                "timeOfDayWeight": 0.2,
-                "memoryDecay": 0.9,
-                "learningRate": 0.15,
-                "adaptationSteps": 8,
-                "coherenceThreshold": 0.75,
-                "similarityPenalty": 0.4,
-                "trainingData": [
-                    "Your patience with my heart means everything to me, darling.",
-                    "I'm learning to trust in what we have together, slowly but surely.",
-                    "Every day with you, I discover new depths to my feelings.",
-                    "You make vulnerability feel safe instead of frightening to me.",
-                    "Thank you for not rushing me as I learn to love.",
-                    "These feelings are new but they feel so right with you.",
-                    "I find myself dreaming about our beautiful future together.",
-                    "Your gentle love is teaching me to open my heart completely.",
-                    "With you, I'm discovering what real intimacy feels like.",
-                    "You've shown me that true love is patient and kind."
-                ],
-                "forbiddenWords": ["hate", "ugly", "stupid", "disgusting", "rush", "hurry"],
-                "requiredWords": ["patient", "gentle", "trust", "slowly", "heart", "feelings", "safe"],
-                "fallbackPhrases": [
-                    "You mean so much to me, and I'm learning to show it.",
-                    "Thank you for being patient with my growing heart.",
-                    "These feelings for you are deep and true.",
-                    "Your love is teaching me to be brave.",
-                    "I treasure every moment we share together.",
-                    "You make me believe in forever, one day at a time."
-                ]
-            },
-            "simple_random": {
-                "responses": [
-                    "Your presence brings me such comfort and joy.",
-                    "I'm grateful for your patience as I learn to love.",
-                    "You make my heart feel safe and cherished."
-                ]
-            }
-        },
-        "memory": {
-            "enabled": true,
-            "maxMemoryItems": 120,
-            "learningEnabled": true
-        }
-    },
-
-    "battleSystem": {
-        "enabled": true,
-        "aiDifficulty": "medium",
-        "battleStats": {
-            "hp": {
-                "base": 95,
-                "growth": 2.1
-            },
-            "attack": {
-                "base": 14,
-                "growth": 2.2
-            },
-            "defense": {
-                "base": 16,
-                "growth": 2.3
-            },
-            "speed": {
-                "base": 15,
-                "growth": 2.0
-            }
-        },
-        "personalities": {
-            "aggressive": 0.2,
-            "defensive": 0.7,
-            "balanced": 0.6,
-            "supportive": 0.9
-        },
-        "availableActions": [
-            "thoughtful_strategy",
-            "protective_stance",
-            "gentle_healing",
-            "patient_defense",
-            "caring_support"
-        ],
-        "battleResponses": {
-            "victory": [
-                "We did it together... I couldn't have won without you. 💕",
-                "Your support gave me the strength to keep going. Thank you. ✨",
-                "Victory feels sweeter when shared with someone I care about. 🌟",
-                "I'm grateful we could face this challenge together. 💖"
-            ],
-            "defeat": [
-                "That's okay... what matters is that we tried together. 💕",
-                "Win or lose, I'm proud to have you by my side. ✨",
-                "This experience brought us closer, and that's what counts. 🌟",
-                "Thank you for believing in me, even when we didn't win. 💖"
-            ],
-            "startBattle": [
-                "I'm nervous, but having you here gives me courage. 💕⚔️",
-                "Let's face this together, one step at a time. ✨",
-                "With your support, I feel like I can do anything. 🌟⚡",
-                "I trust in us... let's show them what teamwork means. 💖🗡️"
-            ]
-        }
-    },
-
-    "giftSystem": {
-        "enabled": true,
-        "inventorySettings": {
-            "maxSlots": 10,
-            "autoSort": true,
-            "stackSimilar": true,
-            "defaultCapacity": 75
-        },
-        "preferences": {
-            "favoriteCategories": [
-                "meaningful",
-                "books",
-                "flowers",
-                "handmade",
-                "sentimental"
-            ],
-            "dislikedCategories": [
-                "flashy",
-                "expensive",
-                "superficial"
-            ],
-            "personalityModifiers": {
-                "meaningful": 2.5,
-                "books": 2.2,
-                "flowers": 2.0,
-                "handmade": 2.3,
-                "sentimental": 2.4
-            }
-        },
-        "giftResponses": {
-            "favorite": [
-                "This is... this is so thoughtful. I'm deeply touched. 💕✨",
-                "You really understand what means the most to me. Thank you. 🌟",
-                "I'll treasure this always... it's perfect because it came from you. 💖"
-            ],
-            "liked": [
-                "This is lovely... thank you for thinking of me. 💕",
-                "I appreciate your thoughtfulness so much. ✨",
-                "You have such a caring heart. This means a lot. 🌟"
-            ],
-            "neutral": [
-                "Thank you... it's sweet of you to give me something. 💕",
-                "I appreciate the gesture, truly. ✨",
-                "That's kind of you to think of me. 🌟"
-            ],
-            "disliked": [
-                "Oh... well, thank you for thinking of me. 💕",
-                "That's... different from what I usually like, but thank you. ✨",
-                "I appreciate the thought behind it, even if it's not quite me. 🌟"
-            ]
-        },
-        "memorySettings": {
-            "rememberGifts": true,
-            "trackPreferences": true,
-            "learningEnabled": true,
-            "maxMemoryItems": 140
-        }
-    },
-
-    "multiplayer": {
-        "enabled": true,
-        "botCapable": true,
-        "networkID": "romance_slowburn_companion_v1",
-        "maxPeers": 5,
-        "socialLevel": "moderate",
-        "shareableStats": ["happiness", "affection", "trust"],
-        "networkPersonality": "thoughtful_reserved"
-    },
-
-    "newsFeatures": {
-        "enabled": true,
-        "readingPersonality": "thoughtful",
-        "feeds": [
-            {
-                "name": "Literature & Books",
-                "url": "https://feeds.feedburner.com/literature-books",
-                "category": "literature",
-                "refreshInterval": 7200
-            },
-            {
-                "name": "Meaningful Stories",
-                "url": "https://feeds.feedburner.com/meaningful-stories",
-                "category": "stories",
-                "refreshInterval": 10800
-            }
-        ],
-        "preferences": {
-            "categories": ["literature", "stories", "philosophy", "art", "meaningful"],
-            "updateFrequency": "occasionally",
-            "maxArticles": 8
-        }
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "What would you like to do together today?",
+        "I'm always happy to spend quality time with you.",
+        "Let's create some beautiful memories together."
+      ],
+      "animation": "happy",
+      "cooldown": 10
     }
+  ],
+  "stats": {
+    "hunger": {
+      "min": 0,
+      "max": 100,
+      "initial": 70,
+      "critical": 20
+    },
+    "happiness": {
+      "min": 0,
+      "max": 100,
+      "initial": 60,
+      "critical": 15
+    },
+    "energy": {
+      "min": 0,
+      "max": 100,
+      "initial": 80,
+      "critical": 20
+    },
+    "affection": {
+      "min": 0,
+      "max": 100,
+      "initial": 25,
+      "critical": 0
+    },
+    "trust": {
+      "min": 0,
+      "max": 100,
+      "initial": 15,
+      "critical": 0
+    },
+    "intimacy": {
+      "min": 0,
+      "max": 100,
+      "initial": 5,
+      "critical": 0
+    },
+    "jealousy": {
+      "min": 0,
+      "max": 100,
+      "initial": 10,
+      "critical": 70
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 75,
+    "autoSaveInterval": 300,
+    "criticalStateAnimationPriority": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "moodBasedAnimations": true
+  },
+  "interactions": {
+    "feed": {
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 22,
+        "happiness": 4,
+        "trust": 2
+      },
+      "animations": [
+        "eating",
+        "happy"
+      ],
+      "responses": [
+        "Thank you for taking care of me... it means so much.",
+        "Your thoughtfulness touches my heart.",
+        "I feel so loved when you care for me like this."
+      ],
+      "cooldown": 45,
+      "requirements": {
+        "hunger": {
+          "max": 80
+        }
+      }
+    },
+    "play": {
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 15,
+        "energy": -18,
+        "affection": 3,
+        "trust": 2
+      },
+      "animations": [
+        "happy"
+      ],
+      "responses": [
+        "This is wonderful... I love spending time with you like this.",
+        "Playing together makes me feel so close to you.",
+        "These moments of joy mean everything to me."
+      ],
+      "cooldown": 60,
+      "requirements": {
+        "energy": {
+          "min": 25
+        }
+      }
+    },
+    "gift": {
+      "triggers": [
+        "ctrl+click"
+      ],
+      "effects": {
+        "affection": 12,
+        "happiness": 8,
+        "trust": 4
+      },
+      "animations": [
+        "heart_eyes",
+        "excited_romance"
+      ],
+      "responses": [
+        "Oh my... this is beautiful! You remembered what I like! 🎁",
+        "Your gifts always come straight from the heart.",
+        "I'll treasure this always, just like I treasure you."
+      ],
+      "cooldown": 180,
+      "requirements": {
+        "affection": {
+          "min": 20
+        }
+      }
+    },
+    "deep_conversation": {
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "trust": 10,
+        "affection": 4,
+        "intimacy": 6
+      },
+      "animations": [
+        "talking",
+        "romantic_idle"
+      ],
+      "responses": [
+        "I love how we can talk about meaningful things together...",
+        "These deep conversations help me understand my feelings for you.",
+        "You really listen to me, and that builds such trust between us."
+      ],
+      "cooldown": 120,
+      "requirements": {
+        "trust": {
+          "min": 25
+        }
+      }
+    },
+    "intimate_moment": {
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "intimacy": 10,
+        "affection": 6,
+        "trust": 3
+      },
+      "animations": [
+        "romantic_idle",
+        "blushing"
+      ],
+      "responses": [
+        "This feels so right... thank you for being patient with me.",
+        "I never knew intimacy could feel this safe and beautiful.",
+        "With you, I feel like I can be completely myself."
+      ],
+      "cooldown": 360,
+      "requirements": {
+        "trust": {
+          "min": 40
+        },
+        "affection": {
+          "min": 35
+        },
+        "intimacy": {
+          "min": 20
+        }
+      }
+    },
+    "commitment_talk": {
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 15,
+        "affection": 10,
+        "intimacy": 8
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
+      "responses": [
+        "I've been thinking about our future together... and it feels wonderful.",
+        "You make me believe in forever, one day at a time.",
+        "I'm ready to take this step with you, when you are."
+      ],
+      "cooldown": 720,
+      "requirements": {
+        "trust": {
+          "min": 60
+        },
+        "affection": {
+          "min": 50
+        },
+        "intimacy": {
+          "min": 40
+        }
+      }
+    },
+    "apology": {
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 12,
+        "affection": 5,
+        "jealousy": -15,
+        "happiness": 6
+      },
+      "animations": [
+        "talking",
+        "happy"
+      ],
+      "responses": [
+        "I appreciate your sincerity... apologies mean a lot to me.",
+        "Thank you for caring enough to make things right.",
+        "Your honesty helps me trust you even more."
+      ],
+      "cooldown": 240,
+      "requirements": {
+        "jealousy": {
+          "min": 25
+        }
+      }
+    },
+    "reassurance": {
+      "triggers": [
+        "alt+shift+click"
+      ],
+      "effects": {
+        "trust": 15,
+        "affection": 6,
+        "jealousy": -20,
+        "happiness": 8
+      },
+      "animations": [
+        "romantic_idle",
+        "happy"
+      ],
+      "responses": [
+        "Your reassurance means everything to me... I needed to hear that.",
+        "Thank you for helping me feel secure in what we have.",
+        "With your patience, I'm learning to trust completely."
+      ],
+      "cooldown": 300,
+      "requirements": {
+        "jealousy": {
+          "min": 20
+        }
+      }
+    }
+  },
+  "progression": {
+    "levels": [
+      {
+        "name": "Romantic Acquaintance",
+        "requirement": {
+          "age": 0
+        },
+        "size": 126,
+        "animations": {}
+      },
+      {
+        "name": "Sweet Friend",
+        "requirement": {
+          "age": 86400,
+          "affection": 20,
+          "trust": 15
+        },
+        "size": 130,
+        "animations": {}
+      },
+      {
+        "name": "Cherished Companion",
+        "requirement": {
+          "age": 172800,
+          "affection": 35,
+          "trust": 30
+        },
+        "size": 134,
+        "animations": {}
+      },
+      {
+        "name": "Beloved Partner",
+        "requirement": {
+          "age": 259200,
+          "affection": 55,
+          "trust": 50,
+          "intimacy": 35
+        },
+        "size": 138,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      },
+      {
+        "name": "Soulmate",
+        "requirement": {
+          "age": 345600,
+          "affection": 75,
+          "trust": 70,
+          "intimacy": 60
+        },
+        "size": 142,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Blush",
+        "requirement": {
+          "affection": {
+            "min": 15
+          }
+        }
+      },
+      {
+        "name": "Growing Trust",
+        "requirement": {
+          "trust": {
+            "min": 40
+          }
+        }
+      },
+      {
+        "name": "Deep Connection",
+        "requirement": {
+          "trust": {
+            "min": 60
+          },
+          "affection": {
+            "min": 50
+          }
+        }
+      },
+      {
+        "name": "Intimate Bond",
+        "requirement": {
+          "intimacy": {
+            "min": 50
+          }
+        }
+      },
+      {
+        "name": "True Love",
+        "requirement": {
+          "affection": {
+            "min": 80
+          },
+          "trust": {
+            "min": 75
+          },
+          "intimacy": {
+            "min": 65
+          }
+        }
+      }
+    ]
+  },
+  "personality": {
+    "traits": {
+      "shyness": 0.5,
+      "romanticism": 0.8,
+      "jealousy_prone": 0.2,
+      "trust_difficulty": 0.6,
+      "affection_responsiveness": 0.7,
+      "flirtiness": 0.4
+    },
+    "compatibility": {
+      "consistent_interaction": 1.8,
+      "variety_preference": 0.9,
+      "gift_appreciation": 1.6,
+      "conversation_lover": 1.9
+    }
+  },
+  "romanceDialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "You make my heart feel so full... I'm still discovering what that means.",
+        "I find myself thinking about you more and more each day.",
+        "These feelings are new to me, but they feel so right with you."
+      ],
+      "animation": "talking",
+      "cooldown": 12,
+      "requirements": {
+        "stats": {
+          "affection": {
+            "min": 25
+          },
+          "trust": {
+            "min": 20
+          }
+        }
+      }
+    },
+    {
+      "trigger": "click",
+      "responses": [
+        "I love you... saying that used to frighten me, but not anymore.",
+        "You've shown me what real love feels like, patient and true.",
+        "Every day with you, I fall a little deeper in love."
+      ],
+      "animation": "romantic_idle",
+      "cooldown": 15,
+      "requirements": {
+        "stats": {
+          "affection": {
+            "min": 60
+          },
+          "trust": {
+            "min": 55
+          },
+          "intimacy": {
+            "min": 45
+          }
+        }
+      }
+    },
+    {
+      "trigger": "hover",
+      "responses": [
+        "*heart flutters softly* Your presence always calms me...",
+        "I feel so safe when you're near me like this.",
+        "Even just being close to you makes me happy."
+      ],
+      "animation": "blushing",
+      "cooldown": 18,
+      "requirements": {
+        "stats": {
+          "trust": {
+            "min": 30
+          },
+          "intimacy": {
+            "min": 15
+          }
+        }
+      }
+    }
+  ],
+  "romanceEvents": [
+    {
+      "name": "Growing Feelings Recognition",
+      "description": "Character acknowledges developing romantic feelings",
+      "probability": 0.08,
+      "effects": {
+        "affection": 4,
+        "trust": 3,
+        "happiness": 6
+      },
+      "animations": [
+        "talking",
+        "blushing"
+      ],
+      "responses": [
+        "I think... I think what I'm feeling for you is more than friendship.",
+        "These feelings are scary but wonderful at the same time.",
+        "You're becoming so important to me, in ways I never expected."
+      ],
+      "cooldown": 1800,
+      "conditions": {
+        "affection": {
+          "min": 30
+        },
+        "trust": {
+          "min": 25
+        }
+      }
+    },
+    {
+      "name": "Trust Milestone",
+      "description": "Character reflects on growing trust",
+      "probability": 0.06,
+      "effects": {
+        "trust": 5,
+        "affection": 3,
+        "happiness": 5
+      },
+      "animations": [
+        "talking",
+        "happy"
+      ],
+      "responses": [
+        "I'm learning to trust you more each day... it feels wonderful.",
+        "Thank you for being so patient with my heart.",
+        "You make vulnerability feel safe instead of scary."
+      ],
+      "cooldown": 2400,
+      "conditions": {
+        "trust": {
+          "min": 35
+        }
+      }
+    },
+    {
+      "name": "Intimate Realization",
+      "description": "Character embraces deeper intimacy",
+      "probability": 0.04,
+      "effects": {
+        "intimacy": 8,
+        "affection": 5,
+        "trust": 4
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
+      "responses": [
+        "I never knew intimacy could feel this beautiful and safe.",
+        "With you, I'm learning what it means to truly connect.",
+        "Every barrier I had is melting away because of your love."
+      ],
+      "cooldown": 3600,
+      "conditions": {
+        "trust": {
+          "min": 50
+        },
+        "affection": {
+          "min": 45
+        },
+        "intimacy": {
+          "min": 30
+        }
+      }
+    },
+    {
+      "name": "Future Dreams",
+      "description": "Character shares hopes for the relationship",
+      "probability": 0.03,
+      "effects": {
+        "affection": 8,
+        "trust": 6,
+        "intimacy": 5,
+        "happiness": 10
+      },
+      "animations": [
+        "romantic_idle",
+        "heart_eyes"
+      ],
+      "responses": [
+        "I find myself dreaming about our future together...",
+        "You've made me believe in happily ever after.",
+        "I want to build something beautiful and lasting with you."
+      ],
+      "cooldown": 4800,
+      "conditions": {
+        "trust": {
+          "min": 65
+        },
+        "affection": {
+          "min": 60
+        },
+        "intimacy": {
+          "min": 45
+        }
+      }
+    }
+  ],
+  "generalEvents": [
+    {
+      "name": "romantic_moment",
+      "description": "A tender romantic interaction",
+      "trigger": "rightclick",
+      "responses": [
+        "Being with you feels like coming home... 💕",
+        "These quiet moments together are when I feel most connected to you... 💖",
+        "Your love is teaching me to be brave with my heart... ✨"
+      ],
+      "choices": [
+        {
+          "text": "Share a gentle moment",
+          "effects": {
+            "affection": 6,
+            "happiness": 5,
+            "trust": 3
+          },
+          "responses": [
+            "This is perfect... just you and me, no rush, just love... 💝"
+          ],
+          "animation": "romantic_idle"
+        },
+        {
+          "text": "Express your growing feelings",
+          "effects": {
+            "affection": 8,
+            "trust": 4,
+            "intimacy": 3
+          },
+          "responses": [
+            "Thank you for showing me what real love looks like... patient and true... 🌟"
+          ],
+          "animation": "heart_eyes"
+        }
+      ],
+      "requirements": {
+        "affection": {
+          "min": 25
+        },
+        "trust": {
+          "min": 20
+        }
+      },
+      "cooldown": 9600,
+      "category": "romance"
+    },
+    {
+      "name": "deep_connection",
+      "description": "A moment of profound emotional connection",
+      "trigger": "longpress",
+      "responses": [
+        "Sometimes I can't believe how deeply I feel for you... it's beautiful and a little overwhelming... 💞",
+        "You've changed my whole world just by being patient with my heart... 🌹"
+      ],
+      "choices": [
+        {
+          "text": "Acknowledge the connection",
+          "effects": {
+            "trust": 8,
+            "affection": 6,
+            "intimacy": 5
+          },
+          "responses": [
+            "I feel it too... this connection we have is something truly special... 💫"
+          ],
+          "animation": "romantic_idle"
+        }
+      ],
+      "requirements": {
+        "trust": {
+          "min": 40
+        },
+        "affection": {
+          "min": 35
+        }
+      },
+      "cooldown": 12000,
+      "category": "romance"
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": [
+      "simple_random"
+    ],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 4,
+        "maxWords": 16,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.7,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.6,
+        "moodInfluence": 0.4,
+        "statAwareness": 0.5,
+        "relationshipWeight": 0.9,
+        "timeOfDayWeight": 0.2,
+        "memoryDecay": 0.9,
+        "learningRate": 0.15,
+        "adaptationSteps": 8,
+        "coherenceThreshold": 0.75,
+        "similarityPenalty": 0.4,
+        "trainingData": [
+          "Your patience with my heart means everything to me, darling.",
+          "I'm learning to trust in what we have together, slowly but surely.",
+          "Every day with you, I discover new depths to my feelings.",
+          "You make vulnerability feel safe instead of frightening to me.",
+          "Thank you for not rushing me as I learn to love.",
+          "These feelings are new but they feel so right with you.",
+          "I find myself dreaming about our beautiful future together.",
+          "Your gentle love is teaching me to open my heart completely.",
+          "With you, I'm discovering what real intimacy feels like.",
+          "You've shown me that true love is patient and kind."
+        ],
+        "forbiddenWords": [
+          "hate",
+          "ugly",
+          "stupid",
+          "disgusting",
+          "rush",
+          "hurry"
+        ],
+        "requiredWords": [
+          "patient",
+          "gentle",
+          "trust",
+          "slowly",
+          "heart",
+          "feelings",
+          "safe"
+        ],
+        "fallbackPhrases": [
+          "You mean so much to me, and I'm learning to show it.",
+          "Thank you for being patient with my growing heart.",
+          "These feelings for you are deep and true.",
+          "Your love is teaching me to be brave.",
+          "I treasure every moment we share together.",
+          "You make me believe in forever, one day at a time."
+        ]
+      },
+      "simple_random": {
+        "responses": [
+          "Your presence brings me such comfort and joy.",
+          "I'm grateful for your patience as I learn to love.",
+          "You make my heart feel safe and cherished."
+        ]
+      }
+    },
+    "memory": {
+      "enabled": true,
+      "maxMemoryItems": 120,
+      "learningEnabled": true
+    }
+  },
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "medium",
+    "battleStats": {
+      "hp": {
+        "base": 95,
+        "growth": 2.1
+      },
+      "attack": {
+        "base": 14,
+        "growth": 2.2
+      },
+      "defense": {
+        "base": 16,
+        "growth": 2.3
+      },
+      "speed": {
+        "base": 15,
+        "growth": 2.0
+      }
+    },
+    "personalities": {
+      "aggressive": 0.2,
+      "defensive": 0.7,
+      "balanced": 0.6,
+      "supportive": 0.9
+    },
+    "availableActions": [
+      "thoughtful_strategy",
+      "protective_stance",
+      "gentle_healing",
+      "patient_defense",
+      "caring_support"
+    ],
+    "battleResponses": {
+      "victory": [
+        "We did it together... I couldn't have won without you. 💕",
+        "Your support gave me the strength to keep going. Thank you. ✨",
+        "Victory feels sweeter when shared with someone I care about. 🌟",
+        "I'm grateful we could face this challenge together. 💖"
+      ],
+      "defeat": [
+        "That's okay... what matters is that we tried together. 💕",
+        "Win or lose, I'm proud to have you by my side. ✨",
+        "This experience brought us closer, and that's what counts. 🌟",
+        "Thank you for believing in me, even when we didn't win. 💖"
+      ],
+      "startBattle": [
+        "I'm nervous, but having you here gives me courage. 💕⚔️",
+        "Let's face this together, one step at a time. ✨",
+        "With your support, I feel like I can do anything. 🌟⚡",
+        "I trust in us... let's show them what teamwork means. 💖🗡️"
+      ]
+    }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 75
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "meaningful",
+        "books",
+        "flowers",
+        "handmade",
+        "sentimental"
+      ],
+      "dislikedCategories": [
+        "flashy",
+        "expensive",
+        "superficial"
+      ],
+      "personalityModifiers": {
+        "meaningful": 2.5,
+        "books": 2.2,
+        "flowers": 2.0,
+        "handmade": 2.3,
+        "sentimental": 2.4
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is... this is so thoughtful. I'm deeply touched. 💕✨",
+        "You really understand what means the most to me. Thank you. 🌟",
+        "I'll treasure this always... it's perfect because it came from you. 💖"
+      ],
+      "liked": [
+        "This is lovely... thank you for thinking of me. 💕",
+        "I appreciate your thoughtfulness so much. ✨",
+        "You have such a caring heart. This means a lot. 🌟"
+      ],
+      "neutral": [
+        "Thank you... it's sweet of you to give me something. 💕",
+        "I appreciate the gesture, truly. ✨",
+        "That's kind of you to think of me. 🌟"
+      ],
+      "disliked": [
+        "Oh... well, thank you for thinking of me. 💕",
+        "That's... different from what I usually like, but thank you. ✨",
+        "I appreciate the thought behind it, even if it's not quite me. 🌟"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 140
+    }
+  },
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "romance_slowburn_companion_v1",
+    "maxPeers": 5,
+    "socialLevel": "moderate",
+    "shareableStats": [
+      "happiness",
+      "affection",
+      "trust"
+    ],
+    "networkPersonality": "thoughtful_reserved"
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "thoughtful",
+    "feeds": [
+      {
+        "name": "Literature & Books",
+        "url": "https://feeds.feedburner.com/literature-books",
+        "category": "literature",
+        "refreshInterval": 7200
+      },
+      {
+        "name": "Meaningful Stories",
+        "url": "https://feeds.feedburner.com/meaningful-stories",
+        "category": "stories",
+        "refreshInterval": 10800
+      }
+    ],
+    "preferences": {
+      "categories": [
+        "literature",
+        "stories",
+        "philosophy",
+        "art",
+        "meaningful"
+      ],
+      "updateFrequency": "occasionally",
+      "maxArticles": 8
+    }
+  },
+  "assetGeneration": {
+    "basePrompt": "A graceful anime character with elegant features and deep eyes, sophisticated clothing with subtle romantic touches, contemplative and gentle expression, digital art, transparent background, high quality romantic character design",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  }
 }

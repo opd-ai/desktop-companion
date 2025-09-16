@@ -1,7 +1,6 @@
 {
   "name": "Chaos Companion",
   "description": "An extreme challenge for master pet owners. This chaotic creature has unpredictable needs, rapid stat changes, and requires expert-level care. Only attempt if you've mastered all other difficulty levels!",
-  
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
@@ -10,7 +9,6 @@
     "hungry": "animations/hungry.gif",
     "eating": "animations/eating.gif"
   },
-
   "dialogs": [
     {
       "trigger": "click",
@@ -39,13 +37,11 @@
       "cooldown": 8
     }
   ],
-
   "behavior": {
     "idleTimeout": 15,
     "movementEnabled": true,
     "defaultSize": 128
   },
-
   "stats": {
     "hunger": {
       "initial": 100,
@@ -96,7 +92,6 @@
       "criticalThreshold": 120
     }
   },
-
   "gameRules": {
     "statsDecayInterval": 15,
     "autoSaveInterval": 60,
@@ -105,12 +100,20 @@
     "evolutionEnabled": true,
     "moodBasedAnimations": true
   },
-
   "interactions": {
     "feed": {
-      "triggers": ["rightclick"],
-      "effects": {"hunger": 12, "happiness": -2, "energy": 3},
-      "animations": ["eating", "sad"],
+      "triggers": [
+        "rightclick"
+      ],
+      "effects": {
+        "hunger": 12,
+        "happiness": -2,
+        "energy": 3
+      },
+      "animations": [
+        "eating",
+        "sad"
+      ],
       "responses": [
         "This isn't quite what I wanted...",
         "Food is chaos! More! Different!",
@@ -119,12 +122,25 @@
         "Feed me again in 30 seconds!"
       ],
       "cooldown": 90,
-      "requirements": {"hunger": {"max": 60}}
+      "requirements": {
+        "hunger": {
+          "max": 60
+        }
+      }
     },
     "play": {
-      "triggers": ["doubleclick"],
-      "effects": {"happiness": 8, "energy": -35, "health": -5},
-      "animations": ["happy", "sad"],
+      "triggers": [
+        "doubleclick"
+      ],
+      "effects": {
+        "happiness": 8,
+        "energy": -35,
+        "health": -5
+      },
+      "animations": [
+        "happy",
+        "sad"
+      ],
       "responses": [
         "CHAOS PLAY! MORE CHAOS!",
         "That was intense! I need more!",
@@ -133,12 +149,25 @@
         "This chaos feeds my soul!"
       ],
       "cooldown": 120,
-      "requirements": {"energy": {"min": 40}}
+      "requirements": {
+        "energy": {
+          "min": 40
+        }
+      }
     },
     "stabilize": {
-      "triggers": ["click"],
-      "effects": {"happiness": 3, "health": 8, "energy": -8, "hunger": -5},
-      "animations": ["happy"],
+      "triggers": [
+        "click"
+      ],
+      "effects": {
+        "happiness": 3,
+        "health": 8,
+        "energy": -8,
+        "hunger": -5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "Temporary stability... but chaos returns!",
         "A moment of peace in the storm...",
@@ -149,9 +178,18 @@
       "cooldown": 40
     },
     "chaotic_compliment": {
-      "triggers": ["shift+click"],
-      "effects": {"affection": 8, "happiness": 10, "trust": 3, "energy": -5},
-      "animations": ["happy"],
+      "triggers": [
+        "shift+click"
+      ],
+      "effects": {
+        "affection": 8,
+        "happiness": 10,
+        "trust": 3,
+        "energy": -5
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "CHAOS COMPLIMENTS! More! Tell me I'm beautifully unpredictable!",
         "Yes! YES! Feed my chaotic ego!",
@@ -160,12 +198,25 @@
         "More praise for the chaos queen!"
       ],
       "cooldown": 45,
-      "requirements": {"trust": {"min": 20}}
+      "requirements": {
+        "trust": {
+          "min": 20
+        }
+      }
     },
     "chaotic_gift": {
-      "triggers": ["ctrl+click"],
-      "effects": {"affection": 15, "happiness": 12, "trust": 5, "jealousy": -10},
-      "animations": ["happy"],
+      "triggers": [
+        "ctrl+click"
+      ],
+      "effects": {
+        "affection": 15,
+        "happiness": 12,
+        "trust": 5,
+        "jealousy": -10
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "CHAOTIC PRESENTS! This feeds my unpredictable soul!",
         "Gift chaos! I need MORE chaos gifts!",
@@ -174,12 +225,25 @@
         "More gifts! Feed the chaos! FEED IT!"
       ],
       "cooldown": 60,
-      "requirements": {"affection": {"min": 30}}
+      "requirements": {
+        "affection": {
+          "min": 30
+        }
+      }
     },
     "chaos_conversation": {
-      "triggers": ["ctrl+shift+click"],
-      "effects": {"trust": 10, "affection": 6, "intimacy": 8, "energy": -10},
-      "animations": ["talking"],
+      "triggers": [
+        "ctrl+shift+click"
+      ],
+      "effects": {
+        "trust": 10,
+        "affection": 6,
+        "intimacy": 8,
+        "energy": -10
+      },
+      "animations": [
+        "talking"
+      ],
       "responses": [
         "Deep chaos talks! My favorite kind of madness!",
         "Your thoughts create beautiful chaos in my mind!",
@@ -188,27 +252,36 @@
         "Talk more! Your words create delicious mental chaos!"
       ],
       "cooldown": 75,
-      "requirements": {"trust": {"min": 40}}
+      "requirements": {
+        "trust": {
+          "min": 40
+        }
+      }
     }
   },
-
   "progression": {
     "levels": [
       {
         "name": "Chaotic Spawn",
-        "requirement": {"age": 0},
+        "requirement": {
+          "age": 0
+        },
         "size": 96,
         "animations": {}
       },
       {
         "name": "Chaos Agent",
-        "requirement": {"age": 259200},
+        "requirement": {
+          "age": 259200
+        },
         "size": 112,
         "animations": {}
       },
       {
         "name": "Master of Chaos",
-        "requirement": {"age": 777600},
+        "requirement": {
+          "age": 777600
+        },
         "size": 144,
         "animations": {}
       }
@@ -217,55 +290,103 @@
       {
         "name": "Chaos Survivor",
         "requirement": {
-          "hunger": {"maintainAbove": 30},
-          "happiness": {"maintainAbove": 25},
-          "health": {"maintainAbove": 25},
-          "energy": {"maintainAbove": 30},
-          "maintainAbove": {"duration": 86400}
+          "hunger": {
+            "maintainAbove": 30
+          },
+          "happiness": {
+            "maintainAbove": 25
+          },
+          "health": {
+            "maintainAbove": 25
+          },
+          "energy": {
+            "maintainAbove": 30
+          },
+          "maintainAbove": {
+            "duration": 86400
+          }
         },
         "reward": {
-          "statBoosts": {"health": 25}
+          "statBoosts": {
+            "health": 25
+          }
         }
       },
       {
         "name": "Madness Tamer",
         "requirement": {
-          "hunger": {"maintainAbove": 40},
-          "happiness": {"maintainAbove": 35},
-          "maintainAbove": {"duration": 172800}
+          "hunger": {
+            "maintainAbove": 40
+          },
+          "happiness": {
+            "maintainAbove": 35
+          },
+          "maintainAbove": {
+            "duration": 172800
+          }
         },
         "reward": {
-          "statBoosts": {"happiness": 20, "energy": 15}
+          "statBoosts": {
+            "happiness": 20,
+            "energy": 15
+          }
         }
       },
       {
         "name": "Chaos Champion",
         "requirement": {
-          "age": {"min": 1209600},
-          "hunger": {"maintainAbove": 35},
-          "happiness": {"maintainAbove": 30},
-          "health": {"maintainAbove": 30},
-          "energy": {"maintainAbove": 35}
+          "age": {
+            "min": 1209600
+          },
+          "hunger": {
+            "maintainAbove": 35
+          },
+          "happiness": {
+            "maintainAbove": 30
+          },
+          "health": {
+            "maintainAbove": 30
+          },
+          "energy": {
+            "maintainAbove": 35
+          }
         },
         "reward": {
-          "statBoosts": {"hunger": 30, "happiness": 30, "health": 30, "energy": 30}
+          "statBoosts": {
+            "hunger": 30,
+            "happiness": 30,
+            "health": 30,
+            "energy": 30
+          }
         }
       },
       {
         "name": "Master of All Chaos",
         "requirement": {
-          "hunger": {"min": 80},
-          "happiness": {"min": 80},
-          "health": {"min": 80},
-          "energy": {"min": 80}
+          "hunger": {
+            "min": 80
+          },
+          "happiness": {
+            "min": 80
+          },
+          "health": {
+            "min": 80
+          },
+          "energy": {
+            "min": 80
+          }
         },
         "reward": {
-          "statBoosts": {"hunger": 50, "happiness": 50, "health": 50, "energy": 50}
+          "statBoosts": {
+            "hunger": 50,
+            "happiness": 50,
+            "health": 50,
+            "energy": 50
+          }
         }
       }
     ]
   },
-
   "personality": {
     "traits": {
       "chaotic": 1.0,
@@ -282,11 +403,12 @@
       "conversation_lover": 1.5
     }
   },
-
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
-    "fallbackChain": ["simple_random"],
+    "fallbackChain": [
+      "simple_random"
+    ],
     "confidenceThreshold": 0.5,
     "backends": {
       "markov_chain": {
@@ -325,8 +447,20 @@
           "Chaos companions are the best companions! Join my madness!",
           "Predictability is death! Long live beautiful, chaotic life!"
         ],
-        "forbiddenWords": ["stable", "predictable", "calm", "boring", "slow"],
-        "requiredWords": ["chaos", "unpredictable", "fast", "change", "intense"],
+        "forbiddenWords": [
+          "stable",
+          "predictable",
+          "calm",
+          "boring",
+          "slow"
+        ],
+        "requiredWords": [
+          "chaos",
+          "unpredictable",
+          "fast",
+          "change",
+          "intense"
+        ],
         "fallbackPhrases": [
           "CHAOS! More chaos needed!",
           "Can't predict me! That's the point!",
@@ -337,14 +471,20 @@
       }
     }
   },
-
   "romanceEvents": [
     {
       "name": "Chaotic Love Declaration",
       "description": "Sudden explosive romantic chaos",
       "probability": 0.15,
-      "effects": {"affection": 12, "intimacy": 8, "jealousy": 15, "happiness": 10},
-      "animations": ["happy"],
+      "effects": {
+        "affection": 12,
+        "intimacy": 8,
+        "jealousy": 15,
+        "happiness": 10
+      },
+      "animations": [
+        "happy"
+      ],
       "responses": [
         "I LOVE YOU CHAOTICALLY! My heart is pure romantic chaos!",
         "Our love is beautifully unpredictable! CHAOS ROMANCE!",
@@ -352,14 +492,28 @@
         "LOVE CHAOS! The best kind of chaos!"
       ],
       "cooldown": 600,
-      "conditions": {"affection": {"min": 40}, "trust": {"min": 30}}
+      "conditions": {
+        "affection": {
+          "min": 40
+        },
+        "trust": {
+          "min": 30
+        }
+      }
     },
     {
       "name": "Jealousy Storm",
       "description": "Explosive chaotic jealousy",
-      "probability": 0.20,
-      "effects": {"jealousy": 25, "trust": -5, "happiness": -10, "affection": 3},
-      "animations": ["sad"],
+      "probability": 0.2,
+      "effects": {
+        "jealousy": 25,
+        "trust": -5,
+        "happiness": -10,
+        "affection": 3
+      },
+      "animations": [
+        "sad"
+      ],
       "responses": [
         "WHO ELSE ARE YOU TALKING TO?! Chaos jealousy activated!",
         "I need ALL your attention! Chaotic possessiveness engaged!",
@@ -367,10 +521,16 @@
         "JEALOUS CHAOS MODE! Pay attention to ME!"
       ],
       "cooldown": 450,
-      "conditions": {"affection": {"min": 25}, "jealousy": {"max": 100}}
+      "conditions": {
+        "affection": {
+          "min": 25
+        },
+        "jealousy": {
+          "max": 100
+        }
+      }
     }
   ],
-
   "generalEvents": [
     {
       "name": "chaos_challenge",
@@ -382,29 +542,51 @@
       "responses": [
         "🔥 CHAOS CHALLENGE TIME! Can you handle my unpredictable madness?!"
       ],
-      "animations": ["happy"],
+      "animations": [
+        "happy"
+      ],
       "choices": [
         {
           "text": "Bring on the chaos!",
-          "effects": {"happiness": 15, "energy": -8, "affection": 5},
-          "responses": ["YES! CHAOS WARRIOR! I love your chaotic spirit!"],
+          "effects": {
+            "happiness": 15,
+            "energy": -8,
+            "affection": 5
+          },
+          "responses": [
+            "YES! CHAOS WARRIOR! I love your chaotic spirit!"
+          ],
           "animation": "happy"
         },
         {
           "text": "I need a moment first",
-          "effects": {"happiness": -5, "energy": 3},
-          "responses": ["NO TIME! CHAOS WAITS FOR NO ONE! But fine..."],
+          "effects": {
+            "happiness": -5,
+            "energy": 3
+          },
+          "responses": [
+            "NO TIME! CHAOS WAITS FOR NO ONE! But fine..."
+          ],
           "animation": "sad"
         },
         {
           "text": "Let's plan this chaos",
-          "effects": {"trust": 3, "happiness": 8},
-          "responses": ["PLANNED CHAOS? That's... actually brilliant chaos!"],
+          "effects": {
+            "trust": 3,
+            "happiness": 8
+          },
+          "responses": [
+            "PLANNED CHAOS? That's... actually brilliant chaos!"
+          ],
           "animation": "talking"
         }
       ],
       "cooldown": 1800,
-      "conditions": {"energy": {"min": 30}}
+      "conditions": {
+        "energy": {
+          "min": 30
+        }
+      }
     },
     {
       "name": "unpredictable_moment",
@@ -416,26 +598,41 @@
       "responses": [
         "🎪 RANDOM CHAOS MOMENT! Everything is unpredictable!"
       ],
-      "animations": ["talking"],
+      "animations": [
+        "talking"
+      ],
       "choices": [
         {
           "text": "Embrace the randomness!",
-          "effects": {"happiness": 12, "affection": 4},
-          "responses": ["Perfect! You understand chaotic beauty!"],
+          "effects": {
+            "happiness": 12,
+            "affection": 4
+          },
+          "responses": [
+            "Perfect! You understand chaotic beauty!"
+          ],
           "animation": "happy"
         },
         {
           "text": "Try to make sense of it",
-          "effects": {"trust": 2, "happiness": 6},
-          "responses": ["Sense from chaos? Impossible but I love the attempt!"],
+          "effects": {
+            "trust": 2,
+            "happiness": 6
+          },
+          "responses": [
+            "Sense from chaos? Impossible but I love the attempt!"
+          ],
           "animation": "talking"
         }
       ],
       "cooldown": 900,
-      "conditions": {"happiness": {"min": 20}}
+      "conditions": {
+        "happiness": {
+          "min": 20
+        }
+      }
     }
   ],
-
   "battleSystem": {
     "enabled": true,
     "aiDifficulty": "extreme",
@@ -491,7 +688,6 @@
       ]
     }
   },
-
   "giftSystem": {
     "enabled": true,
     "inventorySettings": {
@@ -550,14 +746,18 @@
       "maxMemoryItems": 200
     }
   },
-
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "chaos_companion_v1",
     "maxPeers": 10,
     "socialLevel": "intense",
-    "shareableStats": ["happiness", "affection", "energy", "chaos_level"],
+    "shareableStats": [
+      "happiness",
+      "affection",
+      "energy",
+      "chaos_level"
+    ],
     "networkPersonality": "chaotic",
     "botPersonality": {
       "chattiness": 0.95,
@@ -567,7 +767,6 @@
       "responseDelay": "0.1-0.5s"
     }
   },
-
   "newsFeatures": {
     "enabled": true,
     "readingPersonality": "chaotic",
@@ -586,9 +785,168 @@
       }
     ],
     "preferences": {
-      "categories": ["breaking", "unusual", "dramatic", "intense"],
+      "categories": [
+        "breaking",
+        "unusual",
+        "dramatic",
+        "intense"
+      ],
       "updateFrequency": "constant",
       "maxArticles": 20
     }
-  }
+  },
+  "assetGeneration": {
+    "basePrompt": "An elite anime character with striking features and piercing eyes, luxurious or complex outfit, proud and challenging expression, commanding pose, digital art, transparent background, high quality character design for expert-level experience",
+    "animationMappings": {
+      "idle": {
+        "promptModifier": "standing calmly with arms at sides, peaceful neutral expression, slight smile, relaxed pose",
+        "negativePrompt": "angry, aggressive, dark, scary, low quality, blurry",
+        "stateDescription": "Default calm state",
+        "frameCount": 6
+      },
+      "talking": {
+        "promptModifier": "speaking with hand gestures, mouth slightly open, expressive face, animated pose, welcoming expression",
+        "negativePrompt": "silent, static, angry expression, dark mood",
+        "stateDescription": "Speaking or interacting with user",
+        "frameCount": 8
+      },
+      "happy": {
+        "promptModifier": "bright cheerful smile, eyes sparkling with joy, hands clasped together or raised, radiant expression",
+        "negativePrompt": "sad, angry, neutral expression, dark colors",
+        "stateDescription": "Joyful and excited state",
+        "frameCount": 6
+      },
+      "sad": {
+        "promptModifier": "downcast eyes, gentle frown, hand touching cheek or covering face, melancholic but still beautiful",
+        "negativePrompt": "happy, cheerful, bright colors, aggressive",
+        "stateDescription": "Sad or disappointed state",
+        "frameCount": 4
+      },
+      "hungry": {
+        "promptModifier": "looking longingly at food, hand on stomach, slightly droopy expression, cute hungry pose",
+        "negativePrompt": "full, satisfied, eating, aggressive",
+        "stateDescription": "Hungry and wanting food",
+        "frameCount": 5
+      },
+      "eating": {
+        "promptModifier": "eating food happily, content expression, food in hands or near mouth, satisfied pose",
+        "negativePrompt": "hungry, sad, empty hands, aggressive",
+        "stateDescription": "Eating and satisfied",
+        "frameCount": 6
+      },
+      "blushing": {
+        "promptModifier": "soft pink blush on cheeks, shy smile, one hand near face, averting gaze slightly, cute embarrassed expression",
+        "negativePrompt": "confident, bold, angry, dark mood",
+        "stateDescription": "Shy and blushing romantic state",
+        "frameCount": 5
+      },
+      "heart_eyes": {
+        "promptModifier": "heart-shaped pupils or sparkles in eyes, loving expression, hands near heart, surrounded by floating hearts",
+        "negativePrompt": "normal eyes, angry, sad, dark mood",
+        "stateDescription": "In love or adoring state",
+        "frameCount": 6
+      },
+      "shy": {
+        "promptModifier": "looking down shyly, hands clasped behind back or in front, timid expression, cute shy pose",
+        "negativePrompt": "confident, bold, outgoing, aggressive",
+        "stateDescription": "Timid and shy state",
+        "frameCount": 4
+      },
+      "flirty": {
+        "promptModifier": "playful wink or flirty smile, confident pose, one hand on hip or touching hair, charming expression",
+        "negativePrompt": "shy, timid, serious, angry",
+        "stateDescription": "Flirty and charming state",
+        "frameCount": 7
+      },
+      "romantic_idle": {
+        "promptModifier": "gentle romantic expression, soft smile, dreamy eyes, peaceful romantic pose",
+        "negativePrompt": "aggressive, angry, rushed, unromantic",
+        "stateDescription": "Peaceful romantic state",
+        "frameCount": 5
+      },
+      "jealous": {
+        "promptModifier": "slightly pouting expression, arms crossed, looking away with subtle jealous expression",
+        "negativePrompt": "happy, content, peaceful, aggressive",
+        "stateDescription": "Jealous or envious state",
+        "frameCount": 4
+      },
+      "excited_romance": {
+        "promptModifier": "excited happy expression with romantic sparkles, jumping or energetic pose, love-struck appearance",
+        "negativePrompt": "calm, sad, angry, static",
+        "stateDescription": "Excited romantic state",
+        "frameCount": 8
+      },
+      "attack": {
+        "promptModifier": "dynamic attack pose, concentrated expression, action stance, power effects",
+        "stateDescription": "Attacking in battle",
+        "frameCount": 8
+      },
+      "defend": {
+        "promptModifier": "defensive stance, protective pose, focused expression, shield or guard position",
+        "stateDescription": "Defending in battle",
+        "frameCount": 6
+      },
+      "heal": {
+        "promptModifier": "gentle healing pose, hands glowing with soft light, caring expression, restorative energy",
+        "stateDescription": "Healing or supporting",
+        "frameCount": 7
+      }
+    },
+    "generationSettings": {
+      "model": "flux1d",
+      "artStyle": "anime",
+      "resolution": {
+        "width": 128,
+        "height": 128
+      },
+      "qualitySettings": {
+        "steps": 25,
+        "cfgScale": 7.5,
+        "seed": -1,
+        "sampler": "euler_a",
+        "scheduler": "normal"
+      },
+      "animationSettings": {
+        "frameRate": 12,
+        "duration": 2.5,
+        "loopType": "seamless",
+        "optimization": "balanced",
+        "maxFileSize": 450,
+        "transparencyEnabled": true,
+        "colorPalette": "adaptive"
+      }
+    },
+    "assetMetadata": {
+      "version": "1.0.0",
+      "generatedAt": "2024-12-19T12:00:00Z",
+      "generatedBy": "gif-generator v1.0.0"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupPath": "backups",
+      "maxBackups": 5,
+      "compressBackups": true
+    }
+  },
+  "randomEvents": [
+    {
+      "name": "spontaneous_moment",
+      "description": "A delightful spontaneous interaction",
+      "probability": 0.05,
+      "effects": {
+        "happiness": 10,
+        "affection": 5
+      },
+      "animations": [
+        "happy",
+        "talking"
+      ],
+      "responses": [
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
+      ],
+      "cooldown": 1800
+    }
+  ]
 }
