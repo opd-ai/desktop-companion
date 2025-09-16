@@ -1,4 +1,3 @@
-package debug
 // debug_test_active_topics.go - Debug program to analyze the TestGetActiveTopics failure
 package main
 
