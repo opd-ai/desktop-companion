@@ -10,9 +10,9 @@
     "defend": "animations/idle.gif",
     "heal": "animations/happy.gif",
     "boost": "animations/happy.gif",
-    "excited": "animations/excited.gif",
-    "thinking": "animations/thinking.gif",
-    "supportive": "animations/supportive.gif"
+    "excited": "animations/happy.gif",
+    "thinking": "animations/talking.gif",
+    "supportive": "animations/happy.gif"
   },
   "dialogs": [
     {

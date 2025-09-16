@@ -11,9 +11,9 @@
     "attack": "animations/talking.gif",
     "defend": "animations/idle.gif",
     "heal": "animations/thinking.gif",
-    "excited": "animations/excited.gif",
-    "enthusiastic": "animations/enthusiastic.gif",
-    "supportive": "animations/supportive.gif"
+    "excited": "animations/thinking.gif",
+    "enthusiastic": "animations/thinking.gif",
+    "supportive": "animations/thinking.gif"
   },
   "dialogs": [
     {

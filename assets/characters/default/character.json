@@ -16,7 +16,7 @@
     "romantic_idle": "animations/idle.gif",
     "jealous": "animations/sad.gif",
     "excited_romance": "animations/happy.gif",
-    "supportive": "animations/supportive.gif"
+    "supportive": "animations/happy.gif"
   },
   "dialogs": [
     {
