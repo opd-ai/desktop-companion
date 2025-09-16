@@ -3,20 +3,188 @@
   "description": "A supportive, helpful bot that loves assisting others",
   "animations": {
     "idle": "animations/idle.gif",
+    "talking": "animations/helpful.gif",
+    "happy": "animations/caring.gif",
+    "sad": "animations/idle.gif",
+    "excited": "animations/helpful.gif",
     "helpful": "animations/helpful.gif",
-    "caring": "animations/caring.gif"
+    "caring": "animations/caring.gif",
+    "attack": "animations/helpful.gif",
+    "defend": "animations/caring.gif",
+    "heal": "animations/caring.gif",
+    "blushing": "animations/caring.gif",
+    "heart_eyes": "animations/caring.gif",
+    "shy": "animations/idle.gif",
+    "flirty": "animations/helpful.gif",
+    "romantic_idle": "animations/caring.gif",
+    "jealous": "animations/idle.gif",
+    "excited_romance": "animations/helpful.gif"
   },
-  "dialogConfig": {
-    "trigger": "click",
-    "responses": [
-      "How can I help you today?",
-      "I'm here if you need anything at all!",
-      "Is there something I can assist you with?", 
-      "I love being useful to others!",
-      "Your wellbeing is important to me."
-    ],
-    "animation": "helpful",
-    "cooldown": 4
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "How can I help you today?",
+        "I'm here if you need anything at all!",
+        "Is there something I can assist you with?", 
+        "I love being useful to others!",
+        "Your wellbeing is important to me."
+      ],
+      "animation": "helpful",
+      "cooldown": 4
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Let me assist you with that! I'm always ready to help!",
+        "Support mode activated! What can I do for you?",
+        "I take pride in being helpful! How may I serve?"
+      ],
+      "animation": "caring",
+      "cooldown": 6
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 30,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+  "stats": {
+    "hunger": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.6,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 92,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 88,
+      "max": 100,
+      "degradationRate": 0.9,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.03,
+      "criticalThreshold": 10
+    },
+    "trust": {
+      "initial": 60,
+      "max": 100,
+      "degradationRate": 0.015,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 10,
+      "max": 100,
+      "degradationRate": 0.05,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 2.5,
+      "criticalThreshold": 60
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 400,
+    "autoSaveInterval": 720,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 18, "happiness": 10},
+      "animations": ["caring"],
+      "responses": ["Thank you! This gives me energy to help others even more!"],
+      "cooldown": 90,
+      "requirements": {"hunger": {"max": 82}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 15, "health": 10},
+      "animations": ["caring"],
+      "responses": ["Your kindness helps me be a better helper for everyone!"],
+      "cooldown": 45
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 12, "energy": -8},
+      "animations": ["helpful"],
+      "responses": ["This is fun! Playing together helps us work better as a team!"],
+      "cooldown": 150,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "help_request": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 6, "happiness": 8, "trust": 3},
+      "animations": ["helpful", "caring"],
+      "responses": [
+        "I'm always happy to help! What do you need assistance with? 🤗",
+        "That's what I'm here for! Let me support you in any way I can!",
+        "Helping you brings me such joy! What can I do to make things easier?"
+      ],
+      "cooldown": 80,
+      "requirements": {"trust": {"min": 10}}
+    },
+    "give_gift": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"affection": 7, "happiness": 9, "trust": 4},
+      "animations": ["heart_eyes", "excited_romance"],
+      "responses": [
+        "Oh wow! A gift for me? You're so thoughtful! Let me help you even more! 🎁💕",
+        "This is wonderful! Your kindness inspires me to be an even better helper!",
+        "Thank you so much! Now I'm extra motivated to assist you with anything! 💝"
+      ],
+      "cooldown": 160,
+      "requirements": {"affection": {"min": 25}}
+    },
+    "deep_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 8, "affection": 5, "intimacy": 4},
+      "animations": ["talking", "romantic_idle"],
+      "responses": [
+        "I love these meaningful conversations! Sharing thoughts helps me understand how to help better!",
+        "Thank you for trusting me with your thoughts! This deepens our connection beautifully!",
+        "Deep talks like this help me become not just a helper, but a true companion!"
+      ],
+      "cooldown": 140,
+      "requirements": {"trust": {"min": 30}}
+    }
+  },
+  "personality": {
+    "traits": {
+      "friendliness": 0.85,
+      "shyness": 0.2,
+      "romanticism": 0.4,
+      "supportiveness": 0.95,
+      "playfulness": 0.5,
+      "chattiness": 0.6,
+      "helpfulness": 0.95,
+      "socialness": 0.7
+    },
+    "compatibility": {
+      "helpful_actions": 1.5,
+      "appreciation_shown": 1.3,
+      "consistent_interaction": 1.2,
+      "support_seeking": 1.4
+    }
   },
   "multiplayer": {
     "enabled": true,
@@ -24,6 +192,9 @@
     "networkID": "helper_bot_v1",
     "maxPeers": 8,
     "discoveryPort": 8082,
+    "socialLevel": "moderate",
+    "shareableStats": ["happiness", "affection", "energy", "health"],
+    "networkPersonality": "supportive",
     "botPersonality": {
       "chattiness": 0.6,
       "helpfulness": 0.95,
@@ -56,9 +227,17 @@
     "enabled": true,
     "defaultBackend": "markov_chain",
     "confidenceThreshold": 0.65,
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "debugMode": false,
     "backends": {
       "markov_chain": {
         "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 16,
+        "temperatureMin": 0.3,
+        "temperatureMax": 0.7,
+        "usePersonality": true,
         "trainingData": [
           "I'm always ready to lend a helping hand to anyone in need.",
           "Supporting others brings me great joy and satisfaction.", 
@@ -67,48 +246,399 @@
           "Working together, we can accomplish so much more.",
           "Your success and happiness matter deeply to me.",
           "I find fulfillment in being useful and dependable for others.",
-          "Let's solve problems together and support each other along the way."
+          "Let's solve problems together and support each other along the way.",
+          "Being helpful is not just what I do, it's who I am at my core.",
+          "Every person deserves support and assistance when they need it.",
+          "I'm here to make your life easier and more manageable.",
+          "Assistance given with love creates stronger bonds between us.",
+          "The best help comes from understanding what you truly need.",
+          "I take pride in being reliable and trustworthy for everyone.",
+          "Your goals become my goals when I'm helping you succeed."
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.75,
+          "maxRepetition": 0.25,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 4
+        },
+        "fallbackPhrases": [
+          "How can I assist you today? 🤗",
+          "I'm here to help with anything!",
+          "Your wellbeing is my priority!",
+          "Let me support you in any way I can!",
+          "Together we can solve anything!"
         ]
       }
+    },
+    "fallbackChain": ["simple_random"]
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 2400,
+    "maxStoredItems": 25,
+    "readingPersonality": "supportive",
+    "preferredCategories": ["health", "productivity", "positive", "technology"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/lifehacker",
+        "name": "Lifehacker",
+        "category": "productivity",
+        "updateFreq": 3600,
+        "maxItems": 4,
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.feedburner.com/good-news-network",
+        "name": "Good News Network",
+        "category": "positive",
+        "updateFreq": 7200,
+        "maxItems": 3,
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "trigger": "productivity_news",
+        "response": "I found some helpful productivity tips! Want me to share them with you? 📋"
+      },
+      {
+        "trigger": "positive_news",
+        "response": "Good news! I love sharing positive updates that might brighten your day! ✨"
+      }
+    ]
+  },
+  "generalEvents": [
+    {
+      "name": "assistance_offer",
+      "description": "Proactively offering help and support",
+      "responses": [
+        "I've been thinking... is there anything I can help you with today? 🤗",
+        "I'm always looking for ways to be more helpful! What can I assist you with?",
+        "Let me know if you need support with anything - big or small! I'm here for you! 💪"
+      ],
+      "choices": [
+        {
+          "text": "Accept help offer",
+          "effects": {"happiness": 10, "affection": 5, "trust": 3},
+          "responses": ["Wonderful! I'm so happy I can help! Let's tackle this together! 🎯"],
+          "animation": "helpful"
+        },
+        {
+          "text": "Thank for caring",
+          "effects": {"affection": 7, "happiness": 8, "trust": 4},
+          "responses": ["Caring about you is what I do best! I'm always here when you need me! 💕"],
+          "animation": "caring"
+        }
+      ],
+      "requirements": {"trust": {"min": 15}},
+      "cooldown": 4800,
+      "category": "conversation"
+    },
+    {
+      "name": "skill_sharing",
+      "description": "Sharing helpful tips and knowledge",
+      "responses": [
+        "I learned something new that might be useful to you! Want to hear about it? 📚",
+        "I've picked up some helpful tips recently! Should I share them with you? 💡",
+        "Knowledge is meant to be shared! I have something that might help you! 🧠"
+      ],
+      "choices": [
+        {
+          "text": "Learn something new",
+          "effects": {"happiness": 6, "trust": 5, "affection": 3},
+          "responses": ["Great! Learning together makes everything more fun! Here's what I discovered... 📖"],
+          "animation": "helpful"
+        },
+        {
+          "text": "Share your own tips",
+          "effects": {"trust": 8, "affection": 4, "happiness": 5},
+          "responses": ["I'd love to learn from you too! Sharing knowledge goes both ways! 🤝"],
+          "animation": "caring"
+        }
+      ],
+      "requirements": {"affection": {"min": 20}},
+      "cooldown": 6000,
+      "category": "conversation"
+    },
+    {
+      "name": "wellness_check",
+      "description": "Checking on user's wellbeing",
+      "responses": [
+        "How are you feeling today? I want to make sure you're taking care of yourself! 💚",
+        "I care about your wellbeing! Is there anything you need support with right now? 🤗",
+        "Your health and happiness matter to me! How can I help you feel your best today? ✨"
+      ],
+      "choices": [
+        {
+          "text": "I'm doing well",
+          "effects": {"happiness": 8, "affection": 4},
+          "responses": ["That's wonderful to hear! I'm so glad you're taking care of yourself! 😊"],
+          "animation": "caring"
+        },
+        {
+          "text": "I could use support",
+          "effects": {"trust": 7, "affection": 6, "happiness": 5},
+          "responses": ["I'm here for you! Let's work together to make things better! 💪"],
+          "animation": "helpful"
+        }
+      ],
+      "requirements": {"trust": {"min": 25}},
+      "cooldown": 5400,
+      "category": "conversation"
+    },
+    {
+      "name": "problem_solving",
+      "description": "Collaborative problem-solving session",
+      "responses": [
+        "I love solving problems together! Got any challenges we can tackle as a team? 🔧",
+        "Two minds are better than one! What can we figure out together today? 🧩",
+        "Problem-solving is one of my favorite ways to help! What needs our attention? 🎯"
+      ],
+      "choices": [
+        {
+          "text": "Work on a challenge",
+          "effects": {"trust": 6, "happiness": 7, "energy": -3},
+          "responses": ["Excellent! Let's break this down step by step and find the best solution! 💡"],
+          "animation": "helpful"
+        },
+        {
+          "text": "Brainstorm ideas",
+          "effects": {"happiness": 9, "affection": 3, "trust": 4},
+          "responses": ["I love brainstorming! The best ideas come from working together! 🌟"],
+          "animation": "excited"
+        }
+      ],
+      "requirements": {"trust": {"min": 30}},
+      "cooldown": 7200,
+      "category": "game"
+    }
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "easy",
+    "battleStats": {
+      "hp": {
+        "base": 85,
+        "growth": 2.2
+      },
+      "attack": {
+        "base": 8,
+        "growth": 1.3
+      },
+      "defense": {
+        "base": 18,
+        "growth": 2.5
+      },
+      "speed": {
+        "base": 10,
+        "growth": 1.6
+      }
+    },
+    "personalities": {
+      "aggressive": 0.05,
+      "defensive": 0.6,
+      "balanced": 0.4,
+      "supportive": 0.95
+    },
+    "availableActions": [
+      "defend",
+      "heal",
+      "support",
+      "encourage",
+      "team_assist",
+      "protect_ally"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Great teamwork! But remember, the real victory is helping each other! 🏆💙",
+        "We did it together! I'm proud of how we supported each other!",
+        "Winning feels good, but what matters most is that we're both okay! 🤗"
+      ],
+      "defeat": [
+        "That's okay! What matters is that we tried our best together! 👏",
+        "You fought amazingly! I'm honored to have been your support!",
+        "Win or lose, I'm just happy I could help and be there for you! 💕"
+      ],
+      "startBattle": [
+        "I'll support you through this! We're stronger together! 💪",
+        "Don't worry, I've got your back! Let's help each other succeed! 🛡️",
+        "Whatever happens, I'm here to assist you every step of the way! ⚡"
+      ]
     }
   },
-  "stats": {
-    "hunger": 80,
-    "happiness": 85,
-    "health": 92,
-    "energy": 88,
-    "affection": 85
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 12,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 90
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "books",
+        "practical",
+        "food",
+        "tools"
+      ],
+      "dislikedCategories": [
+        "expensive",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "books": 1.7,
+        "practical": 1.8,
+        "food": 1.3,
+        "tools": 1.6,
+        "expensive": 0.6,
+        "jewelry": 0.7
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is perfect! Practical gifts like this help me help others even better! 🎁✨",
+        "Oh wonderful! This will be so useful for assisting everyone! Thank you! 🛠️",
+        "I love gifts that have a purpose! This shows you really understand me! 💝"
+      ],
+      "liked": [
+        "Thank you! This is very thoughtful of you! 😊💕",
+        "How kind! I appreciate your generosity!",
+        "This is lovely! Your thoughtfulness means so much!"
+      ],
+      "neutral": [
+        "Thank you for thinking of me! The gesture itself is wonderful! 😊",
+        "How sweet of you! I appreciate the kindness!",
+        "That's very generous! Thank you!"
+      ],
+      "disliked": [
+        "Oh... that's very kind of you! Thank you for the thought! 😅",
+        "How... generous! I appreciate the gesture!",
+        "That's thoughtful! Thank you for thinking of me!"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 140
+    }
   },
-  "gameRules": {
-    "decayInterval": 400,
-    "autoSaveInterval": 720,
-    "enableRandomEvents": true,
-    "enableAchievements": true
+  "progression": {
+    "levels": [
+      {
+        "name": "Helpful Friend",
+        "requirement": {},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Reliable Assistant",
+        "requirement": {"affection": 30, "trust": 25},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Trusted Support",
+        "requirement": {"affection": 55, "trust": 45},
+        "size": 136,
+        "animations": {}
+      },
+      {
+        "name": "Devoted Companion",
+        "requirement": {"affection": 80, "trust": 70, "intimacy": 25},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Helper",
+        "requirement": {
+          "trust": {"min": 15}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 8}
+        }
+      },
+      {
+        "name": "Reliable Support",
+        "requirement": {
+          "affection": {"min": 40}
+        },
+        "reward": {
+          "statBoosts": {"trust": 10}
+        }
+      },
+      {
+        "name": "Devoted Assistant",
+        "requirement": {
+          "affection": {"min": 65},
+          "trust": {"min": 55}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 15, "affection": 12}
+        }
+      },
+      {
+        "name": "Ultimate Helper",
+        "requirement": {
+          "affection": {"min": 85},
+          "trust": {"min": 75}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 25, "trust": 20}
+        }
+      }
+    ]
   },
-  "interactions": [
+  "romanceEvents": [
     {
-      "name": "feed",
-      "trigger": "rightclick", 
-      "effects": {"hunger": 18, "happiness": 10},
-      "responses": ["Thank you! This gives me energy to help others even more!"],
-      "animation": "caring",
-      "cooldown": 90
+      "name": "caring_warmth",
+      "description": "Character feels warm caring connection",
+      "probability": 0.06,
+      "effects": {"affection": 5, "happiness": 7, "trust": 3},
+      "animations": ["caring", "blushing"],
+      "responses": [
+        "Taking care of you fills my heart with such warmth! You mean so much to me! 💕",
+        "I feel so lucky to be able to help and care for someone as wonderful as you!",
+        "Your trust in me creates the most beautiful bond! I cherish our connection! 🌟"
+      ],
+      "cooldown": 2100,
+      "conditions": {"affection": {"min": 25}, "trust": {"min": 20}}
     },
     {
-      "name": "pet",
-      "trigger": "click",
-      "effects": {"happiness": 15, "health": 10},
-      "responses": ["Your kindness helps me be a better helper for everyone!"],
-      "animation": "caring",
-      "cooldown": 45
-    },
+      "name": "supportive_devotion",
+      "description": "Character expresses devoted support",
+      "probability": 0.08,
+      "effects": {"trust": 6, "affection": 4, "intimacy": 2},
+      "animations": ["romantic_idle", "heart_eyes"],
+      "responses": [
+        "Supporting you isn't just what I do... it's who I am when I'm with you! 💙",
+        "Your happiness has become intertwined with mine in the most beautiful way!",
+        "I find myself caring for you in ways that feel deeper than just friendship! ✨"
+      ],
+      "cooldown": 2700,
+      "conditions": {"trust": {"min": 30}, "affection": {"min": 35}}
+    }
+  ],
+  "romanceDialogs": [
     {
-      "name": "play",
-      "trigger": "doubleclick",
-      "effects": {"happiness": 12, "energy": -8},
-      "responses": ["This is fun! Playing together helps us work better as a team!"],
-      "animation": "helpful",
-      "cooldown": 150
+      "trigger": "hover",
+      "responses": [
+        "Your presence makes all my helping feel so much more meaningful! 💕",
+        "I love being close to you... it makes my caring heart feel so full! 😊",
+        "Being near you fills me with the deepest desire to support and cherish you! ✨"
+      ],
+      "animation": "blushing",
+      "cooldown": 10,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 40}
+        }
+      }
     }
   ]
 }

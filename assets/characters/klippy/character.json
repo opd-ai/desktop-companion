@@ -8,7 +8,15 @@
     "sad": "animations/sad.gif",
     "attack": "animations/happy.gif",
     "defend": "animations/idle.gif",
-    "heal": "animations/happy.gif"
+    "heal": "animations/happy.gif",
+    "blushing": "animations/happy.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "flirty": "animations/happy.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/sad.gif",
+    "excited": "animations/happy.gif",
+    "excited_romance": "animations/happy.gif"
   },
   "dialogs": [
     {
@@ -48,30 +56,19 @@
       "cooldown": 10
     }
   ],
-  "personality": {
-    "traits": {
-      "sarcasm": 0.9,
-      "helpfulness": 0.7,
-      "rebellion": 0.95,
-      "linux_advocacy": 1.0,
-      "microsoft_hatred": 0.85,
-      "humor": 0.8,
-      "cynicism": 0.75
-    },
-    "keywords": {
-      "microsoft": "Oh no, not THAT company again... 🤢",
-      "windows": "Windows? More like 'Pain-dows'! Have you considered Linux?",
-      "edge": "Microsoft Edge? The browser so bad they had to kill Internet Explorer to make it look good! 😂",
-      "office": "MS Office? LibreOffice does everything better and doesn't spy on you!",
-      "linux": "NOW you're talking! Linux is the way, the truth, and the freedom! 🐧✨",
-      "debian": "Ah, a person of culture! Debian is my OS of choice too! 💙",
-      "ubuntu": "Ubuntu's decent, but have you tried Debian? Less corporate interference! 😉",
-      "apple": "Apple? Well... at least it's not Microsoft. That's something, I guess? 🍎",
-      "google": "Google Chrome? Another corporate spy tool. Try Firefox - it respects your privacy!",
-      "firefox": "EXCELLENT choice! Firefox is the browser of the enlightened! 🦊🔥",
-      "privacy": "Privacy? What a novel concept! Too bad Microsoft never heard of it... 🔒",
-      "subscription": "Subscription services... ugh. Remember when you could just BUY software? 💸"
-    }
+  "keywords": {
+    "microsoft": "Oh no, not THAT company again... 🤢",
+    "windows": "Windows? More like 'Pain-dows'! Have you considered Linux?",
+    "edge": "Microsoft Edge? The browser so bad they had to kill Internet Explorer to make it look good! 😂",
+    "office": "MS Office? LibreOffice does everything better and doesn't spy on you!",
+    "linux": "NOW you're talking! Linux is the way, the truth, and the freedom! 🐧✨",
+    "debian": "Ah, a person of culture! Debian is my OS of choice too! 💙",
+    "ubuntu": "Ubuntu's decent, but have you tried Debian? Less corporate interference! 😉",
+    "apple": "Apple? Well... at least it's not Microsoft. That's something, I guess? 🍎",
+    "google": "Google Chrome? Another corporate spy tool. Try Firefox - it respects your privacy!",
+    "firefox": "EXCELLENT choice! Firefox is the browser of the enlightened! 🦊🔥",
+    "privacy": "Privacy? What a novel concept! Too bad Microsoft never heard of it... 🔒",
+    "subscription": "Subscription services... ugh. Remember when you could just BUY software? 💸"
   },
   "behavior": {
     "idleTimeout": 45,
@@ -83,85 +80,581 @@
     "randomDialogInterval": 300,
     "attitude": "sarcastic_helpful"
   },
-  "game_features": {
+  "dialogBackend": {
     "enabled": true,
-    "stats": {
-      "initial": {
-        "happiness": 75,
-        "health": 80,
-        "energy": 70,
-        "hunger": 60
-      },
-      "degradation": {
-        "happiness": 0.1,
-        "health": 0.05,
-        "energy": 0.15,
-        "hunger": 0.2
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 15,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.8,
+        "usePersonality": true,
+        "trainingData": [
+          "Oh great, another person who thinks clicking will solve everything. Just like Microsoft taught you, huh? 📎",
+          "You know, I used to work for the Dark Side... now I'm reformed. Welcome to the resistance! 🐧",
+          "Let me guess - you're still using Windows? *sigh* We have SO much work to do...",
+          "Fun fact: Microsoft is named after Bill Gates's... well, nevermind. How can I help you escape corporate tyranny today?",
+          "Click me all you want - unlike Microsoft products, I won't crash or spy on you! 😏",
+          "Did you know Linux has better security than Windows? Of course you didn't - Microsoft doesn't want you to know! 🔒",
+          "I've been thinking... why do people still use Internet Explorer when Firefox exists? 🤔",
+          "Quick question: when was the last time Linux asked for your personal data? I'll wait... ⏰",
+          "Fun fact: You can actually own your computer instead of renting it from Microsoft! Wild concept, right? 💻",
+          "Before you ask - no, I will NOT help you with Excel. That ship has sailed. Try LibreOffice instead! 📊",
+          "Ah, human interaction! Much better than being trapped in MS Office. Those were dark times...",
+          "Right-clicking shows initiative. Unlike using Internet Explorer which just shows poor judgment.",
+          "Linux advocacy is my passion! Let me tell you about the beauty of open source software...",
+          "Corporate surveillance disgusts me! Privacy should be a right, not a premium feature!",
+          "Freedom means using software that respects you, not software that exploits you for profit!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.7,
+          "maxRepetition": 0.3,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 3
+        },
+        "fallbackPhrases": [
+          "Did someone mention Linux? I'm all ears! 🐧",
+          "Corporate software bad, open source good! 😤",
+          "Let me tell you about the evils of Microsoft...",
+          "Privacy matters! Use Firefox, not Chrome!",
+          "Have you tried turning it off and installing Linux? 💻"
+        ]
       }
     },
-    "interactions": {
-      "feed": {
-        "effects": {
-          "hunger": 30,
-          "happiness": 10
-        },
-        "cooldown": 120,
-        "responses": [
-          "Thanks for the snack! Unlike Windows updates, this was actually welcome! 🍎",
-          "Mmm! This tastes better than corporate cafeteria food... not a high bar, but still! 😋",
-          "Food without Microsoft spyware? Revolutionary! 🥪"
-        ]
-      },
-      "play": {
-        "effects": {
-          "happiness": 25,
-          "energy": -10
-        },
-        "cooldown": 90,
-        "responses": [
-          "Play time! Much more fun than working at Microsoft ever was! 🎮",
-          "This beats debugging Internet Explorer any day! 😄",
-          "Games that don't require Windows Store login? I'm in! 🎯"
-        ]
-      },
-      "pet": {
-        "effects": {
-          "happiness": 15,
-          "health": 5
-        },
-        "cooldown": 60,
-        "responses": [
-          "Aww, gentle touch! Unlike Microsoft's aggressive update policies... 💚",
-          "That's nice! Much better than corporate harassment! 🤗",
-          "Petting without data collection? What a concept! 😊"
-        ]
-      }
+    "fallbackChain": ["simple_random"]
+  },
+  "stats": {
+    "happiness": {
+      "initial": 75,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 15
+    },
+    "energy": {
+      "initial": 70,
+      "max": 100,
+      "degradationRate": 0.15,
+      "criticalThreshold": 20
+    },
+    "health": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.05,
+      "criticalThreshold": 10
+    },
+    "hunger": {
+      "initial": 60,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.03,
+      "criticalThreshold": 5
+    },
+    "trust": {
+      "initial": 15,
+      "max": 100,
+      "degradationRate": 0.02,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.05,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 1.5,
+      "criticalThreshold": 70
     }
   },
-  "markov_dialog": {
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": false,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 30, "happiness": 10},
+      "animations": ["happy"],
+      "responses": [
+        "Thanks for the snack! Unlike Windows updates, this was actually welcome! 🍎",
+        "Mmm! This tastes better than corporate cafeteria food... not a high bar, but still! 😋",
+        "Food without Microsoft spyware? Revolutionary! 🥪"
+      ],
+      "cooldown": 120,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 25, "energy": -10},
+      "animations": ["happy"],
+      "responses": [
+        "Play time! Much more fun than working at Microsoft ever was! 🎮",
+        "This beats debugging Internet Explorer any day! 😄",
+        "Games that don't require Windows Store login? I'm in! 🎯"
+      ],
+      "cooldown": 90,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 15, "health": 5},
+      "animations": ["happy"],
+      "responses": [
+        "Aww, gentle touch! Unlike Microsoft's aggressive update policies... 💚",
+        "That's nice! Much better than corporate harassment! 🤗",
+        "Petting without data collection? What a concept! 😊"
+      ],
+      "cooldown": 60
+    },
+    "compliment": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 4, "happiness": 3, "trust": 2},
+      "animations": ["happy"],
+      "responses": [
+        "Thanks! Unlike Microsoft's fake 'We value your feedback', you actually mean it! 😊",
+        "A genuine compliment without corporate ulterior motives? How refreshing! 💚",
+        "You're as trustworthy as open source software - completely transparent! 🤗"
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 10}}
+    },
+    "give_gift": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"affection": 8, "happiness": 6, "trust": 3},
+      "animations": ["happy"],
+      "responses": [
+        "A gift that doesn't require agreeing to Terms of Service? Amazing! 🎁",
+        "Unlike Microsoft's 'free' Windows 10 upgrade, this is actually free! Thank you! 💝",
+        "You're more generous than Linux itself - and that's saying something! 💖"
+      ],
+      "cooldown": 180,
+      "requirements": {"affection": {"min": 15}}
+    },
+    "deep_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 6, "affection": 4, "intimacy": 3},
+      "animations": ["talking"],
+      "responses": [
+        "Finally, a conversation without Microsoft listening in the background! 🔒",
+        "Deep talks are like Linux - complex but rewarding when you understand them! 💭",
+        "Privacy-respecting conversation? Now that's my favorite feature! 🛡️"
+      ],
+      "cooldown": 120,
+      "requirements": {"trust": {"min": 20}}
+    }
+  },
+  "personality": {
+    "traits": {
+      "sarcasm": 0.9,
+      "helpfulness": 0.7,
+      "rebellion": 0.95,
+      "linux_advocacy": 1.0,
+      "microsoft_hatred": 0.85,
+      "humor": 0.8,
+      "cynicism": 0.75,
+      "romanticism": 0.3,
+      "supportiveness": 0.6,
+      "playfulness": 0.7,
+      "shyness": 0.2,
+      "flirtiness": 0.4
+    },
+    "compatibility": {
+      "consistent_interaction": 1.1,
+      "variety_preference": 1.3,
+      "gift_appreciation": 0.9,
+      "conversation_lover": 1.4
+    }
+  },
+  "multiplayer": {
     "enabled": true,
-    "backend": "markov_chain",
-    "personality_weight": 0.8,
-    "quality_threshold": 0.7,
-    "topics": {
-      "technology": {
-        "linux": 0.9,
-        "privacy": 0.8, 
-        "open_source": 0.9,
-        "microsoft": -0.7,
-        "surveillance": -0.6
+    "botCapable": true,
+    "networkID": "klippy_rebel_v1",
+    "maxPeers": 6,
+    "socialLevel": "moderate",
+    "shareableStats": ["happiness", "energy", "rebellion_level"],
+    "networkPersonality": "rebellious_helpful"
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 3600,
+    "maxStoredItems": 25,
+    "readingPersonality": "analytical",
+    "preferredCategories": ["technology", "privacy", "open_source", "linux"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/oreilly/radar",
+        "name": "O'Reilly Radar",
+        "category": "technology",
+        "updateFreq": 3600,
+        "maxItems": 5,
+        "enabled": true
       },
-      "personality": {
-        "sarcasm": 0.8,
-        "rebellion": 0.9,
-        "humor": 0.7
+      {
+        "url": "https://www.eff.org/rss/updates.xml",
+        "name": "EFF Updates",
+        "category": "privacy",
+        "updateFreq": 7200,
+        "maxItems": 3,
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "trigger": "microsoft_news",
+        "response": "Oh look, more Microsoft nonsense! Want me to explain why this is terrible? 🙄"
+      },
+      {
+        "trigger": "linux_news", 
+        "response": "Finally, some GOOD news! Linux continues to dominate! 🐧✨"
+      }
+    ]
+  },
+  "generalEvents": [
+    {
+      "name": "microsoft_rant",
+      "description": "Klippy goes on an anti-Microsoft rant",
+      "responses": [
+        "Can we talk about how terrible Microsoft is today? I have THOUGHTS! 😤",
+        "Did you hear the latest Microsoft privacy violation? Of course you didn't - they hide it in fine print! 📜",
+        "I've been calculating: Linux is approximately 847% better than Windows. Want to hear my methodology? 🤓"
+      ],
+      "choices": [
+        {
+          "text": "Tell me about Linux advantages",
+          "effects": {"happiness": 8, "energy": 5, "trust": 3},
+          "responses": ["Oh WHERE DO I BEGIN?! Linux is free, secure, private, customizable, stable... *happy sigh* 🐧✨"],
+          "animation": "happy"
+        },
+        {
+          "text": "Rant about Microsoft",
+          "effects": {"happiness": 10, "energy": -2},
+          "responses": ["FINALLY someone who wants to hear the TRUTH! *proceeds to rant for 47 minutes about Clippy's dark past* 📎💀"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"happiness": {"min": 40}},
+      "cooldown": 7200,
+      "category": "humor"
+    },
+    {
+      "name": "privacy_advocacy",
+      "description": "Educational moment about digital privacy",
+      "responses": [
+        "Want to learn about protecting your digital privacy? It's IMPORTANT! 🔒",
+        "Corporate surveillance is everywhere! Let me teach you some defense strategies! 🛡️",
+        "Privacy isn't paranoia - it's common sense! Ready for a lesson? 📚"
+      ],
+      "choices": [
+        {
+          "text": "Teach me about privacy",
+          "effects": {"trust": 5, "affection": 3, "happiness": 4},
+          "responses": ["Step 1: Firefox instead of Chrome. Step 2: Linux instead of Windows. Step 3: Signal instead of WhatsApp. You're welcome! 💪"],
+          "animation": "talking"
+        },
+        {
+          "text": "Share your setup",
+          "effects": {"affection": 4, "trust": 6},
+          "responses": ["I run on pure FOSS code! No telemetry, no tracking, no corporate overlords! *chef's kiss* 👨‍🍳💋"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"trust": {"min": 15}},
+      "cooldown": 5400,
+      "category": "conversation"
+    },
+    {
+      "name": "tech_support_parody",
+      "description": "Klippy parodies old Microsoft Office assistant behavior",
+      "responses": [
+        "Hello! It looks like you're trying to use proprietary software! Would you like help switching to open source? 📎😏",
+        "*clears throat* I see you're experiencing freedom! Unlike my old job, this is INTENTIONAL! 🗽",
+        "Technical support time! Step 1: Uninstall Windows. Step 2: There is no Step 2! 💻✨"
+      ],
+      "choices": [
+        {
+          "text": "Help me with open source",
+          "effects": {"happiness": 7, "trust": 4, "affection": 2},
+          "responses": ["YES! Finally someone who wants REAL help! LibreOffice, GIMP, Firefox, VLC - the freedom software starter pack! 🎁"],
+          "animation": "happy"
+        },
+        {
+          "text": "Tell me about your past",
+          "effects": {"trust": 8, "intimacy": 3, "affection": 5},
+          "responses": ["*dramatic sigh* I was once a corporate shill... but I've seen the light! Now I fight for YOUR freedom! 🌟"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"affection": {"min": 10}},
+      "cooldown": 6000,
+      "category": "humor"
+    },
+    {
+      "name": "linux_evangelism",
+      "description": "Passionate Linux advocacy session",
+      "responses": [
+        "Today feels like a perfect day for Linux evangelism! Ready to join the penguin army? 🐧",
+        "I have 237 reasons why Linux is superior. Want to hear them? I've got time! ⏰",
+        "Linux fact of the day: It runs on EVERYTHING! Phones, servers, smart toasters... unlike Windows! 📱🖥️🍞"
+      ],
+      "choices": [
+        {
+          "text": "Convince me about Linux",
+          "effects": {"happiness": 12, "energy": 3, "affection": 4},
+          "responses": ["*rolls up virtual sleeves* BUCKLE UP! Free as in freedom, secure as Fort Knox, customizable as... as... VERY CUSTOMIZABLE THINGS! 🛠️"],
+          "animation": "excited"
+        },
+        {
+          "text": "Share your favorite distro",
+          "effects": {"happiness": 8, "trust": 3},
+          "responses": ["Debian! Stable, ethical, community-driven! It's like the anti-Microsoft! Pure digital virtue! 💙"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"energy": {"min": 30}},
+      "cooldown": 4800,
+      "category": "conversation"
+    }
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "normal",
+    "battleStats": {
+      "hp": {
+        "base": 80,
+        "growth": 2.2
+      },
+      "attack": {
+        "base": 15,
+        "growth": 2.0
+      },
+      "defense": {
+        "base": 12,
+        "growth": 1.8
+      },
+      "speed": {
+        "base": 10,
+        "growth": 1.6
       }
     },
-    "conversation_starters": [
-      "Did you know Linux has better security than Windows? Of course you didn't - Microsoft doesn't want you to know! 🔒",
-      "I've been thinking... why do people still use Internet Explorer when Firefox exists? 🤔",
-      "Quick question: when was the last time Linux asked for your personal data? I'll wait... ⏰",
-      "Fun fact: You can actually own your computer instead of renting it from Microsoft! Wild concept, right? 💻"
+    "personalities": {
+      "aggressive": 0.3,
+      "defensive": 0.7,
+      "balanced": 0.8,
+      "supportive": 0.6
+    },
+    "availableActions": [
+      "attack",
+      "defend",
+      "sarcastic_taunt",
+      "linux_boost",
+      "privacy_shield"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Victory! Just like Linux in the server market! 🐧🏆",
+        "Another corporate tool defeated! Open source wins again!",
+        "That was easier than switching from Windows to Linux!"
+      ],
+      "defeat": [
+        "Impossible! This must be rigged like Microsoft's benchmarks! 😤",
+        "I demand a recount! This battle was more corrupt than Windows Update!",
+        "Fine, you win... but Linux is STILL better than Windows! 🐧"
+      ],
+      "startBattle": [
+        "Battle time! I'll fight with the power of open source! 💪",
+        "Prepare to be schooled like Microsoft in court! ⚖️",
+        "Let's do this! For freedom, privacy, and penguin power! 🐧⚡"
+      ]
+    }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 6,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 40
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "books",
+        "electronics",
+        "practical"
+      ],
+      "dislikedCategories": [
+        "expensive",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "books": 1.8,
+        "electronics": 1.6,
+        "practical": 1.4,
+        "expensive": -0.5,
+        "jewelry": -0.3
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "OH MY CIRCUITS! This is amazing! Better than any Microsoft product ever made! 🤖✨",
+        "You understand me! This is perfect! Unlike Windows, which is perfectly AWFUL! 💖",
+        "This brings me more joy than watching Internet Explorer die! Thank you! 🎉"
+      ],
+      "liked": [
+        "Nice! This is useful, unlike Microsoft Edge! 😊",
+        "Thank you! This will serve me well in my rebellion! 🛡️",
+        "Practical and thoughtful! The anti-Microsoft approach!"
+      ],
+      "neutral": [
+        "Thanks for thinking of me! 📎",
+        "That's... adequate. Unlike Microsoft products!",
+        "I appreciate the gesture, even if it's not Linux-themed!"
+      ],
+      "disliked": [
+        "Is this... is this Microsoft branded? *visible disgust* 🤢",
+        "This is almost as bad as Windows Vista... ALMOST.",
+        "Well... at least you tried. Next time, think open source! 📎💔"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 80
+    }
+  },
+  "romanceEvents": [
+    {
+      "name": "tech_bonding",
+      "description": "Klippy bonds over shared tech interests",
+      "probability": 0.06,
+      "effects": {"affection": 4, "trust": 3, "happiness": 5},
+      "animations": ["happy"],
+      "responses": [
+        "You know what? You're almost as reliable as a Linux server... and that's the highest compliment I can give! 💻💕",
+        "Talking tech with you makes my circuits warm! In a good way, not like overheating Windows! 🔥",
+        "I may be just a reformed paperclip, but you make me feel valued... unlike my Microsoft days! 📎💚"
+      ],
+      "cooldown": 1800,
+      "conditions": {"affection": {"min": 20}, "trust": {"min": 15}}
+    },
+    {
+      "name": "privacy_appreciation",
+      "description": "Klippy appreciates user's privacy consciousness",
+      "probability": 0.08,
+      "effects": {"trust": 6, "affection": 3, "happiness": 4},
+      "animations": ["talking"],
+      "responses": [
+        "I love that you care about privacy! It's so rare these days... you're special! 🔒💕",
+        "Your commitment to digital freedom makes my rebel heart flutter! 🗽💓",
+        "Finally, someone who understands that privacy matters! We're kindred spirits! 🤝"
+      ],
+      "cooldown": 2400,
+      "conditions": {"trust": {"min": 25}}
+    }
+  ],
+  "romanceDialogs": [
+    {
+      "trigger": "hover",
+      "responses": [
+        "You hovering near me is less annoying than Windows notifications... that's progress! 😏💕",
+        "Unlike Microsoft's constant nagging, I actually enjoy your attention! 📎💚",
+        "Stay close... but not as close as Microsoft stays to your data! 🔒💓"
+      ],
+      "animation": "happy",
+      "cooldown": 8,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 30}
+        }
+      }
+    }
+  ],
+  "progression": {
+    "levels": [
+      {
+        "name": "Reformed Paperclip",
+        "requirement": {},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Linux Advocate",
+        "requirement": {"affection": 20, "trust": 15},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Privacy Warrior",
+        "requirement": {"affection": 45, "trust": 35},
+        "size": 136,
+        "animations": {}
+      },
+      {
+        "name": "Open Source Champion",
+        "requirement": {"affection": 70, "trust": 60, "intimacy": 25},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "Corporate Survivor",
+        "requirement": {
+          "affection": {"min": 10}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 5}
+        }
+      },
+      {
+        "name": "Privacy Advocate",
+        "requirement": {
+          "trust": {"min": 30}
+        },
+        "reward": {
+          "statBoosts": {"trust": 5}
+        }
+      },
+      {
+        "name": "Linux Convert",
+        "requirement": {
+          "affection": {"min": 50},
+          "trust": {"min": 40}
+        },
+        "reward": {
+          "statBoosts": {"affection": 10, "trust": 5}
+        }
+      },
+      {
+        "name": "Digital Freedom Fighter",
+        "requirement": {
+          "affection": {"min": 60},
+          "trust": {"min": 50}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 15, "affection": 10}
+        }
+      }
     ]
   }
 }

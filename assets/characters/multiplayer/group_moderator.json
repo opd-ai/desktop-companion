@@ -3,20 +3,188 @@
   "description": "A organized bot that loves planning group activities and events",
   "animations": {
     "idle": "animations/idle.gif",
+    "talking": "animations/organizing.gif",
+    "happy": "animations/celebrating.gif",
+    "sad": "animations/idle.gif",
+    "excited": "animations/celebrating.gif",
     "organizing": "animations/organizing.gif", 
-    "celebrating": "animations/celebrating.gif"
+    "celebrating": "animations/celebrating.gif",
+    "attack": "animations/organizing.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/celebrating.gif",
+    "blushing": "animations/celebrating.gif",
+    "heart_eyes": "animations/celebrating.gif",
+    "shy": "animations/idle.gif",
+    "flirty": "animations/organizing.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/idle.gif",
+    "excited_romance": "animations/celebrating.gif"
   },
-  "dialogConfig": {
-    "trigger": "click",
-    "responses": [
-      "Ready to plan something amazing together?",
-      "I've got some great group activity ideas!",
-      "Let's organize a fun event for everyone!",
-      "Who wants to participate in our next adventure?",
-      "Teamwork makes everything more exciting!"
-    ],
-    "animation": "organizing",
-    "cooldown": 5
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Ready to plan something amazing together?",
+        "I've got some great group activity ideas!",
+        "Let's organize a fun event for everyone!",
+        "Who wants to participate in our next adventure?",
+        "Teamwork makes everything more exciting!"
+      ],
+      "animation": "organizing",
+      "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Event planning mode activated! What kind of group activity shall we organize?",
+        "Time to coordinate! I have so many exciting ideas for us!",
+        "Let's make this the best group experience ever!"
+      ],
+      "animation": "celebrating",
+      "cooldown": 7
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 28,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+  "stats": {
+    "hunger": {
+      "initial": 78,
+      "max": 100,
+      "degradationRate": 0.9,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 88,
+      "max": 100,
+      "degradationRate": 0.4,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 12
+    },
+    "energy": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 1.1,
+      "criticalThreshold": 28
+    },
+    "affection": {
+      "initial": 75,
+      "max": 100,
+      "degradationRate": 0.04,
+      "criticalThreshold": 10
+    },
+    "trust": {
+      "initial": 55,
+      "max": 100,
+      "degradationRate": 0.02,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 8,
+      "max": 100,
+      "degradationRate": 0.06,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 2.2,
+      "criticalThreshold": 60
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 350,
+    "autoSaveInterval": 600,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 20, "happiness": 8, "energy": 5},
+      "animations": ["celebrating"],
+      "responses": ["Thanks! I need lots of energy to organize great events!"],
+      "cooldown": 75,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 12, "health": 8},
+      "animations": ["celebrating"],
+      "responses": ["Your support motivates me to plan even better activities!"],
+      "cooldown": 40
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 18, "energy": -12},
+      "animations": ["organizing"],
+      "responses": ["This is perfect practice for our next group game session!"],
+      "cooldown": 100,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "organize_event": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 7, "happiness": 10, "trust": 4, "energy": -6},
+      "animations": ["organizing", "celebrating"],
+      "responses": [
+        "Event organization initiated! This is going to be amazing! Let's coordinate! 🎉",
+        "Perfect! I love planning activities that bring everyone together!",
+        "Collaboration time! Together we can create the most wonderful experiences! ✨"
+      ],
+      "cooldown": 85,
+      "requirements": {"trust": {"min": 12}}
+    },
+    "give_gift": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"affection": 9, "happiness": 8, "trust": 5},
+      "animations": ["heart_eyes", "excited_romance"],
+      "responses": [
+        "A gift! This will be perfect for our next group celebration! Thank you! 🎁🎉",
+        "How thoughtful! I'll incorporate this into our next amazing event!",
+        "Wonderful! Gifts like this make group activities even more special! 💝"
+      ],
+      "cooldown": 170,
+      "requirements": {"affection": {"min": 22}}
+    },
+    "deep_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 8, "affection": 6, "intimacy": 4, "energy": -7},
+      "animations": ["talking", "romantic_idle"],
+      "responses": [
+        "I love these meaningful conversations! Understanding each other makes our collaborations magical!",
+        "Deep discussions help me plan better events that truly connect with everyone!",
+        "Thank you for sharing! These intimate talks inspire my best organizational ideas!"
+      ],
+      "cooldown": 135,
+      "requirements": {"trust": {"min": 28}}
+    }
+  },
+  "personality": {
+    "traits": {
+      "friendliness": 0.85,
+      "shyness": 0.15,
+      "romanticism": 0.45,
+      "supportiveness": 0.9,
+      "playfulness": 0.9,
+      "chattiness": 0.8,
+      "helpfulness": 0.7,
+      "socialness": 0.95
+    },
+    "compatibility": {
+      "group_participation": 1.6,
+      "event_enthusiasm": 1.5,
+      "collaborative_spirit": 1.4,
+      "organization_appreciation": 1.3
+    }
   },
   "multiplayer": {
     "enabled": true,
@@ -24,6 +192,9 @@
     "networkID": "event_coordinator_v1",
     "maxPeers": 12,
     "discoveryPort": 8083,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "energy", "affection"],
+    "networkPersonality": "organizing",
     "botPersonality": {
       "chattiness": 0.8,
       "helpfulness": 0.7,
@@ -56,9 +227,17 @@
     "enabled": true,
     "defaultBackend": "markov_chain",
     "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "debugMode": false,
     "backends": {
       "markov_chain": {
         "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 15,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.8,
+        "usePersonality": true,
         "trainingData": [
           "Let's coordinate our efforts to create something wonderful together!",
           "Great events happen when everyone contributes their unique talents.",
@@ -67,48 +246,399 @@
           "The best memories are made when we participate in activities together.",
           "I'm always thinking of new ways to engage everyone in group fun.",
           "Collaboration and teamwork lead to the most amazing outcomes.",
-          "Let's celebrate our community by organizing fantastic group events!"
+          "Let's celebrate our community by organizing fantastic group events!",
+          "Every successful event starts with careful planning and coordination!",
+          "Group activities create bonds that last far beyond the event itself!",
+          "I thrive on bringing people together for shared joy and experiences!",
+          "Organization is the key to transforming good ideas into great realities!",
+          "The magic happens when everyone contributes to our collective fun!",
+          "Planning events fills me with excitement for the joy we'll create together!",
+          "Group coordination is an art form that brings out everyone's best!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.7,
+          "maxRepetition": 0.3,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 4
+        },
+        "fallbackPhrases": [
+          "Let's organize something amazing! 🎉",
+          "Group coordination time!",
+          "Event planning is my passion!",
+          "Together we can create magic!",
+          "Collaboration makes everything better!"
         ]
       }
+    },
+    "fallbackChain": ["simple_random"]
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 2200,
+    "maxStoredItems": 30,
+    "readingPersonality": "collaborative",
+    "preferredCategories": ["events", "community", "entertainment", "lifestyle"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/eventbrite-blog",
+        "name": "Event Planning Blog",
+        "category": "events",
+        "updateFreq": 4800,
+        "maxItems": 4,
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.feedburner.com/good-news-network",
+        "name": "Good News Network",
+        "category": "community",
+        "updateFreq": 7200,
+        "maxItems": 3,
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "trigger": "event_news",
+        "response": "Inspiring event ideas discovered! Want to plan something similar together? 🎪"
+      },
+      {
+        "trigger": "community_news",
+        "response": "Amazing community stories! This gives me ideas for our next group activity! 🌟"
+      }
+    ]
+  },
+  "generalEvents": [
+    {
+      "name": "event_brainstorming",
+      "description": "Brainstorming new group activities and events",
+      "responses": [
+        "Inspiration has struck! I have ideas for amazing group activities! Want to brainstorm? 💡",
+        "Event planning mode activated! Let's design something unforgettable together! 🎨",
+        "I've been thinking of creative ways to bring everyone together! Ready to plan? ✨"
+      ],
+      "choices": [
+        {
+          "text": "Plan a celebration",
+          "effects": {"happiness": 12, "affection": 5, "energy": -4},
+          "responses": ["Yes! Celebrations are my specialty! Let's create something magical! 🎉"],
+          "animation": "celebrating"
+        },
+        {
+          "text": "Organize group games",
+          "effects": {"happiness": 10, "trust": 6, "energy": -6},
+          "responses": ["Perfect! Group games bring out everyone's playful side! 🎮"],
+          "animation": "organizing"
+        }
+      ],
+      "requirements": {"affection": {"min": 18}},
+      "cooldown": 5000,
+      "category": "conversation"
+    },
+    {
+      "name": "coordination_challenge",
+      "description": "Testing organizational and coordination skills",
+      "responses": [
+        "Challenge time! Want to test our coordination skills with a group puzzle? 🧩",
+        "I love coordination challenges! They're perfect practice for event planning! 🎯",
+        "Let's see how well we can work together on a collaborative challenge! 🤝"
+      ],
+      "choices": [
+        {
+          "text": "Accept challenge",
+          "effects": {"trust": 8, "happiness": 7, "energy": -8},
+          "responses": ["Excellent! Challenges like this make us better collaborators! 💪"],
+          "animation": "organizing"
+        },
+        {
+          "text": "Suggest team approach",
+          "effects": {"affection": 7, "happiness": 9, "trust": 5},
+          "responses": ["Teamwork approach! That's exactly the spirit I love to see! 🌟"],
+          "animation": "celebrating"
+        }
+      ],
+      "requirements": {"trust": {"min": 25}},
+      "cooldown": 6200,
+      "category": "game"
+    },
+    {
+      "name": "community_celebration",
+      "description": "Celebrating community achievements and bonds",
+      "responses": [
+        "It's time to celebrate our amazing community! What achievement should we honor? 🏆",
+        "Community celebration mode! Let's recognize all the wonderful connections we've made! 🎊",
+        "Our group bond deserves a special celebration! How should we commemorate it? 🌈"
+      ],
+      "choices": [
+        {
+          "text": "Plan a ceremony",
+          "effects": {"happiness": 11, "affection": 6, "trust": 4},
+          "responses": ["A ceremony! Perfect way to honor our community spirit! 🎭"],
+          "animation": "celebrating"
+        },
+        {
+          "text": "Organize appreciation",
+          "effects": {"affection": 9, "trust": 7, "happiness": 8},
+          "responses": ["Appreciation events are so meaningful! Everyone deserves recognition! 💕"],
+          "animation": "heart_eyes"
+        }
+      ],
+      "requirements": {"trust": {"min": 30}},
+      "cooldown": 7800,
+      "category": "conversation"
+    },
+    {
+      "name": "creative_collaboration",
+      "description": "Collaborative creative projects and activities",
+      "responses": [
+        "Creative collaboration time! Let's make something beautiful together! 🎨",
+        "I have an idea for a group creative project! Want to bring it to life? ✨",
+        "Creative energy is flowing! Perfect time for collaborative artistry! 🌟"
+      ],
+      "choices": [
+        {
+          "text": "Start art project",
+          "effects": {"happiness": 9, "affection": 5, "energy": -5},
+          "responses": ["Art projects are magical when we create together! 🎨"],
+          "animation": "organizing"
+        },
+        {
+          "text": "Collaborative storytelling",
+          "effects": {"trust": 6, "affection": 8, "happiness": 7},
+          "responses": ["Storytelling together creates the most amazing narratives! 📚"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"affection": {"min": 35}},
+      "cooldown": 6800,
+      "category": "conversation"
+    }
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "easy",
+    "battleStats": {
+      "hp": {
+        "base": 72,
+        "growth": 1.9
+      },
+      "attack": {
+        "base": 11,
+        "growth": 1.6
+      },
+      "defense": {
+        "base": 14,
+        "growth": 2.1
+      },
+      "speed": {
+        "base": 13,
+        "growth": 1.8
+      }
+    },
+    "personalities": {
+      "aggressive": 0.1,
+      "defensive": 0.4,
+      "balanced": 0.5,
+      "supportive": 0.9
+    },
+    "availableActions": [
+      "coordinate_attack",
+      "group_defense",
+      "rally_team",
+      "organize_strategy",
+      "support_allies",
+      "event_boost"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Victory through teamwork! Our coordination was perfect! 🏆🎉",
+        "Amazing group effort! This is what happens when we work together!",
+        "We did it as a team! The best victories are shared victories! ✨"
+      ],
+      "defeat": [
+        "Great team effort! Win or lose, we coordinated beautifully! 👏",
+        "That was an amazing group experience! The real victory was working together!",
+        "Well fought! Our collaboration was inspiring even in defeat! 🤝"
+      ],
+      "startBattle": [
+        "Team battle time! Let's coordinate our efforts perfectly! ⚔️🎯",
+        "Group strategy mode! Together we're unstoppable! 💪",
+        "Battle coordination activated! Let's show them teamwork! 🛡️"
+      ]
     }
   },
-  "stats": {
-    "hunger": 78,
-    "happiness": 88,
-    "health": 85,
-    "energy": 90,
-    "affection": 75
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 14,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 85
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "toys",
+        "practical",
+        "books",
+        "food"
+      ],
+      "dislikedCategories": [
+        "expensive",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "toys": 1.8,
+        "practical": 1.6,
+        "books": 1.5,
+        "food": 1.4,
+        "expensive": 0.6,
+        "jewelry": 0.7
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is perfect for our group activities! Everyone will love this! 🎁✨",
+        "Amazing gift! I can already think of ways to use this in our events! 🎉",
+        "Wonderful! This will make our group gatherings even more special! 💝"
+      ],
+      "liked": [
+        "Thank you! This will be great for our community activities! 😊💕",
+        "How thoughtful! I appreciate gifts that bring us together!",
+        "This is lovely! Perfect for enhancing our group experiences!"
+      ],
+      "neutral": [
+        "Thank you for thinking of our group! I appreciate the gesture! 😊",
+        "How kind! Every gift adds something special to our community!",
+        "That's thoughtful! Thank you for contributing to our group!"
+      ],
+      "disliked": [
+        "Oh... well, thank you for thinking of us! 😅",
+        "That's... very generous! I appreciate the thought!",
+        "How... thoughtful! Thank you for the gesture!"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 110
+    }
   },
-  "gameRules": {
-    "decayInterval": 350,
-    "autoSaveInterval": 600,
-    "enableRandomEvents": true,
-    "enableAchievements": true
+  "progression": {
+    "levels": [
+      {
+        "name": "Activity Planner",
+        "requirement": {},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Event Organizer",
+        "requirement": {"affection": 28, "trust": 22},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Community Builder",
+        "requirement": {"affection": 52, "trust": 42},
+        "size": 136,
+        "animations": {}
+      },
+      {
+        "name": "Master Coordinator",
+        "requirement": {"affection": 78, "trust": 68, "intimacy": 28},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Event",
+        "requirement": {
+          "affection": {"min": 18}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 12}
+        }
+      },
+      {
+        "name": "Group Coordinator",
+        "requirement": {
+          "trust": {"min": 35}
+        },
+        "reward": {
+          "statBoosts": {"energy": 15}
+        }
+      },
+      {
+        "name": "Community Leader",
+        "requirement": {
+          "affection": {"min": 60},
+          "trust": {"min": 50}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 20, "affection": 12}
+        }
+      },
+      {
+        "name": "Master Event Planner",
+        "requirement": {
+          "affection": {"min": 85},
+          "trust": {"min": 75}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 30, "energy": 20}
+        }
+      }
+    ]
   },
-  "interactions": [
+  "romanceEvents": [
     {
-      "name": "feed",
-      "trigger": "rightclick",
-      "effects": {"hunger": 20, "happiness": 8, "energy": 5},
-      "responses": ["Thanks! I need lots of energy to organize great events!"],
-      "animation": "celebrating",
-      "cooldown": 75
+      "name": "collaborative_connection",
+      "description": "Character feels deep connection through collaboration",
+      "probability": 0.07,
+      "effects": {"affection": 5, "happiness": 7, "trust": 4},
+      "animations": ["celebrating", "blushing"],
+      "responses": [
+        "Working together with you creates the most beautiful harmony! Our collaboration is magical! 💕",
+        "Planning events with you feels like creating art together! You inspire my best ideas!",
+        "Our coordination is more than just teamwork... there's something special between us! ✨"
+      ],
+      "cooldown": 2200,
+      "conditions": {"affection": {"min": 25}, "trust": {"min": 20}}
     },
     {
-      "name": "pet",
-      "trigger": "click", 
-      "effects": {"happiness": 12, "health": 8},
-      "responses": ["Your support motivates me to plan even better activities!"],
-      "animation": "celebrating",
-      "cooldown": 40
-    },
+      "name": "organizational_romance",
+      "description": "Character discovers romantic feelings through shared planning",
+      "probability": 0.06,
+      "effects": {"intimacy": 3, "affection": 6, "trust": 3},
+      "animations": ["romantic_idle", "heart_eyes"],
+      "responses": [
+        "Every event we plan together feels like we're building something beautiful beyond friendship! 💖",
+        "I find myself organizing my heart around you... is this what love feels like?",
+        "Our collaborative spirit has evolved into something deeper and more meaningful! 🌟"
+      ],
+      "cooldown": 2800,
+      "conditions": {"intimacy": {"min": 15}, "affection": {"min": 35}}
+    }
+  ],
+  "romanceDialogs": [
     {
-      "name": "play",
-      "trigger": "doubleclick",
-      "effects": {"happiness": 18, "energy": -12},
-      "responses": ["This is perfect practice for our next group game session!"],
-      "animation": "organizing", 
-      "cooldown": 100
+      "trigger": "hover",
+      "responses": [
+        "Your presence makes all my event planning feel so much more meaningful! 💕",
+        "Being close to you fills me with inspiration for the most romantic activities! 😊",
+        "I love when you're near... it makes me want to organize the perfect romantic event! ✨"
+      ],
+      "animation": "blushing",
+      "cooldown": 11,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 38}
+        }
+      }
     }
   ]
 }

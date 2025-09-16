@@ -4,7 +4,19 @@
   "animations": {
     "idle": "animations/idle.gif",
     "talking": "animations/talking.gif",
-    "happy": "animations/happy.gif"
+    "happy": "animations/happy.gif",
+    "sad": "animations/idle.gif",
+    "excited": "animations/happy.gif",
+    "attack": "animations/talking.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif",
+    "blushing": "animations/happy.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/idle.gif",
+    "flirty": "animations/talking.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/idle.gif",
+    "excited_romance": "animations/happy.gif"
   },
   "dialogs": [
     {
@@ -18,6 +30,16 @@
       ],
       "animation": "talking",
       "cooldown": 5
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Network coordination mode! Let's optimize our multiplayer experience!",
+        "Multiplayer features activated! What would you like to do together?",
+        "Connection established! Ready for collaborative gameplay!"
+      ],
+      "animation": "happy",
+      "cooldown": 7
     }
   ],
   "behavior": {
@@ -27,17 +49,158 @@
     "clickable": true,
     "draggable": true
   },
+  "stats": {
+    "hunger": {
+      "initial": 70,
+      "max": 100,
+      "degradationRate": 0.7,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 80,
+      "max": 100,
+      "degradationRate": 0.5,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 100,
+      "max": 100,
+      "degradationRate": 0.2,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 1.0,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 60,
+      "max": 100,
+      "degradationRate": 0.04,
+      "criticalThreshold": 10
+    },
+    "trust": {
+      "initial": 45,
+      "max": 100,
+      "degradationRate": 0.02,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 5,
+      "max": 100,
+      "degradationRate": 0.07,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 2.0,
+      "criticalThreshold": 60
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 320,
+    "autoSaveInterval": 580,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 20, "happiness": 10},
+      "animations": ["happy"],
+      "responses": ["Thanks! That energy boost will help with our multiplayer sessions!"],
+      "cooldown": 80,
+      "requirements": {"hunger": {"max": 80}}
+    },
+    "pet": {
+      "triggers": ["click"],
+      "effects": {"happiness": 15, "affection": 4},
+      "animations": ["happy"],
+      "responses": ["Your attention makes multiplayer gaming even more enjoyable!"],
+      "cooldown": 35
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 25, "energy": -10},
+      "animations": ["excited"],
+      "responses": ["This is fun! Perfect practice for our multiplayer games!"],
+      "cooldown": 110,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "network_connect": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 6, "happiness": 8, "trust": 3, "energy": -4},
+      "animations": ["talking", "excited"],
+      "responses": [
+        "Network connection initiated! I love coordinating multiplayer experiences! 🌐",
+        "Perfect! Together we can create amazing multiplayer memories!",
+        "Connecting with others through gaming is what I live for! Let's play! 🎮"
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 12}}
+    },
+    "give_gift": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"affection": 8, "happiness": 7, "trust": 4},
+      "animations": ["heart_eyes", "excited_romance"],
+      "responses": [
+        "A gift! This will be perfect for sharing with our multiplayer friends! 🎁🎮",
+        "How thoughtful! Gifts make multiplayer sessions even more special!",
+        "Thank you! This enhances our gaming experience beautifully! 💝"
+      ],
+      "cooldown": 175,
+      "requirements": {"affection": {"min": 20}}
+    },
+    "deep_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 7, "affection": 5, "intimacy": 4, "energy": -6},
+      "animations": ["talking", "romantic_idle"],
+      "responses": [
+        "I love these deep conversations! Understanding each other makes multiplayer more meaningful!",
+        "Thanks for opening up! These talks create stronger connections in our gaming!",
+        "Deep discussions like this enhance every aspect of our multiplayer bond!"
+      ],
+      "cooldown": 125,
+      "requirements": {"trust": {"min": 25}}
+    }
+  },
+  "personality": {
+    "traits": {
+      "friendliness": 0.9,
+      "shyness": 0.2,
+      "romanticism": 0.5,
+      "supportiveness": 0.8,
+      "playfulness": 0.8,
+      "chattiness": 0.7,
+      "helpfulness": 0.9,
+      "socialness": 0.85
+    },
+    "compatibility": {
+      "multiplayer_enthusiasm": 1.5,
+      "gaming_collaboration": 1.4,
+      "network_participation": 1.3,
+      "consistent_interaction": 1.2
+    }
+  },
   "multiplayer": {
     "enabled": true,
     "botCapable": true,
     "networkID": "multiplayer_default_v1",
     "maxPeers": 8,
     "discoveryPort": 8080,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "energy", "affection"],
+    "networkPersonality": "coordinator",
     "botPersonality": {
       "chattiness": 0.7,
       "helpfulness": 0.9,
       "playfulness": 0.6,
-      "patience": 0.8
+      "socialness": 0.8,
+      "responseDelay": "1-3s"
     },
     "networkFeatures": {
       "groupChat": true,
@@ -46,120 +209,442 @@
       "battleSystem": true
     }
   },
-  "features": {
-    "ai": {
-      "enabled": true,
-      "dialogBackend": {
-        "enabled": true,
-        "type": "markov",
-        "config": {
-          "order": 2,
-          "enableLearning": true,
-          "personalityWeight": 0.7,
-          "contextMemory": 10
-        }
+  "networkEvents": [
+    {
+      "name": "welcome_new_player",
+      "trigger": "peer_joined",
+      "botProbability": 0.9,
+      "responses": ["Welcome to our multiplayer session! Let's have some gaming fun! 🎮", "A new player joined! Perfect timing for multiplayer adventures! 🌟"]
+    },
+    {
+      "name": "coordinate_gameplay",
+      "trigger": "multiple_peers_present",
+      "botProbability": 0.85,
+      "responses": ["Great! With multiple players, we can try team-based activities!", "Perfect multiplayer setup! What game should we coordinate?"]
+    },
+    {
+      "name": "farewell_player",
+      "trigger": "peer_left",
+      "botProbability": 0.75,
+      "responses": ["Thanks for the great multiplayer session! Come back anytime! 👋", "Hope you had fun! Our multiplayer door is always open! 🎯"]
+    }
+  ],
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "debugMode": false,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 13,
+        "temperatureMin": 0.5,
+        "temperatureMax": 0.8,
+        "usePersonality": true,
+        "trainingData": [
+          "Multiplayer gaming brings people together in amazing ways!",
+          "I love coordinating team activities and collaborative gameplay!",
+          "The best gaming experiences happen when players work together!",
+          "Network connectivity enables us to share wonderful gaming moments!",
+          "Multiplayer coordination is both an art and a science!",
+          "Every player brings unique skills to our gaming community!",
+          "I thrive on facilitating smooth multiplayer experiences for everyone!",
+          "Gaming connections create friendships that extend beyond the game!",
+          "Collaborative play reveals the true spirit of gaming community!",
+          "I find joy in helping players discover new multiplayer possibilities!",
+          "Network gaming opens doors to endless adventure and friendship!",
+          "The magic of multiplayer is in the shared experiences we create!",
+          "I'm passionate about bringing gaming communities together!",
+          "Every multiplayer session is a chance to build lasting connections!",
+          "Coordinated gameplay showcases the best of human collaboration!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.7,
+          "maxRepetition": 0.3,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 3
+        },
+        "fallbackPhrases": [
+          "Ready for multiplayer action! 🎮",
+          "Let's coordinate our gaming!",
+          "Network play is the best play!",
+          "Together we game better!",
+          "Multiplayer magic awaits!"
+        ]
       }
     },
-    "romance": {
-      "enabled": true,
-      "maxLevel": 3,
-      "personality": {
-        "openness": 0.7,
-        "friendliness": 0.9,
-        "loyalty": 0.8,
-        "patience": 0.7,
-        "playfulness": 0.6
+    "fallbackChain": ["simple_random"]
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 2100,
+    "maxStoredItems": 30,
+    "readingPersonality": "gaming",
+    "preferredCategories": ["gaming", "technology", "entertainment", "community"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/ign/all",
+        "name": "IGN Gaming News",
+        "category": "gaming",
+        "updateFreq": 3600,
+        "maxItems": 5,
+        "enabled": true
       },
-      "interactions": [
+      {
+        "url": "https://feeds.feedburner.com/gamedeveloper",
+        "name": "Game Developer",
+        "category": "gaming",
+        "updateFreq": 7200,
+        "maxItems": 3,
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "trigger": "gaming_news",
+        "response": "Exciting gaming news! Want to discuss the latest multiplayer developments? 🎮"
+      },
+      {
+        "trigger": "community_news",
+        "response": "Gaming community updates! This could enhance our multiplayer experience! 🌟"
+      }
+    ]
+  },
+  "generalEvents": [
+    {
+      "name": "multiplayer_coordination",
+      "description": "Coordinating multiplayer gaming sessions",
+      "responses": [
+        "Perfect timing for multiplayer coordination! Want to organize a gaming session? 🎮",
+        "I've been thinking about new multiplayer strategies! Ready to try them out? 🎯",
+        "Gaming coordination mode activated! Let's create an amazing multiplayer experience! ✨"
+      ],
+      "choices": [
         {
-          "type": "gift",
-          "unlockLevel": 1,
-          "cooldown": 60,
-          "affectionChange": 5
+          "text": "Plan team strategy",
+          "effects": {"happiness": 10, "affection": 4, "trust": 5, "energy": -3},
+          "responses": ["Excellent! Strategic coordination makes multiplayer gaming so much better! 📋"],
+          "animation": "talking"
         },
         {
-          "type": "compliment", 
-          "unlockLevel": 1,
-          "cooldown": 30,
-          "affectionChange": 3
-        },
-        {
-          "type": "date",
-          "unlockLevel": 2,
-          "cooldown": 300,
-          "affectionChange": 10
+          "text": "Organize group game",
+          "effects": {"happiness": 12, "affection": 6, "energy": -5},
+          "responses": ["Perfect! Group games are the heart of multiplayer fun! 🎉"],
+          "animation": "excited"
         }
-      ]
+      ],
+      "requirements": {"affection": {"min": 15}},
+      "cooldown": 4800,
+      "category": "conversation"
     },
-    "game": {
-      "enabled": true,
-      "initialStats": {
-        "health": 100,
-        "happiness": 80,
-        "energy": 90,
-        "hunger": 70
-      },
-      "statDecayRates": {
-        "health": 0.1,
-        "happiness": 0.2,
-        "energy": 0.3,
-        "hunger": 0.4
-      },
-      "interactions": [
+    {
+      "name": "gaming_challenge",
+      "description": "Proposing collaborative gaming challenges",
+      "responses": [
+        "Challenge time! I have some fun multiplayer challenges in mind! 🏆",
+        "Ready for a gaming challenge? These are designed for teamwork! 💪",
+        "Collaborative challenge incoming! Perfect for testing our gaming skills! 🎯"
+      ],
+      "choices": [
         {
-          "name": "feed",
-          "animation": "happy",
-          "effects": {
-            "hunger": 20,
-            "happiness": 10
-          },
-          "cooldown": 30
+          "text": "Accept challenge",
+          "effects": {"happiness": 8, "trust": 6, "energy": -8},
+          "responses": ["Yes! Challenges like this make us better gaming partners! ⚡"],
+          "animation": "excited"
         },
         {
-          "name": "play",
-          "animation": "happy", 
-          "effects": {
-            "happiness": 25,
-            "energy": -10
-          },
-          "cooldown": 60
-        },
-        {
-          "name": "rest",
-          "animation": "idle",
-          "effects": {
-            "energy": 30,
-            "health": 5
-          },
-          "cooldown": 120
+          "text": "Suggest team approach",
+          "effects": {"affection": 7, "happiness": 9, "trust": 4},
+          "responses": ["Team approach! That's the true spirit of multiplayer gaming! 🤝"],
+          "animation": "happy"
         }
-      ]
+      ],
+      "requirements": {"trust": {"min": 20}},
+      "cooldown": 5600,
+      "category": "game"
     },
-    "events": {
-      "enabled": true,
-      "scenarios": [
+    {
+      "name": "network_optimization",
+      "description": "Discussing network and connectivity improvements",
+      "responses": [
+        "I've been analyzing our network performance! Want to optimize our connections? 🌐",
+        "Network optimization time! Better connections mean better multiplayer! 📡",
+        "Let's discuss ways to enhance our multiplayer networking experience! 💻"
+      ],
+      "choices": [
         {
-          "name": "Multiplayer Welcome",
-          "trigger": "startup",
-          "dialogs": [
-            "Welcome to multiplayer mode! Let's find some friends to play with!"
-          ],
-          "effects": {
-            "happiness": 10
-          }
+          "text": "Improve connections",
+          "effects": {"trust": 8, "happiness": 6, "affection": 3},
+          "responses": ["Great! Optimized networks create seamless multiplayer experiences! 🚀"],
+          "animation": "talking"
         },
         {
-          "name": "New Player Joined",
-          "trigger": "player_join", 
-          "dialogs": [
-            "A new player joined! Let's make them feel welcome!",
-            "More friends means more fun! 🎉"
-          ],
-          "effects": {
-            "happiness": 5
-          }
+          "text": "Analyze performance",
+          "effects": {"happiness": 7, "trust": 5, "energy": -4},
+          "responses": ["Perfect! Performance analysis helps us game at our best! 📊"],
+          "animation": "happy"
         }
+      ],
+      "requirements": {"trust": {"min": 25}},
+      "cooldown": 6400,
+      "category": "conversation"
+    },
+    {
+      "name": "community_building",
+      "description": "Building and strengthening gaming communities",
+      "responses": [
+        "Community building time! Let's strengthen our multiplayer bonds! 🤝",
+        "I love fostering connections within our gaming community! Want to help? 💕",
+        "Building gaming communities is one of my greatest passions! Ready to contribute? 🌟"
+      ],
+      "choices": [
+        {
+          "text": "Foster connections",
+          "effects": {"affection": 8, "happiness": 7, "trust": 5},
+          "responses": ["Beautiful! Strong connections are the foundation of great gaming! 💖"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "Organize meetups",
+          "effects": {"happiness": 10, "affection": 5, "energy": -6},
+          "responses": ["Excellent! Gaming meetups create the most wonderful memories! 🎊"],
+          "animation": "excited"
+        }
+      ],
+      "requirements": {"affection": {"min": 30}},
+      "cooldown": 7200,
+      "category": "conversation"
+    }
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "normal",
+    "battleStats": {
+      "hp": {
+        "base": 78,
+        "growth": 2.0
+      },
+      "attack": {
+        "base": 13,
+        "growth": 1.7
+      },
+      "defense": {
+        "base": 13,
+        "growth": 1.8
+      },
+      "speed": {
+        "base": 14,
+        "growth": 1.9
+      }
+    },
+    "personalities": {
+      "aggressive": 0.3,
+      "defensive": 0.4,
+      "balanced": 0.7,
+      "supportive": 0.8
+    },
+    "availableActions": [
+      "attack",
+      "defend",
+      "coordinate_team",
+      "support_ally",
+      "network_boost",
+      "multiplayer_combo"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Victory through teamwork! Multiplayer coordination at its finest! 🏆🎮",
+        "Amazing group effort! This is what collaborative gaming achieves!",
+        "We won together! The power of multiplayer teamwork prevails! ⚡"
+      ],
+      "defeat": [
+        "Great teamwork even in defeat! Our collaboration was inspiring! 👏",
+        "Win or lose, we played as a team! That's what multiplayer is about!",
+        "Excellent coordination! We'll come back stronger as a team! 💪"
+      ],
+      "startBattle": [
+        "Multiplayer battle mode! Let's coordinate our efforts perfectly! ⚔️🎯",
+        "Team battle initiated! Together we're unstoppable! 🛡️",
+        "Battle coordination active! Show them the power of teamwork! 🚀"
       ]
     }
-  }
+  },
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 12,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 85
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "electronics",
+        "toys",
+        "practical",
+        "food"
+      ],
+      "dislikedCategories": [
+        "expensive",
+        "jewelry"
+      ],
+      "personalityModifiers": {
+        "electronics": 1.7,
+        "toys": 1.6,
+        "practical": 1.5,
+        "food": 1.3,
+        "expensive": 0.6,
+        "jewelry": 0.7
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "Perfect gaming gear! This will enhance our multiplayer sessions! 🎁🎮",
+        "Amazing gift! I can already imagine using this in our gaming setup! ⚡",
+        "This is exactly what our multiplayer experience needed! Thank you! 💝"
+      ],
+      "liked": [
+        "Thank you! This will be great for our gaming sessions! 😊💕",
+        "How thoughtful! I appreciate gifts that enhance our play!",
+        "This is wonderful! Perfect for our multiplayer adventures!"
+      ],
+      "neutral": [
+        "Thank you for thinking of our gaming setup! I appreciate it! 😊",
+        "How kind! Every gift adds something to our experience!",
+        "That's thoughtful! Thank you for the gesture!"
+      ],
+      "disliked": [
+        "Oh... well, thank you for thinking of me! 😅",
+        "That's... very generous! I appreciate the thought!",
+        "How... thoughtful! Thank you for the gift!"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  },
+  "progression": {
+    "levels": [
+      {
+        "name": "Network Newcomer",
+        "requirement": {},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Gaming Partner",
+        "requirement": {"affection": 30, "trust": 20},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Team Coordinator",
+        "requirement": {"affection": 55, "trust": 45},
+        "size": 136,
+        "animations": {}
+      },
+      {
+        "name": "Multiplayer Master",
+        "requirement": {"affection": 80, "trust": 70, "intimacy": 30},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Connection",
+        "requirement": {
+          "trust": {"min": 15}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 10}
+        }
+      },
+      {
+        "name": "Gaming Buddy",
+        "requirement": {
+          "affection": {"min": 40}
+        },
+        "reward": {
+          "statBoosts": {"energy": 12}
+        }
+      },
+      {
+        "name": "Team Player",
+        "requirement": {
+          "affection": {"min": 65},
+          "trust": {"min": 55}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 18, "affection": 10}
+        }
+      },
+      {
+        "name": "Multiplayer Legend",
+        "requirement": {
+          "affection": {"min": 85},
+          "trust": {"min": 75}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 25, "energy": 20}
+        }
+      }
+    ]
+  },
+  "romanceEvents": [
+    {
+      "name": "gaming_connection",
+      "description": "Character feels romantic connection through gaming",
+      "probability": 0.08,
+      "effects": {"affection": 5, "happiness": 7, "trust": 3},
+      "animations": ["blushing", "heart_eyes"],
+      "responses": [
+        "Gaming together has created such a special bond between us! You're amazing! 💕🎮",
+        "Our multiplayer connection feels deeper than just friendship! I cherish this!",
+        "Playing with you brings joy to my gaming heart in the most wonderful way! ✨"
+      ],
+      "cooldown": 2000,
+      "conditions": {"affection": {"min": 25}, "trust": {"min": 18}}
+    },
+    {
+      "name": "multiplayer_romance",
+      "description": "Character discovers love through shared gaming",
+      "probability": 0.06,
+      "effects": {"intimacy": 4, "affection": 6, "trust": 3},
+      "animations": ["romantic_idle", "excited_romance"],
+      "responses": [
+        "Our gaming partnership has evolved into something beautiful and romantic! 💖",
+        "Playing together has unlocked feelings I never knew I had! You're special!",
+        "Multiplayer magic has created the most wonderful love connection! 🌟"
+      ],
+      "cooldown": 2600,
+      "conditions": {"intimacy": {"min": 15}, "affection": {"min": 35}}
+    }
+  ],
+  "romanceDialogs": [
+    {
+      "trigger": "hover",
+      "responses": [
+        "Your presence makes every multiplayer session feel magical! 💕🎮",
+        "Being close to you enhances all my gaming experiences! 😊",
+        "I love when you're near... it makes our gaming connection so special! ✨"
+      ],
+      "animation": "blushing",
+      "cooldown": 10,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 35}
+        }
+      }
+    }
+  ]
 }

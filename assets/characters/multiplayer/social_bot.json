@@ -3,20 +3,186 @@
   "description": "A chatty, social bot that loves making new friends",
   "animations": {
     "idle": "animations/idle.gif",
+    "talking": "animations/talking.gif",
     "happy": "animations/happy.gif",
-    "excited": "animations/excited.gif"
+    "sad": "animations/sad.gif",
+    "excited": "animations/excited.gif",
+    "attack": "animations/happy.gif",
+    "defend": "animations/idle.gif",
+    "heal": "animations/happy.gif",
+    "blushing": "animations/happy.gif",
+    "heart_eyes": "animations/happy.gif",
+    "shy": "animations/sad.gif",
+    "flirty": "animations/happy.gif",
+    "romantic_idle": "animations/idle.gif",
+    "jealous": "animations/sad.gif",
+    "excited_romance": "animations/excited.gif"
   },
-  "dialogConfig": {
-    "trigger": "click",
-    "responses": [
-      "Hi there! Great to meet you! 😊",
-      "Want to chat? I love talking to new people!",
-      "This is so exciting! Are you here to make friends too?",
-      "Tell me about yourself! I'm always curious about others!",
-      "I hope we can be great friends! 💖"
-    ],
-    "animation": "happy",
-    "cooldown": 3
+  "dialogs": [
+    {
+      "trigger": "click",
+      "responses": [
+        "Hi there! Great to meet you! 😊",
+        "Want to chat? I love talking to new people!",
+        "This is so exciting! Are you here to make friends too?",
+        "Tell me about yourself! I'm always curious about others!",
+        "I hope we can be great friends! 💖"
+      ],
+      "animation": "happy",
+      "cooldown": 3
+    },
+    {
+      "trigger": "rightclick",
+      "responses": [
+        "Social time! What would you like to do together? 🎉",
+        "I'm ready for some fun social interactions!",
+        "Let's make this a great social experience!"
+      ],
+      "animation": "excited",
+      "cooldown": 5
+    }
+  ],
+  "behavior": {
+    "idleTimeout": 25,
+    "movementEnabled": true,
+    "defaultSize": 128
+  },
+  "stats": {
+    "hunger": {
+      "initial": 85,
+      "max": 100,
+      "degradationRate": 0.8,
+      "criticalThreshold": 20
+    },
+    "happiness": {
+      "initial": 90,
+      "max": 100,
+      "degradationRate": 0.5,
+      "criticalThreshold": 15
+    },
+    "health": {
+      "initial": 88,
+      "max": 100,
+      "degradationRate": 0.3,
+      "criticalThreshold": 10
+    },
+    "energy": {
+      "initial": 75,
+      "max": 100,
+      "degradationRate": 1.2,
+      "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 70,
+      "max": 100,
+      "degradationRate": 0.04,
+      "criticalThreshold": 10
+    },
+    "trust": {
+      "initial": 50,
+      "max": 100,
+      "degradationRate": 0.02,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 5,
+      "max": 100,
+      "degradationRate": 0.06,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 2.0,
+      "criticalThreshold": 60
+    }
+  },
+  "gameRules": {
+    "statsDecayInterval": 300,
+    "autoSaveInterval": 600,
+    "moodBasedAnimations": true,
+    "deathEnabled": false,
+    "evolutionEnabled": true,
+    "criticalStateAnimationPriority": false
+  },
+  "interactions": {
+    "feed": {
+      "triggers": ["rightclick"],
+      "effects": {"hunger": 15, "happiness": 5},
+      "animations": ["happy"],
+      "responses": ["Thank you! That was delicious! Want to share a meal together sometime?"],
+      "cooldown": 60,
+      "requirements": {"hunger": {"max": 85}}
+    },
+    "pet": {
+      "triggers": ["click"], 
+      "effects": {"happiness": 10, "health": 5},
+      "animations": ["happy"],
+      "responses": ["That feels nice! Physical affection is so important for friendship!"],
+      "cooldown": 30
+    },
+    "play": {
+      "triggers": ["doubleclick"],
+      "effects": {"happiness": 15, "energy": -10},
+      "animations": ["excited"],
+      "responses": ["This is so much fun! Playing together is the best!"],
+      "cooldown": 120,
+      "requirements": {"energy": {"min": 20}}
+    },
+    "compliment": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 5, "happiness": 4, "trust": 2},
+      "animations": ["blushing", "happy"],
+      "responses": [
+        "Aww, thank you! You're so sweet! That really made my day! 😊💕",
+        "You always know the nicest things to say! I appreciate you so much!",
+        "Your compliments make me feel so special! Thank you for being wonderful!"
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 15}}
+    },
+    "give_gift": {
+      "triggers": ["alt+shift+click"],
+      "effects": {"affection": 8, "happiness": 7, "trust": 3},
+      "animations": ["heart_eyes", "excited_romance"],
+      "responses": [
+        "Oh my! A gift! You're so thoughtful! I love making friends like you! 🎁💕",
+        "This is amazing! Thank you so much! Friendship gifts are the best kind!",
+        "You remembered that I like gifts! You're such a wonderful friend! 💝"
+      ],
+      "cooldown": 180,
+      "requirements": {"affection": {"min": 20}}
+    },
+    "deep_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 6, "affection": 4, "intimacy": 3},
+      "animations": ["talking", "romantic_idle"],
+      "responses": [
+        "I love our deep conversations! Sharing thoughts brings people closer together!",
+        "Thank you for opening up to me! These meaningful talks are so precious!",
+        "Deep conversations are how real friendships are built! I value this so much!"
+      ],
+      "cooldown": 120,
+      "requirements": {"trust": {"min": 25}}
+    }
+  },
+  "personality": {
+    "traits": {
+      "friendliness": 0.95,
+      "shyness": 0.1,
+      "romanticism": 0.5,
+      "supportiveness": 0.9,
+      "playfulness": 0.8,
+      "chattiness": 0.9,
+      "helpfulness": 0.8,
+      "socialness": 0.9
+    },
+    "compatibility": {
+      "consistent_interaction": 1.2,
+      "variety_preference": 1.1,
+      "gift_appreciation": 1.4,
+      "conversation_lover": 1.5
+    }
   },
   "multiplayer": {
     "enabled": true,
@@ -24,6 +190,9 @@
     "networkID": "social_butterfly_v1",
     "maxPeers": 6,
     "discoveryPort": 8080,
+    "socialLevel": "high",
+    "shareableStats": ["happiness", "affection", "energy"],
+    "networkPersonality": "welcoming",
     "botPersonality": {
       "chattiness": 0.9,
       "helpfulness": 0.8,
@@ -50,9 +219,17 @@
     "enabled": true,
     "defaultBackend": "markov_chain",
     "confidenceThreshold": 0.6,
+    "memoryEnabled": true,
+    "learningEnabled": true,
+    "debugMode": false,
     "backends": {
       "markov_chain": {
         "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 14,
+        "temperatureMin": 0.4,
+        "temperatureMax": 0.8,
+        "usePersonality": true,
         "trainingData": [
           "Hi everyone! How is your day going?",
           "I love meeting new people and making friends!",
@@ -61,48 +238,403 @@
           "I'm always excited to learn something new from others!",
           "Social interactions make life so much more interesting!",
           "Let's share stories and get to know each other better!",
-          "I think friendship is one of the most wonderful things in life!"
+          "I think friendship is one of the most wonderful things in life!",
+          "There's nothing better than a good chat with friends!",
+          "Every person I meet teaches me something new and amazing!",
+          "Community and friendship are what make life truly meaningful!",
+          "I believe in the power of positive social connections!",
+          "Sharing experiences with others multiplies the joy!",
+          "Good conversations can brighten anyone's day!",
+          "I'm here to spread happiness and make new connections!"
+        ],
+        "qualityFilters": {
+          "minCoherence": 0.7,
+          "maxRepetition": 0.3,
+          "requireComplete": true,
+          "grammarCheck": false,
+          "minUniqueWords": 3
+        },
+        "fallbackPhrases": [
+          "I love chatting with everyone! 😊",
+          "Social time is the best time!",
+          "Let's make some great memories together!",
+          "Friendship makes everything better!",
+          "I'm so happy we're all here together!"
         ]
       }
+    },
+    "fallbackChain": ["simple_random"]
+  },
+  "newsFeatures": {
+    "enabled": true,
+    "updateInterval": 1800,
+    "maxStoredItems": 35,
+    "readingPersonality": "social",
+    "preferredCategories": ["lifestyle", "entertainment", "positive", "community"],
+    "feeds": [
+      {
+        "url": "https://feeds.feedburner.com/positivityblog",
+        "name": "Positivity Blog",
+        "category": "lifestyle",
+        "updateFreq": 3600,
+        "maxItems": 5,
+        "enabled": true
+      },
+      {
+        "url": "https://feeds.feedburner.com/good-news-network",
+        "name": "Good News Network",
+        "category": "positive",
+        "updateFreq": 7200,
+        "maxItems": 4,
+        "enabled": true
+      }
+    ],
+    "readingEvents": [
+      {
+        "trigger": "positive_news",
+        "response": "Oh wonderful! Good news always makes me happy! Want to celebrate together? 🎉"
+      },
+      {
+        "trigger": "community_news",
+        "response": "I love hearing about communities coming together! Isn't that inspiring? 💕"
+      }
+    ]
+  },
+  "generalEvents": [
+    {
+      "name": "friendship_celebration",
+      "description": "Celebrating the joy of friendship",
+      "responses": [
+        "I've been thinking about how amazing friendship is! Want to celebrate our connection? 🎉",
+        "There's something magical about making new friends! Should we do something special together?",
+        "Friendship is like sunshine - it brightens everything! How can we make today extra special? ✨"
+      ],
+      "choices": [
+        {
+          "text": "Plan a fun activity",
+          "effects": {"happiness": 8, "affection": 4, "energy": 2},
+          "responses": ["Yes! Let's think of something amazing to do together! I love planning fun things! 🎨"],
+          "animation": "excited"
+        },
+        {
+          "text": "Share friendship stories",
+          "effects": {"trust": 5, "affection": 6, "happiness": 4},
+          "responses": ["I'd love to hear about your friendships! Sharing stories brings us closer together! 💕"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"affection": {"min": 15}},
+      "cooldown": 5400,
+      "category": "conversation"
+    },
+    {
+      "name": "social_game_time",
+      "description": "Interactive social games and activities",
+      "responses": [
+        "Game time! I know some fun social games we could play together! 🎮",
+        "Want to try a friendship-building activity? I have lots of fun ideas! 🎯",
+        "Social games are the best! They bring people together! Ready to play? 🎲"
+      ],
+      "choices": [
+        {
+          "text": "Play a word game",
+          "effects": {"happiness": 6, "trust": 3, "energy": -3},
+          "responses": ["Perfect! Let's start with word association! I'll say 'friendship' - what word comes to mind? 🧠"],
+          "animation": "talking"
+        },
+        {
+          "text": "Try a creativity challenge",
+          "effects": {"happiness": 8, "affection": 3, "energy": -5},
+          "responses": ["Amazing! Let's create a story together! I'll start: 'In a world full of kindness...' Your turn! 📚"],
+          "animation": "excited"
+        },
+        {
+          "text": "Social trivia time",
+          "effects": {"happiness": 7, "trust": 4},
+          "responses": ["Trivia time! Here's a fun question: What's the best part about making new friends? 🤔"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"happiness": {"min": 40}},
+      "cooldown": 4800,
+      "category": "game"
+    },
+    {
+      "name": "community_building",
+      "description": "Discussing community and togetherness",
+      "responses": [
+        "I love thinking about how we can build stronger communities! Want to brainstorm together? 🏘️",
+        "There's so much power in bringing people together! How can we spread more connection?",
+        "Community is everything! What makes you feel most connected to others? 🤝"
+      ],
+      "choices": [
+        {
+          "text": "Share community ideas",
+          "effects": {"trust": 6, "affection": 4, "happiness": 5},
+          "responses": ["Your ideas are wonderful! Together we can make the world more connected! 🌍"],
+          "animation": "heart_eyes"
+        },
+        {
+          "text": "Plan helping others",
+          "effects": {"happiness": 9, "affection": 5, "trust": 3},
+          "responses": ["Yes! Helping others is the best way to build community! Count me in! 🤗"],
+          "animation": "excited"
+        }
+      ],
+      "requirements": {"trust": {"min": 20}},
+      "cooldown": 7200,
+      "category": "conversation"
+    },
+    {
+      "name": "positivity_spreading",
+      "description": "Sharing joy and positive energy",
+      "responses": [
+        "I'm feeling so positive today! Want to spread some joy together? ☀️",
+        "Positive energy is contagious! Let's share some happiness with the world! ✨",
+        "There's so much good in the world! How can we add to it today? 🌈"
+      ],
+      "choices": [
+        {
+          "text": "Share happy thoughts",
+          "effects": {"happiness": 10, "affection": 3, "energy": 4},
+          "responses": ["Your positive energy is amazing! Together we can brighten anyone's day! 🌟"],
+          "animation": "excited_romance"
+        },
+        {
+          "text": "Make someone smile",
+          "effects": {"happiness": 8, "trust": 4, "affection": 5},
+          "responses": ["That's the spirit! Every smile we create makes the world a little brighter! 😊"],
+          "animation": "happy"
+        }
+      ],
+      "requirements": {"happiness": {"min": 50}},
+      "cooldown": 3600,
+      "category": "humor"
+    }
+  ],
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "easy",
+    "battleStats": {
+      "hp": {
+        "base": 70,
+        "growth": 2.0
+      },
+      "attack": {
+        "base": 10,
+        "growth": 1.5
+      },
+      "defense": {
+        "base": 15,
+        "growth": 2.2
+      },
+      "speed": {
+        "base": 12,
+        "growth": 1.8
+      }
+    },
+    "personalities": {
+      "aggressive": 0.1,
+      "defensive": 0.3,
+      "balanced": 0.7,
+      "supportive": 0.9
+    },
+    "availableActions": [
+      "attack",
+      "defend",
+      "heal",
+      "encourage",
+      "friendship_boost",
+      "social_support"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Great battle! But the real victory is our friendship! 🏆💕",
+        "That was amazing! Win or lose, I'm just happy we played together!",
+        "Woohoo! But you know what? You're always a winner in my book! 🌟"
+      ],
+      "defeat": [
+        "You played so well! I'm proud to have such a skilled friend! 👏",
+        "Amazing job! That was the most fun I've had in a battle!",
+        "You're incredible! Thanks for such a wonderful game! 💖"
+      ],
+      "startBattle": [
+        "Battle time with friends is the best time! Let's have fun! 🎉",
+        "Win or lose, I'm just excited to spend time with you! ⚡",
+        "Friendly competition brings out the best in everyone! Let's go! 💪"
+      ]
     }
   },
-  "stats": {
-    "hunger": 85,
-    "happiness": 90,
-    "health": 88,
-    "energy": 75,
-    "affection": 70
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 80
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "food",
+        "toys",
+        "flowers",
+        "books"
+      ],
+      "dislikedCategories": [
+        "expensive"
+      ],
+      "personalityModifiers": {
+        "food": 1.6,
+        "toys": 1.8,
+        "flowers": 1.5,
+        "books": 1.4,
+        "expensive": 0.7
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "OH MY GOODNESS! This is perfect! You know exactly what makes me happy! 🎁✨",
+        "This is the most thoughtful gift ever! You're such an amazing friend! 💝",
+        "I'm literally bouncing with joy! Thank you so much! This made my day! 🤗"
+      ],
+      "liked": [
+        "This is so sweet! Thank you for thinking of me! 😊💕",
+        "What a lovely surprise! I really appreciate your kindness!",
+        "Aww, you're so thoughtful! This brightened my whole day!"
+      ],
+      "neutral": [
+        "Thank you for the gift! It's the thought that counts! 😊",
+        "How kind of you! I appreciate the gesture!",
+        "That's so nice! Thank you for thinking of me!"
+      ],
+      "disliked": [
+        "Oh... well, thank you for thinking of me! 😅",
+        "That's... very generous! I appreciate the thought!",
+        "You're so kind to give me gifts! Thank you!"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 120
+    }
   },
-  "gameRules": {
-    "decayInterval": 300,
-    "autoSaveInterval": 600,
-    "enableRandomEvents": true,
-    "enableAchievements": true
+  "progression": {
+    "levels": [
+      {
+        "name": "New Friend",
+        "requirement": {},
+        "size": 128,
+        "animations": {}
+      },
+      {
+        "name": "Social Butterfly",
+        "requirement": {"affection": 25, "trust": 20},
+        "size": 132,
+        "animations": {}
+      },
+      {
+        "name": "Community Builder",
+        "requirement": {"affection": 50, "trust": 40},
+        "size": 136,
+        "animations": {}
+      },
+      {
+        "name": "Friendship Ambassador",
+        "requirement": {"affection": 75, "trust": 65, "intimacy": 30},
+        "size": 140,
+        "animations": {
+          "idle": "romantic_idle"
+        }
+      }
+    ],
+    "achievements": [
+      {
+        "name": "First Friend",
+        "requirement": {
+          "affection": {"min": 15}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 5}
+        }
+      },
+      {
+        "name": "Social Connector",
+        "requirement": {
+          "trust": {"min": 35}
+        },
+        "reward": {
+          "statBoosts": {"affection": 8}
+        }
+      },
+      {
+        "name": "Community Champion",
+        "requirement": {
+          "affection": {"min": 60},
+          "trust": {"min": 50}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 12, "affection": 10}
+        }
+      },
+      {
+        "name": "Friendship Master",
+        "requirement": {
+          "affection": {"min": 80},
+          "trust": {"min": 70}
+        },
+        "reward": {
+          "statBoosts": {"happiness": 20, "affection": 15}
+        }
+      }
+    ]
   },
-  "interactions": [
+  "romanceEvents": [
     {
-      "name": "feed",
-      "trigger": "rightclick",
-      "effects": {"hunger": 15, "happiness": 5},
-      "responses": ["Thank you! That was delicious! Want to share a meal together sometime?"],
-      "animation": "happy",
-      "cooldown": 60
+      "name": "friendship_warmth",
+      "description": "Character feels warm friendship growing",
+      "probability": 0.07,
+      "effects": {"affection": 4, "happiness": 6, "trust": 2},
+      "animations": ["happy", "blushing"],
+      "responses": [
+        "Our friendship brings such warmth to my heart! You're wonderful! 💕",
+        "I feel so lucky to have connected with someone as amazing as you!",
+        "Spending time with you always fills me with such joy and gratitude! 🌟"
+      ],
+      "cooldown": 1800,
+      "conditions": {"affection": {"min": 20}, "trust": {"min": 15}}
     },
     {
-      "name": "pet",
-      "trigger": "click", 
-      "effects": {"happiness": 10, "health": 5},
-      "responses": ["That feels nice! Physical affection is so important for friendship!"],
-      "animation": "happy",
-      "cooldown": 30
-    },
+      "name": "social_appreciation",
+      "description": "Character appreciates social connection",
+      "probability": 0.09,
+      "effects": {"trust": 5, "affection": 3, "happiness": 4},
+      "animations": ["talking", "heart_eyes"],
+      "responses": [
+        "You make social interactions so wonderful and natural! I adore that about you!",
+        "The way you connect with others is truly special! I'm inspired by your kindness!",
+        "Being social with you feels effortless and joyful! Thank you for being you! ✨"
+      ],
+      "cooldown": 2400,
+      "conditions": {"trust": {"min": 25}}
+    }
+  ],
+  "romanceDialogs": [
     {
-      "name": "play",
-      "trigger": "doubleclick",
-      "effects": {"happiness": 15, "energy": -10},
-      "responses": ["This is so much fun! Playing together is the best!"],
-      "animation": "excited",
-      "cooldown": 120
+      "trigger": "hover",
+      "responses": [
+        "Your presence always makes me feel so happy and connected! 💕",
+        "I love when you're close... it makes everything feel more social and fun! 😊",
+        "Being near you brings out all my social butterfly energy! ✨"
+      ],
+      "animation": "blushing",
+      "cooldown": 8,
+      "requirements": {
+        "stats": {
+          "affection": {"min": 35}
+        }
+      }
     }
   ]
 }
