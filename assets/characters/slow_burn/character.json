@@ -927,7 +927,11 @@
     "enabled": true,
     "updateInterval": 1800,
     "maxStoredItems": 20,
-    "readingPersonality": "casual",
+    "readingPersonality": {
+      "interestLevel": 0.5,
+      "commentFrequency": 0.3,
+      "topicPreferences": ["general", "lifestyle", "relationships", "personal"]
+    },
     "preferredCategories": [
       "general",
       "lifestyle"

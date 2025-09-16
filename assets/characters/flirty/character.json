@@ -971,21 +971,21 @@
     "preferences": {
       "favoriteCategories": [
         "flowers",
-        "cute",
-        "colorful",
+        "jewelry",
+        "clothing",
         "toys",
-        "fun"
+        "art"
       ],
       "dislikedCategories": [
-        "boring",
+        "electronics",
         "practical"
       ],
       "personalityModifiers": {
         "flowers": 2.2,
-        "cute": 2.5,
-        "colorful": 2.0,
+        "jewelry": 2.5,
+        "clothing": 2.0,
         "toys": 1.9,
-        "fun": 2.3
+        "art": 2.3
       }
     },
     "giftResponses": {

@@ -582,7 +582,7 @@
       "favoriteCategories": [
         "food",
         "books",
-        "games",
+        "toys",
         "flowers",
         "practical"
       ],
@@ -592,7 +592,7 @@
       "personalityModifiers": {
         "food": 1.6,
         "books": 1.4,
-        "games": 1.7,
+        "toys": 1.7,
         "flowers": 1.5,
         "practical": 1.3
       }
