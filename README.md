@@ -10,12 +10,12 @@ The DDS project includes an automated pipeline for generating GIF character anim
 2. Configure generation parameters in `config.json`.
 3. Run asset generation:
   ```bash
-  gif-generator batch --config batch_config.json --parallel 4
+  go run cmd/gif-generator/main.go batch --config batch_config.json --parallel 4
   ```
 4. Validate and deploy assets:
   ```bash
-  gif-generator validate --path assets/characters/
-  gif-generator deploy --source generated/ --target assets/characters/
+  go run cmd/gif-generator/main.go validate --path assets/characters/
+  go run cmd/gif-generator/main.go deploy --source generated/ --target assets/characters/
   ```
 
 See [GIF_PLAN.md](GIF_PLAN.md) for technical details and troubleshooting.
@@ -29,7 +29,7 @@ Automated APK integrity testing is provided for CI/CD validation. The script `sc
 1. Build your APK (see Fyne mobile docs).
 2. Run the test:
   ```bash
-  ./scripts/test-android-apk.sh path/to/app.apk com.example.package
+  ./scripts/test-android-apk.sh path/to/app.apk ai.opd.dds
   ```
 3. The script will fail if the APK is missing, unsigned, or has the wrong package name.
 
@@ -295,7 +295,7 @@ For detailed Android setup instructions, see [`docs/ANDROID_BUILD_GUIDE.md`](doc
 
 # Build for specific platforms
 make release-linux    # Linux binary
-make release-windows  # Windows binary (requires Windows or cross-compilation)
+make release-windows  # Windows binary (requires Windows platform)
 make release-macos    # macOS binary (requires macOS)
 ```
 
