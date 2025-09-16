@@ -113,20 +113,22 @@ BUILD SCRIPTS:
 VALIDATION SCRIPTS:
     validate-characters        Validate character JSON files
     validate-animations        Validate character animation files
-    validate-character-binaries Validate built character binaries
+    validate-binaries          Validate built character binaries
     validate-pipeline          Validate complete build pipeline
     validate-workflow          Validate GitHub Actions workflow
-    release-validation         Pre-release validation suite
+
+ASSET GENERATION SCRIPTS:
+    generate-character-assets  Generate assets for all characters
+
+RELEASE SCRIPTS:
+    pre-release-validation     Pre-release validation suite
 
 ANDROID SCRIPTS:
     validate-environment       Validate Android build environment
     test-apk-build             Test Android APK build process
-    test-apk-integrity         Test APK file integrity
 
 CHARACTER MANAGEMENT:
     fix-validation-issues      Fix character validation issues
-    generate-assets-simple     Generate character assets (simple)
-    generate-assets-full       Generate character assets (full pipeline)
 
 CONFIGURATION:
     show-config               Show current configuration
@@ -134,9 +136,9 @@ CONFIGURATION:
     load-config               Load configuration from file
 
 LEGACY SCRIPTS (maintained for compatibility):
-    $(find "$SCRIPT_DIR" -maxdepth 1 -name "*.sh" -not -name "dds-scripts.sh" | sed 's|.*/||' | sort)
-
 EOF
+    find "$SCRIPT_DIR" -maxdepth 1 -name "*.sh" -not -name "dds-scripts.sh" | sed 's|.*/||' | sort | sed 's/^/    /'
+    echo ""
 }
 
 # ============================================================================
