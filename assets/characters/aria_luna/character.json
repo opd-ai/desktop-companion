@@ -607,7 +607,7 @@
         }
       },
       "cooldown": 5400,
-      "category": "mystical"
+      "category": "conversation"
     },
     {
       "name": "celestial_guidance",
@@ -651,7 +651,7 @@
         }
       },
       "cooldown": 7200,
-      "category": "support"
+      "category": "conversation"
     }
   ],
   "progression": {

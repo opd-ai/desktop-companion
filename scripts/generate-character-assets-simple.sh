@@ -114,7 +114,6 @@ for character_file in "${character_files[@]}"; do
     fi
     
     if [[ "$DRY_RUN" == "true" ]]; then
-        cmd_args+=("--dry-run")
         log "  DRY RUN: $GIF_GENERATOR_BINARY ${cmd_args[*]}"
         ((success_count++))
     else

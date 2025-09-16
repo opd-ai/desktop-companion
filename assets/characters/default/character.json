@@ -193,7 +193,7 @@
     },
     "give_gift": {
       "triggers": [
-        "alt+click"
+        "alt+shift+click"
       ],
       "effects": {
         "affection": 6,
