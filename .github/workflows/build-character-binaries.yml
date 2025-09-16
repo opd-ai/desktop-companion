@@ -26,8 +26,11 @@ jobs:
       - name: Generate character matrix
         id: characters
         run: |
+          # Make script executable first
+          chmod +x scripts/build-characters.sh
+          
           # Use existing build script to list characters
-          CHARS=$(./scripts/build-characters.sh list | grep "•" | sed 's/.*• //' | jq -R -s -c 'split("\n")[:-1]')
+          CHARS=$(./scripts/build-characters.sh list | grep "✓" | sed 's/.*✓ //' | jq -R -s -c 'split("\n")[:-1]')
           echo "matrix=$CHARS" >> $GITHUB_OUTPUT
           echo "Generated matrix: $CHARS"
 

@@ -31,7 +31,7 @@ jobs:
           chmod +x scripts/build-characters.sh
           
           # Generate character list and convert to JSON array
-          CHARS=$(./scripts/build-characters.sh list | grep "•" | sed 's/.*• //' | jq -R -s -c 'split("\n")[:-1]')
+          CHARS=$(./scripts/build-characters.sh list | grep "✓" | sed 's/.*✓ //' | jq -R -s -c 'split("\n")[:-1]')
           echo "matrix=$CHARS" >> $GITHUB_OUTPUT
           echo "Generated matrix: $CHARS"
 
