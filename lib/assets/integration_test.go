@@ -31,6 +31,11 @@ func TestAssetGenerationWorkflow(t *testing.T) {
 				Cooldown:  5,
 			},
 		},
+		Behavior: character.Behavior{
+			IdleTimeout:     30,
+			MovementEnabled: true,
+			DefaultSize:     128,
+		},
 		AssetGeneration: character.DefaultAssetGenerationConfig(),
 	}
 
