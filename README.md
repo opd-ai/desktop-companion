@@ -207,7 +207,11 @@ A lightweight, platform-native virtual desktop pet application built with Go. Fe
   - **Fair Combat**: Balanced turn-based mechanics with timeout protection
   - **Multiplayer Ready**: Seamless integration with network multiplayer sessions
   - **AI Opponents**: Intelligent AI-driven battle decisions with personality traits
-  - **Battle Actions**: Attack, defend, and special abilities with strategic depth
+  - **Battle Actions**: Attack, defend, heal, and special abilities with strategic depth
+  - **Special Abilities**: 8 unique abilities including Critical Strike, Lightning Bolt, Berserker Rage, Life Steal, Perfect Guard, Sanctuary, Cleanse, and Time Freeze
+  - **Combo System**: Strategic combo attacks with 8 combo types for advanced tactical gameplay
+  - **Tournament System**: Competitive multiplayer with ELO rankings and multiple tournament formats (Single/Double Elimination, Round Robin, Swiss)
+  - **AI Personalities**: Enhanced AI decision-making with personality-driven special ability and combo usage
   - **Battle UI**: Complete interface for battle management and visualization
   - **Cryptographic Security**: Ed25519-signed battle messages for cheat prevention
   - **Performance Optimized**: Sub-millisecond action processing for real-time play
@@ -482,7 +486,8 @@ go run cmd/companion/main.go -network -network-ui -character assets/characters/d
 # Battle System Examples (Complete!)
 go run cmd/companion/main.go -network -character assets/characters/multiplayer/social_bot.json        # Enable battle-capable character
 # Battle invitations available through context menu in multiplayer mode
-# Turn-based combat with AI opponents and strategic decision making
+# Turn-based combat with special abilities, combo attacks, and tournament rankings
+# AI opponents use personality-driven strategies for challenging gameplay
 ```
 
 **General Dialog Events**:
@@ -519,7 +524,8 @@ go run cmd/companion/main.go -network -character assets/characters/multiplayer/s
 - **Peer chat**: Send messages to other players through the network overlay
 - **Character visibility**: See all characters connected to the network session
 - **Real-time sync**: Character actions and status updates shared across peers
-- **Battle system**: Challenge other players to turn-based combat matches
+- **Battle system**: Challenge other players to turn-based combat matches with special abilities and combo attacks
+- **Tournament system**: Participate in competitive tournaments with ELO rankings and multiple formats
 - **Gift exchange**: Share gifts between characters in multiplayer sessions
 
 **Character Care**:
