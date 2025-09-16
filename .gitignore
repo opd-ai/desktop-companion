@@ -33,10 +33,14 @@ go.work.sum
 /build
 /companion
 /main
-/*_demo
+/*_demo*
+/*demo_*
 /demo
-/test_*
+/*test_*
+/*_test*
 /tmp
+/*log
+/*err
 scripts/embed-character
 apk-validator
 artifact-manager
