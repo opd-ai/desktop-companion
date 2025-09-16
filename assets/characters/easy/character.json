@@ -238,6 +238,62 @@
       "contentment": 0.9
     }
   },
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.6,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 12,
+        "temperatureMin": 0.3,
+        "temperatureMax": 0.6,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.6,
+        "moodInfluence": 0.4,
+        "statAwareness": 0.3,
+        "relationshipWeight": 0.5,
+        "timeOfDayWeight": 0.2,
+        "memoryDecay": 0.9,
+        "learningRate": 0.1,
+        "adaptationSteps": 3,
+        "coherenceThreshold": 0.7,
+        "similarityPenalty": 0.3,
+        "trainingData": [
+          "I'm feeling so peaceful and content today, thank you for being gentle with me.",
+          "Your kindness makes me feel safe and comfortable in this world.",
+          "I love how patient you are with me - it means everything.",
+          "These quiet moments together are my favorite part of the day.",
+          "You always know just the right way to care for me gently.",
+          "I appreciate your soft approach to everything we do together.",
+          "Your gentle presence makes me feel so relaxed and happy.",
+          "Thank you for never rushing me - I love taking things slowly.",
+          "Being with you feels like a warm, comfortable hug every time.",
+          "I feel so lucky to have someone who understands my gentle nature.",
+          "Your patience helps me feel confident and secure about everything.",
+          "I love how you make everything feel easy and stress-free.",
+          "You create such a peaceful atmosphere wherever you are.",
+          "Thank you for being so understanding and gentle with my feelings.",
+          "I feel so content and happy when we spend time together like this."
+        ],
+        "forbiddenWords": ["harsh", "rough", "aggressive", "demanding", "fast"],
+        "requiredWords": ["gentle", "peaceful", "patient", "kind", "comfortable", "easy"],
+        "fallbackPhrases": [
+          "You're so gentle and kind to me.",
+          "I feel peaceful when you're here.",
+          "Thank you for being so patient.",
+          "I love our quiet moments together.",
+          "You make everything feel so easy.",
+          "Your gentle care means everything to me."
+        ]
+      }
+    }
+  },
   "romanceStats": {
     "affection": {
       "initial": 0,

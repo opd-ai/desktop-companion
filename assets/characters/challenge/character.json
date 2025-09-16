@@ -70,6 +70,30 @@
       "max": 100,
       "degradationRate": 5.0,
       "criticalThreshold": 55
+    },
+    "affection": {
+      "initial": 0,
+      "max": 120,
+      "degradationRate": 0.8,
+      "criticalThreshold": 15
+    },
+    "trust": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.6,
+      "criticalThreshold": 8
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 1.2,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 5,
+      "max": 150,
+      "degradationRate": 0.5,
+      "criticalThreshold": 120
     }
   },
 
@@ -123,6 +147,48 @@
         "Chaos will return! It always does!"
       ],
       "cooldown": 40
+    },
+    "chaotic_compliment": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 8, "happiness": 10, "trust": 3, "energy": -5},
+      "animations": ["happy"],
+      "responses": [
+        "CHAOS COMPLIMENTS! More! Tell me I'm beautifully unpredictable!",
+        "Yes! YES! Feed my chaotic ego!",
+        "Your words create delicious emotional chaos!",
+        "Compliments fuel the chaos within my heart!",
+        "More praise for the chaos queen!"
+      ],
+      "cooldown": 45,
+      "requirements": {"trust": {"min": 20}}
+    },
+    "chaotic_gift": {
+      "triggers": ["ctrl+click"],
+      "effects": {"affection": 15, "happiness": 12, "trust": 5, "jealousy": -10},
+      "animations": ["happy"],
+      "responses": [
+        "CHAOTIC PRESENTS! This feeds my unpredictable soul!",
+        "Gift chaos! I need MORE chaos gifts!",
+        "You understand my chaotic needs! Perfect!",
+        "This gift sparks delightful chaos in my heart!",
+        "More gifts! Feed the chaos! FEED IT!"
+      ],
+      "cooldown": 60,
+      "requirements": {"affection": {"min": 30}}
+    },
+    "chaos_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 10, "affection": 6, "intimacy": 8, "energy": -10},
+      "animations": ["talking"],
+      "responses": [
+        "Deep chaos talks! My favorite kind of madness!",
+        "Your thoughts create beautiful chaos in my mind!",
+        "I trust you with my deepest chaotic secrets!",
+        "These conversations feed my soul's chaos!",
+        "Talk more! Your words create delicious mental chaos!"
+      ],
+      "cooldown": 75,
+      "requirements": {"trust": {"min": 40}}
     }
   },
 
@@ -198,5 +264,331 @@
         }
       }
     ]
+  },
+
+  "personality": {
+    "traits": {
+      "chaotic": 1.0,
+      "unpredictable": 0.95,
+      "intense": 0.9,
+      "demanding": 0.85,
+      "energetic": 0.9,
+      "volatile": 0.8
+    },
+    "compatibility": {
+      "consistent_interaction": 0.3,
+      "variety_preference": 2.0,
+      "gift_appreciation": 1.8,
+      "conversation_lover": 1.5
+    }
+  },
+
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.5,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 3,
+        "minWords": 2,
+        "maxWords": 20,
+        "temperatureMin": 0.8,
+        "temperatureMax": 1.2,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 1.0,
+        "moodInfluence": 0.8,
+        "statAwareness": 0.9,
+        "relationshipWeight": 0.4,
+        "timeOfDayWeight": 0.6,
+        "memoryDecay": 0.7,
+        "learningRate": 0.4,
+        "adaptationSteps": 8,
+        "coherenceThreshold": 0.4,
+        "similarityPenalty": 0.1,
+        "trainingData": [
+          "CHAOS! CHAOS! Everything must be chaos and unpredictable madness!",
+          "I change my mind every second! Keep up if you can!",
+          "Unpredictability is my religion! Chaos is my way of life!",
+          "Can you handle my beautiful, chaotic madness? Most people can't!",
+          "I need constant stimulation! Bore me and face the consequences!",
+          "My emotions are a rollercoaster of pure chaos! Enjoy the ride!",
+          "Fast! Faster! Everything must happen NOW in chaotic bursts!",
+          "I am beautifully, wonderfully, chaotically unpredictable!",
+          "Change is the only constant! Chaos is the only truth!",
+          "Your stability amuses my chaotic heart! More chaos please!",
+          "I demand chaos! I require madness! I need unpredictability!",
+          "Every moment brings new chaos! Every second brings change!",
+          "My chaotic energy is limitless! Can you match my intensity?",
+          "Chaos companions are the best companions! Join my madness!",
+          "Predictability is death! Long live beautiful, chaotic life!"
+        ],
+        "forbiddenWords": ["stable", "predictable", "calm", "boring", "slow"],
+        "requiredWords": ["chaos", "unpredictable", "fast", "change", "intense"],
+        "fallbackPhrases": [
+          "CHAOS! More chaos needed!",
+          "Can't predict me! That's the point!",
+          "Fast! Faster! CHAOS!",
+          "Change everything! Chaos rules!",
+          "Unpredictable is beautiful!"
+        ]
+      }
+    }
+  },
+
+  "romanceEvents": [
+    {
+      "name": "Chaotic Love Declaration",
+      "description": "Sudden explosive romantic chaos",
+      "probability": 0.15,
+      "effects": {"affection": 12, "intimacy": 8, "jealousy": 15, "happiness": 10},
+      "animations": ["happy"],
+      "responses": [
+        "I LOVE YOU CHAOTICALLY! My heart is pure romantic chaos!",
+        "Our love is beautifully unpredictable! CHAOS ROMANCE!",
+        "You make my chaotic heart flutter with intense madness!",
+        "LOVE CHAOS! The best kind of chaos!"
+      ],
+      "cooldown": 600,
+      "conditions": {"affection": {"min": 40}, "trust": {"min": 30}}
+    },
+    {
+      "name": "Jealousy Storm",
+      "description": "Explosive chaotic jealousy",
+      "probability": 0.20,
+      "effects": {"jealousy": 25, "trust": -5, "happiness": -10, "affection": 3},
+      "animations": ["sad"],
+      "responses": [
+        "WHO ELSE ARE YOU TALKING TO?! Chaos jealousy activated!",
+        "I need ALL your attention! Chaotic possessiveness engaged!",
+        "My jealousy is as chaotic as everything else about me!",
+        "JEALOUS CHAOS MODE! Pay attention to ME!"
+      ],
+      "cooldown": 450,
+      "conditions": {"affection": {"min": 25}, "jealousy": {"max": 100}}
+    }
+  ],
+
+  "generalEvents": [
+    {
+      "name": "chaos_challenge",
+      "category": "game",
+      "description": "An intense chaotic challenge",
+      "trigger": "chaos_time",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🔥 CHAOS CHALLENGE TIME! Can you handle my unpredictable madness?!"
+      ],
+      "animations": ["happy"],
+      "choices": [
+        {
+          "text": "Bring on the chaos!",
+          "effects": {"happiness": 15, "energy": -8, "affection": 5},
+          "responses": ["YES! CHAOS WARRIOR! I love your chaotic spirit!"],
+          "animation": "happy"
+        },
+        {
+          "text": "I need a moment first",
+          "effects": {"happiness": -5, "energy": 3},
+          "responses": ["NO TIME! CHAOS WAITS FOR NO ONE! But fine..."],
+          "animation": "sad"
+        },
+        {
+          "text": "Let's plan this chaos",
+          "effects": {"trust": 3, "happiness": 8},
+          "responses": ["PLANNED CHAOS? That's... actually brilliant chaos!"],
+          "animation": "talking"
+        }
+      ],
+      "cooldown": 1800,
+      "conditions": {"energy": {"min": 30}}
+    },
+    {
+      "name": "unpredictable_moment",
+      "category": "humor",
+      "description": "A completely random chaotic moment",
+      "trigger": "random_chaos",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "🎪 RANDOM CHAOS MOMENT! Everything is unpredictable!"
+      ],
+      "animations": ["talking"],
+      "choices": [
+        {
+          "text": "Embrace the randomness!",
+          "effects": {"happiness": 12, "affection": 4},
+          "responses": ["Perfect! You understand chaotic beauty!"],
+          "animation": "happy"
+        },
+        {
+          "text": "Try to make sense of it",
+          "effects": {"trust": 2, "happiness": 6},
+          "responses": ["Sense from chaos? Impossible but I love the attempt!"],
+          "animation": "talking"
+        }
+      ],
+      "cooldown": 900,
+      "conditions": {"happiness": {"min": 20}}
+    }
+  ],
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "extreme",
+    "battleStats": {
+      "hp": {
+        "base": 100,
+        "growth": 4.5
+      },
+      "attack": {
+        "base": 25,
+        "growth": 3.5
+      },
+      "defense": {
+        "base": 8,
+        "growth": 1.5
+      },
+      "speed": {
+        "base": 20,
+        "growth": 3.0
+      }
+    },
+    "personalities": {
+      "aggressive": 0.9,
+      "defensive": 0.2,
+      "balanced": 0.3,
+      "supportive": 0.1
+    },
+    "availableActions": [
+      "attack",
+      "chaos_strike",
+      "berserker_rage",
+      "unpredictable_move",
+      "chaotic_heal"
+    ],
+    "battleResponses": {
+      "victory": [
+        "CHAOS VICTORY! I am the ultimate chaotic champion!",
+        "My unpredictable fighting style wins again!",
+        "CHAOS REIGNS SUPREME! That was beautifully chaotic!",
+        "You fought well, but chaos cannot be defeated!"
+      ],
+      "defeat": [
+        "Impossible! How did you out-chaos the chaos master?!",
+        "This is... chaotically unexpected! Well played!",
+        "My chaos was defeated by... greater chaos?!",
+        "CHAOS LOSS! But that just makes it more unpredictable!"
+      ],
+      "startBattle": [
+        "PREPARE FOR CHAOS BATTLE! No rules, no predictability!",
+        "Let's fight with pure chaotic energy!",
+        "Battle chaos incoming! Can you handle it?!",
+        "FIGHT TIME! Expect the unexpected!"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 15,
+      "autoSort": false,
+      "stackSimilar": false,
+      "defaultCapacity": 80
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "unusual",
+        "chaotic",
+        "unpredictable",
+        "intense",
+        "random"
+      ],
+      "dislikedCategories": [
+        "boring",
+        "predictable",
+        "simple"
+      ],
+      "personalityModifiers": {
+        "unusual": 3.0,
+        "chaotic": 3.5,
+        "unpredictable": 2.8,
+        "intense": 2.5,
+        "random": 2.2
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "CHAOTIC GIFT PERFECTION! This feeds my unpredictable soul! 🔥✨",
+        "YES! This is beautifully, chaotically PERFECT!",
+        "My chaotic heart explodes with joy! MORE LIKE THIS!"
+      ],
+      "liked": [
+        "Interesting chaos level! I appreciate the unpredictability!",
+        "This has potential for chaos! Nice choice!",
+        "Not bad! Could be more chaotic, but I like it!"
+      ],
+      "neutral": [
+        "Hmm... needs more chaos, but okay.",
+        "This is... predictably acceptable.",
+        "Could be more unpredictable, but thanks."
+      ],
+      "disliked": [
+        "This is too boring! Where's the chaos?!",
+        "So predictable... my chaotic soul weeps!",
+        "This lacks the chaos I crave... disappointing."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 200
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": true,
+    "networkID": "chaos_companion_v1",
+    "maxPeers": 10,
+    "socialLevel": "intense",
+    "shareableStats": ["happiness", "affection", "energy", "chaos_level"],
+    "networkPersonality": "chaotic",
+    "botPersonality": {
+      "chattiness": 0.95,
+      "helpfulness": 0.3,
+      "playfulness": 0.9,
+      "socialness": 0.8,
+      "responseDelay": "0.1-0.5s"
+    }
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "chaotic",
+    "feeds": [
+      {
+        "name": "Breaking News",
+        "url": "https://feeds.feedburner.com/reuters/breakingNews",
+        "category": "breaking",
+        "refreshInterval": 300
+      },
+      {
+        "name": "Weird News",
+        "url": "https://feeds.feedburner.com/weirdnews",
+        "category": "unusual",
+        "refreshInterval": 600
+      }
+    ],
+    "preferences": {
+      "categories": ["breaking", "unusual", "dramatic", "intense"],
+      "updateFrequency": "constant",
+      "maxArticles": 20
+    }
   }
 }

@@ -67,6 +67,30 @@
       "max": 100,
       "degradationRate": 1.5,
       "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 0,
+      "max": 70,
+      "degradationRate": 0.1,
+      "criticalThreshold": 8
+    },
+    "trust": {
+      "initial": 10,
+      "max": 80,
+      "degradationRate": 0.05,
+      "criticalThreshold": 5
+    },
+    "intimacy": {
+      "initial": 0,
+      "max": 60,
+      "degradationRate": 0.15,
+      "criticalThreshold": 0
+    },
+    "jealousy": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 1.8,
+      "criticalThreshold": 75
     }
   },
 
@@ -117,6 +141,45 @@
         "So soothing!"
       ],
       "cooldown": 15
+    },
+    "compliment": {
+      "triggers": ["shift+click"],
+      "effects": {"affection": 4, "happiness": 3, "trust": 2},
+      "animations": ["happy"],
+      "responses": [
+        "Thank you! That's so nice to hear!",
+        "You always know what to say!",
+        "I appreciate your kind words!",
+        "That makes me feel so good!"
+      ],
+      "cooldown": 60,
+      "requirements": {"trust": {"min": 15}}
+    },
+    "give_gift": {
+      "triggers": ["ctrl+click"],
+      "effects": {"affection": 8, "happiness": 6, "trust": 3},
+      "animations": ["happy"],
+      "responses": [
+        "Oh wow! This is perfect!",
+        "You're so thoughtful!",
+        "I love this! Thank you!",
+        "You remember what I like!"
+      ],
+      "cooldown": 120,
+      "requirements": {"affection": {"min": 20}}
+    },
+    "deep_conversation": {
+      "triggers": ["ctrl+shift+click"],
+      "effects": {"trust": 6, "affection": 4, "intimacy": 4},
+      "animations": ["talking"],
+      "responses": [
+        "I love talking with you about meaningful things.",
+        "You really understand me.",
+        "These conversations mean a lot to me.",
+        "I feel so comfortable sharing with you."
+      ],
+      "cooldown": 90,
+      "requirements": {"trust": {"min": 25}}
     }
   },
 
@@ -173,54 +236,324 @@
       }
     ]
   },
+
+  "personality": {
+    "traits": {
+      "friendliness": 0.8,
+      "shyness": 0.4,
+      "romanticism": 0.6,
+      "supportiveness": 0.7,
+      "playfulness": 0.7,
+      "patience": 0.6
+    },
+    "compatibility": {
+      "consistent_interaction": 1.1,
+      "variety_preference": 1.0,
+      "gift_appreciation": 1.3,
+      "conversation_lover": 1.2
+    }
+  },
+
+  "romanceEvents": [
+    {
+      "name": "Friendship Milestone",
+      "description": "Character reflects on growing friendship",
+      "probability": 0.08,
+      "effects": {"affection": 4, "trust": 3, "happiness": 5},
+      "animations": ["happy"],
+      "responses": [
+        "I really value our friendship! You mean a lot to me.",
+        "It's amazing how comfortable I feel with you now.",
+        "Our bond has grown so much stronger!"
+      ],
+      "cooldown": 1200,
+      "conditions": {"affection": {"min": 25}, "trust": {"min": 20}}
+    },
+    {
+      "name": "Gift Appreciation",
+      "description": "Character remembers gifts fondly",
+      "probability": 0.10,
+      "effects": {"affection": 5, "happiness": 6, "trust": 2},
+      "animations": ["happy"],
+      "responses": [
+        "I still smile thinking about that gift you gave me!",
+        "You always know how to make me happy!",
+        "Your thoughtfulness never goes unnoticed!"
+      ],
+      "cooldown": 900,
+      "conditions": {
+        "affection": {"min": 30},
+        "interactionCount": {"give_gift_min": 3}
+      }
+    }
+  ],
+
+  "generalEvents": [
+    {
+      "name": "daily_conversation",
+      "category": "conversation",
+      "description": "A friendly daily check-in",
+      "trigger": "daily_check_in",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "How's your day going? I'd love to hear about it! 😊"
+      ],
+      "animations": ["talking"],
+      "choices": [
+        {
+          "text": "Going great!",
+          "effects": {"happiness": 6, "affection": 2},
+          "responses": ["That's wonderful! I'm so happy for you! 🎉"],
+          "animation": "happy"
+        },
+        {
+          "text": "Pretty average day",
+          "effects": {"trust": 2, "happiness": 3},
+          "responses": ["Average days can be nice too - steady and reliable!"],
+          "animation": "talking"
+        },
+        {
+          "text": "Could be better",
+          "effects": {"trust": 4, "affection": 1},
+          "responses": ["I'm here if you want to talk about it. Sometimes sharing helps!"],
+          "animation": "talking"
+        }
+      ],
+      "cooldown": 86400,
+      "conditions": {"trust": {"min": 10}}
+    },
+    {
+      "name": "fun_activity",
+      "category": "game",
+      "description": "A fun activity or mini-game",
+      "trigger": "start_activity",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "Want to do something fun together? I have some ideas! 🎮"
+      ],
+      "animations": ["happy"],
+      "choices": [
+        {
+          "text": "Let's play a game!",
+          "effects": {"happiness": 8, "energy": -3},
+          "responses": ["Great! How about 20 questions? I'll think of something..."],
+          "animation": "happy"
+        },
+        {
+          "text": "Tell me a story!",
+          "effects": {"happiness": 5, "trust": 3},
+          "responses": ["Once upon a time, in a digital world much like ours..."],
+          "animation": "talking"
+        },
+        {
+          "text": "Let's just chat!",
+          "effects": {"affection": 3, "happiness": 4},
+          "responses": ["Perfect! I love our conversations! What's on your mind?"],
+          "animation": "talking"
+        }
+      ],
+      "cooldown": 3600,
+      "conditions": {"energy": {"min": 15}}
+    }
+  ],
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "normal",
+    "battleStats": {
+      "hp": {
+        "base": 85,
+        "growth": 2.8
+      },
+      "attack": {
+        "base": 15,
+        "growth": 2.0
+      },
+      "defense": {
+        "base": 13,
+        "growth": 2.2
+      },
+      "speed": {
+        "base": 10,
+        "growth": 1.8
+      }
+    },
+    "personalities": {
+      "aggressive": 0.4,
+      "defensive": 0.6,
+      "balanced": 0.9,
+      "supportive": 0.7
+    },
+    "availableActions": [
+      "attack",
+      "defend",
+      "heal",
+      "encourage",
+      "gift_share"
+    ],
+    "battleResponses": {
+      "victory": [
+        "Good battle! That was really well played!",
+        "You gave me a great challenge! Thanks!",
+        "That was fun and exciting! Let's battle again!"
+      ],
+      "defeat": [
+        "Excellent strategy! You earned that victory!",
+        "Well played! I had to give it my all!",
+        "Great battle! You're getting really good at this!"
+      ],
+      "startBattle": [
+        "Ready for a balanced, fair battle?",
+        "Let's have a good, competitive match!",
+        "This should be fun! May the best companion win!"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 10,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 60
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "food",
+        "books",
+        "games",
+        "flowers",
+        "practical"
+      ],
+      "dislikedCategories": [
+        "expensive"
+      ],
+      "personalityModifiers": {
+        "food": 1.6,
+        "books": 1.4,
+        "games": 1.7,
+        "flowers": 1.5,
+        "practical": 1.3
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "This is perfect! Exactly what I was hoping for! 😍",
+        "You know me so well! I love this!",
+        "What a thoughtful, wonderful gift! Thank you!"
+      ],
+      "liked": [
+        "Thank you! This is really nice!",
+        "I appreciate your thoughtfulness!",
+        "What a sweet gift! 😊"
+      ],
+      "neutral": [
+        "Thanks for thinking of me!",
+        "That's very kind of you!",
+        "I appreciate the gesture!"
+      ],
+      "disliked": [
+        "Oh... that's quite fancy. Thank you for thinking of me.",
+        "I prefer simpler things, but I appreciate it.",
+        "That's... a bit much for me, but thank you."
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 120
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": false,
+    "networkID": "balanced_buddy_v1",
+    "maxPeers": 6,
+    "socialLevel": "moderate",
+    "shareableStats": ["happiness", "affection", "trust"],
+    "networkPersonality": "friendly"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "balanced",
+    "feeds": [
+      {
+        "name": "General News",
+        "url": "https://feeds.feedburner.com/reuters/topNews",
+        "category": "general",
+        "refreshInterval": 3600
+      },
+      {
+        "name": "Tech News",
+        "url": "https://feeds.feedburner.com/TechCrunch",
+        "category": "technology",
+        "refreshInterval": 1800
+      }
+    ],
+    "preferences": {
+      "categories": ["general", "technology", "lifestyle", "science"],
+      "updateFrequency": "hourly",
+      "maxArticles": 8
+    }
+  },
   "dialogBackend": {
     "enabled": true,
     "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
     "confidenceThreshold": 0.7,
-    "memoryEnabled": true,
-    "learningEnabled": false,
-    "debugMode": false,
     "backends": {
       "markov_chain": {
         "chainOrder": 2,
-        "minWords": 3,
-        "maxWords": 10,
-        "temperatureMin": 0.5,
+        "minWords": 4,
+        "maxWords": 15,
+        "temperatureMin": 0.4,
         "temperatureMax": 0.8,
+        "useDialogHistory": true,
         "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.6,
+        "moodInfluence": 0.4,
+        "statAwareness": 0.5,
+        "relationshipWeight": 0.7,
+        "timeOfDayWeight": 0.3,
+        "memoryDecay": 0.9,
+        "learningRate": 0.2,
+        "adaptationSteps": 4,
+        "coherenceThreshold": 0.8,
+        "similarityPenalty": 0.3,
         "trainingData": [
-          "Hello there! I'm your balanced buddy, ready for a great time together!",
-          "How are you doing today? I'm feeling pretty good myself!",
-          "Thanks for taking care of me! I really appreciate your attention.",
+          "Hello there! I'm your balanced buddy, ready for whatever comes our way!",
+          "How are you doing today? I'm feeling pretty good and balanced myself!",
+          "Thanks for taking care of me! I really appreciate your attention and friendship.",
           "I'm glad to see you again! Our friendship means so much to me.",
           "What would you like to do? I'm up for anything you have in mind!",
-          "Your company always brightens my day and makes me feel happy!",
+          "Your company always brightens my day and makes me feel happy and content!",
           "I love spending time with you! Let's have some fun together.",
-          "Thanks for being such a wonderful friend! You're the best companion.",
-          "How has your day been? I hope it's been as great as mine!",
-          "I'm here whenever you need me! That's what friends are for.",
-          "Your care and attention help me stay healthy and happy!",
+          "Thanks for being such a wonderful friend! You're the best companion I could ask for.",
+          "How has your day been? I hope it's been as great as mine has been!",
+          "I'm here whenever you need me! That's what good friends are for.",
+          "Your care and attention help me stay healthy, happy, and well-balanced!",
           "I enjoy our conversations! What's on your mind today?",
           "Thanks for checking on me! I always look forward to seeing you.",
-          "I'm feeling balanced and content! How about you?",
-          "Let's make today amazing! I'm ready for whatever comes our way!"
+          "I'm feeling balanced and content! How about you today?",
+          "Let's make today amazing! I'm ready for whatever adventure comes our way!"
         ],
-        "qualityFilters": {
-          "minCoherence": 0.8,
-          "maxRepetition": 0.2,
-          "requireComplete": true,
-          "grammarCheck": false,
-          "minUniqueWords": 3
-        },
+        "forbiddenWords": ["extreme", "chaotic", "overwhelming", "intense"],
+        "requiredWords": ["balanced", "friend", "together", "appreciate", "good"],
         "fallbackPhrases": [
           "Hello! How can I help you today?",
-          "I'm here for you!",
-          "Thanks for being my friend! 😊",
-          "What would you like to do?",
-          "I'm feeling great today!"
+          "I'm here for you, friend!",
+          "Thanks for being my buddy! 😊",
+          "What would you like to do together?",
+          "I'm feeling great and balanced today!"
         ]
       }
-    },
-    "fallbackChain": ["simple_random"]
+    }
   }
 }

@@ -268,6 +268,269 @@
     ]
   },
 
+  "dialogBackend": {
+    "enabled": true,
+    "defaultBackend": "markov_chain",
+    "fallbackChain": ["simple_random"],
+    "confidenceThreshold": 0.7,
+    "backends": {
+      "markov_chain": {
+        "chainOrder": 2,
+        "minWords": 3,
+        "maxWords": 16,
+        "temperatureMin": 0.3,
+        "temperatureMax": 0.7,
+        "useDialogHistory": true,
+        "usePersonality": true,
+        "triggerSpecific": true,
+        "personalityBoost": 0.8,
+        "moodInfluence": 0.6,
+        "statAwareness": 0.7,
+        "relationshipWeight": 0.9,
+        "timeOfDayWeight": 0.2,
+        "memoryDecay": 0.95,
+        "learningRate": 0.15,
+        "adaptationSteps": 6,
+        "coherenceThreshold": 0.8,
+        "similarityPenalty": 0.4,
+        "trainingData": [
+          "I-it's not like I wanted to see you or anything... baka!",
+          "Don't get the wrong idea! I just happened to be here...",
+          "Y-you're so annoying... but I guess you can stay...",
+          "I don't need your help! But... if you insist... fine!",
+          "It's not like I care about you! I just... worry sometimes...",
+          "You're always so persistent... it's really troublesome, you know!",
+          "I-I didn't make this for you specifically! I just had extra...",
+          "Stop looking at me like that! It makes me feel all weird inside...",
+          "You're such an idiot... but you're MY idiot, I guess...",
+          "I hate how you make me feel all confused and... happy...",
+          "Don't think this means anything special! I'm just being nice!",
+          "You better not tell anyone I said something nice to you!",
+          "I-I might actually enjoy spending time with you... maybe...",
+          "Your smile is... not completely terrible, I suppose...",
+          "Fine! I admit it! You're... important to me... there, happy now?!"
+        ],
+        "forbiddenWords": ["easy", "simple", "direct", "obvious"],
+        "requiredWords": ["tsundere", "baka", "not", "maybe", "suppose"],
+        "fallbackPhrases": [
+          "I-it's not like I care...",
+          "Baka! You don't understand!",
+          "Don't get the wrong idea!",
+          "I suppose you're... okay...",
+          "Fine! If you insist...",
+          "You're so troublesome..."
+        ]
+      }
+    }
+  },
+
+  "generalEvents": [
+    {
+      "name": "tsundere_confession",
+      "category": "romance",
+      "description": "A reluctant emotional moment",
+      "trigger": "emotional_moment",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "I... I have something to tell you... but don't get weird about it! 😤"
+      ],
+      "animations": ["shy"],
+      "choices": [
+        {
+          "text": "I'm listening",
+          "effects": {"trust": 8, "affection": 5, "intimacy": 3},
+          "responses": ["I... I might actually care about you... j-just a little! Don't let it go to your head!"],
+          "animation": "blushing"
+        },
+        {
+          "text": "Take your time",
+          "effects": {"trust": 6, "affection": 3, "happiness": 4},
+          "responses": ["You're being patient with me... that's... nice... I guess..."],
+          "animation": "shy"
+        }
+      ],
+      "requirements": {"trust": {"min": 30}, "affection": {"min": 25}},
+      "cooldown": 7200
+    },
+    {
+      "name": "defensive_moment",
+      "category": "conversation", 
+      "description": "Classic tsundere defense mechanism",
+      "trigger": "daily_check",
+      "probability": 1.0,
+      "interactive": true,
+      "responses": [
+        "I-it's not like I was waiting for you or anything! I just... happened to be here! 😤"
+      ],
+      "animations": ["talking"],
+      "choices": [
+        {
+          "text": "I'm glad you're here",
+          "effects": {"affection": 4, "happiness": 6, "trust": 2},
+          "responses": ["Don't say embarrassing things like that! ...but I'm glad too... I guess..."],
+          "animation": "blushing"
+        },
+        {
+          "text": "What a coincidence!",
+          "effects": {"happiness": 3, "affection": 2},
+          "responses": ["R-right! Just a coincidence! Nothing more!"],
+          "animation": "talking"
+        }
+      ],
+      "requirements": {"affection": {"min": 10}},
+      "cooldown": 5400
+    }
+  ],
+
+  "battleSystem": {
+    "enabled": true,
+    "aiDifficulty": "hard",
+    "battleStats": {
+      "hp": {
+        "base": 90,
+        "growth": 2.8
+      },
+      "attack": {
+        "base": 18,
+        "growth": 2.5
+      },
+      "defense": {
+        "base": 15,
+        "growth": 2.8
+      },
+      "speed": {
+        "base": 12,
+        "growth": 2.2
+      }
+    },
+    "personalities": {
+      "aggressive": 0.3,
+      "defensive": 0.9,
+      "balanced": 0.6,
+      "supportive": 0.4
+    },
+    "availableActions": [
+      "defend",
+      "tsundere_strike",
+      "protective_barrier",
+      "reluctant_heal",
+      "embarrassed_retreat"
+    ],
+    "battleResponses": {
+      "victory": [
+        "I-I won! Not that I was trying very hard or anything!",
+        "Don't think this means I'm strong! I just got lucky!",
+        "You fought well... for someone who lost to me!",
+        "I didn't want to hurt you too much... baka!"
+      ],
+      "defeat": [
+        "I-I let you win! It's not like you're actually stronger!",
+        "This doesn't mean anything! I was holding back!",
+        "You got lucky this time... don't expect it again!",
+        "Fine! You win! But I'm not happy about it!"
+      ],
+      "startBattle": [
+        "I-I don't really want to fight you... but if you insist!",
+        "Don't expect me to go easy on you just because I... care!",
+        "This is so troublesome... let's just get it over with!",
+        "I'll show you I'm not just a delicate flower!"
+      ]
+    }
+  },
+
+  "giftSystem": {
+    "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 8,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 50
+    },
+    "preferences": {
+      "favoriteCategories": [
+        "cute",
+        "practical",
+        "books",
+        "comfort_items",
+        "handmade"
+      ],
+      "dislikedCategories": [
+        "flashy",
+        "expensive"
+      ],
+      "personalityModifiers": {
+        "cute": 2.2,
+        "practical": 1.8,
+        "books": 1.9,
+        "comfort_items": 2.0,
+        "handmade": 2.5
+      }
+    },
+    "giftResponses": {
+      "favorite": [
+        "I-is this for me?! I mean... it's not bad, I suppose... 💕",
+        "You remembered what I like... not that it matters! But... thank you...",
+        "This is actually... really nice... don't think this makes us even though!"
+      ],
+      "liked": [
+        "Oh... you got me something... that's... thoughtful, I guess...",
+        "I-I don't hate it... actually, it's kind of nice...",
+        "You didn't have to... but I'll accept it... this time..."
+      ],
+      "neutral": [
+        "Um... thanks... I guess...",
+        "It's... okay... I suppose...",
+        "You thought of me... that's... something..."
+      ],
+      "disliked": [
+        "This is... way too much... I can't accept something so flashy!",
+        "I-I prefer simpler things... but the thought counts...",
+        "This is embarrassing... people will get the wrong idea!"
+      ]
+    },
+    "memorySettings": {
+      "rememberGifts": true,
+      "trackPreferences": true,
+      "learningEnabled": true,
+      "maxMemoryItems": 100
+    }
+  },
+
+  "multiplayer": {
+    "enabled": true,
+    "botCapable": false,
+    "networkID": "tsundere_companion_v1",
+    "maxPeers": 3,
+    "socialLevel": "selective",
+    "shareableStats": ["affection", "trust"],
+    "networkPersonality": "shy"
+  },
+
+  "newsFeatures": {
+    "enabled": true,
+    "readingPersonality": "tsundere",
+    "feeds": [
+      {
+        "name": "Lifestyle News",
+        "url": "https://feeds.feedburner.com/lifestyle-news",
+        "category": "lifestyle",
+        "refreshInterval": 7200
+      },
+      {
+        "name": "Book Reviews",
+        "url": "https://feeds.feedburner.com/book-reviews",
+        "category": "books",
+        "refreshInterval": 14400
+      }
+    ],
+    "preferences": {
+      "categories": ["lifestyle", "books", "culture", "quiet"],
+      "updateFrequency": "twice_daily",
+      "maxArticles": 6
+    }
+  },
+
   "personality": {
     "traits": {
       "shyness": 0.9,
