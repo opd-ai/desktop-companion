@@ -37,16 +37,16 @@ const (
 	ABILITY_LIFE_STEAL      SpecialAbilityType = "life_steal"      // Attack that heals based on damage
 
 	// Defensive special abilities
-	ABILITY_PERFECT_GUARD   SpecialAbilityType = "perfect_guard"   // Complete damage immunity for 1 turn
-	ABILITY_COUNTER_ATTACK  SpecialAbilityType = "counter_attack"  // Automatic retaliation on hit
-	ABILITY_DAMAGE_REFLECT  SpecialAbilityType = "damage_reflect"  // Reflects damage back to attacker
-	ABILITY_SANCTUARY       SpecialAbilityType = "sanctuary"       // Area healing and protection
+	ABILITY_PERFECT_GUARD  SpecialAbilityType = "perfect_guard"  // Complete damage immunity for 1 turn
+	ABILITY_COUNTER_ATTACK SpecialAbilityType = "counter_attack" // Automatic retaliation on hit
+	ABILITY_DAMAGE_REFLECT SpecialAbilityType = "damage_reflect" // Reflects damage back to attacker
+	ABILITY_SANCTUARY      SpecialAbilityType = "sanctuary"      // Area healing and protection
 
 	// Utility special abilities
-	ABILITY_TIME_FREEZE     SpecialAbilityType = "time_freeze"     // Skip opponent's next turn
-	ABILITY_STAT_SWAP       SpecialAbilityType = "stat_swap"       // Exchange stats with opponent
-	ABILITY_CLEANSE         SpecialAbilityType = "cleanse"         // Remove all negative modifiers
-	ABILITY_POWER_SURGE     SpecialAbilityType = "power_surge"     // Temporary massive stat boost
+	ABILITY_TIME_FREEZE SpecialAbilityType = "time_freeze" // Skip opponent's next turn
+	ABILITY_STAT_SWAP   SpecialAbilityType = "stat_swap"   // Exchange stats with opponent
+	ABILITY_CLEANSE     SpecialAbilityType = "cleanse"     // Remove all negative modifiers
+	ABILITY_POWER_SURGE SpecialAbilityType = "power_surge" // Temporary massive stat boost
 )
 
 // ComboAttackType defines multi-action battle combinations
@@ -54,9 +54,9 @@ type ComboAttackType string
 
 const (
 	// Two-hit combos
-	COMBO_STUN_ATTACK     ComboAttackType = "stun_attack"     // Stun → Attack (enhanced damage)
-	COMBO_BOOST_STRIKE    ComboAttackType = "boost_strike"    // Boost → Attack (damage amplified)
-	COMBO_DRAIN_HEAL      ComboAttackType = "drain_heal"      // Drain → Heal (enhanced healing)
+	COMBO_STUN_ATTACK  ComboAttackType = "stun_attack"  // Stun → Attack (enhanced damage)
+	COMBO_BOOST_STRIKE ComboAttackType = "boost_strike" // Boost → Attack (damage amplified)
+	COMBO_DRAIN_HEAL   ComboAttackType = "drain_heal"   // Drain → Heal (enhanced healing)
 
 	// Three-hit combos
 	COMBO_CHARGE_BOOST_ATTACK ComboAttackType = "charge_boost_attack" // Charge → Boost → Attack
@@ -64,62 +64,62 @@ const (
 	COMBO_HEAL_BOOST_COUNTER  ComboAttackType = "heal_boost_counter"  // Heal → Boost → Counter
 
 	// Ultimate combos (four+ hits)
-	COMBO_BERSERKER_FURY   ComboAttackType = "berserker_fury"   // Boost → Charge → Attack → Attack
+	COMBO_BERSERKER_FURY    ComboAttackType = "berserker_fury"    // Boost → Charge → Attack → Attack
 	COMBO_DEFENSIVE_MASTERY ComboAttackType = "defensive_mastery" // Shield → Heal → Counter → Boost
 )
 
 // Ability configuration constants with fairness constraints
 const (
 	// Special ability base values (stronger than normal actions but capped)
-	SPECIAL_CRITICAL_DAMAGE    = BASE_ATTACK_DAMAGE * 1.2  // 20% damage boost (within fairness cap)
-	SPECIAL_LIGHTNING_DAMAGE   = BASE_ATTACK_DAMAGE * 1.15 // 15% damage boost, unblockable
-	SPECIAL_BERSERKER_DAMAGE   = 1.2                       // 20% damage boost (within cap)
-	SPECIAL_BERSERKER_DEFENSE  = 0.3                       // 30% defense reduction penalty
-	SPECIAL_LIFE_STEAL_RATIO   = 0.6                       // 60% of damage as healing
-	SPECIAL_REFLECT_RATIO      = 0.4                       // 40% damage reflection
-	SPECIAL_SANCTUARY_HEAL     = BASE_HEAL_AMOUNT * 1.25   // 25% enhanced healing (within cap)
-	SPECIAL_POWER_SURGE_BONUS  = 1.1                       // 10% stat boost (within cap)
+	SPECIAL_CRITICAL_DAMAGE   = BASE_ATTACK_DAMAGE * 1.2  // 20% damage boost (within fairness cap)
+	SPECIAL_LIGHTNING_DAMAGE  = BASE_ATTACK_DAMAGE * 1.15 // 15% damage boost, unblockable
+	SPECIAL_BERSERKER_DAMAGE  = 1.2                       // 20% damage boost (within cap)
+	SPECIAL_BERSERKER_DEFENSE = 0.3                       // 30% defense reduction penalty
+	SPECIAL_LIFE_STEAL_RATIO  = 0.6                       // 60% of damage as healing
+	SPECIAL_REFLECT_RATIO     = 0.4                       // 40% damage reflection
+	SPECIAL_SANCTUARY_HEAL    = BASE_HEAL_AMOUNT * 1.25   // 25% enhanced healing (within cap)
+	SPECIAL_POWER_SURGE_BONUS = 1.1                       // 10% stat boost (within cap)
 
 	// Combo multipliers (applied to base actions)
-	COMBO_TWO_HIT_MULTIPLIER   = 1.2  // 20% bonus for 2-hit combos (within fairness)
-	COMBO_THREE_HIT_MULTIPLIER = 1.2  // 20% bonus for 3-hit combos (within fairness)
-	COMBO_ULTIMATE_MULTIPLIER  = 1.2  // 20% bonus for ultimate combos (within fairness)
+	COMBO_TWO_HIT_MULTIPLIER   = 1.2 // 20% bonus for 2-hit combos (within fairness)
+	COMBO_THREE_HIT_MULTIPLIER = 1.2 // 20% bonus for 3-hit combos (within fairness)
+	COMBO_ULTIMATE_MULTIPLIER  = 1.2 // 20% bonus for ultimate combos (within fairness)
 
 	// Cooldown durations (turns)
-	SPECIAL_ABILITY_COOLDOWN = 5   // Most special abilities
-	ULTIMATE_ABILITY_COOLDOWN = 8  // Most powerful abilities
-	COMBO_WINDOW_DURATION = 3      // Turns to complete combo sequence
+	SPECIAL_ABILITY_COOLDOWN  = 5 // Most special abilities
+	ULTIMATE_ABILITY_COOLDOWN = 8 // Most powerful abilities
+	COMBO_WINDOW_DURATION     = 3 // Turns to complete combo sequence
 )
 
 // SpecialAbility represents an enhanced battle action with cooldown
 type SpecialAbility struct {
-	Type         SpecialAbilityType `json:"type"`
-	Name         string             `json:"name"`
-	Description  string             `json:"description"`
-	Cooldown     int                `json:"cooldown"`     // Base cooldown in turns
-	ChargesMax   int                `json:"chargesMax"`   // Maximum charges (0 = unlimited)
-	ChargesCurrent int              `json:"chargesCurrent"` // Current available charges
-	LastUsed     time.Time          `json:"lastUsed"`     // When ability was last used
-	RequiredLevel int               `json:"requiredLevel"` // Character level requirement
+	Type           SpecialAbilityType `json:"type"`
+	Name           string             `json:"name"`
+	Description    string             `json:"description"`
+	Cooldown       int                `json:"cooldown"`       // Base cooldown in turns
+	ChargesMax     int                `json:"chargesMax"`     // Maximum charges (0 = unlimited)
+	ChargesCurrent int                `json:"chargesCurrent"` // Current available charges
+	LastUsed       time.Time          `json:"lastUsed"`       // When ability was last used
+	RequiredLevel  int                `json:"requiredLevel"`  // Character level requirement
 }
 
 // ComboAttack represents a sequence of actions that create enhanced effects
 type ComboAttack struct {
-	Type           ComboAttackType    `json:"type"`
-	Name           string             `json:"name"`
-	Description    string             `json:"description"`
-	Sequence       []BattleActionType `json:"sequence"`       // Required action sequence
-	WindowDuration int                `json:"windowDuration"` // Turns to complete combo
-	DamageMultiplier float64          `json:"damageMultiplier"`
-	EffectMultiplier float64          `json:"effectMultiplier"`
-	BonusEffects   []string           `json:"bonusEffects"` // Additional effects when completed
+	Type             ComboAttackType    `json:"type"`
+	Name             string             `json:"name"`
+	Description      string             `json:"description"`
+	Sequence         []BattleActionType `json:"sequence"`       // Required action sequence
+	WindowDuration   int                `json:"windowDuration"` // Turns to complete combo
+	DamageMultiplier float64            `json:"damageMultiplier"`
+	EffectMultiplier float64            `json:"effectMultiplier"`
+	BonusEffects     []string           `json:"bonusEffects"` // Additional effects when completed
 }
 
 // ComboState tracks progress of ongoing combo attempts
 type ComboState struct {
-	Type              ComboAttackType    `json:"type"`
-	ActionsCompleted  []BattleActionType `json:"actionsCompleted"`
-	StartedTurn       int                `json:"startedTurn"`
+	Type             ComboAttackType    `json:"type"`
+	ActionsCompleted []BattleActionType `json:"actionsCompleted"`
+	StartedTurn      int                `json:"startedTurn"`
 	ActorID          string             `json:"actorID"`
 	IsActive         bool               `json:"isActive"`
 }
@@ -212,7 +212,7 @@ func getDefaultCombos() []ComboAttack {
 		},
 		{
 			Type:             COMBO_DEFENSIVE_MASTERY,
-			Name:             "Guardian's Resolve", 
+			Name:             "Guardian's Resolve",
 			Description:      "Ultimate defensive combo providing massive protection",
 			Sequence:         []BattleActionType{ACTION_SHIELD, ACTION_HEAL, ACTION_COUNTER, ACTION_BOOST},
 			WindowDuration:   4,
@@ -228,80 +228,80 @@ func getDefaultSpecialAbilities() []SpecialAbility {
 	return []SpecialAbility{
 		// Offensive abilities
 		{
-			Type:          ABILITY_CRITICAL_STRIKE,
-			Name:          "Critical Strike",
-			Description:   "High damage attack with critical hit chance",
-			Cooldown:      4,
-			ChargesMax:    0, // Unlimited uses (cooldown limited)
+			Type:           ABILITY_CRITICAL_STRIKE,
+			Name:           "Critical Strike",
+			Description:    "High damage attack with critical hit chance",
+			Cooldown:       4,
+			ChargesMax:     0, // Unlimited uses (cooldown limited)
 			ChargesCurrent: 0,
-			RequiredLevel: 1,
+			RequiredLevel:  1,
 		},
 		{
-			Type:          ABILITY_LIGHTNING_BOLT,
-			Name:          "Lightning Bolt",
-			Description:   "Fast, unblockable magical attack",
-			Cooldown:      3,
-			ChargesMax:    0,
+			Type:           ABILITY_LIGHTNING_BOLT,
+			Name:           "Lightning Bolt",
+			Description:    "Fast, unblockable magical attack",
+			Cooldown:       3,
+			ChargesMax:     0,
 			ChargesCurrent: 0,
-			RequiredLevel: 2,
+			RequiredLevel:  2,
 		},
 		{
-			Type:          ABILITY_BERSERKER_RAGE,
-			Name:          "Berserker Rage",
-			Description:   "Massive damage boost with defense penalty",
-			Cooldown:      6,
-			ChargesMax:    0,
+			Type:           ABILITY_BERSERKER_RAGE,
+			Name:           "Berserker Rage",
+			Description:    "Massive damage boost with defense penalty",
+			Cooldown:       6,
+			ChargesMax:     0,
 			ChargesCurrent: 0,
-			RequiredLevel: 3,
+			RequiredLevel:  3,
 		},
 		{
-			Type:          ABILITY_LIFE_STEAL,
-			Name:          "Life Steal",
-			Description:   "Attack that heals based on damage dealt",
-			Cooldown:      5,
-			ChargesMax:    0,
+			Type:           ABILITY_LIFE_STEAL,
+			Name:           "Life Steal",
+			Description:    "Attack that heals based on damage dealt",
+			Cooldown:       5,
+			ChargesMax:     0,
 			ChargesCurrent: 0,
-			RequiredLevel: 2,
+			RequiredLevel:  2,
 		},
 
 		// Defensive abilities
 		{
-			Type:          ABILITY_PERFECT_GUARD,
-			Name:          "Perfect Guard",
-			Description:   "Complete immunity to damage for one turn",
-			Cooldown:      8,
-			ChargesMax:    2, // Limited charges
+			Type:           ABILITY_PERFECT_GUARD,
+			Name:           "Perfect Guard",
+			Description:    "Complete immunity to damage for one turn",
+			Cooldown:       8,
+			ChargesMax:     2, // Limited charges
 			ChargesCurrent: 2,
-			RequiredLevel: 3,
+			RequiredLevel:  3,
 		},
 		{
-			Type:          ABILITY_SANCTUARY,
-			Name:          "Sanctuary",
-			Description:   "Area healing and protection effect",
-			Cooldown:      7,
-			ChargesMax:    0,
+			Type:           ABILITY_SANCTUARY,
+			Name:           "Sanctuary",
+			Description:    "Area healing and protection effect",
+			Cooldown:       7,
+			ChargesMax:     0,
 			ChargesCurrent: 0,
-			RequiredLevel: 4,
+			RequiredLevel:  4,
 		},
 
 		// Utility abilities
 		{
-			Type:          ABILITY_CLEANSE,
-			Name:          "Cleanse",
-			Description:   "Remove all negative status effects",
-			Cooldown:      5,
-			ChargesMax:    0,
+			Type:           ABILITY_CLEANSE,
+			Name:           "Cleanse",
+			Description:    "Remove all negative status effects",
+			Cooldown:       5,
+			ChargesMax:     0,
 			ChargesCurrent: 0,
-			RequiredLevel: 2,
+			RequiredLevel:  2,
 		},
 		{
-			Type:          ABILITY_TIME_FREEZE,
-			Name:          "Time Freeze",
-			Description:   "Skip opponent's next turn",
-			Cooldown:      10,
-			ChargesMax:    1, // Very limited
+			Type:           ABILITY_TIME_FREEZE,
+			Name:           "Time Freeze",
+			Description:    "Skip opponent's next turn",
+			Cooldown:       10,
+			ChargesMax:     1, // Very limited
 			ChargesCurrent: 1,
-			RequiredLevel: 5,
+			RequiredLevel:  5,
 		},
 	}
 }
@@ -309,7 +309,7 @@ func getDefaultSpecialAbilities() []SpecialAbility {
 // InitializeParticipantAbilities sets up special abilities for a battle participant
 func (am *AbilityManager) InitializeParticipantAbilities(participantID string, characterLevel int) {
 	abilities := getDefaultSpecialAbilities()
-	
+
 	// Filter abilities by character level
 	var availableAbilities []SpecialAbility
 	for _, ability := range abilities {
@@ -317,7 +317,7 @@ func (am *AbilityManager) InitializeParticipantAbilities(participantID string, c
 			availableAbilities = append(availableAbilities, ability)
 		}
 	}
-	
+
 	am.participantAbilities[participantID] = availableAbilities
 }
 
@@ -536,7 +536,7 @@ func (am *AbilityManager) executeSpecialAbility(abilityType SpecialAbilityType, 
 func (am *AbilityManager) TrackComboAction(participantID string, action BattleActionType) (*ComboAttack, error) {
 	// Check if participant has an active combo
 	comboState := am.activeComboStates[participantID]
-	
+
 	if comboState != nil {
 		// Continue existing combo
 		return am.continueCombo(participantID, action, comboState)
@@ -555,8 +555,8 @@ func (am *AbilityManager) checkComboStart(participantID string, action BattleAct
 				Type:             combo.Type,
 				ActionsCompleted: []BattleActionType{action},
 				StartedTurn:      am.currentTurn,
-				ActorID:         participantID,
-				IsActive:        true,
+				ActorID:          participantID,
+				IsActive:         true,
 			}
 			return nil, nil // Combo started but not completed
 		}
@@ -656,7 +656,7 @@ func (am *AbilityManager) GetActiveComboState(participantID string) *ComboState 
 // AdvanceTurn updates the internal turn counter for cooldown calculations
 func (am *AbilityManager) AdvanceTurn() {
 	am.currentTurn++
-	
+
 	// Clean up expired combo states
 	for participantID, comboState := range am.activeComboStates {
 		var comboDef *ComboAttack
@@ -666,7 +666,7 @@ func (am *AbilityManager) AdvanceTurn() {
 				break
 			}
 		}
-		
+
 		if comboDef != nil && am.currentTurn-comboState.StartedTurn >= comboDef.WindowDuration {
 			am.clearComboState(participantID)
 		}
