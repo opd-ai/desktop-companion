@@ -1,18 +1,14 @@
 #!/bin/bash
 
-# Release Preparation Script for Desktop Companion (DDS)
-# Phase 4 Task 3: Final Testing & Release
-# 
-# This script performs comprehensive validation before release:
-# 1. Full regression testing
-# 2. Performance benchmarking 
-# 3. Release preparation and validation
+# DEPRECATED: Legacy wrapper for release_validation.sh
+# This script is maintained for backward compatibility.
+# New usage: ./scripts/dds-scripts.sh release validate
+# Direct usage: ./scripts/release/pre-release-validation.sh
 
-set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-PROJECT_NAME="desktop-companion"
-BUILD_DIR="build"
-TEST_DIR="test_output"
+# Forward all arguments to the new refactored script
+exec "$SCRIPT_DIR/release/pre-release-validation.sh" "$@"
 
 # Colors for output
 RED='\033[0;31m'

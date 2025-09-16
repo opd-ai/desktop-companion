@@ -48,6 +48,25 @@ export DDS_TEST_TIMEOUT="${TEST_TIMEOUT:-60s}"
 # CHARACTER ASSET GENERATION
 # ============================================================================
 
+# Asset generation settings
+export DDS_BACKUP_ASSETS="${BACKUP_ASSETS:-true}"
+export DDS_VALIDATE_ASSETS="${VALIDATE_ASSETS:-true}"
+export DDS_FORCE_REBUILD="${FORCE_REBUILD:-false}"
+
+# Default styling options
+export DDS_DEFAULT_STYLE="${DEFAULT_STYLE:-anime}"
+export DDS_DEFAULT_MODEL="${DEFAULT_MODEL:-sd15}"
+
+# ============================================================================
+# RELEASE VALIDATION CONFIGURATION
+# ============================================================================
+
+# Release validation settings  
+export DDS_QUICK_MODE="${QUICK_MODE:-false}"
+export DDS_ANDROID_TESTS="${ANDROID_TESTS:-true}"
+export DDS_PARALLEL_TESTS="${PARALLEL_TESTS:-4}"
+
+# ============================================================================
 # Asset generation defaults
 export DDS_DEFAULT_STYLE="${STYLE:-anime}"
 export DDS_DEFAULT_MODEL="${MODEL:-sd15}"

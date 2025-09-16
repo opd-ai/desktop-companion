@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# generate-character-assets-simple.sh
-# A simplified version that generates GIF assets for all character JSON files
+# DEPRECATED: Legacy wrapper for generate-character-assets-simple.sh
+# This script is maintained for backward compatibility.
+# New usage: ./scripts/dds-scripts.sh asset-generation simple
+# Direct usage: ./scripts/asset-generation/generate-character-assets.sh simple
 
-set -euo pipefail
-
-# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-CHARACTERS_DIR="$PROJECT_ROOT/assets/characters"
-BUILD_DIR="$PROJECT_ROOT/build"
-GIF_GENERATOR_BINARY="$BUILD_DIR/gif-generator"
+
+# Forward all arguments to the new refactored script
+exec "$SCRIPT_DIR/asset-generation/generate-character-assets.sh" simple "$@"
 
 # Default settings
 STYLE="anime"

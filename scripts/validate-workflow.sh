@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# GitHub Actions Workflow Validator
-# Validates the character-specific binary generation workflow for completeness and correctness
-
-set -e
+# DEPRECATED: Legacy wrapper for validate-workflow.sh
+# This script is maintained for backward compatibility.
+# New usage: ./scripts/dds-scripts.sh validation workflow
+# Direct usage: ./scripts/validation/validate-workflow.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-WORKFLOW_FILE="$PROJECT_ROOT/.github/workflows/build-character-binaries.yml"
+
+# Forward all arguments to the new refactored script
+exec "$SCRIPT_DIR/validation/validate-workflow.sh" "$@"
 
 # Colors for output
 RED='\033[0;31m'

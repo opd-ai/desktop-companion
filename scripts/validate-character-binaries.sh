@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# Character Binary Validation Script
-# Implements Phase 3, Task 2: Validate all character binaries
-# Tests functionality, performance, and deployment readiness
-
-set -e
+# DEPRECATED: Legacy wrapper for validate-character-binaries.sh
+# This script is maintained for backward compatibility.
+# New usage: ./scripts/dds-scripts.sh validation binaries
+# Direct usage: ./scripts/validation/validate-binaries.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BUILD_DIR="$PROJECT_ROOT/build"
-TEST_OUTPUT_DIR="$PROJECT_ROOT/test_output"
+
+# Forward all arguments to the new refactored script
+exec "$SCRIPT_DIR/validation/validate-binaries.sh" "$@"
 
 # Colors for output
 RED='\033[0;31m'

@@ -1,19 +1,14 @@
 #!/bin/bash
 
-# generate-all-character-assets.sh
-# Generates GIF assets for all character JSON files using the gif-generator tool
-# This script replaces placeholder assets with properly generated ones for each character archetype
+# DEPRECATED: Legacy wrapper for generate-all-character-assets.sh
+# This script is maintained for backward compatibility.
+# New usage: ./scripts/dds-scripts.sh asset-generation generate
+# Direct usage: ./scripts/asset-generation/generate-character-assets.sh
 
-set -euo pipefail
-
-# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-CHARACTERS_DIR="$PROJECT_ROOT/assets/characters"
-GIF_GENERATOR_CMD="$PROJECT_ROOT/cmd/gif-generator"
-BUILD_DIR="$PROJECT_ROOT/build"
-GIF_GENERATOR_BINARY="$BUILD_DIR/gif-generator"
-LOG_FILE="$PROJECT_ROOT/test_output/asset-generation-$(date +%Y%m%d-%H%M%S).log"
+
+# Forward all arguments to the new refactored script
+exec "$SCRIPT_DIR/asset-generation/generate-character-assets.sh" "$@"
 
 # Default settings
 PARALLEL_JOBS=2

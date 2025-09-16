@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# Pipeline Validation Script
-# Implements Phase 2, Task 6: Test full pipeline with multiple characters
-# Comprehensive testing and validation for character-specific binary generation
-
-set -e
+# DEPRECATED: Legacy wrapper for validate-pipeline.sh
+# This script is maintained for backward compatibility.
+# New usage: ./scripts/dds-scripts.sh validation pipeline
+# Direct usage: ./scripts/validation/validate-pipeline.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BUILD_DIR="$PROJECT_ROOT/build"
-VALIDATION_DIR="$BUILD_DIR/validation"
-TEMP_DIR="$BUILD_DIR/temp"
+
+# Forward all arguments to the new refactored script
+exec "$SCRIPT_DIR/validation/validate-pipeline.sh" "$@"
 
 # Colors for output
 RED='\033[0;31m'

@@ -38,6 +38,8 @@ CATEGORIES:
     validation         Character and environment validation scripts  
     android            Android-specific build and testing scripts
     character          Character management and fixing scripts
+    asset-generation   Character asset generation scripts
+    release            Release preparation and validation scripts
     config             Configuration management utilities
 
 GLOBAL OPTIONS:
@@ -71,6 +73,8 @@ PROJECT STRUCTURE:
     ├── validation/             # Validation and testing scripts  
     ├── android/                # Android-specific scripts
     ├── character-management/   # Character management scripts
+    ├── asset-generation/       # Asset generation scripts
+    ├── release/               # Release preparation scripts
     └── dds-scripts.sh         # This master script
 
 EOF
@@ -249,23 +253,85 @@ route_character_command() {
         fix-validation|fix)
             exec "$SCRIPT_DIR/character-management/fix-validation-issues.sh" "$@"
             ;;
-        generate-assets|assets)
-            exec "$SCRIPT_DIR/generate-character-assets-simple.sh" "$@"
-            ;;
-        generate-assets-full|assets-full)
-            exec "$SCRIPT_DIR/generate-all-character-assets.sh" "$@"
-            ;;
         --help|-h)
             echo "Character Management Scripts:"
             echo "  fix-validation       Fix character validation issues"
-            echo "  generate-assets      Generate character assets (simple)"
-            echo "  generate-assets-full Generate character assets (full pipeline)"
             echo ""
             echo "Usage: $0 character [COMMAND] [OPTIONS]"
             ;;
         *)
             error "Unknown character command: $command"
-            echo "Available: fix-validation, generate-assets, generate-assets-full"
+            echo "Available: fix-validation"
+            exit 1
+            ;;
+    esac
+}
+
+# Route to asset generation scripts
+route_asset_generation_command() {
+    local command="${1:-generate}"
+    shift || true
+    
+    case "$command" in
+        generate)
+            exec "$SCRIPT_DIR/asset-generation/generate-character-assets.sh" "$@"
+            ;;
+        simple)
+            exec "$SCRIPT_DIR/asset-generation/generate-character-assets.sh" simple "$@"
+            ;;
+        validate)
+            exec "$SCRIPT_DIR/asset-generation/generate-character-assets.sh" validate "$@"
+            ;;
+        rebuild)
+            exec "$SCRIPT_DIR/asset-generation/generate-character-assets.sh" rebuild "$@"
+            ;;
+        --help|-h)
+            echo "Asset Generation Scripts:"
+            echo "  generate             Generate assets for all characters"
+            echo "  simple               Use simplified generation (faster)"
+            echo "  validate             Validate existing assets"
+            echo "  rebuild              Force rebuild all assets"
+            echo ""
+            echo "Usage: $0 asset-generation [COMMAND] [OPTIONS]"
+            ;;
+        *)
+            error "Unknown asset-generation command: $command"
+            echo "Available: generate, simple, validate, rebuild"
+            exit 1
+            ;;
+    esac
+}
+
+# Route to release scripts
+route_release_command() {
+    local command="${1:-validate}"
+    shift || true
+    
+    case "$command" in
+        validate|validation)
+            exec "$SCRIPT_DIR/release/pre-release-validation.sh" "$@"
+            ;;
+        quick)
+            exec "$SCRIPT_DIR/release/pre-release-validation.sh" quick "$@"
+            ;;
+        benchmark)
+            exec "$SCRIPT_DIR/release/pre-release-validation.sh" benchmark "$@"
+            ;;
+        environment)
+            exec "$SCRIPT_DIR/release/pre-release-validation.sh" environment "$@"
+            ;;
+        --help|-h)
+            echo "Release Scripts:"
+            echo "  validate             Full pre-release validation"
+            echo "  quick                Quick validation (essential tests)"
+            echo "  benchmark            Performance benchmarks only"
+            echo "  environment          Environment validation only"
+            echo ""
+            echo "Usage: $0 release [COMMAND] [OPTIONS]"
+            ;;
+        *)
+            error "Unknown release command: $command"
+            echo "Available: validate, quick, benchmark, environment"
             exit 1
             ;;
     esac
@@ -384,13 +450,19 @@ main() {
         character|char)
             route_character_command "$@"
             ;;
+        asset-generation|assets|generate)
+            route_asset_generation_command "$@"
+            ;;
+        release)
+            route_release_command "$@"
+            ;;
         config|configuration)
             route_config_command "$@"
             ;;
         *)
             error "Unknown category: $category"
             echo ""
-            echo "Available categories: build, validation, android, character, config"
+            echo "Available categories: build, validation, android, character, asset-generation, release, config"
             echo "Quick commands: build, validate, fix, android"
             echo ""
             echo "Use '$0 --help' for more information."
