@@ -1032,7 +1032,11 @@
   },
   "newsFeatures": {
     "enabled": true,
-    "readingPersonality": "enthusiastic",
+    "readingPersonality": {
+      "interestLevel": 0.8,
+      "commentFrequency": 0.9,
+      "topicPreferences": ["entertainment", "fashion", "relationships", "social", "lifestyle"]
+    },
     "feeds": [
       {
         "name": "Entertainment News",

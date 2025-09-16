@@ -821,22 +821,22 @@
     },
     "preferences": {
       "favoriteCategories": [
-        "cute",
+        "toys",
         "practical",
         "books",
-        "comfort_items",
-        "handmade"
+        "art",
+        "clothing"
       ],
       "dislikedCategories": [
-        "flashy",
+        "jewelry",
         "expensive"
       ],
       "personalityModifiers": {
-        "cute": 2.2,
+        "toys": 2.2,
         "practical": 1.8,
         "books": 1.9,
-        "comfort_items": 2.0,
-        "handmade": 2.5
+        "art": 2.0,
+        "clothing": 2.5
       }
     },
     "giftResponses": {
