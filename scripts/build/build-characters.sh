@@ -174,10 +174,23 @@ generate_embedded_character() {
     # Clean previous embedded version
     [[ -d "$output_dir" ]] && rm -rf "$output_dir"
     
-    if ! go run "$SCRIPT_DIR/../embed-character.go" -character "$char" -output "$output_dir"; then
+    # Change to project root so embed-character.go can find assets/characters/
+    local original_dir="$PWD"
+    cd "$PROJECT_ROOT" || {
+        error "Failed to change to project root: $PROJECT_ROOT"
+        return 1
+    }
+    
+    # Use absolute path to embed-character.go script
+    local embed_script="$PROJECT_ROOT/scripts/embed-character.go"
+    
+    if ! go run "$embed_script" -character "$char" -output "$output_dir"; then
+        cd "$original_dir"
         error "Failed to generate embedded character: $char"
         return 1
     fi
+    
+    cd "$original_dir"
     
     success "Generated embedded character: $char"
     return 0
