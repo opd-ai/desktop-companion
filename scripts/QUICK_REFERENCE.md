@@ -31,7 +31,6 @@
 ./scripts/dds-scripts.sh validation binaries [OPTIONS]       # Validate binaries
 ./scripts/dds-scripts.sh validation pipeline [OPTIONS]       # Full pipeline validation
 ./scripts/dds-scripts.sh validation workflow [OPTIONS]       # GitHub Actions validation
-./scripts/dds-scripts.sh validation release [OPTIONS]        # Pre-release validation
 ```
 
 ### android/
@@ -44,8 +43,22 @@
 ### character-management/
 ```bash
 ./scripts/dds-scripts.sh character fix-validation [OPTIONS]   # Fix validation issues
-./scripts/dds-scripts.sh character generate-simple [OPTIONS]  # Simple asset generation
-./scripts/dds-scripts.sh character generate-full [OPTIONS]    # Full asset generation
+```
+
+### asset-generation/
+```bash
+./scripts/dds-scripts.sh asset-generation generate [OPTIONS]    # Generate all assets
+./scripts/dds-scripts.sh asset-generation simple [OPTIONS]      # Simple generation
+./scripts/dds-scripts.sh asset-generation validate [OPTIONS]    # Validate assets
+./scripts/dds-scripts.sh asset-generation rebuild [OPTIONS]     # Force rebuild assets
+```
+
+### release/
+```bash
+./scripts/dds-scripts.sh release validate [OPTIONS]            # Full pre-release validation
+./scripts/dds-scripts.sh release quick [OPTIONS]               # Quick validation
+./scripts/dds-scripts.sh release benchmark [OPTIONS]           # Performance benchmarks
+./scripts/dds-scripts.sh release environment [OPTIONS]         # Environment validation
 ```
 
 ## Configuration Commands
