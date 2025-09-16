@@ -56,10 +56,10 @@ func TestInitializeParticipantAbilities(t *testing.T) {
 		minAbilities   int
 		maxAbilities   int
 	}{
-		{"Level 1", 1, 1, 3},
-		{"Level 3", 3, 3, 5},
-		{"Level 5", 5, 5, 8},
-		{"Level 10", 10, 7, 7}, // All abilities
+		{"Level 1", 1, 1, 1},   // Only CRITICAL_STRIKE
+		{"Level 3", 3, 6, 6},   // Level 1-3 abilities: CRITICAL_STRIKE, LIGHTNING_BOLT, LIFE_STEAL, CLEANSE, BERSERKER_RAGE, PERFECT_GUARD
+		{"Level 5", 5, 8, 8},   // All abilities: +SANCTUARY, +TIME_FREEZE
+		{"Level 10", 10, 8, 8}, // All abilities (no more than level 5 max)
 	}
 
 	for _, tt := range tests {

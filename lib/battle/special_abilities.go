@@ -345,19 +345,17 @@ func (am *AbilityManager) isAbilityAvailable(ability SpecialAbility) bool {
 		return false
 	}
 
-	// Check cooldown (simplified - using turn-based cooldown)
-	// For testing purposes, if LastUsed is zero time, ability is available
+	// Check cooldown (turn-based system)
+	// If LastUsed is zero time, ability is available (never used)
 	if ability.LastUsed.IsZero() {
 		return true
 	}
 
-	// Calculate turns elapsed since last use (simplified logic for testing)
-	turnsElapsed := am.currentTurn - int(ability.LastUsed.Unix()) // Simplified calculation
-	if turnsElapsed < ability.Cooldown {
-		return false
-	}
+	// Use Unix timestamp to track turn when ability was used
+	lastUsedTurn := int(ability.LastUsed.Unix())
+	turnsElapsed := am.currentTurn - lastUsedTurn
 
-	return true
+	return turnsElapsed >= ability.Cooldown
 }
 
 // UseSpecialAbility attempts to use a special ability and returns the enhanced battle result
@@ -394,7 +392,7 @@ func (am *AbilityManager) UseSpecialAbility(participantID string, abilityType Sp
 	result = am.applySpecialAbilityFairnessCaps(result)
 
 	// Update ability state
-	ability.LastUsed = time.Now().Add(time.Duration(ability.Cooldown) * time.Second) // Track when available again
+	ability.LastUsed = time.Unix(int64(am.currentTurn), 0) // Store current turn in Unix timestamp
 	if ability.ChargesMax > 0 {
 		ability.ChargesCurrent--
 	}
