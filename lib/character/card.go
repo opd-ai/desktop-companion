@@ -577,6 +577,24 @@ func (d *Dialog) Validate(animations map[string]string) error {
 	return nil
 }
 
+// ValidateForRomance validates dialog with extended trigger support for romance systems
+func (d *Dialog) ValidateForRomance(animations map[string]string) error {
+	if err := d.validateRomanceTrigger(); err != nil {
+		return err
+	}
+
+	if err := d.validateResponses(); err != nil {
+		return err
+	}
+
+	if err := d.validateAnimationReference(animations); err != nil {
+		return err
+	}
+
+	d.setDefaultCooldown()
+	return nil
+}
+
 // validateTrigger checks if the trigger type is valid
 func (d *Dialog) validateTrigger() error {
 	validTriggers := []string{"click", "rightclick", "hover"}
@@ -586,6 +604,23 @@ func (d *Dialog) validateTrigger() error {
 		}
 	}
 	return fmt.Errorf("trigger must be one of %v, got: %s", validTriggers, d.Trigger)
+}
+
+// validateRomanceTrigger checks if the trigger type is valid for romance dialogs
+func (d *Dialog) validateRomanceTrigger() error {
+	// Romance dialogs support extended trigger set
+	validTriggers := []string{
+		"click", "rightclick", "hover", // Basic triggers
+		"compliment", "automatic", // Romance-specific triggers
+		"emotional_moment", "daily_check", // Event-based triggers
+		"energy_low", "mood_change", // State-based triggers
+	}
+	for _, trigger := range validTriggers {
+		if d.Trigger == trigger {
+			return nil
+		}
+	}
+	return fmt.Errorf("romance trigger must be one of %v, got: %s", validTriggers, d.Trigger)
 }
 
 // validateResponses ensures responses are within limits and not empty
@@ -1155,8 +1190,8 @@ func (c *CharacterCard) validatePersonalityConfig() error {
 
 // validateRomanceDialog validates an extended dialog configuration
 func (c *CharacterCard) validateRomanceDialog(dialog DialogExtended, index int) error {
-	// Validate base dialog
-	if err := dialog.Dialog.Validate(c.Animations); err != nil {
+	// Validate base dialog with romance trigger support
+	if err := dialog.Dialog.ValidateForRomance(c.Animations); err != nil {
 		return err
 	}
 

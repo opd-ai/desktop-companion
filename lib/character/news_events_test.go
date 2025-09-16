@@ -40,10 +40,14 @@ func TestNewsEventsInitialization(t *testing.T) {
 			},
 		},
 		NewsFeatures: &news.NewsConfig{
-			Enabled:             true,
-			UpdateInterval:      30,
-			MaxStoredItems:      50,
-			ReadingPersonality:  "casual",
+			Enabled:        true,
+			UpdateInterval: 30,
+			MaxStoredItems: 50,
+			ReadingPersonality: &news.ReadingPersonality{
+				InterestLevel:    0.6,
+				CommentFrequency: 0.4,
+				TopicPreferences: []string{"tech", "gaming"},
+			},
 			PreferredCategories: []string{"tech", "gaming"},
 			Feeds: []news.RSSFeed{
 				{

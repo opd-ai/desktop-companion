@@ -41,10 +41,14 @@ func TestCharacterCardNewsFeatures(t *testing.T) {
 
 	// Add news features
 	testCard.NewsFeatures = &news.NewsConfig{
-		Enabled:             true,
-		UpdateInterval:      30,
-		MaxStoredItems:      50,
-		ReadingPersonality:  "casual",
+		Enabled:        true,
+		UpdateInterval: 30,
+		MaxStoredItems: 50,
+		ReadingPersonality: &news.ReadingPersonality{
+			InterestLevel:    0.6,
+			CommentFrequency: 0.4,
+			TopicPreferences: []string{"tech", "gaming"},
+		},
 		PreferredCategories: []string{"tech", "gaming"},
 		Feeds: []news.RSSFeed{
 			{
@@ -93,8 +97,10 @@ func TestCharacterCardNewsFeatures(t *testing.T) {
 		t.Errorf("Expected max stored items of 50, got %d", newsConfig.MaxStoredItems)
 	}
 
-	if newsConfig.ReadingPersonality != "casual" {
-		t.Errorf("Expected reading personality 'casual', got '%s'", newsConfig.ReadingPersonality)
+	if newsConfig.ReadingPersonality == nil {
+		t.Errorf("Expected reading personality to be configured, got nil")
+	} else if newsConfig.ReadingPersonality.InterestLevel != 0.6 {
+		t.Errorf("Expected reading personality interest level 0.6, got %f", newsConfig.ReadingPersonality.InterestLevel)
 	}
 
 	// Verify feeds

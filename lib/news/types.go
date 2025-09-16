@@ -29,15 +29,22 @@ type NewsItem struct {
 	ID string `json:"id"` // Unique identifier (typically URL or GUID)
 }
 
+// ReadingPersonality defines how a character approaches reading and commenting on news
+type ReadingPersonality struct {
+	InterestLevel    float64  `json:"interestLevel"`    // 0.0-1.0: How interested the character is in news
+	CommentFrequency float64  `json:"commentFrequency"` // 0.0-1.0: How often they comment on articles
+	TopicPreferences []string `json:"topicPreferences"` // Preferred news categories
+}
+
 // NewsConfig defines RSS/Atom newsfeed configuration for character cards
 type NewsConfig struct {
-	Enabled             bool        `json:"enabled"`             // Enable news features
-	UpdateInterval      int         `json:"updateInterval"`      // Minutes between feed updates
-	MaxStoredItems      int         `json:"maxStoredItems"`      // Maximum news items to keep in memory
-	ReadingPersonality  string      `json:"readingPersonality"`  // "casual", "formal", "enthusiastic"
-	PreferredCategories []string    `json:"preferredCategories"` // Preferred news categories
-	Feeds               []RSSFeed   `json:"feeds"`               // List of RSS feeds
-	ReadingEvents       []NewsEvent `json:"readingEvents"`       // News-specific events
+	Enabled             bool                `json:"enabled"`             // Enable news features
+	UpdateInterval      int                 `json:"updateInterval"`      // Minutes between feed updates
+	MaxStoredItems      int                 `json:"maxStoredItems"`      // Maximum news items to keep in memory
+	ReadingPersonality  *ReadingPersonality `json:"readingPersonality"`  // Detailed reading behavior configuration
+	PreferredCategories []string            `json:"preferredCategories"` // Preferred news categories
+	Feeds               []RSSFeed           `json:"feeds"`               // List of RSS feeds
+	ReadingEvents       []NewsEvent         `json:"readingEvents"`       // News-specific events
 }
 
 // NewsEvent extends general dialog events for news-specific scenarios

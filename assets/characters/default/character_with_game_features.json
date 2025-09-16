@@ -61,6 +61,12 @@
       "max": 100,
       "degradationRate": 1.5,
       "criticalThreshold": 25
+    },
+    "affection": {
+      "initial": 0,
+      "max": 100,
+      "degradationRate": 0.1,
+      "criticalThreshold": 0
     }
   },
   "gameRules": {
@@ -262,6 +268,12 @@
   },
   "giftSystem": {
     "enabled": true,
+    "inventorySettings": {
+      "maxSlots": 8,
+      "autoSort": true,
+      "stackSimilar": true,
+      "defaultCapacity": 50
+    },
     "categories": [
       "food",
       "toys",
@@ -328,7 +340,7 @@
     "updateInterval": 3600
   },
   "battleSystem": {
-    "enabled": true,
+    "enabled": false,
     "combatStats": {
       "attack": 50,
       "defense": 50,
