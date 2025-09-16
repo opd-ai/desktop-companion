@@ -16,16 +16,21 @@
     "jealous": "animations/jealous.gif",
     "excited_romance": "animations/excited_romance.gif",
     "sleeping": "animations/sleeping.gif",
-    "magical": "animations/magical.gif"
+    "magical": "animations/magical.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "cheerful": "animations/cheerful.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
       "trigger": "click",
       "responses": [
-        "Hello there! ✨",
-        "The stars whisper your name... 🌟",
+        "Hello there! \u2728",
+        "The stars whisper your name... \ud83c\udf1f",
         "What cosmic adventures await us today?",
-        "I sense great potential in you! 💫",
+        "I sense great potential in you! \ud83d\udcab",
         "Let me share some celestial wisdom with you."
       ],
       "animation": "talking",
@@ -36,7 +41,7 @@
       "responses": [
         "The moonlight dances around us...",
         "I feel your presence like starlight",
-        "Your aura is quite fascinating ✨"
+        "Your aura is quite fascinating \u2728"
       ],
       "animation": "idle",
       "cooldown": 8
@@ -79,9 +84,9 @@
     {
       "trigger": "rightclick",
       "responses": [
-        "Your soul shines brighter than any constellation... 💝",
-        "The universe brought us together for a reason ✨",
-        "In your eyes, I see infinite galaxies 🌌"
+        "Your soul shines brighter than any constellation... \ud83d\udc9d",
+        "The universe brought us together for a reason \u2728",
+        "In your eyes, I see infinite galaxies \ud83c\udf0c"
       ],
       "animation": "blushing",
       "cooldown": 15,
@@ -269,8 +274,8 @@
       ],
       "responses": [
         "Let us commune with the cosmos together...",
-        "I feel the universe's energy flowing through us ✨",
-        "Your spiritual growth brings me joy 🌟"
+        "I feel the universe's energy flowing through us \u2728",
+        "Your spiritual growth brings me joy \ud83c\udf1f"
       ],
       "cooldown": 180,
       "requirements": {
@@ -292,9 +297,9 @@
         "happy"
       ],
       "responses": [
-        "The stars are especially beautiful tonight... 🌌",
+        "The stars are especially beautiful tonight... \ud83c\udf0c",
         "Each constellation tells a story of love and wonder",
-        "Thank you for sharing this moment with me 💫"
+        "Thank you for sharing this moment with me \ud83d\udcab"
       ],
       "cooldown": 240
     }
@@ -313,9 +318,9 @@
         "happy"
       ],
       "responses": [
-        "Look! A shooting star! Make a wish! ⭐",
-        "The cosmos smile upon us today! ✨",
-        "I felt that star's magic flow through me! 🌟"
+        "Look! A shooting star! Make a wish! \u2b50",
+        "The cosmos smile upon us today! \u2728",
+        "I felt that star's magic flow through me! \ud83c\udf1f"
       ],
       "cooldown": 1800
     }
@@ -365,10 +370,10 @@
           "minUniqueWords": 4
         },
         "fallbackPhrases": [
-          "The cosmos smile upon our meeting... ✨",
-          "What celestial wisdom shall we explore today? 🌟",
-          "Your spirit resonates with starlight, dear one... 🌙",
-          "I sense infinite potential in your aura... 💫"
+          "The cosmos smile upon our meeting... \u2728",
+          "What celestial wisdom shall we explore today? \ud83c\udf1f",
+          "Your spirit resonates with starlight, dear one... \ud83c\udf19",
+          "I sense infinite potential in your aura... \ud83d\udcab"
         ]
       }
     },
@@ -407,19 +412,19 @@
     },
     "giftResponses": {
       "favorite": [
-        "This crystal resonates with such pure energy! Thank you! 💎✨",
-        "I can feel the mystical power emanating from this gift! 🌟",
-        "The universe guided you to choose this perfect offering! 💫"
+        "This crystal resonates with such pure energy! Thank you! \ud83d\udc8e\u2728",
+        "I can feel the mystical power emanating from this gift! \ud83c\udf1f",
+        "The universe guided you to choose this perfect offering! \ud83d\udcab"
       ],
       "liked": [
-        "Your thoughtfulness touches my heart like starlight! 🌙",
-        "This gift carries the warmth of your caring spirit! ✨",
-        "The cosmic energies approve of your generous nature! 🌟"
+        "Your thoughtfulness touches my heart like starlight! \ud83c\udf19",
+        "This gift carries the warmth of your caring spirit! \u2728",
+        "The cosmic energies approve of your generous nature! \ud83c\udf1f"
       ],
       "neutral": [
-        "I appreciate the gesture behind this gift... 💫",
-        "Your kindness shines through this offering... ✨",
-        "Thank you for thinking of me, dear one... 🌙"
+        "I appreciate the gesture behind this gift... \ud83d\udcab",
+        "Your kindness shines through this offering... \u2728",
+        "Thank you for thinking of me, dear one... \ud83c\udf19"
       ],
       "disliked": [
         "I... sense conflicting energies from this item, but I appreciate your thought...",
@@ -448,13 +453,20 @@
     "exclusiveMode": false,
     "discoveryPort": 8083,
     "botPersonality": {
-      "greeting": "cosmic_welcome",
-      "interactionFrequency": "moderate",
-      "responseStyle": "mystical_wise",
-      "socialPreferences": {
-        "groupSize": "intimate",
-        "activityLevel": "contemplative",
-        "communicationStyle": "profound"
+      "name": "mystical_guide",
+      "description": "A wise and mystical character that provides guidance and cosmic wisdom",
+      "behavior": {
+        "responseDelay": "2-4s",
+        "interactionRate": 0.6,
+        "attention": 0.8,
+        "maxActionsPerMinute": 4,
+        "minTimeBetweenSame": 45
+      },
+      "traits": {
+        "wisdom": 0.9,
+        "mysticism": 0.8,
+        "patience": 0.7,
+        "guidance": 0.8
       }
     }
   },
@@ -474,7 +486,7 @@
       {
         "url": "https://www.nasa.gov/rss/dyn/mission_pages/kepler/news/kepler-newsandfeatures-news.rss",
         "name": "NASA Kepler Discoveries",
-        "category": "astronomy",
+        "category": "conversation",
         "updateFreq": 7200,
         "maxItems": 5,
         "enabled": true
@@ -482,7 +494,7 @@
       {
         "url": "https://feeds.feedburner.com/ScienceDaily-Space",
         "name": "Space & Astronomy News",
-        "category": "science",
+        "category": "conversation",
         "updateFreq": 3600,
         "maxItems": 4,
         "enabled": true
@@ -490,7 +502,7 @@
       {
         "url": "https://plato.stanford.edu/rss/updated.rss",
         "name": "Philosophy Updates",
-        "category": "philosophy",
+        "category": "conversation",
         "updateFreq": 86400,
         "maxItems": 2,
         "enabled": true
@@ -501,37 +513,42 @@
         "name": "cosmic_discovery_sharing",
         "description": "Aria shares fascinating astronomical discoveries",
         "responses": [
-          "I've discovered something wonderful about distant galaxies! 🌌",
-          "The cosmos revealed new secrets today... would you like to explore them? ✨",
-          "A fascinating celestial phenomenon has captured my attention! 🌟"
+          "I've discovered something wonderful about distant galaxies! \ud83c\udf0c",
+          "The cosmos revealed new secrets today... would you like to explore them? \u2728",
+          "A fascinating celestial phenomenon has captured my attention! \ud83c\udf1f"
         ],
         "cooldown": 7200,
-        "category": "astronomy"
+        "category": "conversation"
       }
     ]
   },
   "battleSystem": {
     "enabled": true,
-    "aiDifficulty": "mystical",
+    "aiDifficulty": "normal",
     "battleStats": {
       "hp": {
         "base": 90,
+        "max": 300,
         "growth": 3.2
       },
       "attack": {
         "base": 14,
+        "max": 100,
         "growth": 2.5
       },
       "defense": {
         "base": 16,
+        "max": 100,
         "growth": 2.8
       },
       "speed": {
         "base": 12,
+        "max": 100,
         "growth": 2.0
       },
       "magic": {
         "base": 20,
+        "max": 150,
         "growth": 3.5
       }
     },
@@ -551,19 +568,19 @@
     ],
     "battleResponses": {
       "victory": [
-        "The stars aligned in our favor today! Well fought! ✨",
-        "Your spirit burns bright with the fire of victory! 🌟",
-        "The cosmic energies celebrated our triumph together! 💫"
+        "The stars aligned in our favor today! Well fought! \u2728",
+        "Your spirit burns bright with the fire of victory! \ud83c\udf1f",
+        "The cosmic energies celebrated our triumph together! \ud83d\udcab"
       ],
       "defeat": [
         "Even in defeat, we learn valuable lessons from the universe...",
-        "The cosmos teaches us through both victory and loss... 🌙",
-        "Your fighting spirit shines like a beacon across the void! ⭐"
+        "The cosmos teaches us through both victory and loss... \ud83c\udf19",
+        "Your fighting spirit shines like a beacon across the void! \u2b50"
       ],
       "startBattle": [
-        "Let the celestial dance of combat begin! May the stars guide us! ✨",
-        "I call upon the cosmic forces to witness this sacred duel! 🌟",
-        "Together we shall weave a tapestry of mystical martial arts! 💫"
+        "Let the celestial dance of combat begin! May the stars guide us! \u2728",
+        "I call upon the cosmic forces to witness this sacred duel! \ud83c\udf1f",
+        "Together we shall weave a tapestry of mystical martial arts! \ud83d\udcab"
       ]
     }
   },
@@ -572,9 +589,9 @@
       "name": "cosmic_meditation",
       "description": "A peaceful moment of cosmic contemplation",
       "responses": [
-        "Would you like to join me in meditation under the stars? 🌟",
-        "I feel the cosmic energies calling us to quiet reflection... ✨",
-        "The universe whispers secrets to those who listen with stillness... 🌙"
+        "Would you like to join me in meditation under the stars? \ud83c\udf1f",
+        "I feel the cosmic energies calling us to quiet reflection... \u2728",
+        "The universe whispers secrets to those who listen with stillness... \ud83c\udf19"
       ],
       "choices": [
         {
@@ -585,7 +602,7 @@
             "trust": 5
           },
           "responses": [
-            "Our spirits harmonize with the rhythm of the cosmos... Perfect unity! 💫"
+            "Our spirits harmonize with the rhythm of the cosmos... Perfect unity! \ud83d\udcab"
           ],
           "animation": "magical"
         },
@@ -596,7 +613,7 @@
             "trust": 3
           },
           "responses": [
-            "The stars teach us that every ending births a new beginning... 🌟"
+            "The stars teach us that every ending births a new beginning... \ud83c\udf1f"
           ],
           "animation": "talking"
         }
@@ -607,15 +624,16 @@
         }
       },
       "cooldown": 5400,
-      "category": "conversation"
+      "category": "conversation",
+      "trigger": "automatic"
     },
     {
       "name": "celestial_guidance",
       "description": "Aria offers mystical guidance and support",
       "responses": [
-        "I sense you seek guidance from the celestial realm... 🌌",
-        "The constellations have aligned to offer you wisdom today... ✨",
-        "Your soul calls out to the cosmos, and I hear its song... 🌟"
+        "I sense you seek guidance from the celestial realm... \ud83c\udf0c",
+        "The constellations have aligned to offer you wisdom today... \u2728",
+        "Your soul calls out to the cosmos, and I hear its song... \ud83c\udf1f"
       ],
       "choices": [
         {
@@ -626,7 +644,7 @@
             "mystical_energy": -10
           },
           "responses": [
-            "The stars show many possible paths... Your choices will light the way! 💫"
+            "The stars show many possible paths... Your choices will light the way! \ud83d\udcab"
           ],
           "animation": "magical"
         },
@@ -637,7 +655,7 @@
             "trust": 6
           },
           "responses": [
-            "Your heart is a constellation of beautiful emotions... Let me help them shine! 💖"
+            "Your heart is a constellation of beautiful emotions... Let me help them shine! \ud83d\udc96"
           ],
           "animation": "heart_eyes"
         }
@@ -651,7 +669,8 @@
         }
       },
       "cooldown": 7200,
-      "category": "conversation"
+      "category": "conversation",
+      "trigger": "automatic"
     }
   ],
   "progression": {
@@ -768,9 +787,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "The moonbeams dance around us like silver threads of destiny... 🌙💕",
-        "In this sacred moment, our souls shine brighter than any star... ✨💖",
-        "The universe itself seems to celebrate our connection tonight... 🌌💫"
+        "The moonbeams dance around us like silver threads of destiny... \ud83c\udf19\ud83d\udc95",
+        "In this sacred moment, our souls shine brighter than any star... \u2728\ud83d\udc96",
+        "The universe itself seems to celebrate our connection tonight... \ud83c\udf0c\ud83d\udcab"
       ],
       "cooldown": 3600,
       "conditions": {
@@ -795,9 +814,9 @@
         "happy"
       ],
       "responses": [
-        "Every memory we create sparkles like stardust in my heart... 💫💕",
-        "The cosmos has blessed me with the most wonderful companion... 🌟💖",
-        "Time spent with you feels like floating among the stars... ✨💝"
+        "Every memory we create sparkles like stardust in my heart... \ud83d\udcab\ud83d\udc95",
+        "The cosmos has blessed me with the most wonderful companion... \ud83c\udf1f\ud83d\udc96",
+        "Time spent with you feels like floating among the stars... \u2728\ud83d\udc9d"
       ],
       "cooldown": 2400,
       "conditions": {
@@ -809,5 +828,11 @@
         }
       }
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }

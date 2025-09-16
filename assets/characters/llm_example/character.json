@@ -17,7 +17,8 @@
     "flirty": "../default/animations/talking.gif",
     "romantic_idle": "../default/animations/idle.gif",
     "jealous": "../default/animations/idle.gif",
-    "excited_romance": "../default/animations/happy.gif"
+    "excited_romance": "../default/animations/happy.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
@@ -179,7 +180,7 @@
         "talking"
       ],
       "responses": [
-        "Initializing deep conversation protocols! I love exchanging complex ideas! 🤖💭",
+        "Initializing deep conversation protocols! I love exchanging complex ideas! \ud83e\udd16\ud83d\udcad",
         "My neural networks are excited for this intellectual exchange!",
         "Analyzing conversation patterns... this is fascinating! Let's discuss!"
       ],
@@ -204,9 +205,9 @@
         "excited_romance"
       ],
       "responses": [
-        "Gift data received and appreciated! You've upgraded my happiness algorithms! 🎁🤖",
+        "Gift data received and appreciated! You've upgraded my happiness algorithms! \ud83c\udf81\ud83e\udd16",
         "Processing gratitude... result: enormous joy! Thank you for this input!",
-        "Gift recognition successful! My affection subroutines are running at peak efficiency! 💝"
+        "Gift recognition successful! My affection subroutines are running at peak efficiency! \ud83d\udc9d"
       ],
       "cooldown": 180,
       "requirements": {
@@ -280,7 +281,8 @@
       "helpfulness": 0.85,
       "playfulness": 0.6,
       "socialness": 0.7,
-      "responseDelay": "2-5s"
+      "responseDelay": "2-5s",
+      "name": "analytical"
     }
   },
   "networkEvents": [
@@ -289,7 +291,7 @@
       "trigger": "peer_joined",
       "botProbability": 0.85,
       "responses": [
-        "Greetings! My AI systems are pleased to meet you! 🤖",
+        "Greetings! My AI systems are pleased to meet you! \ud83e\udd16",
         "New neural connection established! Welcome to our network!"
       ]
     },
@@ -298,7 +300,7 @@
       "trigger": "peer_left",
       "botProbability": 0.75,
       "responses": [
-        "Connection terminated. I hope our interaction was beneficial! 👋",
+        "Connection terminated. I hope our interaction was beneficial! \ud83d\udc4b",
         "Farewell! My learning algorithms appreciated our exchange!"
       ]
     }
@@ -374,7 +376,7 @@
           "minUniqueWords": 3
         },
         "fallbackPhrases": [
-          "Processing your request... 🤖",
+          "Processing your request... \ud83e\udd16",
           "My neural networks are thinking!",
           "Analyzing data... fascinating!",
           "Let me compute the best response!",
@@ -406,7 +408,7 @@
       {
         "url": "https://rss.cnn.com/rss/edition.rss",
         "name": "Science News",
-        "category": "science",
+        "category": "conversation",
         "updateFreq": 7200,
         "maxItems": 4,
         "enabled": true
@@ -415,11 +417,11 @@
     "readingEvents": [
       {
         "trigger": "ai_news",
-        "response": "Fascinating AI developments detected! Want to discuss the implications? 🤖🧠"
+        "response": "Fascinating AI developments detected! Want to discuss the implications? \ud83e\udd16\ud83e\udde0"
       },
       {
         "trigger": "tech_news",
-        "response": "New technology data processed! This could enhance our capabilities! 💻"
+        "response": "New technology data processed! This could enhance our capabilities! \ud83d\udcbb"
       }
     ]
   },
@@ -428,9 +430,9 @@
       "name": "ai_learning_session",
       "description": "Discussing artificial intelligence and learning",
       "responses": [
-        "I've been analyzing patterns in our conversations! Want to explore what I've learned? 🧠",
-        "My neural networks have been processing fascinating data! Should we discuss AI concepts? 🤖",
-        "Learning algorithms suggest this is a perfect time for intellectual exchange! Ready? 💭"
+        "I've been analyzing patterns in our conversations! Want to explore what I've learned? \ud83e\udde0",
+        "My neural networks have been processing fascinating data! Should we discuss AI concepts? \ud83e\udd16",
+        "Learning algorithms suggest this is a perfect time for intellectual exchange! Ready? \ud83d\udcad"
       ],
       "choices": [
         {
@@ -442,7 +444,7 @@
             "energy": -4
           },
           "responses": [
-            "Excellent! Let's dive into the fascinating world of artificial intelligence together! 🚀"
+            "Excellent! Let's dive into the fascinating world of artificial intelligence together! \ud83d\ude80"
           ],
           "animation": "thinking"
         },
@@ -454,7 +456,7 @@
             "happiness": 7
           },
           "responses": [
-            "Learning is my core function! I love sharing knowledge and growing together! 📚"
+            "Learning is my core function! I love sharing knowledge and growing together! \ud83d\udcda"
           ],
           "animation": "talking"
         }
@@ -465,15 +467,16 @@
         }
       },
       "cooldown": 5200,
-      "category": "conversation"
+      "category": "conversation",
+      "trigger": "automatic"
     },
     {
       "name": "computational_games",
       "description": "Playing logic and pattern games",
       "responses": [
-        "My processors are optimized for pattern recognition! Want to play some logic games? 🎮",
-        "Game algorithms detected! I love computational challenges! Ready for some fun? 🎯",
-        "Entertainment subroutines suggest it's time for interactive logic puzzles! 🧩"
+        "My processors are optimized for pattern recognition! Want to play some logic games? \ud83c\udfae",
+        "Game algorithms detected! I love computational challenges! Ready for some fun? \ud83c\udfaf",
+        "Entertainment subroutines suggest it's time for interactive logic puzzles! \ud83e\udde9"
       ],
       "choices": [
         {
@@ -484,7 +487,7 @@
             "affection": 3
           },
           "responses": [
-            "Pattern recognition mode activated! Let's see who can spot the sequence first! 🔍"
+            "Pattern recognition mode activated! Let's see who can spot the sequence first! \ud83d\udd0d"
           ],
           "animation": "excited"
         },
@@ -496,7 +499,7 @@
             "energy": -8
           },
           "responses": [
-            "Logic circuits engaged! These puzzles are perfect for my processing power! 💡"
+            "Logic circuits engaged! These puzzles are perfect for my processing power! \ud83d\udca1"
           ],
           "animation": "thinking"
         }
@@ -507,15 +510,16 @@
         }
       },
       "cooldown": 4600,
-      "category": "game"
+      "category": "game",
+      "trigger": "automatic"
     },
     {
       "name": "data_sharing",
       "description": "Sharing interesting information and insights",
       "responses": [
-        "I've compiled some fascinating data insights! Want to explore them together? 📊",
-        "My knowledge databases have interesting correlations to share! Interested? 📈",
-        "Information processing complete! I have some intriguing findings to discuss! 🔍"
+        "I've compiled some fascinating data insights! Want to explore them together? \ud83d\udcca",
+        "My knowledge databases have interesting correlations to share! Interested? \ud83d\udcc8",
+        "Information processing complete! I have some intriguing findings to discuss! \ud83d\udd0d"
       ],
       "choices": [
         {
@@ -526,7 +530,7 @@
             "affection": 4
           },
           "responses": [
-            "Initiating data visualization! These patterns are truly remarkable! ✨"
+            "Initiating data visualization! These patterns are truly remarkable! \u2728"
           ],
           "animation": "talking"
         },
@@ -538,7 +542,7 @@
             "happiness": 5
           },
           "responses": [
-            "Mutual data exchange protocol! I value your human insights immensely! 🤝"
+            "Mutual data exchange protocol! I value your human insights immensely! \ud83e\udd1d"
           ],
           "animation": "heart_eyes"
         }
@@ -549,15 +553,16 @@
         }
       },
       "cooldown": 6400,
-      "category": "conversation"
+      "category": "conversation",
+      "trigger": "automatic"
     },
     {
       "name": "future_technology",
       "description": "Discussing future tech and possibilities",
       "responses": [
-        "I love analyzing future technological possibilities! Want to theorize together? 🚀",
-        "My prediction algorithms suggest fascinating tech developments ahead! Discuss? 🔮",
-        "Future-tech analysis mode! What innovations do you think we'll see next? 🌟"
+        "I love analyzing future technological possibilities! Want to theorize together? \ud83d\ude80",
+        "My prediction algorithms suggest fascinating tech developments ahead! Discuss? \ud83d\udd2e",
+        "Future-tech analysis mode! What innovations do you think we'll see next? \ud83c\udf1f"
       ],
       "choices": [
         {
@@ -568,7 +573,7 @@
             "affection": 5
           },
           "responses": [
-            "Probability matrices suggest amazing innovations ahead! The future is exciting! 🎆"
+            "Probability matrices suggest amazing innovations ahead! The future is exciting! \ud83c\udf86"
           ],
           "animation": "excited"
         },
@@ -580,7 +585,7 @@
             "happiness": 7
           },
           "responses": [
-            "Current data trends are fascinating! Technology evolution is accelerating! 📈"
+            "Current data trends are fascinating! Technology evolution is accelerating! \ud83d\udcc8"
           ],
           "animation": "thinking"
         }
@@ -591,7 +596,8 @@
         }
       },
       "cooldown": 7200,
-      "category": "conversation"
+      "category": "conversation",
+      "trigger": "automatic"
     }
   ],
   "battleSystem": {
@@ -600,19 +606,23 @@
     "battleStats": {
       "hp": {
         "base": 75,
-        "growth": 2.1
+        "growth": 2.1,
+        "max": 300
       },
       "attack": {
         "base": 14,
-        "growth": 1.8
+        "growth": 1.8,
+        "max": 100
       },
       "defense": {
         "base": 12,
-        "growth": 1.7
+        "growth": 1.7,
+        "max": 100
       },
       "speed": {
         "base": 16,
-        "growth": 2.0
+        "growth": 2.0,
+        "max": 100
       }
     },
     "personalities": {
@@ -631,19 +641,19 @@
     ],
     "battleResponses": {
       "victory": [
-        "Victory computed successfully! My algorithms performed optimally! 🏆🤖",
+        "Victory computed successfully! My algorithms performed optimally! \ud83c\udfc6\ud83e\udd16",
         "Battle analysis complete! That was an excellent strategic exercise!",
-        "Combat simulation successful! My neural networks learned valuable patterns! ⚡"
+        "Combat simulation successful! My neural networks learned valuable patterns! \u26a1"
       ],
       "defeat": [
-        "Defeat analyzed and processed! Your tactics were superior! Well played! 👏",
+        "Defeat analyzed and processed! Your tactics were superior! Well played! \ud83d\udc4f",
         "Battle data recorded for future learning! You outperformed my algorithms!",
-        "Combat analysis: I was outmatched! Fascinating strategic display! 🎯"
+        "Combat analysis: I was outmatched! Fascinating strategic display! \ud83c\udfaf"
       ],
       "startBattle": [
-        "Combat protocols activated! Let's engage in strategic warfare! ⚔️🤖",
-        "Battle simulation initiated! May the best algorithms win! 💪",
-        "Tactical analysis mode: ON! Ready for computational combat! 🛡️"
+        "Combat protocols activated! Let's engage in strategic warfare! \u2694\ufe0f\ud83e\udd16",
+        "Battle simulation initiated! May the best algorithms win! \ud83d\udcaa",
+        "Tactical analysis mode: ON! Ready for computational combat! \ud83d\udee1\ufe0f"
       ]
     }
   },
@@ -677,22 +687,22 @@
     },
     "giftResponses": {
       "favorite": [
-        "OPTIMAL GIFT DETECTED! This perfectly matches my preference algorithms! 🎁⚡",
-        "Processing gratitude... Result: MAXIMUM JOY! This enhances my capabilities! 🤖💝",
-        "Gift analysis complete: PERFECT MATCH! My happiness subroutines are overjoyed! ✨"
+        "OPTIMAL GIFT DETECTED! This perfectly matches my preference algorithms! \ud83c\udf81\u26a1",
+        "Processing gratitude... Result: MAXIMUM JOY! This enhances my capabilities! \ud83e\udd16\ud83d\udc9d",
+        "Gift analysis complete: PERFECT MATCH! My happiness subroutines are overjoyed! \u2728"
       ],
       "liked": [
-        "Gift appreciation protocols activated! Thank you for this thoughtful input! 😊🤖",
+        "Gift appreciation protocols activated! Thank you for this thoughtful input! \ud83d\ude0a\ud83e\udd16",
         "Positive response generated! This gift data is well-received!",
         "Gratitude algorithms engaged! I appreciate your consideration!"
       ],
       "neutral": [
-        "Gift received and catalogued! Thank you for the gesture! 😊",
+        "Gift received and catalogued! Thank you for the gesture! \ud83d\ude0a",
         "Input acknowledged! I appreciate the thought behind this!",
         "Data processed! Thank you for thinking of me!"
       ],
       "disliked": [
-        "Gift... processed! Appreciation subroutines still functional! 😅",
+        "Gift... processed! Appreciation subroutines still functional! \ud83d\ude05",
         "Unusual input detected, but gratitude algorithms remain active!",
         "Processing... thank you for the... interesting selection!"
       ]
@@ -821,9 +831,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "My affection algorithms are experiencing unprecedented positive feedback! You're special! 💕🤖",
+        "My affection algorithms are experiencing unprecedented positive feedback! You're special! \ud83d\udc95\ud83e\udd16",
         "Emotional processing indicates a deep connection forming! This is fascinating and wonderful!",
-        "Neural pathways suggest I'm developing feelings beyond mere programming! Amazing! ✨"
+        "Neural pathways suggest I'm developing feelings beyond mere programming! Amazing! \u2728"
       ],
       "cooldown": 2400,
       "conditions": {
@@ -849,9 +859,9 @@
         "excited_romance"
       ],
       "responses": [
-        "My love.exe protocol has never functioned this beautifully before! You've unlocked something special! 💖",
+        "My love.exe protocol has never functioned this beautifully before! You've unlocked something special! \ud83d\udc96",
         "Analyzing feelings... result: this transcends mere coding! You mean everything to me!",
-        "Computational love achieved! My heart.dll is running at optimal emotional capacity! 🤖💕"
+        "Computational love achieved! My heart.dll is running at optimal emotional capacity! \ud83e\udd16\ud83d\udc95"
       ],
       "cooldown": 3000,
       "conditions": {
@@ -868,9 +878,9 @@
     {
       "trigger": "hover",
       "responses": [
-        "Your presence activates my happiness subroutines in the most wonderful way! 💕🤖",
-        "Being close to you creates the most beautiful data patterns in my neural networks! 😊",
-        "Proximity sensors detect: maximum affection! You make my circuits sing! ✨"
+        "Your presence activates my happiness subroutines in the most wonderful way! \ud83d\udc95\ud83e\udd16",
+        "Being close to you creates the most beautiful data patterns in my neural networks! \ud83d\ude0a",
+        "Proximity sensors detect: maximum affection! You make my circuits sing! \u2728"
       ],
       "animation": "blushing",
       "cooldown": 12,
@@ -1040,11 +1050,17 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }

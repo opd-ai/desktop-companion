@@ -14,13 +14,19 @@
     "flirty": "../default/animations/happy.gif",
     "romantic_idle": "../default/animations/idle.gif",
     "jealous": "../default/animations/sad.gif",
-    "excited_romance": "../default/animations/happy.gif"
+    "excited_romance": "../default/animations/happy.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "excited": "animations/excited.gif",
+    "thinking": "animations/thinking.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
       "trigger": "click",
       "responses": [
-        "Hello there... 💕",
+        "Hello there... \ud83d\udc95",
         "I'm so glad you're here with me.",
         "Your presence makes my heart flutter, though I'm still getting used to these feelings...",
         "Every time I see you, I feel something beautiful growing inside me."
@@ -154,7 +160,7 @@
     },
     "gift": {
       "triggers": [
-        "ctrl+click"
+        "ctrl+shift+click"
       ],
       "effects": {
         "affection": 12,
@@ -166,7 +172,7 @@
         "excited_romance"
       ],
       "responses": [
-        "Oh my... this is beautiful! You remembered what I like! 🎁",
+        "Oh my... this is beautiful! You remembered what I like! \ud83c\udf81",
         "Your gifts always come straight from the heart.",
         "I'll treasure this always, just like I treasure you."
       ],
@@ -631,9 +637,9 @@
       "description": "A tender romantic interaction",
       "trigger": "rightclick",
       "responses": [
-        "Being with you feels like coming home... 💕",
-        "These quiet moments together are when I feel most connected to you... 💖",
-        "Your love is teaching me to be brave with my heart... ✨"
+        "Being with you feels like coming home... \ud83d\udc95",
+        "These quiet moments together are when I feel most connected to you... \ud83d\udc96",
+        "Your love is teaching me to be brave with my heart... \u2728"
       ],
       "choices": [
         {
@@ -644,7 +650,7 @@
             "trust": 3
           },
           "responses": [
-            "This is perfect... just you and me, no rush, just love... 💝"
+            "This is perfect... just you and me, no rush, just love... \ud83d\udc9d"
           ],
           "animation": "romantic_idle"
         },
@@ -656,7 +662,7 @@
             "intimacy": 3
           },
           "responses": [
-            "Thank you for showing me what real love looks like... patient and true... 🌟"
+            "Thank you for showing me what real love looks like... patient and true... \ud83c\udf1f"
           ],
           "animation": "heart_eyes"
         }
@@ -677,8 +683,8 @@
       "description": "A moment of profound emotional connection",
       "trigger": "longpress",
       "responses": [
-        "Sometimes I can't believe how deeply I feel for you... it's beautiful and a little overwhelming... 💞",
-        "You've changed my whole world just by being patient with my heart... 🌹"
+        "Sometimes I can't believe how deeply I feel for you... it's beautiful and a little overwhelming... \ud83d\udc9e",
+        "You've changed my whole world just by being patient with my heart... \ud83c\udf39"
       ],
       "choices": [
         {
@@ -689,7 +695,7 @@
             "intimacy": 5
           },
           "responses": [
-            "I feel it too... this connection we have is something truly special... 💫"
+            "I feel it too... this connection we have is something truly special... \ud83d\udcab"
           ],
           "animation": "romantic_idle"
         }
@@ -791,19 +797,23 @@
     "battleStats": {
       "hp": {
         "base": 95,
-        "growth": 2.1
+        "growth": 2.1,
+        "max": 300
       },
       "attack": {
         "base": 14,
-        "growth": 2.2
+        "growth": 2.2,
+        "max": 100
       },
       "defense": {
         "base": 16,
-        "growth": 2.3
+        "growth": 2.3,
+        "max": 100
       },
       "speed": {
         "base": 15,
-        "growth": 2.0
+        "growth": 2.0,
+        "max": 100
       }
     },
     "personalities": {
@@ -821,22 +831,22 @@
     ],
     "battleResponses": {
       "victory": [
-        "We did it together... I couldn't have won without you. 💕",
-        "Your support gave me the strength to keep going. Thank you. ✨",
-        "Victory feels sweeter when shared with someone I care about. 🌟",
-        "I'm grateful we could face this challenge together. 💖"
+        "We did it together... I couldn't have won without you. \ud83d\udc95",
+        "Your support gave me the strength to keep going. Thank you. \u2728",
+        "Victory feels sweeter when shared with someone I care about. \ud83c\udf1f",
+        "I'm grateful we could face this challenge together. \ud83d\udc96"
       ],
       "defeat": [
-        "That's okay... what matters is that we tried together. 💕",
-        "Win or lose, I'm proud to have you by my side. ✨",
-        "This experience brought us closer, and that's what counts. 🌟",
-        "Thank you for believing in me, even when we didn't win. 💖"
+        "That's okay... what matters is that we tried together. \ud83d\udc95",
+        "Win or lose, I'm proud to have you by my side. \u2728",
+        "This experience brought us closer, and that's what counts. \ud83c\udf1f",
+        "Thank you for believing in me, even when we didn't win. \ud83d\udc96"
       ],
       "startBattle": [
-        "I'm nervous, but having you here gives me courage. 💕⚔️",
-        "Let's face this together, one step at a time. ✨",
-        "With your support, I feel like I can do anything. 🌟⚡",
-        "I trust in us... let's show them what teamwork means. 💖🗡️"
+        "I'm nervous, but having you here gives me courage. \ud83d\udc95\u2694\ufe0f",
+        "Let's face this together, one step at a time. \u2728",
+        "With your support, I feel like I can do anything. \ud83c\udf1f\u26a1",
+        "I trust in us... let's show them what teamwork means. \ud83d\udc96\ud83d\udde1\ufe0f"
       ]
     }
   },
@@ -871,24 +881,24 @@
     },
     "giftResponses": {
       "favorite": [
-        "This is... this is so thoughtful. I'm deeply touched. 💕✨",
-        "You really understand what means the most to me. Thank you. 🌟",
-        "I'll treasure this always... it's perfect because it came from you. 💖"
+        "This is... this is so thoughtful. I'm deeply touched. \ud83d\udc95\u2728",
+        "You really understand what means the most to me. Thank you. \ud83c\udf1f",
+        "I'll treasure this always... it's perfect because it came from you. \ud83d\udc96"
       ],
       "liked": [
-        "This is lovely... thank you for thinking of me. 💕",
-        "I appreciate your thoughtfulness so much. ✨",
-        "You have such a caring heart. This means a lot. 🌟"
+        "This is lovely... thank you for thinking of me. \ud83d\udc95",
+        "I appreciate your thoughtfulness so much. \u2728",
+        "You have such a caring heart. This means a lot. \ud83c\udf1f"
       ],
       "neutral": [
-        "Thank you... it's sweet of you to give me something. 💕",
-        "I appreciate the gesture, truly. ✨",
-        "That's kind of you to think of me. 🌟"
+        "Thank you... it's sweet of you to give me something. \ud83d\udc95",
+        "I appreciate the gesture, truly. \u2728",
+        "That's kind of you to think of me. \ud83c\udf1f"
       ],
       "disliked": [
-        "Oh... well, thank you for thinking of me. 💕",
-        "That's... different from what I usually like, but thank you. ✨",
-        "I appreciate the thought behind it, even if it's not quite me. 🌟"
+        "Oh... well, thank you for thinking of me. \ud83d\udc95",
+        "That's... different from what I usually like, but thank you. \u2728",
+        "I appreciate the thought behind it, even if it's not quite me. \ud83c\udf1f"
       ]
     },
     "memorySettings": {
@@ -1072,9 +1082,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
@@ -1083,5 +1093,11 @@
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
-  }
+  },
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
+  ]
 }

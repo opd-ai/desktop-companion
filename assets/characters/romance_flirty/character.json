@@ -14,16 +14,22 @@
     "flirty": "../default/animations/happy.gif",
     "romantic_idle": "../default/animations/idle.gif",
     "jealous": "../default/animations/sad.gif",
-    "excited_romance": "../default/animations/happy.gif"
+    "excited_romance": "../default/animations/happy.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "excited": "animations/excited.gif",
+    "tired": "animations/tired.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
       "trigger": "click",
       "responses": [
-        "Hey gorgeous! 😘",
-        "Miss me? Because I definitely missed you! 💕",
-        "You look absolutely stunning today! ✨",
-        "Ready for some fun together, cutie? 😉"
+        "Hey gorgeous! \ud83d\ude18",
+        "Miss me? Because I definitely missed you! \ud83d\udc95",
+        "You look absolutely stunning today! \u2728",
+        "Ready for some fun together, cutie? \ud83d\ude09"
       ],
       "animation": "flirty",
       "cooldown": 8
@@ -31,9 +37,9 @@
     {
       "trigger": "hover",
       "responses": [
-        "*winks playfully* Like what you see? 😏",
-        "Getting closer, I like that... 💋",
-        "You can't resist me, can you? 😈"
+        "*winks playfully* Like what you see? \ud83d\ude0f",
+        "Getting closer, I like that... \ud83d\udc8b",
+        "You can't resist me, can you? \ud83d\ude08"
       ],
       "animation": "heart_eyes",
       "cooldown": 10
@@ -41,9 +47,9 @@
     {
       "trigger": "rightclick",
       "responses": [
-        "What shall we do today, my darling? 💖",
-        "I'm all yours... what's your heart's desire? 🌹",
-        "Every moment with you is pure magic! ✨"
+        "What shall we do today, my darling? \ud83d\udc96",
+        "I'm all yours... what's your heart's desire? \ud83c\udf39",
+        "Every moment with you is pure magic! \u2728"
       ],
       "animation": "excited_romance",
       "cooldown": 12
@@ -122,9 +128,9 @@
         "happy"
       ],
       "responses": [
-        "Mmm, delicious! You always know how to spoil me! 😋",
-        "Feeding me like this... you're such a sweetheart! 💕",
-        "I love how you take care of me, gorgeous! 🥰"
+        "Mmm, delicious! You always know how to spoil me! \ud83d\ude0b",
+        "Feeding me like this... you're such a sweetheart! \ud83d\udc95",
+        "I love how you take care of me, gorgeous! \ud83e\udd70"
       ],
       "cooldown": 40,
       "requirements": {
@@ -147,9 +153,9 @@
         "flirty"
       ],
       "responses": [
-        "Yes! Let's have some fun together, cutie! 🎉",
-        "Playing with you is my favorite thing ever! 😍",
-        "You know exactly how to make me smile! ✨"
+        "Yes! Let's have some fun together, cutie! \ud83c\udf89",
+        "Playing with you is my favorite thing ever! \ud83d\ude0d",
+        "You know exactly how to make me smile! \u2728"
       ],
       "cooldown": 50,
       "requirements": {
@@ -160,7 +166,7 @@
     },
     "gift": {
       "triggers": [
-        "ctrl+click"
+        "ctrl+shift+click"
       ],
       "effects": {
         "affection": 15,
@@ -172,9 +178,9 @@
         "excited_romance"
       ],
       "responses": [
-        "For me?! You're absolutely adorable! 🎁💕",
-        "I love your gifts, but I love YOU even more! 😘",
-        "You spoil me rotten and I'm completely here for it! 🥰"
+        "For me?! You're absolutely adorable! \ud83c\udf81\ud83d\udc95",
+        "I love your gifts, but I love YOU even more! \ud83d\ude18",
+        "You spoil me rotten and I'm completely here for it! \ud83e\udd70"
       ],
       "cooldown": 120,
       "requirements": {
@@ -197,9 +203,9 @@
         "blushing"
       ],
       "responses": [
-        "Ooh, getting bold with me? I like it! 😏",
-        "Keep talking like that and I might just fall for you harder! 💋",
-        "You're such a charmer... and I'm totally falling for it! 😍"
+        "Ooh, getting bold with me? I like it! \ud83d\ude0f",
+        "Keep talking like that and I might just fall for you harder! \ud83d\udc8b",
+        "You're such a charmer... and I'm totally falling for it! \ud83d\ude0d"
       ],
       "cooldown": 90,
       "requirements": {
@@ -210,7 +216,7 @@
     },
     "romantic_gesture": {
       "triggers": [
-        "alt+click"
+        "alt+shift+click"
       ],
       "effects": {
         "affection": 12,
@@ -223,9 +229,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "Aww, you're being so romantic! My heart is melting! 💖",
-        "Gestures like this make me fall for you all over again! 🌹",
-        "You know exactly how to make me feel special! ✨"
+        "Aww, you're being so romantic! My heart is melting! \ud83d\udc96",
+        "Gestures like this make me fall for you all over again! \ud83c\udf39",
+        "You know exactly how to make me feel special! \u2728"
       ],
       "cooldown": 180,
       "requirements": {
@@ -251,9 +257,9 @@
         "blushing"
       ],
       "responses": [
-        "Mmm... I could get used to this! 💋",
-        "You're such an amazing kisser, gorgeous! 😘",
-        "More kisses like that, please! I'm addicted! 💕"
+        "Mmm... I could get used to this! \ud83d\udc8b",
+        "You're such an amazing kisser, gorgeous! \ud83d\ude18",
+        "More kisses like that, please! I'm addicted! \ud83d\udc95"
       ],
       "cooldown": 240,
       "requirements": {
@@ -390,9 +396,9 @@
     {
       "trigger": "click",
       "responses": [
-        "Hey there, handsome! Ready to be swept off your feet? 😘",
-        "You're looking absolutely irresistible today! 😍",
-        "Come here often? Because you should... to see me! 😉"
+        "Hey there, handsome! Ready to be swept off your feet? \ud83d\ude18",
+        "You're looking absolutely irresistible today! \ud83d\ude0d",
+        "Come here often? Because you should... to see me! \ud83d\ude09"
       ],
       "animation": "flirty",
       "cooldown": 10,
@@ -407,9 +413,9 @@
     {
       "trigger": "click",
       "responses": [
-        "I love you so much it makes me want to shout it from rooftops! 💕",
-        "You're my favorite person in the entire universe! 🌟",
-        "Being with you feels like living in a fairytale! ✨"
+        "I love you so much it makes me want to shout it from rooftops! \ud83d\udc95",
+        "You're my favorite person in the entire universe! \ud83c\udf1f",
+        "Being with you feels like living in a fairytale! \u2728"
       ],
       "animation": "heart_eyes",
       "cooldown": 15,
@@ -427,9 +433,9 @@
     {
       "trigger": "hover",
       "responses": [
-        "*blows a kiss* Caught you looking! 💋",
-        "Like what you see? I certainly like what I see! 😏",
-        "You're making me blush... and I love it! 😊"
+        "*blows a kiss* Caught you looking! \ud83d\udc8b",
+        "Like what you see? I certainly like what I see! \ud83d\ude0f",
+        "You're making me blush... and I love it! \ud83d\ude0a"
       ],
       "animation": "blushing",
       "cooldown": 12,
@@ -456,9 +462,9 @@
         "excited_romance"
       ],
       "responses": [
-        "I'm feeling extra flirty today... want to play? 😘",
-        "You bring out my playful side like no one else! 💕",
-        "I can't help but smile when you're around! 😊"
+        "I'm feeling extra flirty today... want to play? \ud83d\ude18",
+        "You bring out my playful side like no one else! \ud83d\udc95",
+        "I can't help but smile when you're around! \ud83d\ude0a"
       ],
       "cooldown": 1800,
       "conditions": {
@@ -482,9 +488,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "I'm head over heels for you, and I'm not afraid to show it! 💖",
-        "You make my heart do backflips every single day! 🤸‍♀️💕",
-        "I want the whole world to know how crazy I am about you! 🌍❤️"
+        "I'm head over heels for you, and I'm not afraid to show it! \ud83d\udc96",
+        "You make my heart do backflips every single day! \ud83e\udd38\u200d\u2640\ufe0f\ud83d\udc95",
+        "I want the whole world to know how crazy I am about you! \ud83c\udf0d\u2764\ufe0f"
       ],
       "cooldown": 3600,
       "conditions": {
@@ -508,9 +514,9 @@
         "jealous"
       ],
       "responses": [
-        "Hey, I want all your attention on me! I'm irresistible, remember? 😤",
-        "Don't make me compete for your attention... I always win anyway! 😏",
-        "Eyes on me, gorgeous! I'm the only one who matters! 💕"
+        "Hey, I want all your attention on me! I'm irresistible, remember? \ud83d\ude24",
+        "Don't make me compete for your attention... I always win anyway! \ud83d\ude0f",
+        "Eyes on me, gorgeous! I'm the only one who matters! \ud83d\udc95"
       ],
       "cooldown": 2400,
       "conditions": {
@@ -526,9 +532,9 @@
       "description": "A playful, flirty moment",
       "trigger": "rightclick",
       "responses": [
-        "What's on your mind, cutie? I'm all ears... and eyes... and heart! 💕😘",
-        "Ready for some fun together? I've got some ideas that'll make you smile! ✨",
-        "You know exactly how to make me happy just by being here! 🥰"
+        "What's on your mind, cutie? I'm all ears... and eyes... and heart! \ud83d\udc95\ud83d\ude18",
+        "Ready for some fun together? I've got some ideas that'll make you smile! \u2728",
+        "You know exactly how to make me happy just by being here! \ud83e\udd70"
       ],
       "choices": [
         {
@@ -539,7 +545,7 @@
             "intimacy": 3
           },
           "responses": [
-            "Ooh, I love it when you play along! You're perfect! 😍💋"
+            "Ooh, I love it when you play along! You're perfect! \ud83d\ude0d\ud83d\udc8b"
           ],
           "animation": "flirty"
         },
@@ -551,7 +557,7 @@
             "trust": 2
           },
           "responses": [
-            "Aww, you always know exactly what to say! You're amazing! 🌟💕"
+            "Aww, you always know exactly what to say! You're amazing! \ud83c\udf1f\ud83d\udc95"
           ],
           "animation": "heart_eyes"
         }
@@ -569,8 +575,8 @@
       "description": "An intense romantic interaction",
       "trigger": "longpress",
       "responses": [
-        "The way you look at me... it makes my heart race! 💓😘",
-        "I could get lost in moments like this forever with you! 💫💕"
+        "The way you look at me... it makes my heart race! \ud83d\udc93\ud83d\ude18",
+        "I could get lost in moments like this forever with you! \ud83d\udcab\ud83d\udc95"
       ],
       "choices": [
         {
@@ -581,7 +587,7 @@
             "happiness": 7
           },
           "responses": [
-            "Yes! This is exactly what I've been dreaming of! 🔥💖"
+            "Yes! This is exactly what I've been dreaming of! \ud83d\udd25\ud83d\udc96"
           ],
           "animation": "heart_eyes"
         }
@@ -683,19 +689,23 @@
     "battleStats": {
       "hp": {
         "base": 90,
-        "growth": 2.3
+        "growth": 2.3,
+        "max": 300
       },
       "attack": {
         "base": 17,
-        "growth": 2.5
+        "growth": 2.5,
+        "max": 100
       },
       "defense": {
         "base": 13,
-        "growth": 1.9
+        "growth": 1.9,
+        "max": 100
       },
       "speed": {
         "base": 19,
-        "growth": 2.7
+        "growth": 2.7,
+        "max": 100
       }
     },
     "personalities": {
@@ -713,22 +723,22 @@
     ],
     "battleResponses": {
       "victory": [
-        "We did it together, gorgeous! That was so exciting! 💖⚔️",
-        "Victory tastes even sweeter when shared with you, cutie! 🎉",
-        "We make such an amazing team! I love battling alongside you! ✨",
-        "That was incredible! You fought so beautifully! 💕🗡️"
+        "We did it together, gorgeous! That was so exciting! \ud83d\udc96\u2694\ufe0f",
+        "Victory tastes even sweeter when shared with you, cutie! \ud83c\udf89",
+        "We make such an amazing team! I love battling alongside you! \u2728",
+        "That was incredible! You fought so beautifully! \ud83d\udc95\ud83d\udde1\ufe0f"
       ],
       "defeat": [
-        "Even losing feels good when I'm with you, darling! 😘",
-        "You fought so valiantly! I'm proud to be your partner! 💕",
-        "That was still so much fun! Your skill is impressive! 🌟",
-        "Win or lose, I love every moment we spend together! 💖"
+        "Even losing feels good when I'm with you, darling! \ud83d\ude18",
+        "You fought so valiantly! I'm proud to be your partner! \ud83d\udc95",
+        "That was still so much fun! Your skill is impressive! \ud83c\udf1f",
+        "Win or lose, I love every moment we spend together! \ud83d\udc96"
       ],
       "startBattle": [
-        "Let's show them what true love and passion can do! 💖⚔️",
-        "Ready to fight alongside the most amazing person ever? 😍",
-        "Battle time! Let's make this romantic and victorious! 🌹⚡",
-        "With you by my side, we're absolutely unstoppable! 💕🗡️"
+        "Let's show them what true love and passion can do! \ud83d\udc96\u2694\ufe0f",
+        "Ready to fight alongside the most amazing person ever? \ud83d\ude0d",
+        "Battle time! Let's make this romantic and victorious! \ud83c\udf39\u26a1",
+        "With you by my side, we're absolutely unstoppable! \ud83d\udc95\ud83d\udde1\ufe0f"
       ]
     }
   },
@@ -763,24 +773,24 @@
     },
     "giftResponses": {
       "favorite": [
-        "OH MY HEART! This is absolutely perfect! I'm melting! 😍💖",
-        "You know exactly what makes me swoon! I love you so much! 💕✨",
-        "This is the most romantic thing ever! You're amazing! 🌹💎"
+        "OH MY HEART! This is absolutely perfect! I'm melting! \ud83d\ude0d\ud83d\udc96",
+        "You know exactly what makes me swoon! I love you so much! \ud83d\udc95\u2728",
+        "This is the most romantic thing ever! You're amazing! \ud83c\udf39\ud83d\udc8e"
       ],
       "liked": [
-        "This is so sweet and thoughtful! You're wonderful! 💕",
-        "I love it! You always know how to make me smile! 😊",
-        "Such a lovely gift from such a lovely person! ✨"
+        "This is so sweet and thoughtful! You're wonderful! \ud83d\udc95",
+        "I love it! You always know how to make me smile! \ud83d\ude0a",
+        "Such a lovely gift from such a lovely person! \u2728"
       ],
       "neutral": [
-        "Thank you, cutie! You're always so thoughtful! 💕",
-        "That's sweet of you to think of me! 😊",
-        "How kind! I appreciate the gesture! ✨"
+        "Thank you, cutie! You're always so thoughtful! \ud83d\udc95",
+        "That's sweet of you to think of me! \ud83d\ude0a",
+        "How kind! I appreciate the gesture! \u2728"
       ],
       "disliked": [
-        "Oh... well, it's the thought that counts, right darling? 😅",
-        "That's... interesting! But I love that you thought of me! 💕",
-        "I prefer more romantic things, but thank you sweetie! 🌹"
+        "Oh... well, it's the thought that counts, right darling? \ud83d\ude05",
+        "That's... interesting! But I love that you thought of me! \ud83d\udc95",
+        "I prefer more romantic things, but thank you sweetie! \ud83c\udf39"
       ]
     },
     "memorySettings": {
@@ -965,9 +975,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
@@ -976,5 +986,11 @@
     "idleTimeout": 30,
     "movementEnabled": true,
     "defaultSize": 128
-  }
+  },
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
+  ]
 }

@@ -16,7 +16,12 @@
     "jealous": "animations/sad.gif",
     "excited_romance": "animations/happy.gif",
     "demanding": "animations/sad.gif",
-    "critical": "animations/sad.gif"
+    "critical": "animations/sad.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "excited": "animations/excited.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
@@ -231,7 +236,7 @@
     },
     "earn_approval": {
       "triggers": [
-        "alt+click"
+        "alt+shift+click"
       ],
       "effects": {
         "affection": 8,
@@ -408,8 +413,8 @@
       {
         "name": "Expert Caretaker",
         "requirement": {
-          "age": {
-            "min": 1209600
+          "affection": {
+            "min": 80
           }
         },
         "reward": {
@@ -635,7 +640,7 @@
       "category": "conversation",
       "description": "Character demands higher standards",
       "responses": [
-        "I have very high expectations, and I expect you to meet them! Nothing less than excellence will do! 💎",
+        "I have very high expectations, and I expect you to meet them! Nothing less than excellence will do! \ud83d\udc8e",
         "Your current efforts are... adequate, but I know you can do better! Show me your true potential!",
         "I don't accept mediocrity! You must rise to my level if you want my approval!"
       ],
@@ -648,7 +653,7 @@
             "happiness": 7
           },
           "responses": [
-            "That's exactly what I want to hear! Excellence is the only acceptable standard! ✨"
+            "That's exactly what I want to hear! Excellence is the only acceptable standard! \u2728"
           ],
           "animation": "excited_romance"
         },
@@ -670,14 +675,15 @@
           "min": 10
         }
       },
-      "cooldown": 7200
+      "cooldown": 7200,
+      "trigger": "automatic"
     },
     {
       "name": "competency_test",
       "category": "game",
       "description": "A challenging intellectual or skill test",
       "responses": [
-        "Let's see if you're truly worthy of my time! I have a challenge that will test your abilities! 🧠",
+        "Let's see if you're truly worthy of my time! I have a challenge that will test your abilities! \ud83e\udde0",
         "Only those who can meet my intellectual standards deserve my attention! Are you ready?",
         "I require proof of your competence! This challenge will separate the worthy from the unworthy!"
       ],
@@ -691,7 +697,7 @@
             "energy": -10
           },
           "responses": [
-            "Excellent confidence! Let's see if your abilities match your determination! 🏆"
+            "Excellent confidence! Let's see if your abilities match your determination! \ud83c\udfc6"
           ],
           "animation": "excited_romance"
         },
@@ -717,14 +723,15 @@
           "min": 20
         }
       },
-      "cooldown": 10800
+      "cooldown": 10800,
+      "trigger": "automatic"
     },
     {
       "name": "luxury_appreciation",
       "category": "roleplay",
       "description": "Character discusses finer things in life",
       "responses": [
-        "I have refined tastes and high standards! Let's discuss the finer things in life! 💎",
+        "I have refined tastes and high standards! Let's discuss the finer things in life! \ud83d\udc8e",
         "Excellence surrounds me in all things - from art to music to companionship!",
         "I can teach you about true quality and sophistication, if you're worthy of learning!"
       ],
@@ -737,7 +744,7 @@
             "affection": 3
           },
           "responses": [
-            "Very well! True excellence begins with understanding that only the best is acceptable! 🌟"
+            "Very well! True excellence begins with understanding that only the best is acceptable! \ud83c\udf1f"
           ],
           "animation": "romantic_idle"
         },
@@ -762,7 +769,8 @@
           "min": 30
         }
       },
-      "cooldown": 9000
+      "cooldown": 9000,
+      "trigger": "automatic"
     }
   ],
   "battleSystem": {
@@ -771,19 +779,23 @@
     "battleStats": {
       "hp": {
         "base": 110,
-        "growth": 3.5
+        "growth": 3.5,
+        "max": 300
       },
       "attack": {
         "base": 25,
-        "growth": 3.2
+        "growth": 3.2,
+        "max": 100
       },
       "defense": {
         "base": 20,
-        "growth": 3.0
+        "growth": 3.0,
+        "max": 100
       },
       "speed": {
         "base": 15,
-        "growth": 2.8
+        "growth": 2.8,
+        "max": 100
       }
     },
     "personalities": {
@@ -851,7 +863,7 @@
     },
     "giftResponses": {
       "favorite": [
-        "NOW THIS is what I expect! Finally, something worthy of my standards! 💎",
+        "NOW THIS is what I expect! Finally, something worthy of my standards! \ud83d\udc8e",
         "Excellent choice! You're beginning to understand my refined tastes!",
         "Perfect! This meets my exacting requirements for quality and luxury!"
       ],
@@ -1060,11 +1072,17 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }

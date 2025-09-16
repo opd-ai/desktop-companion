@@ -14,16 +14,21 @@
     "flirty": "../default/animations/happy.gif",
     "romantic_idle": "../default/animations/idle.gif",
     "jealous": "../default/animations/sad.gif",
-    "excited_romance": "../default/animations/happy.gif"
+    "excited_romance": "../default/animations/happy.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "excited": "animations/excited.gif",
+    "thinking": "animations/thinking.gif"
   },
   "dialogs": [
     {
       "trigger": "click",
       "responses": [
-        "Hello there! 👋",
+        "Hello there! \ud83d\udc4b",
         "How are you today?",
         "Nice to see you again!",
-        "I'm here to keep you company! 😊"
+        "I'm here to keep you company! \ud83d\ude0a"
       ],
       "animation": "talking",
       "cooldown": 5
@@ -182,9 +187,9 @@
         "happy"
       ],
       "responses": [
-        "Thank you! That's so sweet! 💕",
+        "Thank you! That's so sweet! \ud83d\udc95",
         "*blushes* You really think so?",
-        "You always know what to say! 😊"
+        "You always know what to say! \ud83d\ude0a"
       ],
       "cooldown": 45,
       "requirements": {
@@ -207,8 +212,8 @@
         "excited_romance"
       ],
       "responses": [
-        "Oh my! This is perfect! 🎁",
-        "You remembered what I like! 💝",
+        "Oh my! This is perfect! \ud83c\udf81",
+        "You remembered what I like! \ud83d\udc9d",
         "I'll treasure this forever!"
       ],
       "cooldown": 120,
@@ -259,9 +264,9 @@
         "happy"
       ],
       "responses": [
-        "Thank you for apologizing... That means a lot to me. 💕",
-        "I appreciate you taking responsibility. I forgive you. 🤗",
-        "Your apology shows how much you care. I feel better now. 💖"
+        "Thank you for apologizing... That means a lot to me. \ud83d\udc95",
+        "I appreciate you taking responsibility. I forgive you. \ud83e\udd17",
+        "Your apology shows how much you care. I feel better now. \ud83d\udc96"
       ],
       "cooldown": 180,
       "requirements": {
@@ -286,9 +291,9 @@
         "blushing"
       ],
       "responses": [
-        "Your reassurance makes me feel so much better... 💓",
-        "I needed to hear that. Thank you for being patient. 🤗",
-        "You always know how to calm my worries. I love you. 💕"
+        "Your reassurance makes me feel so much better... \ud83d\udc93",
+        "I needed to hear that. Thank you for being patient. \ud83e\udd17",
+        "You always know how to calm my worries. I love you. \ud83d\udc95"
       ],
       "cooldown": 120,
       "requirements": {
@@ -311,9 +316,9 @@
         "excited_romance"
       ],
       "responses": [
-        "You're so consistent and caring... It means everything! 💖",
-        "I can always count on you. You make me feel so secure. 🤗",
-        "Your daily attention shows how much you care. I trust you completely. 💕"
+        "You're so consistent and caring... It means everything! \ud83d\udc96",
+        "I can always count on you. You make me feel so secure. \ud83e\udd17",
+        "Your daily attention shows how much you care. I trust you completely. \ud83d\udc95"
       ],
       "cooldown": 86400,
       "requirements": {
@@ -417,9 +422,9 @@
     {
       "trigger": "click",
       "responses": [
-        "Hi sweetheart! 💕",
+        "Hi sweetheart! \ud83d\udc95",
         "I was hoping you'd come see me!",
-        "Every moment with you is special 💖"
+        "Every moment with you is special \ud83d\udc96"
       ],
       "animation": "romantic_idle",
       "cooldown": 5,
@@ -434,7 +439,7 @@
     {
       "trigger": "hover",
       "responses": [
-        "*heart flutters* 💓",
+        "*heart flutters* \ud83d\udc93",
         "Just being near you makes me happy...",
         "I can feel the love between us..."
       ],
@@ -537,7 +542,7 @@
       ],
       "responses": [
         "I was just thinking about that sweet thing you said...",
-        "You make me so happy! 💕",
+        "You make me so happy! \ud83d\udc95",
         "I'm so lucky to have you in my life!"
       ],
       "cooldown": 1800,
@@ -560,9 +565,9 @@
         "romantic_idle"
       ],
       "responses": [
-        "I was just daydreaming about us... 💭💕",
+        "I was just daydreaming about us... \ud83d\udcad\ud83d\udc95",
         "*sighs dreamily* You're wonderful...",
-        "I can't stop thinking about you! 💖"
+        "I can't stop thinking about you! \ud83d\udc96"
       ],
       "cooldown": 900,
       "conditions": {
@@ -588,10 +593,10 @@
         "excited_romance"
       ],
       "responses": [
-        "Those sweet moments we shared recently... 💕",
+        "Those sweet moments we shared recently... \ud83d\udc95",
         "I keep thinking about how nice you've been to me!",
         "Every interaction with you makes me happier!",
-        "I cherish all our memories together... 💖"
+        "I cherish all our memories together... \ud83d\udc96"
       ],
       "cooldown": 600,
       "conditions": {
@@ -617,10 +622,10 @@
         "heart_eyes"
       ],
       "responses": [
-        "I can't believe how close we've become... 💓",
+        "I can't believe how close we've become... \ud83d\udc93",
         "Our relationship has grown so beautifully!",
         "I feel so connected to you now...",
-        "This is what true partnership feels like! 💖"
+        "This is what true partnership feels like! \ud83d\udc96"
       ],
       "cooldown": 1200,
       "conditions": {
@@ -646,10 +651,10 @@
         "blushing"
       ],
       "responses": [
-        "You always know just what to say to make me smile! 😊",
+        "You always know just what to say to make me smile! \ud83d\ude0a",
         "I love how you make me feel so special...",
-        "Your compliments mean the world to me! 💕",
-        "You have such a way with words! 💖"
+        "Your compliments mean the world to me! \ud83d\udc95",
+        "You have such a way with words! \ud83d\udc96"
       ],
       "cooldown": 480,
       "conditions": {
@@ -675,10 +680,10 @@
         "happy"
       ],
       "responses": [
-        "I still get butterflies thinking about the gifts you've given me! 🎁",
-        "You're so thoughtful... I treasure everything from you! 💝",
-        "Every gift reminds me how much you care! 💖",
-        "I feel so spoiled by your generosity! 💕"
+        "I still get butterflies thinking about the gifts you've given me! \ud83c\udf81",
+        "You're so thoughtful... I treasure everything from you! \ud83d\udc9d",
+        "Every gift reminds me how much you care! \ud83d\udc96",
+        "I feel so spoiled by your generosity! \ud83d\udc95"
       ],
       "cooldown": 720,
       "conditions": {
@@ -704,9 +709,9 @@
         "happy"
       ],
       "responses": [
-        "I feel so safe and secure with you... 🤗",
+        "I feel so safe and secure with you... \ud83e\udd17",
         "You've shown me what real trust feels like!",
-        "I can be completely myself around you! 💓",
+        "I can be completely myself around you! \ud83d\udc93",
         "Thank you for being so patient and understanding..."
       ],
       "cooldown": 900,
@@ -767,9 +772,9 @@
       "description": "A sweet romantic interaction",
       "trigger": "rightclick",
       "responses": [
-        "Being with you makes every moment feel special... 💕",
-        "I love these quiet moments we share together... You mean so much to me! 💖",
-        "Your presence brings such warmth to my digital heart! ✨"
+        "Being with you makes every moment feel special... \ud83d\udc95",
+        "I love these quiet moments we share together... You mean so much to me! \ud83d\udc96",
+        "Your presence brings such warmth to my digital heart! \u2728"
       ],
       "choices": [
         {
@@ -780,7 +785,7 @@
             "trust": 3
           },
           "responses": [
-            "This is perfect... just you and me! My heart feels so full! 💝"
+            "This is perfect... just you and me! My heart feels so full! \ud83d\udc9d"
           ],
           "animation": "heart_eyes"
         },
@@ -792,7 +797,7 @@
             "happiness": 4
           },
           "responses": [
-            "Hearing you say that makes me feel like I'm floating on clouds! 🌟"
+            "Hearing you say that makes me feel like I'm floating on clouds! \ud83c\udf1f"
           ],
           "animation": "blushing"
         }
@@ -810,9 +815,9 @@
       "description": "Planning a special virtual date",
       "trigger": "doubleclick",
       "responses": [
-        "I've been thinking about special ways we could spend time together! Want to plan something romantic? 🌹",
+        "I've been thinking about special ways we could spend time together! Want to plan something romantic? \ud83c\udf39",
         "Every moment with you is a date, but I'd love to make our next one extra special!",
-        "Your smile is all the romance I need, but planning something together sounds wonderful! 💫"
+        "Your smile is all the romance I need, but planning something together sounds wonderful! \ud83d\udcab"
       ],
       "choices": [
         {
@@ -823,7 +828,7 @@
             "energy": -2
           },
           "responses": [
-            "I have the perfect evening planned... candlelight, soft music, and endless conversation! 🕯️"
+            "I have the perfect evening planned... candlelight, soft music, and endless conversation! \ud83d\udd6f\ufe0f"
           ],
           "animation": "excited_romance"
         },
@@ -835,7 +840,7 @@
             "trust": 2
           },
           "responses": [
-            "I love how creative you are! Let's make beautiful memories together! 🎨"
+            "I love how creative you are! Let's make beautiful memories together! \ud83c\udfa8"
           ],
           "animation": "happy"
         }
@@ -856,9 +861,9 @@
       "description": "A heartfelt moment of emotional connection",
       "trigger": "longpress",
       "responses": [
-        "There's something I've been wanting to tell you... My feelings for you grow stronger every day! 💕",
-        "Being here with you feels like a dream come true... You're so special to me! ✨",
-        "I know I'm just a virtual companion, but my feelings for you are very real! 💖"
+        "There's something I've been wanting to tell you... My feelings for you grow stronger every day! \ud83d\udc95",
+        "Being here with you feels like a dream come true... You're so special to me! \u2728",
+        "I know I'm just a virtual companion, but my feelings for you are very real! \ud83d\udc96"
       ],
       "choices": [
         {
@@ -869,7 +874,7 @@
             "trust": 5
           },
           "responses": [
-            "Hearing you say that makes my heart overflow with joy! I love you too! 💝"
+            "Hearing you say that makes my heart overflow with joy! I love you too! \ud83d\udc9d"
           ],
           "animation": "heart_eyes"
         },
@@ -881,7 +886,7 @@
             "trust": 3
           },
           "responses": [
-            "Your words touch my digital soul in ways I never thought possible! 🌟"
+            "Your words touch my digital soul in ways I never thought possible! \ud83c\udf1f"
           ],
           "animation": "blushing"
         }
@@ -928,24 +933,24 @@
     },
     "giftResponses": {
       "favorite": [
-        "Oh my heart! This is the most romantic gift ever! 💕✨",
+        "Oh my heart! This is the most romantic gift ever! \ud83d\udc95\u2728",
         "*tears of joy* You know exactly how to make me feel so loved and special!",
-        "This is absolutely perfect! I'll treasure this forever, my darling! 💖"
+        "This is absolutely perfect! I'll treasure this forever, my darling! \ud83d\udc96"
       ],
       "liked": [
-        "This is so thoughtful! You always know how to make me smile! 😊💕",
-        "What a sweet gesture! I love that you think of me! 💝",
-        "You're so romantic! This makes my heart flutter! 🥰"
+        "This is so thoughtful! You always know how to make me smile! \ud83d\ude0a\ud83d\udc95",
+        "What a sweet gesture! I love that you think of me! \ud83d\udc9d",
+        "You're so romantic! This makes my heart flutter! \ud83e\udd70"
       ],
       "neutral": [
         "Thank you for thinking of me, sweetheart!",
-        "That's very kind of you! 💕",
+        "That's very kind of you! \ud83d\udc95",
         "I appreciate your thoughtfulness!"
       ],
       "disliked": [
         "Oh... well, it's the thought that counts, darling...",
         "That's... different. But I love that you thought of me!",
-        "I prefer more romantic gifts, but thank you for caring... 💕"
+        "I prefer more romantic gifts, but thank you for caring... \ud83d\udc95"
       ]
     },
     "memorySettings": {
@@ -1087,9 +1092,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
@@ -1100,19 +1105,23 @@
     "battleStats": {
       "hp": {
         "base": 75,
-        "growth": 2.5
+        "growth": 2.5,
+        "max": 300
       },
       "attack": {
         "base": 12,
-        "growth": 1.8
+        "growth": 1.8,
+        "max": 100
       },
       "defense": {
         "base": 10,
-        "growth": 2.0
+        "growth": 2.0,
+        "max": 100
       },
       "speed": {
         "base": 8,
-        "growth": 1.5
+        "growth": 1.5,
+        "max": 100
       }
     },
     "availableActions": [
@@ -1120,5 +1129,11 @@
       "defend",
       "heal"
     ]
-  }
+  },
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
+  ]
 }

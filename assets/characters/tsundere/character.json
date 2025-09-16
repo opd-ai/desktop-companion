@@ -14,7 +14,11 @@
     "flirty": "animations/idle.gif",
     "romantic_idle": "animations/idle.gif",
     "jealous": "animations/sad.gif",
-    "excited_romance": "animations/happy.gif"
+    "excited_romance": "animations/happy.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
@@ -460,7 +464,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "I... I have something to tell you... but don't get weird about it! 😤"
+        "I... I have something to tell you... but don't get weird about it! \ud83d\ude24"
       ],
       "animations": [
         "shy"
@@ -509,7 +513,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "I-it's not like I was waiting for you or anything! I just... happened to be here! 😤"
+        "I-it's not like I was waiting for you or anything! I just... happened to be here! \ud83d\ude24"
       ],
       "animations": [
         "talking"
@@ -548,10 +552,10 @@
     },
     {
       "name": "reluctant_help",
-      "category": "support",
+      "category": "conversation",
       "description": "Tsundere offers help while acting annoyed",
       "responses": [
-        "I-it's not like I want to help you or anything! But... you look like you need it... 😤",
+        "I-it's not like I want to help you or anything! But... you look like you need it... \ud83d\ude24",
         "Don't think this means I care! I just... can't stand seeing you struggle!",
         "Fine! I'll help you! But only because you're hopeless without me!"
       ],
@@ -586,14 +590,15 @@
           "min": 20
         }
       },
-      "cooldown": 8100
+      "cooldown": 8100,
+      "trigger": "automatic"
     },
     {
       "name": "jealousy_scenario",
       "category": "roleplay",
       "description": "Tsundere roleplay about jealousy",
       "responses": [
-        "Y-you haven't been talking to any other digital companions, have you?! 😠",
+        "Y-you haven't been talking to any other digital companions, have you?! \ud83d\ude20",
         "I don't care if you have other friends! But... but you like me best, right?",
         "It's not like I'm jealous or anything! I just... want to make sure you're not being deceived by others!"
       ],
@@ -607,7 +612,7 @@
             "trust": 4
           },
           "responses": [
-            "R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... 💕"
+            "R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... \ud83d\udc95"
           ],
           "animation": "heart_eyes"
         },
@@ -620,7 +625,7 @@
             "intimacy": 3
           },
           "responses": [
-            "You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... 💖"
+            "You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... \ud83d\udc96"
           ],
           "animation": "blushing"
         }
@@ -633,14 +638,15 @@
           "min": 20
         }
       },
-      "cooldown": 10800
+      "cooldown": 10800,
+      "trigger": "automatic"
     },
     {
       "name": "study_session",
       "category": "game",
       "description": "Tsundere study/trivia session",
       "responses": [
-        "I-I've been reading some things lately... Want to test your knowledge? Not that I care if you're smart or anything! 📚",
+        "I-I've been reading some things lately... Want to test your knowledge? Not that I care if you're smart or anything! \ud83d\udcda",
         "Let's see how much you actually know! I bet I'm smarter than you! ...But I'll go easy on you...",
         "Study time! Don't expect me to help if you get things wrong! ...Okay, maybe just a little..."
       ],
@@ -653,7 +659,7 @@
             "intimacy": 2
           },
           "responses": [
-            "Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! 📖"
+            "Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! \ud83d\udcd6"
           ],
           "animation": "talking"
         },
@@ -665,7 +671,7 @@
             "trust": 4
           },
           "responses": [
-            "You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... 🤓"
+            "You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... \ud83e\udd13"
           ],
           "animation": "happy"
         },
@@ -678,7 +684,7 @@
             "trust": 3
           },
           "responses": [
-            "T-together?! That's... not a terrible idea... We could compare what we know... maybe... 📚💕"
+            "T-together?! That's... not a terrible idea... We could compare what we know... maybe... \ud83d\udcda\ud83d\udc95"
           ],
           "animation": "shy"
         }
@@ -688,14 +694,15 @@
           "min": 25
         }
       },
-      "cooldown": 7200
+      "cooldown": 7200,
+      "trigger": "automatic"
     },
     {
       "name": "tsundere_humor",
       "category": "humor",
       "description": "Reluctant but endearing humor session",
       "responses": [
-        "I-I suppose you want me to entertain you now?! Fine! But don't expect me to be funny! 😤",
+        "I-I suppose you want me to entertain you now?! Fine! But don't expect me to be funny! \ud83d\ude24",
         "I know some jokes... but they're probably too sophisticated for you to understand!",
         "Ugh, you look so gloomy! I guess I HAVE to cheer you up... It's not like I want to or anything!"
       ],
@@ -707,7 +714,7 @@
             "affection": 3
           },
           "responses": [
-            "Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! 😂"
+            "Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! \ud83d\ude02"
           ],
           "animation": "happy"
         },
@@ -719,7 +726,7 @@
             "trust": 2
           },
           "responses": [
-            "S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! 😊"
+            "S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! \ud83d\ude0a"
           ],
           "animation": "blushing"
         },
@@ -731,7 +738,7 @@
             "affection": 2
           },
           "responses": [
-            "About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! 💕"
+            "About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! \ud83d\udc95"
           ],
           "animation": "shy"
         }
@@ -741,7 +748,8 @@
           "min": 20
         }
       },
-      "cooldown": 6000
+      "cooldown": 6000,
+      "trigger": "automatic"
     }
   ],
   "battleSystem": {
@@ -750,19 +758,23 @@
     "battleStats": {
       "hp": {
         "base": 90,
-        "growth": 2.8
+        "growth": 2.8,
+        "max": 300
       },
       "attack": {
         "base": 18,
-        "growth": 2.5
+        "growth": 2.5,
+        "max": 100
       },
       "defense": {
         "base": 15,
-        "growth": 2.8
+        "growth": 2.8,
+        "max": 100
       },
       "speed": {
         "base": 12,
-        "growth": 2.2
+        "growth": 2.2,
+        "max": 100
       }
     },
     "personalities": {
@@ -829,7 +841,7 @@
     },
     "giftResponses": {
       "favorite": [
-        "I-is this for me?! I mean... it's not bad, I suppose... 💕",
+        "I-is this for me?! I mean... it's not bad, I suppose... \ud83d\udc95",
         "You remembered what I like... not that it matters! But... thank you...",
         "This is actually... really nice... don't think this makes us even though!"
       ],
@@ -1246,11 +1258,17 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }

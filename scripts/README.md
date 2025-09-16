@@ -58,6 +58,26 @@ Full-featured script with parallel processing and comprehensive logging.
 ./scripts/generate-all-character-assets.sh --help
 ```
 
+### `scripts/validate-characters.sh` (Validation)
+Quick validation script to check character JSON files for common issues.
+
+**Usage:**
+```bash
+# Validate all characters
+./scripts/validate-characters.sh
+```
+
+### `scripts/fix-character-validation.sh` (Maintenance)
+Automatically fixes common validation issues in character JSON files.
+
+**Usage:**
+```bash
+# Fix common validation issues
+./scripts/fix-character-validation.sh
+```
+
+**Note:** This script was already run once to fix validation issues. It creates `.backup` files before making changes.
+
 ## Character Files Processed
 
 The scripts automatically find and process these 20 character archetypes:

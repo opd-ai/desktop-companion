@@ -41,6 +41,9 @@ go.work.sum
 /tmp
 /*log
 /*err
+*.backup
+*.bak
+*.swp
 scripts/embed-character
 apk-validator
 artifact-manager

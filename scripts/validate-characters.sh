@@ -38,11 +38,13 @@ success_count=0
 failure_count=0
 failed_characters=()
 
+# Temporarily disable error exit for validation loop
+set +e
+
 for character_file in "${character_files[@]}"; do
     character_name="$(basename "$(dirname "$character_file")")"
-    character_dir="$(dirname "$character_file")"
     
-    if "$GIF_GENERATOR_BINARY" validate --path "$character_dir" >/dev/null 2>&1; then
+    if "$GIF_GENERATOR_BINARY" character --file "$character_file" >/dev/null 2>&1; then
         echo "✓ $character_name"
         ((success_count++))
     else
@@ -51,6 +53,9 @@ for character_file in "${character_files[@]}"; do
         ((failure_count++))
     fi
 done
+
+# Re-enable error exit
+set -e
 
 echo
 log "Validation complete: $success_count passed, $failure_count failed"
@@ -63,7 +68,7 @@ if [[ $failure_count -gt 0 ]]; then
     done
     echo
     echo "To see detailed errors for a specific character:"
-    echo "  ./build/gif-generator validate --path assets/characters/CHAR_NAME"
+    echo "  ./build/gif-generator character --file assets/characters/CHAR_NAME/character.json"
     exit 1
 fi
 

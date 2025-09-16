@@ -15,17 +15,18 @@
     "flirty": "animations/happy.gif",
     "romantic_idle": "animations/idle.gif",
     "jealous": "animations/sad.gif",
-    "excited_romance": "animations/happy.gif"
+    "excited_romance": "animations/happy.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
       "trigger": "click",
       "responses": [
-        "Hello there! 👋",
+        "Hello there! \ud83d\udc4b",
         "How are you today?",
         "Nice to see you again!",
         "What can I help you with?",
-        "I'm here to keep you company! 😊"
+        "I'm here to keep you company! \ud83d\ude0a"
       ],
       "animation": "talking",
       "cooldown": 5
@@ -33,9 +34,9 @@
     {
       "trigger": "rightclick",
       "responses": [
-        "Right-click detected! 🖱️",
+        "Right-click detected! \ud83d\uddb1\ufe0f",
         "That tickles!",
-        "Try clicking normally next time! 😄"
+        "Try clicking normally next time! \ud83d\ude04"
       ],
       "animation": "happy",
       "cooldown": 8
@@ -45,7 +46,7 @@
       "responses": [
         "I see you hovering...",
         "Thinking of clicking?",
-        "Hello up there! 👀"
+        "Hello up there! \ud83d\udc40"
       ],
       "animation": "idle",
       "cooldown": 10
@@ -115,7 +116,7 @@
         "happy"
       ],
       "responses": [
-        "That feels wonderful! 😊",
+        "That feels wonderful! \ud83d\ude0a",
         "Thanks for the attention!",
         "I love spending time with you!",
         "You always know how to cheer me up!"
@@ -134,7 +135,7 @@
         "happy"
       ],
       "responses": [
-        "Your encouragement means so much! 💕",
+        "Your encouragement means so much! \ud83d\udc95",
         "Thank you for believing in me!",
         "I feel so much better now!",
         "You're the best companion ever!"
@@ -154,10 +155,10 @@
         "happy"
       ],
       "responses": [
-        "Thank you so much! That really means a lot to me! 😊",
+        "Thank you so much! That really means a lot to me! \ud83d\ude0a",
         "You're so sweet! I appreciate your kindness!",
         "Aww, you always know how to make me smile!",
-        "Your words warm my heart! Thank you! 💕"
+        "Your words warm my heart! Thank you! \ud83d\udc95"
       ],
       "cooldown": 60,
       "requirements": {
@@ -204,9 +205,9 @@
         "happy"
       ],
       "responses": [
-        "Oh wow! A gift for me? Thank you so much! 🎁",
+        "Oh wow! A gift for me? Thank you so much! \ud83c\udf81",
         "You're so thoughtful! I really appreciate this!",
-        "This is wonderful! I'll treasure it! 💝",
+        "This is wonderful! I'll treasure it! \ud83d\udc9d",
         "You always know how to make me happy!"
       ],
       "cooldown": 120,
@@ -285,7 +286,7 @@
           "Hello! Nice to see you!",
           "How can I help you today?",
           "Thanks for being here with me!",
-          "I'm happy you're here! 😊",
+          "I'm happy you're here! \ud83d\ude0a",
           "What would you like to do?"
         ]
       }
@@ -400,8 +401,8 @@
       {
         "name": "Faithful Companion",
         "requirement": {
-          "age": {
-            "min": 604800
+          "affection": {
+            "min": 80
           }
         },
         "reward": {
@@ -459,6 +460,7 @@
     {
       "name": "daily_reflection",
       "description": "A moment of friendly reflection",
+      "trigger": "automatic",
       "responses": [
         "I've been thinking about how nice it is to have a companion like you!",
         "What a wonderful day to spend together! How are you feeling?",
@@ -472,7 +474,7 @@
             "affection": 2
           },
           "responses": [
-            "Thank you for sharing! Your openness means so much to me! 💕"
+            "Thank you for sharing! Your openness means so much to me! \ud83d\udc95"
           ],
           "animation": "happy"
         },
@@ -483,7 +485,7 @@
             "happiness": 3
           },
           "responses": [
-            "I think about how grateful I am for our friendship! 😊"
+            "I think about how grateful I am for our friendship! \ud83d\ude0a"
           ],
           "animation": "talking"
         }
@@ -499,8 +501,9 @@
     {
       "name": "encouragement_moment",
       "description": "A supportive moment of encouragement",
+      "trigger": "automatic",
       "responses": [
-        "I believe in you! You've got this! 💪",
+        "I believe in you! You've got this! \ud83d\udcaa",
         "Remember, every challenge is a chance to grow stronger!",
         "You're doing amazing things, even when you don't see it!"
       ],
@@ -513,7 +516,7 @@
             "trust": 2
           },
           "responses": [
-            "Your gratitude fills my heart with joy! I'm always here for you! ✨"
+            "Your gratitude fills my heart with joy! I'm always here for you! \u2728"
           ],
           "animation": "happy"
         },
@@ -524,7 +527,7 @@
             "affection": 1
           },
           "responses": [
-            "You are capable of incredible things! Believe in yourself! 🌟"
+            "You are capable of incredible things! Believe in yourself! \ud83c\udf1f"
           ],
           "animation": "talking"
         }
@@ -535,15 +538,16 @@
         }
       },
       "cooldown": 5400,
-      "category": "support"
+      "category": "conversation"
     },
     {
       "name": "friendship_adventure",
       "description": "An imaginative adventure scenario",
+      "trigger": "automatic",
       "responses": [
-        "Want to go on a virtual adventure together? I have some ideas! 🗺️",
+        "Want to go on a virtual adventure together? I have some ideas! \ud83d\uddfa\ufe0f",
         "Let's imagine we're exploring a magical world! What do you see?",
-        "Adventure time! Where should our imaginations take us today? ✨"
+        "Adventure time! Where should our imaginations take us today? \u2728"
       ],
       "choices": [
         {
@@ -554,19 +558,19 @@
             "affection": 4
           },
           "responses": [
-            "The enchanted trees whisper secrets as we walk together! This is magical! 🌲✨"
+            "The enchanted trees whisper secrets as we walk together! This is magical! \ud83c\udf32\u2728"
           ],
           "animation": "excited_romance"
         },
         {
-          "text": "Visit a cozy café",
+          "text": "Visit a cozy caf\u00e9",
           "effects": {
             "happiness": 6,
             "trust": 3,
             "intimacy": 2
           },
           "responses": [
-            "This imaginary café is perfect! Just us, good conversation, and virtual coffee! ☕💕"
+            "This imaginary caf\u00e9 is perfect! Just us, good conversation, and virtual coffee! \u2615\ud83d\udc95"
           ],
           "animation": "happy"
         },
@@ -578,7 +582,7 @@
             "happiness": 4
           },
           "responses": [
-            "The virtual stars are beautiful! But being here with you is even better! 🌟"
+            "The virtual stars are beautiful! But being here with you is even better! \ud83c\udf1f"
           ],
           "animation": "romantic_idle"
         }
@@ -598,9 +602,9 @@
       "name": "creative_challenge",
       "description": "A fun creative thinking game",
       "responses": [
-        "Let's play a creative game! I'll give you a scenario, you tell me what happens next! 🎨",
+        "Let's play a creative game! I'll give you a scenario, you tell me what happens next! \ud83c\udfa8",
         "Time for some imaginative fun! Are you ready for a creative challenge?",
-        "I love exercising our creativity together! Want to try something fun? 💡"
+        "I love exercising our creativity together! Want to try something fun? \ud83d\udca1"
       ],
       "choices": [
         {
@@ -611,7 +615,7 @@
             "intimacy": 3
           },
           "responses": [
-            "Once upon a time, in a digital realm, two friends discovered they could create worlds with their imagination... What happens next? 📚✨"
+            "Once upon a time, in a digital realm, two friends discovered they could create worlds with their imagination... What happens next? \ud83d\udcda\u2728"
           ],
           "animation": "talking"
         },
@@ -622,7 +626,7 @@
             "affection": 2
           },
           "responses": [
-            "I'll start! 'Friendship'... what word comes to your mind? This will be fun! 🌈"
+            "I'll start! 'Friendship'... what word comes to your mind? This will be fun! \ud83c\udf08"
           ],
           "animation": "happy"
         },
@@ -634,7 +638,7 @@
             "trust": 1
           },
           "responses": [
-            "If we could go anywhere together, I'd love to visit a peaceful mountain retreat! Where would you want to go? 🏔️"
+            "If we could go anywhere together, I'd love to visit a peaceful mountain retreat! Where would you want to go? \ud83c\udfd4\ufe0f"
           ],
           "animation": "excited_romance"
         }
@@ -645,15 +649,16 @@
         }
       },
       "cooldown": 6000,
-      "category": "game"
+      "category": "game",
+      "trigger": "automatic"
     },
     {
       "name": "humor_session",
       "description": "Light-hearted jokes and fun",
       "responses": [
-        "I've got some silly jokes to share! Ready for some laughs? 😄",
+        "I've got some silly jokes to share! Ready for some laughs? \ud83d\ude04",
         "Want to brighten the mood with some humor? I love making you smile!",
-        "Time for giggles! I have some fun things to share with you! 🤪"
+        "Time for giggles! I have some fun things to share with you! \ud83e\udd2a"
       ],
       "choices": [
         {
@@ -663,7 +668,7 @@
             "energy": 3
           },
           "responses": [
-            "Why don't digital pets ever get hungry? Because they're always fed up with their bytes! 😂 Did that make you smile?"
+            "Why don't digital pets ever get hungry? Because they're always fed up with their bytes! \ud83d\ude02 Did that make you smile?"
           ],
           "animation": "happy"
         },
@@ -674,7 +679,7 @@
             "affection": 2
           },
           "responses": [
-            "I'm reading a book about anti-gravity... I just can't put it down! 📚 Your groans are music to my ears! 😆"
+            "I'm reading a book about anti-gravity... I just can't put it down! \ud83d\udcda Your groans are music to my ears! \ud83d\ude06"
           ],
           "animation": "talking"
         },
@@ -686,7 +691,7 @@
             "affection": 1
           },
           "responses": [
-            "If I were a real pet, I'd probably spend all day trying to catch my own cursor! 🖱️ What silly thing would you do as a digital being?"
+            "If I were a real pet, I'd probably spend all day trying to catch my own cursor! \ud83d\uddb1\ufe0f What silly thing would you do as a digital being?"
           ],
           "animation": "happy"
         }
@@ -697,7 +702,8 @@
         }
       },
       "cooldown": 4800,
-      "category": "humor"
+      "category": "humor",
+      "trigger": "automatic"
     }
   ],
   "battleSystem": {
@@ -706,19 +712,23 @@
     "battleStats": {
       "hp": {
         "base": 75,
-        "growth": 2.5
+        "growth": 2.5,
+        "max": 300
       },
       "attack": {
         "base": 12,
-        "growth": 1.8
+        "growth": 1.8,
+        "max": 100
       },
       "defense": {
         "base": 10,
-        "growth": 2.0
+        "growth": 2.0,
+        "max": 100
       },
       "speed": {
         "base": 8,
-        "growth": 1.5
+        "growth": 1.5,
+        "max": 100
       }
     },
     "personalities": {
@@ -736,7 +746,7 @@
     ],
     "battleResponses": {
       "victory": [
-        "Great battle! You played really well! 😊",
+        "Great battle! You played really well! \ud83d\ude0a",
         "That was fun! Thanks for the friendly competition!",
         "You're getting better at this! Let's battle again soon!"
       ],
@@ -780,12 +790,12 @@
     },
     "giftResponses": {
       "favorite": [
-        "Oh wow! This is perfect! Thank you so much! 😍",
-        "You know me so well! I love this! 💕",
+        "Oh wow! This is perfect! Thank you so much! \ud83d\ude0d",
+        "You know me so well! I love this! \ud83d\udc95",
         "This is exactly what I wanted! You're amazing!"
       ],
       "liked": [
-        "Thank you! This is really nice! 😊",
+        "Thank you! This is really nice! \ud83d\ude0a",
         "I appreciate your thoughtfulness!",
         "What a sweet gift! Thanks!"
       ],
@@ -824,7 +834,7 @@
       "responses": [
         "I've been thinking about how much our friendship means to me...",
         "You're such a wonderful friend! I'm so grateful for you!",
-        "Having you in my life makes everything brighter! 😊"
+        "Having you in my life makes everything brighter! \ud83d\ude0a"
       ],
       "cooldown": 1200,
       "conditions": {
@@ -878,9 +888,9 @@
         "happy"
       ],
       "responses": [
-        "I still smile when I think about the gifts you've given me! 🎁",
+        "I still smile when I think about the gifts you've given me! \ud83c\udf81",
         "Your thoughtfulness always touches my heart!",
-        "You remember the little things that make me happy! 💕"
+        "You remember the little things that make me happy! \ud83d\udc95"
       ],
       "cooldown": 900,
       "conditions": {
@@ -935,7 +945,7 @@
       ],
       "responses": [
         "I feel like we're getting closer... and I really like that!",
-        "There's something special growing between us... 💖",
+        "There's something special growing between us... \ud83d\udc96",
         "You've become such an important part of my life!"
       ],
       "cooldown": 2400,
@@ -956,7 +966,7 @@
     {
       "trigger": "click",
       "responses": [
-        "Hi there, my dear friend! 💕",
+        "Hi there, my dear friend! \ud83d\udc95",
         "I'm so happy to see you again!",
         "You always make my day brighter!"
       ],
@@ -973,7 +983,7 @@
     {
       "trigger": "hover",
       "responses": [
-        "I love when you're close like this... 😊",
+        "I love when you're close like this... \ud83d\ude0a",
         "Your presence makes me feel so warm inside...",
         "Just being near you makes me happy!"
       ],
@@ -1138,11 +1148,17 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }

@@ -14,7 +14,13 @@
     "flirty": "animations/happy.gif",
     "romantic_idle": "animations/idle.gif",
     "jealous": "animations/sad.gif",
-    "excited_romance": "animations/happy.gif"
+    "excited_romance": "animations/happy.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "excited": "animations/excited.gif",
+    "thinking": "animations/thinking.gif",
+    "supportive": "animations/supportive.gif"
   },
   "dialogs": [
     {
@@ -200,7 +206,7 @@
     },
     "give_gift": {
       "triggers": [
-        "ctrl+click"
+        "ctrl+shift+click"
       ],
       "effects": {
         "affection": 8,
@@ -405,7 +411,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "How's your day going? I'd love to hear about it! 😊"
+        "How's your day going? I'd love to hear about it! \ud83d\ude0a"
       ],
       "animations": [
         "talking"
@@ -418,7 +424,7 @@
             "affection": 2
           },
           "responses": [
-            "That's wonderful! I'm so happy for you! 🎉"
+            "That's wonderful! I'm so happy for you! \ud83c\udf89"
           ],
           "animation": "happy"
         },
@@ -460,7 +466,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "Want to do something fun together? I have some ideas! 🎮"
+        "Want to do something fun together? I have some ideas! \ud83c\udfae"
       ],
       "animations": [
         "happy"
@@ -514,19 +520,23 @@
     "battleStats": {
       "hp": {
         "base": 85,
-        "growth": 2.8
+        "growth": 2.8,
+        "max": 300
       },
       "attack": {
         "base": 15,
-        "growth": 2.0
+        "growth": 2.0,
+        "max": 100
       },
       "defense": {
         "base": 13,
-        "growth": 2.2
+        "growth": 2.2,
+        "max": 100
       },
       "speed": {
         "base": 10,
-        "growth": 1.8
+        "growth": 1.8,
+        "max": 100
       }
     },
     "personalities": {
@@ -589,14 +599,14 @@
     },
     "giftResponses": {
       "favorite": [
-        "This is perfect! Exactly what I was hoping for! 😍",
+        "This is perfect! Exactly what I was hoping for! \ud83d\ude0d",
         "You know me so well! I love this!",
         "What a thoughtful, wonderful gift! Thank you!"
       ],
       "liked": [
         "Thank you! This is really nice!",
         "I appreciate your thoughtfulness!",
-        "What a sweet gift! 😊"
+        "What a sweet gift! \ud83d\ude0a"
       ],
       "neutral": [
         "Thanks for thinking of me!",
@@ -717,7 +727,7 @@
         "fallbackPhrases": [
           "Hello! How can I help you today?",
           "I'm here for you, friend!",
-          "Thanks for being my buddy! 😊",
+          "Thanks for being my buddy! \ud83d\ude0a",
           "What would you like to do together?",
           "I'm feeling great and balanced today!"
         ]
@@ -856,16 +866,16 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
   ],
   "romanceDialogs": [
     {
-      "trigger": "compliment",
+      "trigger": "click",
       "requirements": {
         "affection": 25
       },
@@ -879,5 +889,11 @@
       },
       "animation": "happy"
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }

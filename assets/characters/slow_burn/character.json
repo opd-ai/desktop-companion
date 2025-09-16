@@ -12,7 +12,12 @@
     "flirty": "animations/idle.gif",
     "romantic_idle": "animations/idle.gif",
     "jealous": "animations/sad.gif",
-    "excited_romance": "animations/happy.gif"
+    "excited_romance": "animations/happy.gif",
+    "attack": "animations/attack.gif",
+    "defend": "animations/defend.gif",
+    "heal": "animations/heal.gif",
+    "excited": "animations/excited.gif",
+    "thinking": "animations/thinking.gif"
   },
   "name": "Slow Burn Romance",
   "description": "A thoughtful, reserved companion who values deep connection and takes time to open up",
@@ -852,9 +857,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
-        "Life is full of wonderful unexpected moments like this! ✨",
-        "These spontaneous times together are what I treasure most! 💕"
+        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
+        "Life is full of wonderful unexpected moments like this! \u2728",
+        "These spontaneous times together are what I treasure most! \ud83d\udc95"
       ],
       "cooldown": 1800
     }
@@ -935,19 +940,23 @@
     "battleStats": {
       "hp": {
         "base": 75,
-        "growth": 2.5
+        "growth": 2.5,
+        "max": 300
       },
       "attack": {
         "base": 12,
-        "growth": 1.8
+        "growth": 1.8,
+        "max": 100
       },
       "defense": {
         "base": 10,
-        "growth": 2.0
+        "growth": 2.0,
+        "max": 100
       },
       "speed": {
         "base": 8,
-        "growth": 1.5
+        "growth": 1.5,
+        "max": 100
       }
     },
     "availableActions": [
@@ -961,7 +970,7 @@
       "name": "friendly_chat",
       "description": "A casual conversation moment",
       "responses": [
-        "I've been thinking about our friendship today! 😊",
+        "I've been thinking about our friendship today! \ud83d\ude0a",
         "What's been on your mind lately?",
         "I love our little conversations!"
       ],
@@ -973,13 +982,20 @@
             "affection": 3
           },
           "responses": [
-            "Thank you for sharing! I really appreciate that! 💕"
+            "Thank you for sharing! I really appreciate that! \ud83d\udc95"
           ],
           "animation": "happy"
         }
       ],
       "cooldown": 3600,
-      "category": "conversation"
+      "category": "conversation",
+      "trigger": "automatic"
     }
+  ],
+  "categories": [
+    "conversation"
+  ],
+  "triggers": [
+    "click"
   ]
 }
