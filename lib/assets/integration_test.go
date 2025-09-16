@@ -17,6 +17,20 @@ func TestAssetGenerationWorkflow(t *testing.T) {
 			"happy":   "animations/happy.gif",
 			"sad":     "animations/sad.gif",
 		},
+		Dialogs: []character.Dialog{
+			{
+				Trigger:   "click",
+				Responses: []string{"Hello there!", "Hi!", "Hey!"},
+				Animation: "talking",
+				Cooldown:  5,
+			},
+			{
+				Trigger:   "rightclick",
+				Responses: []string{"See you later!", "Bye!", "Take care!"},
+				Animation: "idle",
+				Cooldown:  5,
+			},
+		},
 		AssetGeneration: character.DefaultAssetGenerationConfig(),
 	}
 
