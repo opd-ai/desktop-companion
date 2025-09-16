@@ -640,7 +640,7 @@
       "category": "conversation",
       "description": "Character demands higher standards",
       "responses": [
-        "I have very high expectations, and I expect you to meet them! Nothing less than excellence will do! \ud83d\udc8e",
+        "I have very high expectations, and I expect you to meet them! Nothing less than excellence will do! 💎",
         "Your current efforts are... adequate, but I know you can do better! Show me your true potential!",
         "I don't accept mediocrity! You must rise to my level if you want my approval!"
       ],
@@ -653,7 +653,7 @@
             "happiness": 7
           },
           "responses": [
-            "That's exactly what I want to hear! Excellence is the only acceptable standard! \u2728"
+            "That's exactly what I want to hear! Excellence is the only acceptable standard! ✨"
           ],
           "animation": "excited_romance"
         },
@@ -683,7 +683,7 @@
       "category": "game",
       "description": "A challenging intellectual or skill test",
       "responses": [
-        "Let's see if you're truly worthy of my time! I have a challenge that will test your abilities! \ud83e\udde0",
+        "Let's see if you're truly worthy of my time! I have a challenge that will test your abilities! 🧠",
         "Only those who can meet my intellectual standards deserve my attention! Are you ready?",
         "I require proof of your competence! This challenge will separate the worthy from the unworthy!"
       ],
@@ -697,7 +697,7 @@
             "energy": -10
           },
           "responses": [
-            "Excellent confidence! Let's see if your abilities match your determination! \ud83c\udfc6"
+            "Excellent confidence! Let's see if your abilities match your determination! 🏆"
           ],
           "animation": "excited_romance"
         },
@@ -731,7 +731,7 @@
       "category": "roleplay",
       "description": "Character discusses finer things in life",
       "responses": [
-        "I have refined tastes and high standards! Let's discuss the finer things in life! \ud83d\udc8e",
+        "I have refined tastes and high standards! Let's discuss the finer things in life! 💎",
         "Excellence surrounds me in all things - from art to music to companionship!",
         "I can teach you about true quality and sophistication, if you're worthy of learning!"
       ],
@@ -744,7 +744,7 @@
             "affection": 3
           },
           "responses": [
-            "Very well! True excellence begins with understanding that only the best is acceptable! \ud83c\udf1f"
+            "Very well! True excellence begins with understanding that only the best is acceptable! 🌟"
           ],
           "animation": "romantic_idle"
         },
@@ -863,7 +863,7 @@
     },
     "giftResponses": {
       "favorite": [
-        "NOW THIS is what I expect! Finally, something worthy of my standards! \ud83d\udc8e",
+        "NOW THIS is what I expect! Finally, something worthy of my standards! 💎",
         "Excellent choice! You're beginning to understand my refined tastes!",
         "Perfect! This meets my exacting requirements for quality and luxury!"
       ],
@@ -1072,9 +1072,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

@@ -549,7 +549,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "\ud83d\udd25 CHAOS CHALLENGE TIME! Can you handle my unpredictable madness?!"
+        "🔥 CHAOS CHALLENGE TIME! Can you handle my unpredictable madness?!"
       ],
       "animations": [
         "happy"
@@ -605,7 +605,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "\ud83c\udfaa RANDOM CHAOS MOMENT! Everything is unpredictable!"
+        "🎪 RANDOM CHAOS MOMENT! Everything is unpredictable!"
       ],
       "animations": [
         "talking"
@@ -732,7 +732,7 @@
     },
     "giftResponses": {
       "favorite": [
-        "CHAOTIC GIFT PERFECTION! This feeds my unpredictable soul! \ud83d\udd25\u2728",
+        "CHAOTIC GIFT PERFECTION! This feeds my unpredictable soul! 🔥✨",
         "YES! This is beautifully, chaotically PERFECT!",
         "My chaotic heart explodes with joy! MORE LIKE THIS!"
       ],
@@ -899,9 +899,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

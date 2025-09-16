@@ -857,9 +857,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }
@@ -936,7 +936,7 @@
   },
   "battleSystem": {
     "enabled": true,
-    "aiDifficulty": "balanced",
+    "aiDifficulty": "normal",
     "battleStats": {
       "hp": {
         "base": 75,
@@ -970,7 +970,7 @@
       "name": "friendly_chat",
       "description": "A casual conversation moment",
       "responses": [
-        "I've been thinking about our friendship today! \ud83d\ude0a",
+        "I've been thinking about our friendship today! 😊",
         "What's been on your mind lately?",
         "I love our little conversations!"
       ],
@@ -982,7 +982,7 @@
             "affection": 3
           },
           "responses": [
-            "Thank you for sharing! I really appreciate that! \ud83d\udc95"
+            "Thank you for sharing! I really appreciate that! 💕"
           ],
           "animation": "happy"
         }

@@ -411,7 +411,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "How's your day going? I'd love to hear about it! \ud83d\ude0a"
+        "How's your day going? I'd love to hear about it! 😊"
       ],
       "animations": [
         "talking"
@@ -424,7 +424,7 @@
             "affection": 2
           },
           "responses": [
-            "That's wonderful! I'm so happy for you! \ud83c\udf89"
+            "That's wonderful! I'm so happy for you! 🎉"
           ],
           "animation": "happy"
         },
@@ -466,7 +466,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "Want to do something fun together? I have some ideas! \ud83c\udfae"
+        "Want to do something fun together? I have some ideas! 🎮"
       ],
       "animations": [
         "happy"
@@ -599,14 +599,14 @@
     },
     "giftResponses": {
       "favorite": [
-        "This is perfect! Exactly what I was hoping for! \ud83d\ude0d",
+        "This is perfect! Exactly what I was hoping for! 😍",
         "You know me so well! I love this!",
         "What a thoughtful, wonderful gift! Thank you!"
       ],
       "liked": [
         "Thank you! This is really nice!",
         "I appreciate your thoughtfulness!",
-        "What a sweet gift! \ud83d\ude0a"
+        "What a sweet gift! 😊"
       ],
       "neutral": [
         "Thanks for thinking of me!",
@@ -727,7 +727,7 @@
         "fallbackPhrases": [
           "Hello! How can I help you today?",
           "I'm here for you, friend!",
-          "Thanks for being my buddy! \ud83d\ude0a",
+          "Thanks for being my buddy! 😊",
           "What would you like to do together?",
           "I'm feeling great and balanced today!"
         ]
@@ -866,9 +866,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

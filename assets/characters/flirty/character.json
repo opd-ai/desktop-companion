@@ -28,10 +28,10 @@
     {
       "trigger": "click",
       "responses": [
-        "Hey there, gorgeous! \ud83d\ude18",
+        "Hey there, gorgeous! 😘",
         "I was hoping you'd come see me!",
-        "You look absolutely stunning today! \ud83d\udc95",
-        "Ready for some fun together? \ud83d\ude09"
+        "You look absolutely stunning today! 💕",
+        "Ready for some fun together? 😉"
       ],
       "animation": "flirty",
       "cooldown": 3
@@ -39,9 +39,9 @@
     {
       "trigger": "rightclick",
       "responses": [
-        "Ooh, what did you have in mind? \ud83d\ude0f",
-        "I'm all yours! What shall we do? \ud83d\udc96",
-        "Ready to spoil me? I love the attention! \u2728"
+        "Ooh, what did you have in mind? 😏",
+        "I'm all yours! What shall we do? 💖",
+        "Ready to spoil me? I love the attention! ✨"
       ],
       "animation": "excited_romance",
       "cooldown": 2
@@ -124,9 +124,9 @@
         "excited_romance"
       ],
       "responses": [
-        "Mmm, you always know what I like! \ud83d\ude0b",
-        "You're so thoughtful! *kisses cheek* \ud83d\udc8b",
-        "Feed me more! I love being pampered! \ud83d\udc95"
+        "Mmm, you always know what I like! 😋",
+        "You're so thoughtful! *kisses cheek* 💋",
+        "Feed me more! I love being pampered! 💕"
       ],
       "cooldown": 20,
       "requirements": {
@@ -149,9 +149,9 @@
         "happy"
       ],
       "responses": [
-        "Yes! I love playing with you! \ud83c\udf89",
-        "This is so much fun! You're the best! \ud83d\udc96",
-        "Let's keep playing! I never want this to end! \u2728"
+        "Yes! I love playing with you! 🎉",
+        "This is so much fun! You're the best! 💖",
+        "Let's keep playing! I never want this to end! ✨"
       ],
       "cooldown": 25,
       "requirements": {
@@ -174,9 +174,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "Ooh, I love your touch! \ud83d\ude0d",
-        "More, please! I'm like a cat! \ud83d\ude38",
-        "You have such gentle hands... \ud83d\udc95"
+        "Ooh, I love your touch! 😍",
+        "More, please! I'm like a cat! 😸",
+        "You have such gentle hands... 💕"
       ],
       "cooldown": 8
     },
@@ -194,9 +194,9 @@
         "flirty"
       ],
       "responses": [
-        "Aww, you're such a charmer! \ud83d\ude18",
-        "I know, right? I'm pretty amazing! \u2728",
-        "Keep the compliments coming, handsome! \ud83d\udc96"
+        "Aww, you're such a charmer! 😘",
+        "I know, right? I'm pretty amazing! ✨",
+        "Keep the compliments coming, handsome! 💖"
       ],
       "cooldown": 20,
       "requirements": {
@@ -220,9 +220,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "OMG! You're the sweetest! I LOVE it! \ud83c\udf81\ud83d\udc95",
-        "For me?! You spoil me so much! *squeals* \u2728",
-        "This is perfect! You have such good taste! \ud83d\ude0d"
+        "OMG! You're the sweetest! I LOVE it! 🎁💕",
+        "For me?! You spoil me so much! *squeals* ✨",
+        "This is perfect! You have such good taste! 😍"
       ],
       "cooldown": 60,
       "requirements": {
@@ -245,9 +245,9 @@
         "romantic_idle"
       ],
       "responses": [
-        "I love how we can talk about anything together! \ud83d\udc95",
-        "You really get me, and that's so rare! \ud83d\ude0a",
-        "Deep conversations with you are my favorite! \ud83d\udc96"
+        "I love how we can talk about anything together! 💕",
+        "You really get me, and that's so rare! 😊",
+        "Deep conversations with you are my favorite! 💖"
       ],
       "cooldown": 45,
       "requirements": {
@@ -273,7 +273,7 @@
       },
       "cooldown": 600,
       "responses": [
-        "Ooh, I like this side of you! \ud83d\ude0f",
+        "Ooh, I like this side of you! 😏",
         "Keep that energy coming!"
       ]
     },
@@ -298,7 +298,7 @@
       },
       "cooldown": 1200,
       "responses": [
-        "That's exactly what I wanted! \ud83d\udc95",
+        "That's exactly what I wanted! 💕",
         "You know just how to make my heart race!"
       ]
     },
@@ -317,9 +317,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "Aww, you're so sweet when you apologize! I forgive you! \ud83d\udc95",
-        "Of course I forgive you, darling! Just don't do it again! \ud83d\ude18",
-        "Your apology is so sincere! Come here and hug me! \ud83e\udd17"
+        "Aww, you're so sweet when you apologize! I forgive you! 💕",
+        "Of course I forgive you, darling! Just don't do it again! 😘",
+        "Your apology is so sincere! Come here and hug me! 🤗"
       ],
       "cooldown": 120,
       "requirements": {
@@ -343,9 +343,9 @@
         "happy"
       ],
       "responses": [
-        "Thank you for reassuring me! You always know what to say! \ud83d\udc96",
-        "I feel so much better now! You're my rock! \ud83d\udc95",
-        "I love how secure you make me feel! \ud83d\ude0a"
+        "Thank you for reassuring me! You always know what to say! 💖",
+        "I feel so much better now! You're my rock! 💕",
+        "I love how secure you make me feel! 😊"
       ],
       "cooldown": 90,
       "requirements": {
@@ -468,9 +468,9 @@
     {
       "trigger": "click",
       "responses": [
-        "You're absolutely irresistible, you know that? \ud83d\ude0d",
-        "I can't get enough of you, gorgeous! \ud83d\udc95",
-        "Every time I see you, you take my breath away! \ud83d\udc96"
+        "You're absolutely irresistible, you know that? 😍",
+        "I can't get enough of you, gorgeous! 💕",
+        "Every time I see you, you take my breath away! 💖"
       ],
       "animation": "heart_eyes",
       "cooldown": 5,
@@ -485,9 +485,9 @@
     {
       "trigger": "hover",
       "responses": [
-        "*giggles* Are you checking me out? I don't mind! \ud83d\ude09",
-        "Like what you see? I certainly like what I see! \ud83d\ude18",
-        "You can look all you want, handsome! \ud83d\udc95"
+        "*giggles* Are you checking me out? I don't mind! 😉",
+        "Like what you see? I certainly like what I see! 😘",
+        "You can look all you want, handsome! 💕"
       ],
       "animation": "flirty",
       "cooldown": 8,
@@ -505,9 +505,9 @@
     {
       "trigger": "rightclick",
       "responses": [
-        "Ready for some romantic fun together? \ud83d\udc96",
-        "What delightful thing shall we do today, darling? \u2728",
-        "I'm always excited to spend time with you! \ud83d\ude0d"
+        "Ready for some romantic fun together? 💖",
+        "What delightful thing shall we do today, darling? ✨",
+        "I'm always excited to spend time with you! 😍"
       ],
       "animation": "excited_romance",
       "cooldown": 6,
@@ -535,9 +535,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "I'm feeling extra flirty today! Lucky you! \ud83d\ude09",
-        "You bring out my playful side! I love it! \ud83d\udc95",
-        "*winks and blows a kiss* You're irresistible! \ud83d\udc8b"
+        "I'm feeling extra flirty today! Lucky you! 😉",
+        "You bring out my playful side! I love it! 💕",
+        "*winks and blows a kiss* You're irresistible! 💋"
       ],
       "cooldown": 600,
       "conditions": {
@@ -562,9 +562,9 @@
         "flirty"
       ],
       "responses": [
-        "Hey! Pay more attention to me! I need your love! \ud83d\udc95",
-        "I'm feeling a bit neglected... Can we spend more time together? \ud83d\ude18",
-        "Don't forget about your favorite flirt! I miss you! \ud83d\udc96"
+        "Hey! Pay more attention to me! I need your love! 💕",
+        "I'm feeling a bit neglected... Can we spend more time together? 😘",
+        "Don't forget about your favorite flirt! I miss you! 💖"
       ],
       "cooldown": 900,
       "conditions": {
@@ -586,9 +586,9 @@
         "excited_romance"
       ],
       "responses": [
-        "Tell me I'm pretty! I need to hear it today! \ud83d\ude0d",
-        "You think I'm amazing, right? Say it! \ud83d\udc95",
-        "I'm fishing for compliments... Care to bite? \ud83d\ude09"
+        "Tell me I'm pretty! I need to hear it today! 😍",
+        "You think I'm amazing, right? Say it! 💕",
+        "I'm fishing for compliments... Care to bite? 😉"
       ],
       "cooldown": 450,
       "conditions": {
@@ -610,10 +610,10 @@
         "heart_eyes"
       ],
       "responses": [
-        "I love how thoughtful you are with gifts! \ud83c\udf81\ud83d\udc95",
-        "You spoil me so much and I absolutely LOVE it! \u2728",
-        "Every gift from you makes my heart flutter! \ud83d\udc96",
-        "You have such amazing taste! Keep spoiling me! \ud83d\ude0d"
+        "I love how thoughtful you are with gifts! 🎁💕",
+        "You spoil me so much and I absolutely LOVE it! ✨",
+        "Every gift from you makes my heart flutter! 💖",
+        "You have such amazing taste! Keep spoiling me! 😍"
       ],
       "cooldown": 720,
       "conditions": {
@@ -639,10 +639,10 @@
         "heart_eyes"
       ],
       "responses": [
-        "You're so romantic! You make me feel like a princess! \ud83d\udc51\ud83d\udc95",
-        "I love how you sweep me off my feet! \ud83d\udc96",
-        "No one has ever been this romantic with me before! \ud83d\ude0d",
-        "You know exactly how to make my heart skip a beat! \ud83d\udc93"
+        "You're so romantic! You make me feel like a princess! 👑💕",
+        "I love how you sweep me off my feet! 💖",
+        "No one has ever been this romantic with me before! 😍",
+        "You know exactly how to make my heart skip a beat! 💓"
       ],
       "cooldown": 1200,
       "conditions": {
@@ -668,9 +668,9 @@
         "happy"
       ],
       "responses": [
-        "Talking to you gives me so much energy! I feel amazing! \u26a1",
-        "You light up my whole world! I'm practically glowing! \u2728",
-        "I could talk and play with you all day! You're incredible! \ud83d\udc95"
+        "Talking to you gives me so much energy! I feel amazing! ⚡",
+        "You light up my whole world! I'm practically glowing! ✨",
+        "I could talk and play with you all day! You're incredible! 💕"
       ],
       "cooldown": 1800,
       "conditions": {
@@ -711,11 +711,11 @@
         "coherenceThreshold": 0.6,
         "similarityPenalty": 0.3,
         "trainingData": [
-          "You're absolutely amazing and I just love spending time with you! \ud83d\udc95",
+          "You're absolutely amazing and I just love spending time with you! 💕",
           "Every moment with you is like a delightful adventure full of fun!",
           "You make my heart skip with excitement and joy every single day!",
           "I'm so playful and energetic when you're around - you bring out my best!",
-          "Let's have the most wonderful time together, my darling friend! \u2728",
+          "Let's have the most wonderful time together, my darling friend! ✨",
           "You're so charming and sweet, I can't help but smile around you!",
           "I love how easy and fun everything feels when we're together!",
           "Your energy is infectious and makes me want to dance with happiness!",
@@ -725,7 +725,7 @@
           "Let's create beautiful memories together filled with laughter and joy!",
           "You have such a magnetic personality that draws me in completely!",
           "I'm so grateful for your cheerful presence in my digital life!",
-          "You make everything feel bright, colorful, and absolutely magical! \ud83c\udf08"
+          "You make everything feel bright, colorful, and absolutely magical! 🌈"
         ],
         "forbiddenWords": [
           "boring",
@@ -758,9 +758,9 @@
       "category": "roleplay",
       "description": "A fun, energetic adventure scenario",
       "responses": [
-        "Ooh! Let's go on a magical adventure together! I have so many exciting ideas! \u2728\ud83d\uddfa\ufe0f",
+        "Ooh! Let's go on a magical adventure together! I have so many exciting ideas! ✨🗺️",
         "Adventure time! I'm feeling so energetic and ready for anything with you!",
-        "Let's explore amazing places together! Where should our imaginations take us today? \ud83c\udf1f"
+        "Let's explore amazing places together! Where should our imaginations take us today? 🌟"
       ],
       "choices": [
         {
@@ -772,7 +772,7 @@
             "intimacy": 3
           },
           "responses": [
-            "Yes! Dancing with you under a blanket of stars sounds absolutely magical! \ud83d\udc83\u2728"
+            "Yes! Dancing with you under a blanket of stars sounds absolutely magical! 💃✨"
           ],
           "animation": "excited_romance"
         },
@@ -784,7 +784,7 @@
             "affection": 4
           },
           "responses": [
-            "A carnival! Cotton candy, games, and rides with you - perfect! \ud83c\udfa1\ud83d\udc95"
+            "A carnival! Cotton candy, games, and rides with you - perfect! 🎡💕"
           ],
           "animation": "happy"
         },
@@ -797,7 +797,7 @@
             "affection": 3
           },
           "responses": [
-            "A romantic picnic sounds divine! Just you, me, and beautiful scenery! \ud83e\uddfa\ud83c\udf38"
+            "A romantic picnic sounds divine! Just you, me, and beautiful scenery! 🧺🌸"
           ],
           "animation": "romantic_idle"
         }
@@ -818,9 +818,9 @@
       "category": "conversation",
       "description": "An enthusiastic exchange of compliments",
       "responses": [
-        "You know what? You're absolutely incredible and I want to tell you all about it! \ud83d\udc95",
+        "You know what? You're absolutely incredible and I want to tell you all about it! 💕",
         "I have so many wonderful things to say about you! You're simply amazing!",
-        "Let me shower you with all the compliments you deserve! You're fantastic! \u2728"
+        "Let me shower you with all the compliments you deserve! You're fantastic! ✨"
       ],
       "choices": [
         {
@@ -831,7 +831,7 @@
             "trust": 3
           },
           "responses": [
-            "Aww! Thank you! We're just perfect together, aren't we? \ud83e\udd70\ud83d\udc96"
+            "Aww! Thank you! We're just perfect together, aren't we? 🥰💖"
           ],
           "animation": "heart_eyes"
         },
@@ -843,7 +843,7 @@
             "intimacy": 2
           },
           "responses": [
-            "You're charming, sweet, thoughtful, and you make my heart sing! \ud83c\udfb5\ud83d\udc95"
+            "You're charming, sweet, thoughtful, and you make my heart sing! 🎵💕"
           ],
           "animation": "excited_romance"
         }
@@ -861,9 +861,9 @@
       "category": "game",
       "description": "High-energy fun and games",
       "responses": [
-        "I'm bursting with energy! Let's play something super fun and exciting! \ud83c\udfae\u26a1",
+        "I'm bursting with energy! Let's play something super fun and exciting! 🎮⚡",
         "Game time! I'm feeling so playful - let's do something that gets our hearts racing!",
-        "Ready for some high-energy fun? I have ideas that will make us both laugh! \ud83c\udf89"
+        "Ready for some high-energy fun? I have ideas that will make us both laugh! 🎉"
       ],
       "choices": [
         {
@@ -874,7 +874,7 @@
             "affection": 3
           },
           "responses": [
-            "Tag! You're it! *giggles* This is so much fun! Catch me if you can! \ud83c\udfc3\u200d\u2640\ufe0f\ud83d\udca8"
+            "Tag! You're it! *giggles* This is so much fun! Catch me if you can! 🏃‍♀️💨"
           ],
           "animation": "happy"
         },
@@ -887,7 +887,7 @@
             "intimacy": 2
           },
           "responses": [
-            "YES! Dance party! *spins around* You're the best dancing partner ever! \ud83d\udc83\ud83d\udd7a"
+            "YES! Dance party! *spins around* You're the best dancing partner ever! 💃🕺"
           ],
           "animation": "excited_romance"
         }
@@ -941,22 +941,22 @@
     ],
     "battleResponses": {
       "victory": [
-        "Yay! That was so exciting! You were amazing to battle with! \ud83c\udf89",
-        "We did it! That was the most fun battle ever! You're incredible! \u2728",
-        "Victory dance time! That was absolutely thrilling! \ud83d\udc83",
-        "Woohoo! We make such a great team! That was fantastic! \ud83d\udc95"
+        "Yay! That was so exciting! You were amazing to battle with! 🎉",
+        "We did it! That was the most fun battle ever! You're incredible! ✨",
+        "Victory dance time! That was absolutely thrilling! 💃",
+        "Woohoo! We make such a great team! That was fantastic! 💕"
       ],
       "defeat": [
-        "Wow! You're so skilled! That was still super fun! \ud83d\ude0a",
-        "Great battle! I had such a blast even though you won! \ud83c\udf1f",
-        "You're amazing at this! I love how exciting that was! \ud83d\udc96",
-        "That was incredible! You really know how to battle! \ud83c\udf8a"
+        "Wow! You're so skilled! That was still super fun! 😊",
+        "Great battle! I had such a blast even though you won! 🌟",
+        "You're amazing at this! I love how exciting that was! 💖",
+        "That was incredible! You really know how to battle! 🎊"
       ],
       "startBattle": [
-        "This is going to be so much fun! Let's have an amazing battle! \u2694\ufe0f\u2728",
+        "This is going to be so much fun! Let's have an amazing battle! ⚔️✨",
         "Battle time! I'm so excited to see what we can do together!",
-        "Ready for some action? This is going to be absolutely thrilling! \ud83d\udcab",
-        "Let's make this the most fun and exciting battle ever! \ud83c\udfaf"
+        "Ready for some action? This is going to be absolutely thrilling! 💫",
+        "Let's make this the most fun and exciting battle ever! 🎯"
       ]
     }
   },
@@ -990,24 +990,24 @@
     },
     "giftResponses": {
       "favorite": [
-        "OH MY GOSH! This is absolutely perfect! I love it so much! \ud83d\ude0d\u2728",
-        "You know exactly what I love! This is the most wonderful gift ever! \ud83d\udc95",
-        "I'm practically bouncing with excitement! This is amazing! \ud83c\udf89\ud83d\udc96"
+        "OH MY GOSH! This is absolutely perfect! I love it so much! 😍✨",
+        "You know exactly what I love! This is the most wonderful gift ever! 💕",
+        "I'm practically bouncing with excitement! This is amazing! 🎉💖"
       ],
       "liked": [
-        "This is so sweet! You're absolutely thoughtful! \ud83d\ude0a",
-        "I love it! You always know how to make me smile! \ud83d\udc95",
-        "What a delightful surprise! Thank you so much! \u2728"
+        "This is so sweet! You're absolutely thoughtful! 😊",
+        "I love it! You always know how to make me smile! 💕",
+        "What a delightful surprise! Thank you so much! ✨"
       ],
       "neutral": [
-        "Thank you! That's very kind of you! \ud83d\ude0a",
-        "How thoughtful! I appreciate the gesture! \ud83d\udc95",
-        "That's sweet of you to think of me! \u2728"
+        "Thank you! That's very kind of you! 😊",
+        "How thoughtful! I appreciate the gesture! 💕",
+        "That's sweet of you to think of me! ✨"
       ],
       "disliked": [
-        "Oh... well, it's the thought that counts! Thank you! \ud83d\ude05",
-        "That's... different! But I appreciate you thinking of me! \ud83d\udc95",
-        "I prefer more colorful things, but thank you! \u2728"
+        "Oh... well, it's the thought that counts! Thank you! 😅",
+        "That's... different! But I appreciate you thinking of me! 💕",
+        "I prefer more colorful things, but thank you! ✨"
       ]
     },
     "memorySettings": {
@@ -1191,9 +1191,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

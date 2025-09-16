@@ -350,7 +350,7 @@
       "responses": [
         "*yawn* I was just thinking about you... *sleepy smile*",
         "Being tired makes me feel closer to you somehow... *yawn*",
-        "Even when I'm sleepy, I still love spending time with you... \ud83d\ude34"
+        "Even when I'm sleepy, I still love spending time with you... 😴"
       ],
       "choices": [
         {
@@ -361,7 +361,7 @@
             "affection": 3
           },
           "responses": [
-            "*contented yawn* That sounds perfect... thank you for understanding me \ud83d\udca4"
+            "*contented yawn* That sounds perfect... thank you for understanding me 💤"
           ],
           "animation": "happy"
         },
@@ -372,7 +372,7 @@
             "happiness": 5
           },
           "responses": [
-            "*peaceful sleepy contentment* Your presence is so comforting... \ud83d\ude0c"
+            "*peaceful sleepy contentment* Your presence is so comforting... 😌"
           ],
           "animation": "happy"
         }
@@ -392,7 +392,7 @@
       "responses": [
         "*sleepy whisper* I had the most wonderful dream about us...",
         "Sometimes I wonder if this is all a beautiful dream... *yawn*",
-        "In my dreams, we're always together in the most peaceful places... \ud83d\udcad"
+        "In my dreams, we're always together in the most peaceful places... 💭"
       ],
       "choices": [
         {
@@ -403,7 +403,7 @@
             "happiness": 3
           },
           "responses": [
-            "*sleepy smile* We were floating on soft clouds, just resting together... so peaceful \ud83c\udf19"
+            "*sleepy smile* We were floating on soft clouds, just resting together... so peaceful 🌙"
           ],
           "animation": "talking"
         },
@@ -414,7 +414,7 @@
             "affection": 2
           },
           "responses": [
-            "*drowsy contentment* I love that you share your dreams with me... *yawn* \ud83d\udc95"
+            "*drowsy contentment* I love that you share your dreams with me... *yawn* 💕"
           ],
           "animation": "happy"
         }
@@ -459,13 +459,13 @@
     },
     "giftResponses": {
       "favorite": [
-        "*sleepy contentment* This is so soothing... perfect... \ud83d\ude34",
-        "*yawn* You know exactly what I need... so comforting... \ud83d\udc95",
+        "*sleepy contentment* This is so soothing... perfect... 😴",
+        "*yawn* You know exactly what I need... so comforting... 💕",
         "This makes me feel so peaceful and relaxed... *yawn* thank you..."
       ],
       "liked": [
         "*drowsy appreciation* That's very thoughtful... *yawn*",
-        "This is nice... I can rest easier now... \ud83d\ude0c",
+        "This is nice... I can rest easier now... 😌",
         "*sleepy smile* Thank you for thinking of my comfort..."
       ],
       "neutral": [
@@ -591,22 +591,22 @@
     ],
     "battleResponses": {
       "victory": [
-        "*yawn* Did we... did we win? That's nice... *drowsy smile* \ud83d\ude34",
-        "I'm surprised I stayed awake for the whole battle... *yawn* \u2694\ufe0f",
-        "Victory feels peaceful... like a good nap after hard work... \ud83c\udf19",
-        "*sleepy celebration* We did it... now can we rest? \ud83d\udca4"
+        "*yawn* Did we... did we win? That's nice... *drowsy smile* 😴",
+        "I'm surprised I stayed awake for the whole battle... *yawn* ⚔️",
+        "Victory feels peaceful... like a good nap after hard work... 🌙",
+        "*sleepy celebration* We did it... now can we rest? 💤"
       ],
       "defeat": [
-        "*yawn* That's okay... losing doesn't feel so bad when you're this sleepy... \ud83d\ude34",
-        "I tried my best... even if I was half-asleep... *drowsy smile* \ud83d\udca4",
-        "Maybe next time I'll be more rested... *yawn* \ud83c\udf19",
-        "It's hard to fight when all you want to do is nap... *sleepy sigh* \ud83d\ude34"
+        "*yawn* That's okay... losing doesn't feel so bad when you're this sleepy... 😴",
+        "I tried my best... even if I was half-asleep... *drowsy smile* 💤",
+        "Maybe next time I'll be more rested... *yawn* 🌙",
+        "It's hard to fight when all you want to do is nap... *sleepy sigh* 😴"
       ],
       "startBattle": [
-        "*yawn* A battle? Right now? I suppose I can try... \ud83d\ude34\u2694\ufe0f",
-        "I'll do my best, but I might be a bit... *yawn* ...slow... \ud83d\udca4",
-        "Fighting when sleepy is like dancing in a dream... \ud83c\udf19\u26a1",
-        "*drowsy determination* Let's get this over with so I can rest... \ud83d\ude34\ud83d\udde1\ufe0f"
+        "*yawn* A battle? Right now? I suppose I can try... 😴⚔️",
+        "I'll do my best, but I might be a bit... *yawn* ...slow... 💤",
+        "Fighting when sleepy is like dancing in a dream... 🌙⚡",
+        "*drowsy determination* Let's get this over with so I can rest... 😴🗡️"
       ]
     }
   },
@@ -746,9 +746,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

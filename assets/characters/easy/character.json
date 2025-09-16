@@ -22,7 +22,7 @@
     {
       "trigger": "click",
       "responses": [
-        "I'm feeling great today! \ud83d\ude0a",
+        "I'm feeling great today! 😊",
         "Thanks for taking such good care of me!",
         "You're the best companion ever!",
         "Life is wonderful with you around!",
@@ -182,7 +182,7 @@
         "happy"
       ],
       "responses": [
-        "Your gentle words mean everything to me... \ud83d\ude0a",
+        "Your gentle words mean everything to me... 😊",
         "I feel so safe and cared for with you!",
         "Thank you for being so patient and kind!",
         "You make me feel so comfortable and loved!"
@@ -450,7 +450,7 @@
       "description": "A soft moment of care and attention",
       "responses": [
         "How are you feeling today? I'm here if you need anything gentle...",
-        "Just checking in on you - you don't need to do anything special, just be yourself \ud83c\udf38",
+        "Just checking in on you - you don't need to do anything special, just be yourself 🌸",
         "I hope you're taking things at your own pace today..."
       ],
       "choices": [
@@ -461,7 +461,7 @@
             "affection": 2
           },
           "responses": [
-            "I'm so glad to hear that! Your wellbeing makes me happy too \ud83d\udc9d"
+            "I'm so glad to hear that! Your wellbeing makes me happy too 💝"
           ],
           "animation": "happy"
         },
@@ -472,7 +472,7 @@
             "happiness": 3
           },
           "responses": [
-            "Of course, I'm here for you. Take all the time you need, no pressure at all \ud83e\udd17"
+            "Of course, I'm here for you. Take all the time you need, no pressure at all 🤗"
           ],
           "animation": "talking"
         }
@@ -491,7 +491,7 @@
       "description": "A quiet, restful interaction",
       "responses": [
         "Let's just enjoy this peaceful moment together...",
-        "Sometimes the best thing is to simply be present with each other \ud83c\udf43",
+        "Sometimes the best thing is to simply be present with each other 🍃",
         "I love these quiet times we share - no rush, no pressure..."
       ],
       "choices": [
@@ -503,7 +503,7 @@
             "affection": 1
           },
           "responses": [
-            "*peaceful contentment* This is perfect... \ud83d\ude0c"
+            "*peaceful contentment* This is perfect... 😌"
           ],
           "animation": "happy"
         },
@@ -514,7 +514,7 @@
             "happiness": 2
           },
           "responses": [
-            "Thank you for sharing that with me... your gentle nature brings me peace \ud83c\udf3a"
+            "Thank you for sharing that with me... your gentle nature brings me peace 🌺"
           ],
           "animation": "talking"
         }
@@ -569,7 +569,7 @@
     ],
     "battleResponses": {
       "victory": [
-        "That was a gentle battle! I hope you had fun too! \ud83d\ude0a",
+        "That was a gentle battle! I hope you had fun too! 😊",
         "Thanks for playing with me! You're so considerate!",
         "I enjoyed that peaceful competition!"
       ],
@@ -613,14 +613,14 @@
     },
     "giftResponses": {
       "favorite": [
-        "This is so perfect and gentle! Thank you! \ud83c\udf38",
+        "This is so perfect and gentle! Thank you! 🌸",
         "You understand me so well! I love simple, beautiful things!",
-        "What a thoughtful, peaceful gift! \ud83d\udc95"
+        "What a thoughtful, peaceful gift! 💕"
       ],
       "liked": [
         "This is lovely! Thank you for being so kind!",
         "I appreciate your gentle thoughtfulness!",
-        "What a sweet, simple pleasure! \ud83d\ude0a"
+        "What a sweet, simple pleasure! 😊"
       ],
       "neutral": [
         "Thank you for thinking of me!",
@@ -655,7 +655,7 @@
         "talking"
       ],
       "responses": [
-        "I feel so comfortable and peaceful when you're here with me... \ud83c\udf38",
+        "I feel so comfortable and peaceful when you're here with me... 🌸",
         "Our gentle friendship is growing into something really special...",
         "You make everything feel so easy and natural... I love that about you!"
       ],
@@ -684,7 +684,7 @@
       ],
       "responses": [
         "These quiet, easy moments with you are my absolute favorite...",
-        "I don't need anything complicated - just being with you is perfect! \ud83d\udc95",
+        "I don't need anything complicated - just being with you is perfect! 💕",
         "You bring such peace and happiness to my simple life!"
       ],
       "cooldown": 1200,
@@ -711,7 +711,7 @@
         "happy"
       ],
       "responses": [
-        "You're so patient and gentle with me... I feel so cherished! \ud83d\udc96",
+        "You're so patient and gentle with me... I feel so cherished! 💖",
         "Your kindness makes my heart feel so warm and full!",
         "I'm so grateful for how easy you make everything feel!"
       ],
@@ -758,9 +758,9 @@
     {
       "trigger": "click",
       "responses": [
-        "Oh! You're here! Everything feels so much better now! \ud83d\ude0a",
+        "Oh! You're here! Everything feels so much better now! 😊",
         "I love when you visit me... you make everything so peaceful!",
-        "Your gentle presence always brightens my day! \ud83d\udc95"
+        "Your gentle presence always brightens my day! 💕"
       ],
       "animation": "happy",
       "cooldown": 5,
@@ -777,7 +777,7 @@
       "responses": [
         "I love feeling your gentle attention... it's so comforting...",
         "Just having you near makes me feel so content and happy...",
-        "Your peaceful energy is exactly what my heart needs... \ud83c\udf38"
+        "Your peaceful energy is exactly what my heart needs... 🌸"
       ],
       "animation": "happy",
       "cooldown": 8,
@@ -898,9 +898,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

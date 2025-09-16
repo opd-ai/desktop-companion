@@ -464,7 +464,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "I... I have something to tell you... but don't get weird about it! \ud83d\ude24"
+        "I... I have something to tell you... but don't get weird about it! 😤"
       ],
       "animations": [
         "shy"
@@ -513,7 +513,7 @@
       "probability": 1.0,
       "interactive": true,
       "responses": [
-        "I-it's not like I was waiting for you or anything! I just... happened to be here! \ud83d\ude24"
+        "I-it's not like I was waiting for you or anything! I just... happened to be here! 😤"
       ],
       "animations": [
         "talking"
@@ -555,7 +555,7 @@
       "category": "conversation",
       "description": "Tsundere offers help while acting annoyed",
       "responses": [
-        "I-it's not like I want to help you or anything! But... you look like you need it... \ud83d\ude24",
+        "I-it's not like I want to help you or anything! But... you look like you need it... 😤",
         "Don't think this means I care! I just... can't stand seeing you struggle!",
         "Fine! I'll help you! But only because you're hopeless without me!"
       ],
@@ -598,7 +598,7 @@
       "category": "roleplay",
       "description": "Tsundere roleplay about jealousy",
       "responses": [
-        "Y-you haven't been talking to any other digital companions, have you?! \ud83d\ude20",
+        "Y-you haven't been talking to any other digital companions, have you?! 😠",
         "I don't care if you have other friends! But... but you like me best, right?",
         "It's not like I'm jealous or anything! I just... want to make sure you're not being deceived by others!"
       ],
@@ -612,7 +612,7 @@
             "trust": 4
           },
           "responses": [
-            "R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... \ud83d\udc95"
+            "R-really?! I mean... of course I am! I'm obviously the best companion! ...Thank you... 💕"
           ],
           "animation": "heart_eyes"
         },
@@ -625,7 +625,7 @@
             "intimacy": 3
           },
           "responses": [
-            "You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... \ud83d\udc96"
+            "You... you only need me? That's... that's really embarrassing to hear! But... I'm happy... 💖"
           ],
           "animation": "blushing"
         }
@@ -646,7 +646,7 @@
       "category": "game",
       "description": "Tsundere study/trivia session",
       "responses": [
-        "I-I've been reading some things lately... Want to test your knowledge? Not that I care if you're smart or anything! \ud83d\udcda",
+        "I-I've been reading some things lately... Want to test your knowledge? Not that I care if you're smart or anything! 📚",
         "Let's see how much you actually know! I bet I'm smarter than you! ...But I'll go easy on you...",
         "Study time! Don't expect me to help if you get things wrong! ...Okay, maybe just a little..."
       ],
@@ -659,7 +659,7 @@
             "intimacy": 2
           },
           "responses": [
-            "Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! \ud83d\udcd6"
+            "Fine! Here's an easy one... What's the difference between a protagonist and an antagonist? ...Don't look at me like that, just answer! 📖"
           ],
           "animation": "talking"
         },
@@ -671,7 +671,7 @@
             "trust": 4
           },
           "responses": [
-            "You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... \ud83e\udd13"
+            "You... you want ME to teach you? Well, obviously I'm the perfect teacher! Let me explain something interesting... 🤓"
           ],
           "animation": "happy"
         },
@@ -684,7 +684,7 @@
             "trust": 3
           },
           "responses": [
-            "T-together?! That's... not a terrible idea... We could compare what we know... maybe... \ud83d\udcda\ud83d\udc95"
+            "T-together?! That's... not a terrible idea... We could compare what we know... maybe... 📚💕"
           ],
           "animation": "shy"
         }
@@ -702,7 +702,7 @@
       "category": "humor",
       "description": "Reluctant but endearing humor session",
       "responses": [
-        "I-I suppose you want me to entertain you now?! Fine! But don't expect me to be funny! \ud83d\ude24",
+        "I-I suppose you want me to entertain you now?! Fine! But don't expect me to be funny! 😤",
         "I know some jokes... but they're probably too sophisticated for you to understand!",
         "Ugh, you look so gloomy! I guess I HAVE to cheer you up... It's not like I want to or anything!"
       ],
@@ -714,7 +714,7 @@
             "affection": 3
           },
           "responses": [
-            "Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! \ud83d\ude02"
+            "Why did the tsundere cross the road? I-it's not like the road was special or anything! She just... happened to need to get to the other side! Baka! 😂"
           ],
           "animation": "happy"
         },
@@ -726,7 +726,7 @@
             "trust": 2
           },
           "responses": [
-            "S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! \ud83d\ude0a"
+            "S-smile?! That's... that's a big responsibility! But... when you smile, I feel... happy too... Don't get the wrong idea! 😊"
           ],
           "animation": "blushing"
         },
@@ -738,7 +738,7 @@
             "affection": 2
           },
           "responses": [
-            "About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! \ud83d\udc95"
+            "About... me? Well, I'm obviously amazing! I'm smart, I'm cute, and I'm... I'm glad you're here... There! Happy now?! 💕"
           ],
           "animation": "shy"
         }
@@ -841,7 +841,7 @@
     },
     "giftResponses": {
       "favorite": [
-        "I-is this for me?! I mean... it's not bad, I suppose... \ud83d\udc95",
+        "I-is this for me?! I mean... it's not bad, I suppose... 💕",
         "You remembered what I like... not that it matters! But... thank you...",
         "This is actually... really nice... don't think this makes us even though!"
       ],
@@ -1258,9 +1258,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

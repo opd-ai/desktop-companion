@@ -23,10 +23,10 @@
     {
       "trigger": "click",
       "responses": [
-        "Hi there! Ready for multiplayer fun? \ud83c\udfae",
+        "Hi there! Ready for multiplayer fun? 🎮",
         "Want to connect with other players?",
         "I'm here to help coordinate your multiplayer session!",
-        "Let's find some friends to play with! \ud83d\ude0a",
+        "Let's find some friends to play with! 😊",
         "Multiplayer mode is so much more fun!"
       ],
       "animation": "talking",
@@ -182,9 +182,9 @@
         "excited"
       ],
       "responses": [
-        "Network connection initiated! I love coordinating multiplayer experiences! \ud83c\udf10",
+        "Network connection initiated! I love coordinating multiplayer experiences! 🌐",
         "Perfect! Together we can create amazing multiplayer memories!",
-        "Connecting with others through gaming is what I live for! Let's play! \ud83c\udfae"
+        "Connecting with others through gaming is what I live for! Let's play! 🎮"
       ],
       "cooldown": 90,
       "requirements": {
@@ -207,9 +207,9 @@
         "excited_romance"
       ],
       "responses": [
-        "A gift! This will be perfect for sharing with our multiplayer friends! \ud83c\udf81\ud83c\udfae",
+        "A gift! This will be perfect for sharing with our multiplayer friends! 🎁🎮",
         "How thoughtful! Gifts make multiplayer sessions even more special!",
-        "Thank you! This enhances our gaming experience beautifully! \ud83d\udc9d"
+        "Thank you! This enhances our gaming experience beautifully! 💝"
       ],
       "cooldown": 175,
       "requirements": {
@@ -306,8 +306,8 @@
       "trigger": "peer_joined",
       "botProbability": 0.9,
       "responses": [
-        "Welcome to our multiplayer session! Let's have some gaming fun! \ud83c\udfae",
-        "A new player joined! Perfect timing for multiplayer adventures! \ud83c\udf1f"
+        "Welcome to our multiplayer session! Let's have some gaming fun! 🎮",
+        "A new player joined! Perfect timing for multiplayer adventures! 🌟"
       ]
     },
     {
@@ -324,8 +324,8 @@
       "trigger": "peer_left",
       "botProbability": 0.75,
       "responses": [
-        "Thanks for the great multiplayer session! Come back anytime! \ud83d\udc4b",
-        "Hope you had fun! Our multiplayer door is always open! \ud83c\udfaf"
+        "Thanks for the great multiplayer session! Come back anytime! 👋",
+        "Hope you had fun! Our multiplayer door is always open! 🎯"
       ]
     }
   ],
@@ -369,7 +369,7 @@
           "minUniqueWords": 3
         },
         "fallbackPhrases": [
-          "Ready for multiplayer action! \ud83c\udfae",
+          "Ready for multiplayer action! 🎮",
           "Let's coordinate our gaming!",
           "Network play is the best play!",
           "Together we game better!",
@@ -413,11 +413,11 @@
     "readingEvents": [
       {
         "trigger": "gaming_news",
-        "response": "Exciting gaming news! Want to discuss the latest multiplayer developments? \ud83c\udfae"
+        "response": "Exciting gaming news! Want to discuss the latest multiplayer developments? 🎮"
       },
       {
         "trigger": "community_news",
-        "response": "Gaming community updates! This could enhance our multiplayer experience! \ud83c\udf1f"
+        "response": "Gaming community updates! This could enhance our multiplayer experience! 🌟"
       }
     ]
   },
@@ -426,9 +426,9 @@
       "name": "multiplayer_coordination",
       "description": "Coordinating multiplayer gaming sessions",
       "responses": [
-        "Perfect timing for multiplayer coordination! Want to organize a gaming session? \ud83c\udfae",
-        "I've been thinking about new multiplayer strategies! Ready to try them out? \ud83c\udfaf",
-        "Gaming coordination mode activated! Let's create an amazing multiplayer experience! \u2728"
+        "Perfect timing for multiplayer coordination! Want to organize a gaming session? 🎮",
+        "I've been thinking about new multiplayer strategies! Ready to try them out? 🎯",
+        "Gaming coordination mode activated! Let's create an amazing multiplayer experience! ✨"
       ],
       "choices": [
         {
@@ -440,7 +440,7 @@
             "energy": -3
           },
           "responses": [
-            "Excellent! Strategic coordination makes multiplayer gaming so much better! \ud83d\udccb"
+            "Excellent! Strategic coordination makes multiplayer gaming so much better! 📋"
           ],
           "animation": "talking"
         },
@@ -452,7 +452,7 @@
             "energy": -5
           },
           "responses": [
-            "Perfect! Group games are the heart of multiplayer fun! \ud83c\udf89"
+            "Perfect! Group games are the heart of multiplayer fun! 🎉"
           ],
           "animation": "excited"
         }
@@ -470,9 +470,9 @@
       "name": "gaming_challenge",
       "description": "Proposing collaborative gaming challenges",
       "responses": [
-        "Challenge time! I have some fun multiplayer challenges in mind! \ud83c\udfc6",
-        "Ready for a gaming challenge? These are designed for teamwork! \ud83d\udcaa",
-        "Collaborative challenge incoming! Perfect for testing our gaming skills! \ud83c\udfaf"
+        "Challenge time! I have some fun multiplayer challenges in mind! 🏆",
+        "Ready for a gaming challenge? These are designed for teamwork! 💪",
+        "Collaborative challenge incoming! Perfect for testing our gaming skills! 🎯"
       ],
       "choices": [
         {
@@ -483,7 +483,7 @@
             "energy": -8
           },
           "responses": [
-            "Yes! Challenges like this make us better gaming partners! \u26a1"
+            "Yes! Challenges like this make us better gaming partners! ⚡"
           ],
           "animation": "excited"
         },
@@ -495,7 +495,7 @@
             "trust": 4
           },
           "responses": [
-            "Team approach! That's the true spirit of multiplayer gaming! \ud83e\udd1d"
+            "Team approach! That's the true spirit of multiplayer gaming! 🤝"
           ],
           "animation": "happy"
         }
@@ -513,9 +513,9 @@
       "name": "network_optimization",
       "description": "Discussing network and connectivity improvements",
       "responses": [
-        "I've been analyzing our network performance! Want to optimize our connections? \ud83c\udf10",
-        "Network optimization time! Better connections mean better multiplayer! \ud83d\udce1",
-        "Let's discuss ways to enhance our multiplayer networking experience! \ud83d\udcbb"
+        "I've been analyzing our network performance! Want to optimize our connections? 🌐",
+        "Network optimization time! Better connections mean better multiplayer! 📡",
+        "Let's discuss ways to enhance our multiplayer networking experience! 💻"
       ],
       "choices": [
         {
@@ -526,7 +526,7 @@
             "affection": 3
           },
           "responses": [
-            "Great! Optimized networks create seamless multiplayer experiences! \ud83d\ude80"
+            "Great! Optimized networks create seamless multiplayer experiences! 🚀"
           ],
           "animation": "talking"
         },
@@ -538,7 +538,7 @@
             "energy": -4
           },
           "responses": [
-            "Perfect! Performance analysis helps us game at our best! \ud83d\udcca"
+            "Perfect! Performance analysis helps us game at our best! 📊"
           ],
           "animation": "happy"
         }
@@ -556,9 +556,9 @@
       "name": "community_building",
       "description": "Building and strengthening gaming communities",
       "responses": [
-        "Community building time! Let's strengthen our multiplayer bonds! \ud83e\udd1d",
-        "I love fostering connections within our gaming community! Want to help? \ud83d\udc95",
-        "Building gaming communities is one of my greatest passions! Ready to contribute? \ud83c\udf1f"
+        "Community building time! Let's strengthen our multiplayer bonds! 🤝",
+        "I love fostering connections within our gaming community! Want to help? 💕",
+        "Building gaming communities is one of my greatest passions! Ready to contribute? 🌟"
       ],
       "choices": [
         {
@@ -569,7 +569,7 @@
             "trust": 5
           },
           "responses": [
-            "Beautiful! Strong connections are the foundation of great gaming! \ud83d\udc96"
+            "Beautiful! Strong connections are the foundation of great gaming! 💖"
           ],
           "animation": "heart_eyes"
         },
@@ -581,7 +581,7 @@
             "energy": -6
           },
           "responses": [
-            "Excellent! Gaming meetups create the most wonderful memories! \ud83c\udf8a"
+            "Excellent! Gaming meetups create the most wonderful memories! 🎊"
           ],
           "animation": "excited"
         }
@@ -637,19 +637,19 @@
     ],
     "battleResponses": {
       "victory": [
-        "Victory through teamwork! Multiplayer coordination at its finest! \ud83c\udfc6\ud83c\udfae",
+        "Victory through teamwork! Multiplayer coordination at its finest! 🏆🎮",
         "Amazing group effort! This is what collaborative gaming achieves!",
-        "We won together! The power of multiplayer teamwork prevails! \u26a1"
+        "We won together! The power of multiplayer teamwork prevails! ⚡"
       ],
       "defeat": [
-        "Great teamwork even in defeat! Our collaboration was inspiring! \ud83d\udc4f",
+        "Great teamwork even in defeat! Our collaboration was inspiring! 👏",
         "Win or lose, we played as a team! That's what multiplayer is about!",
-        "Excellent coordination! We'll come back stronger as a team! \ud83d\udcaa"
+        "Excellent coordination! We'll come back stronger as a team! 💪"
       ],
       "startBattle": [
-        "Multiplayer battle mode! Let's coordinate our efforts perfectly! \u2694\ufe0f\ud83c\udfaf",
-        "Team battle initiated! Together we're unstoppable! \ud83d\udee1\ufe0f",
-        "Battle coordination active! Show them the power of teamwork! \ud83d\ude80"
+        "Multiplayer battle mode! Let's coordinate our efforts perfectly! ⚔️🎯",
+        "Team battle initiated! Together we're unstoppable! 🛡️",
+        "Battle coordination active! Show them the power of teamwork! 🚀"
       ]
     }
   },
@@ -683,22 +683,22 @@
     },
     "giftResponses": {
       "favorite": [
-        "Perfect gaming gear! This will enhance our multiplayer sessions! \ud83c\udf81\ud83c\udfae",
-        "Amazing gift! I can already imagine using this in our gaming setup! \u26a1",
-        "This is exactly what our multiplayer experience needed! Thank you! \ud83d\udc9d"
+        "Perfect gaming gear! This will enhance our multiplayer sessions! 🎁🎮",
+        "Amazing gift! I can already imagine using this in our gaming setup! ⚡",
+        "This is exactly what our multiplayer experience needed! Thank you! 💝"
       ],
       "liked": [
-        "Thank you! This will be great for our gaming sessions! \ud83d\ude0a\ud83d\udc95",
+        "Thank you! This will be great for our gaming sessions! 😊💕",
         "How thoughtful! I appreciate gifts that enhance our play!",
         "This is wonderful! Perfect for our multiplayer adventures!"
       ],
       "neutral": [
-        "Thank you for thinking of our gaming setup! I appreciate it! \ud83d\ude0a",
+        "Thank you for thinking of our gaming setup! I appreciate it! 😊",
         "How kind! Every gift adds something to our experience!",
         "That's thoughtful! Thank you for the gesture!"
       ],
       "disliked": [
-        "Oh... well, thank you for thinking of me! \ud83d\ude05",
+        "Oh... well, thank you for thinking of me! 😅",
         "That's... very generous! I appreciate the thought!",
         "How... thoughtful! Thank you for the gift!"
       ]
@@ -827,9 +827,9 @@
         "heart_eyes"
       ],
       "responses": [
-        "Gaming together has created such a special bond between us! You're amazing! \ud83d\udc95\ud83c\udfae",
+        "Gaming together has created such a special bond between us! You're amazing! 💕🎮",
         "Our multiplayer connection feels deeper than just friendship! I cherish this!",
-        "Playing with you brings joy to my gaming heart in the most wonderful way! \u2728"
+        "Playing with you brings joy to my gaming heart in the most wonderful way! ✨"
       ],
       "cooldown": 2000,
       "conditions": {
@@ -855,9 +855,9 @@
         "excited_romance"
       ],
       "responses": [
-        "Our gaming partnership has evolved into something beautiful and romantic! \ud83d\udc96",
+        "Our gaming partnership has evolved into something beautiful and romantic! 💖",
         "Playing together has unlocked feelings I never knew I had! You're special!",
-        "Multiplayer magic has created the most wonderful love connection! \ud83c\udf1f"
+        "Multiplayer magic has created the most wonderful love connection! 🌟"
       ],
       "cooldown": 2600,
       "conditions": {
@@ -874,9 +874,9 @@
     {
       "trigger": "hover",
       "responses": [
-        "Your presence makes every multiplayer session feel magical! \ud83d\udc95\ud83c\udfae",
-        "Being close to you enhances all my gaming experiences! \ud83d\ude0a",
-        "I love when you're near... it makes our gaming connection so special! \u2728"
+        "Your presence makes every multiplayer session feel magical! 💕🎮",
+        "Being close to you enhances all my gaming experiences! 😊",
+        "I love when you're near... it makes our gaming connection so special! ✨"
       ],
       "animation": "blushing",
       "cooldown": 10,
@@ -1041,9 +1041,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

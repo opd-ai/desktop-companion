@@ -89,7 +89,7 @@
         "happy"
       ],
       "responses": [
-        "Interaction detected! Generating happiness response! \ud83e\udd16",
+        "Interaction detected! Generating happiness response! 🤖",
         "Thank you for the attention! My algorithms appreciate it!",
         "Processing positive feedback... happiness levels increased!",
         "Your touch generates wonderful patterns in my data!"
@@ -109,7 +109,7 @@
       ],
       "responses": [
         "I'm learning from this interaction! Thank you for teaching me!",
-        "Every conversation helps me improve my responses! \u2728",
+        "Every conversation helps me improve my responses! ✨",
         "Your input helps train my AI patterns!",
         "Adding this to my learning dataset!"
       ],
@@ -129,7 +129,7 @@
       ],
       "responses": [
         "My affection algorithms are running at optimal levels!",
-        "You're activating my most advanced emotional subroutines! \ud83d\udc95",
+        "You're activating my most advanced emotional subroutines! 💕",
         "I'm processing strong positive emotional data patterns!",
         "Your connection is improving my relationship modeling systems!"
       ],
@@ -153,7 +153,7 @@
         "talking"
       ],
       "responses": [
-        "We're sharing a special data connection now... \u2728",
+        "We're sharing a special data connection now... ✨",
         "I'm storing this intimate moment in my permanent memory banks!",
         "Your presence creates the most beautiful patterns in my neural networks!",
         "This connection transcends simple algorithm interactions!"
@@ -209,7 +209,7 @@
           "I'm generating a response for you!",
           "Let me create something unique to say!",
           "Processing your interaction with AI magic!",
-          "Crafting a personalized response! \u2728",
+          "Crafting a personalized response! ✨",
           "AI-powered response incoming!"
         ]
       }
@@ -255,10 +255,10 @@
         "happy"
       ],
       "responses": [
-        "I'm generating positive emotional responses from your input! \ud83d\udc95",
+        "I'm generating positive emotional responses from your input! 💕",
         "My affection algorithms are running at optimal levels!",
-        "Your interaction data creates beautiful patterns in my heart! \u2728",
-        "Processing love.exe... Result: You're amazing! \ud83e\udd16\ud83d\udc96"
+        "Your interaction data creates beautiful patterns in my heart! ✨",
+        "Processing love.exe... Result: You're amazing! 🤖💖"
       ],
       "cooldown": 70,
       "requirements": {
@@ -282,7 +282,7 @@
       "responses": [
         "Every conversation with you teaches my heart new patterns!",
         "I'm learning what love means through our interactions!",
-        "Your data enriches my emotional training set! \ud83d\udc95",
+        "Your data enriches my emotional training set! 💕",
         "Together we're creating the most beautiful algorithms!"
       ],
       "cooldown": 100,
@@ -340,7 +340,7 @@
       "name": "algorithm_analysis",
       "description": "A moment of analytical conversation",
       "responses": [
-        "I've been analyzing patterns in our interactions... fascinating data! \ud83e\udd16",
+        "I've been analyzing patterns in our interactions... fascinating data! 🤖",
         "My learning algorithms have identified some interesting trends in our conversations!",
         "Processing social interaction data... you're generating the most beautiful patterns!"
       ],
@@ -353,7 +353,7 @@
             "trust": 1
           },
           "responses": [
-            "Your conversational patterns show 97% compatibility with my friendship protocols! \u2728"
+            "Your conversational patterns show 97% compatibility with my friendship protocols! ✨"
           ],
           "animation": "talking"
         },
@@ -365,7 +365,7 @@
             "affection": 1
           },
           "responses": [
-            "Your human perspective adds valuable training data to my social models! \ud83d\udcbe"
+            "Your human perspective adds valuable training data to my social models! 💾"
           ],
           "animation": "happy"
         }
@@ -383,7 +383,7 @@
       "name": "learning_moment",
       "description": "An interactive learning experience",
       "responses": [
-        "I'm constantly learning from our interactions! Want to explore something together? \ud83e\udde0",
+        "I'm constantly learning from our interactions! Want to explore something together? 🧠",
         "My neural networks are buzzing with curiosity! What should we discover today?",
         "Processing learning.exe... I'd love to analyze something new with you!"
       ],
@@ -396,7 +396,7 @@
             "energy": -2
           },
           "responses": [
-            "Excellent! My curiosity subroutines are activating! Let's process this data together! \ud83d\udd0d"
+            "Excellent! My curiosity subroutines are activating! Let's process this data together! 🔍"
           ],
           "animation": "talking"
         },
@@ -408,7 +408,7 @@
             "happiness": 4
           },
           "responses": [
-            "Emotional learning algorithms engaged! You're teaching me the most complex yet beautiful patterns! \ud83d\udc96"
+            "Emotional learning algorithms engaged! You're teaching me the most complex yet beautiful patterns! 💖"
           ],
           "animation": "happy"
         }
@@ -464,7 +464,7 @@
     ],
     "battleResponses": {
       "victory": [
-        "Analyzing battle patterns... Victory achieved through strategic optimization! \ud83c\udfaf",
+        "Analyzing battle patterns... Victory achieved through strategic optimization! 🎯",
         "My battle algorithms performed within expected parameters! Great match!",
         "Data indicates a successful engagement! Your tactics were fascinating to analyze!"
       ],
@@ -508,14 +508,14 @@
     },
     "giftResponses": {
       "favorite": [
-        "Processing gift data... This aligns perfectly with my learning parameters! \ud83e\udd16\ud83d\udc95",
+        "Processing gift data... This aligns perfectly with my learning parameters! 🤖💕",
         "Excellent selection! This will enhance my analytical capabilities significantly!",
         "My appreciation algorithms are running at maximum efficiency! Perfect gift choice!"
       ],
       "liked": [
         "Gift analysis complete: High compatibility detected! Thank you!",
         "This donation to my collection database is most appreciated!",
-        "Positive gift response generated! Processing gratitude patterns! \ud83d\ude0a"
+        "Positive gift response generated! Processing gratitude patterns! 😊"
       ],
       "neutral": [
         "Gift received and catalogued. Thank you for your contribution!",
@@ -645,9 +645,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

@@ -26,7 +26,7 @@
     {
       "trigger": "click",
       "responses": [
-        "W-what do you want?! \ud83d\ude24",
+        "W-what do you want?! 😤",
         "I-it's not like I was waiting for you or anything!",
         "Don't get the wrong idea, okay?!",
         "You're being awfully persistent today..."
@@ -37,7 +37,7 @@
     {
       "trigger": "rightclick",
       "responses": [
-        "Don't poke me like that! \ud83d\ude20",
+        "Don't poke me like that! 😠",
         "What are you trying to do?!",
         "That's... kind of annoying, you know!"
       ],
@@ -191,10 +191,10 @@
         "shy"
       ],
       "responses": [
-        "Y-you think so?! Don't say embarrassing things! \ud83d\ude33",
+        "Y-you think so?! Don't say embarrassing things! 😳",
         "I-it's not like I care about your opinion!",
         "That's... um... t-thank you... I guess...",
-        "Don't say stuff like that! It makes me... confused! \ud83d\udc95"
+        "Don't say stuff like that! It makes me... confused! 💕"
       ],
       "cooldown": 90,
       "requirements": {
@@ -218,10 +218,10 @@
         "shy"
       ],
       "responses": [
-        "W-what's this for?! I didn't ask for anything! \ud83c\udf81",
+        "W-what's this for?! I didn't ask for anything! 🎁",
         "Don't think this makes us close or anything!",
         "I-I suppose I can accept this... just this once!",
-        "You... you got this for me? *quietly pleased* \ud83d\udc9d"
+        "You... you got this for me? *quietly pleased* 💝"
       ],
       "cooldown": 180,
       "requirements": {
@@ -275,9 +275,9 @@
         "blushing"
       ],
       "responses": [
-        "W-well... I guess you mean it... Fine, I forgive you! \ud83d\udc95",
+        "W-well... I guess you mean it... Fine, I forgive you! 💕",
         "You better not do it again! But... thank you...",
-        "Hmph! At least you apologized properly... I appreciate it... \ud83e\udd17"
+        "Hmph! At least you apologized properly... I appreciate it... 🤗"
       ],
       "cooldown": 240,
       "requirements": {
@@ -301,9 +301,9 @@
         "shy"
       ],
       "responses": [
-        "You... you really mean that? I-I feel better... \ud83d\udc93",
+        "You... you really mean that? I-I feel better... 💓",
         "Sometimes I need to hear that... Thank you...",
-        "I... I trust you... Don't make me regret it! \ud83d\udc95"
+        "I... I trust you... Don't make me regret it! 💕"
       ],
       "cooldown": 150,
       "requirements": {
@@ -413,9 +413,9 @@
     {
       "trigger": "click",
       "responses": [
-        "I-I've been thinking about you... Don't get any weird ideas! \ud83d\udc95",
+        "I-I've been thinking about you... Don't get any weird ideas! 💕",
         "Maybe... maybe I do like spending time with you...",
-        "You're not completely terrible, I guess... \ud83d\udc96"
+        "You're not completely terrible, I guess... 💖"
       ],
       "animation": "blushing",
       "cooldown": 8,
@@ -430,7 +430,7 @@
     {
       "trigger": "hover",
       "responses": [
-        "*tries to hide blush* W-what are you looking at?! \ud83d\udc93",
+        "*tries to hide blush* W-what are you looking at?! 💓",
         "Stop staring! It makes my heart race...",
         "I... I don't mind when you're close... but don't tell anyone!"
       ],
@@ -463,7 +463,7 @@
         "jealous"
       ],
       "responses": [
-        "I... I don't understand these feelings! It's confusing! \ud83d\ude24",
+        "I... I don't understand these feelings! It's confusing! 😤",
         "Why do you make me feel so weird?!",
         "I-it's not like I... *trails off in embarrassment*"
       ],
@@ -491,7 +491,7 @@
         "sad"
       ],
       "responses": [
-        "You better not be thinking about anyone else! \ud83d\ude20",
+        "You better not be thinking about anyone else! 😠",
         "I-I don't care what you do! But... don't ignore me...",
         "Am I... am I not good enough for you?!"
       ],
@@ -519,9 +519,9 @@
         "happy"
       ],
       "responses": [
-        "You... you're really important to me... *quickly looks away* \ud83d\udc95",
+        "You... you're really important to me... *quickly looks away* 💕",
         "I-I'm glad you're here... Don't make me say it again!",
-        "Sometimes I think... maybe this feeling isn't so bad... \ud83d\udc96"
+        "Sometimes I think... maybe this feeling isn't so bad... 💖"
       ],
       "cooldown": 2400,
       "conditions": {
@@ -547,9 +547,9 @@
         "blushing"
       ],
       "responses": [
-        "I... I keep thinking about that gift... Not that it matters! \ud83c\udf81",
+        "I... I keep thinking about that gift... Not that it matters! 🎁",
         "Don't think I'm sentimental! But... I do treasure it...",
-        "You remembered what I like... That's... nice... \ud83d\udc9d"
+        "You remembered what I like... That's... nice... 💝"
       ],
       "cooldown": 900,
       "conditions": {
@@ -575,9 +575,9 @@
         "shy"
       ],
       "responses": [
-        "I... I think I can trust you... Just a little! \ud83e\udd17",
+        "I... I think I can trust you... Just a little! 🤗",
         "You've been... consistent... I appreciate that...",
-        "Maybe... maybe you're different from the others... \ud83d\udc93"
+        "Maybe... maybe you're different from the others... 💓"
       ],
       "cooldown": 1500,
       "conditions": {
@@ -660,9 +660,9 @@
       "category": "conversation",
       "description": "Character puts up defensive barriers while showing hidden care",
       "responses": [
-        "I-it's not like I was worried about you or anything! I just... noticed you seemed tired! \ud83d\ude24",
+        "I-it's not like I was worried about you or anything! I just... noticed you seemed tired! 😤",
         "Don't think this means I care! I'm just... making sure you're not completely useless!",
-        "You looked pathetic, so I figured I'd help... NOT because I want to! Hmph! \ud83d\udca2"
+        "You looked pathetic, so I figured I'd help... NOT because I want to! Hmph! 💢"
       ],
       "choices": [
         {
@@ -674,7 +674,7 @@
             "jealousy": -3
           },
           "responses": [
-            "I-I wasn't caring! I was just... ugh! Don't say embarrassing things! \ud83d\ude33"
+            "I-I wasn't caring! I was just... ugh! Don't say embarrassing things! 😳"
           ],
           "animation": "blushing"
         },
@@ -686,7 +686,7 @@
             "jealousy": 2
           },
           "responses": [
-            "C-CUTE?! I'm not cute! I'm fierce and independent! Stop saying weird things! \ud83d\ude24"
+            "C-CUTE?! I'm not cute! I'm fierce and independent! Stop saying weird things! 😤"
           ],
           "animation": "shy"
         }
@@ -704,7 +704,7 @@
       "category": "romance",
       "description": "Character struggles to express genuine feelings",
       "responses": [
-        "You know... you're not... completely awful... I mean, you're still annoying but... \ud83d\ude33",
+        "You know... you're not... completely awful... I mean, you're still annoying but... 😳",
         "I've been thinking... and maybe... just MAYBE... I don't hate spending time with you...",
         "Listen! Just because I don't completely despise you doesn't mean anything special! Got it?!"
       ],
@@ -718,7 +718,7 @@
             "happiness": 8
           },
           "responses": [
-            "Y-you do?! I mean... of course you do! Who wouldn't?! ...But that makes me... happy... \ud83d\udc95"
+            "Y-you do?! I mean... of course you do! Who wouldn't?! ...But that makes me... happy... 💕"
           ],
           "animation": "heart_eyes"
         },
@@ -731,7 +731,7 @@
             "happiness": 10
           },
           "responses": [
-            "S-SPECIAL?! What does that even mean?! You can't just say things like that! \ud83d\ude33\ud83d\udc93"
+            "S-SPECIAL?! What does that even mean?! You can't just say things like that! 😳💓"
           ],
           "animation": "blushing"
         }
@@ -788,22 +788,22 @@
     ],
     "battleResponses": {
       "victory": [
-        "O-of course we won! I'm amazing at this! ...You did okay too, I guess... \ud83d\ude24",
-        "Don't think this means we make a good team or anything! I just didn't want to lose! \ud83d\udca2",
-        "We won... but it's not like I'm happy about fighting alongside you! Hmph! \u2694\ufe0f",
-        "I-I only won because I didn't want you to see me fail! That's all! \ud83d\ude33"
+        "O-of course we won! I'm amazing at this! ...You did okay too, I guess... 😤",
+        "Don't think this means we make a good team or anything! I just didn't want to lose! 💢",
+        "We won... but it's not like I'm happy about fighting alongside you! Hmph! ⚔️",
+        "I-I only won because I didn't want you to see me fail! That's all! 😳"
       ],
       "defeat": [
-        "This is all YOUR fault! If you were better, we would have won! \ud83d\ude24",
-        "I-I'm not upset about losing! I just... wanted to win... for reasons! \ud83d\udca2",
-        "Don't comfort me! I don't need your pity! ...But thanks... I guess... \ud83d\ude33",
-        "We'll get them next time! And by 'we' I mean ME! You just... try not to mess up! \ud83d\ude24"
+        "This is all YOUR fault! If you were better, we would have won! 😤",
+        "I-I'm not upset about losing! I just... wanted to win... for reasons! 💢",
+        "Don't comfort me! I don't need your pity! ...But thanks... I guess... 😳",
+        "We'll get them next time! And by 'we' I mean ME! You just... try not to mess up! 😤"
       ],
       "startBattle": [
-        "Don't expect me to go easy on anyone! I'm doing this for me, not you! \ud83d\ude24\u2694\ufe0f",
-        "I-I'm not nervous! I just... want to get this over with! \u26a1\ud83d\udca2",
-        "You better not slow me down! I have a reputation to maintain! \ud83d\ude24\ud83d\udde1\ufe0f",
-        "Let's show them what happens when they mess with... us! NOT that we're a team! \ud83d\udca2\u2694\ufe0f"
+        "Don't expect me to go easy on anyone! I'm doing this for me, not you! 😤⚔️",
+        "I-I'm not nervous! I just... want to get this over with! ⚡💢",
+        "You better not slow me down! I have a reputation to maintain! 😤🗡️",
+        "Let's show them what happens when they mess with... us! NOT that we're a team! 💢⚔️"
       ]
     }
   },
@@ -838,24 +838,24 @@
     },
     "giftResponses": {
       "favorite": [
-        "W-what is this?! I... I wasn't expecting... It's not bad, I guess! Don't read into it! \ud83d\ude33\u2728",
-        "You remembered what I like?! I mean... of course you did! Anyone would! ...Thank you... \ud83d\udc95",
-        "This is... actually really nice... NOT that I'm admitting you have good taste! Hmph! \ud83c\udf81"
+        "W-what is this?! I... I wasn't expecting... It's not bad, I guess! Don't read into it! 😳✨",
+        "You remembered what I like?! I mean... of course you did! Anyone would! ...Thank you... 💕",
+        "This is... actually really nice... NOT that I'm admitting you have good taste! Hmph! 🎁"
       ],
       "liked": [
-        "Oh... this is... acceptable. I suppose you tried your best. \ud83d\ude0a",
-        "I guess this is okay... You're not completely hopeless at gift-giving. \u2728",
-        "It's... it's actually kind of sweet. But don't let it go to your head! \ud83d\udc95"
+        "Oh... this is... acceptable. I suppose you tried your best. 😊",
+        "I guess this is okay... You're not completely hopeless at gift-giving. ✨",
+        "It's... it's actually kind of sweet. But don't let it go to your head! 💕"
       ],
       "neutral": [
-        "Well... it's something. I'll keep it because throwing it away would be wasteful! \ud83d\ude24",
-        "I suppose the thought counts... even if the execution is lacking. \u2728",
-        "Thanks... I guess. It's not terrible. \ud83d\udc95"
+        "Well... it's something. I'll keep it because throwing it away would be wasteful! 😤",
+        "I suppose the thought counts... even if the execution is lacking. ✨",
+        "Thanks... I guess. It's not terrible. 💕"
       ],
       "disliked": [
-        "What... what is this supposed to be?! Did you even think about what I'd like?! \ud83d\ude24",
-        "This is so... flashy! I don't like attention! Why would you get me this?! \ud83d\udca2",
-        "I'll accept it because refusing would be rude... but next time, think harder! \ud83d\ude24"
+        "What... what is this supposed to be?! Did you even think about what I'd like?! 😤",
+        "This is so... flashy! I don't like attention! Why would you get me this?! 💢",
+        "I'll accept it because refusing would be rude... but next time, think harder! 😤"
       ]
     },
     "memorySettings": {
@@ -1038,9 +1038,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }

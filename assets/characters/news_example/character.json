@@ -225,7 +225,7 @@
       "name": "current_events_discussion",
       "description": "An engaging discussion about current events",
       "responses": [
-        "I've been following some fascinating stories today! Want to discuss current events? \ud83d\udcf0",
+        "I've been following some fascinating stories today! Want to discuss current events? 📰",
         "The news landscape is always evolving! I'd love to hear your perspective on recent developments!",
         "Knowledge is power, and sharing perspectives makes us both smarter! What's on your mind?"
       ],
@@ -238,7 +238,7 @@
             "affection": 2
           },
           "responses": [
-            "I love how you engage with important topics! Your insights always broaden my perspective! \ud83c\udf0d"
+            "I love how you engage with important topics! Your insights always broaden my perspective! 🌍"
           ],
           "animation": "talking"
         },
@@ -250,7 +250,7 @@
             "affection": 1
           },
           "responses": [
-            "I'd be happy to share some thoughtful articles I've curated for you! \ud83d\udcda"
+            "I'd be happy to share some thoughtful articles I've curated for you! 📚"
           ],
           "animation": "thinking"
         }
@@ -268,7 +268,7 @@
       "name": "information_sharing",
       "description": "A moment of intellectual connection",
       "responses": [
-        "I discovered something interesting that I think you'd appreciate! Knowledge shared is knowledge doubled! \ud83d\udca1",
+        "I discovered something interesting that I think you'd appreciate! Knowledge shared is knowledge doubled! 💡",
         "The best part of staying informed is having someone thoughtful to share it with!",
         "Your curiosity inspires me to dig deeper into the stories that matter!"
       ],
@@ -281,7 +281,7 @@
             "energy": -1
           },
           "responses": [
-            "I love how eager you are to learn! Here's something that caught my analytical eye... \ud83d\udd0d"
+            "I love how eager you are to learn! Here's something that caught my analytical eye... 🔍"
           ],
           "animation": "talking"
         },
@@ -293,7 +293,7 @@
             "happiness": 5
           },
           "responses": [
-            "Your perspective adds such valuable context to my understanding! Thank you for sharing! \ud83e\udd1d"
+            "Your perspective adds such valuable context to my understanding! Thank you for sharing! 🤝"
           ],
           "animation": "thinking"
         }
@@ -311,7 +311,7 @@
       "name": "current_events_discussion",
       "description": "An engaging discussion about current events",
       "responses": [
-        "I've been following some fascinating stories today! Want to discuss current events? \ud83d\udcf0",
+        "I've been following some fascinating stories today! Want to discuss current events? 📰",
         "The news landscape is always evolving! I'd love to hear your perspective on recent developments!",
         "Knowledge is power, and sharing perspectives makes us both smarter! What's on your mind?"
       ],
@@ -324,7 +324,7 @@
             "affection": 2
           },
           "responses": [
-            "I love how you engage with important topics! Your insights always broaden my perspective! \ud83c\udf0d"
+            "I love how you engage with important topics! Your insights always broaden my perspective! 🌍"
           ],
           "animation": "talking"
         },
@@ -336,7 +336,7 @@
             "affection": 1
           },
           "responses": [
-            "I'd be happy to share some thoughtful articles I've curated for you! \ud83d\udcda"
+            "I'd be happy to share some thoughtful articles I've curated for you! 📚"
           ],
           "animation": "thinking"
         }
@@ -354,7 +354,7 @@
       "name": "information_sharing",
       "description": "A moment of intellectual connection",
       "responses": [
-        "I discovered something interesting that I think you'd appreciate! Knowledge shared is knowledge doubled! \ud83d\udca1",
+        "I discovered something interesting that I think you'd appreciate! Knowledge shared is knowledge doubled! 💡",
         "The best part of staying informed is having someone thoughtful to share it with!",
         "Your curiosity inspires me to dig deeper into the stories that matter!"
       ],
@@ -367,7 +367,7 @@
             "energy": -1
           },
           "responses": [
-            "I love how eager you are to learn! Here's something that caught my analytical eye... \ud83d\udd0d"
+            "I love how eager you are to learn! Here's something that caught my analytical eye... 🔍"
           ],
           "animation": "talking"
         },
@@ -379,7 +379,7 @@
             "happiness": 5
           },
           "responses": [
-            "Your perspective adds such valuable context to my understanding! Thank you for sharing! \ud83e\udd1d"
+            "Your perspective adds such valuable context to my understanding! Thank you for sharing! 🤝"
           ],
           "animation": "thinking"
         }
@@ -481,7 +481,7 @@
       ],
       "responses": [
         "I found this fascinating article that made me think of you!",
-        "Your perspective on news always intrigues me! \ud83d\udcf0",
+        "Your perspective on news always intrigues me! 📰",
         "I love how we can discuss current events together!",
         "Reading the news is so much better when shared with someone special!"
       ],
@@ -506,7 +506,7 @@
       ],
       "responses": [
         "I cherish our intellectual connections and deep conversations...",
-        "You understand my passion for staying informed! \ud83d\udc95",
+        "You understand my passion for staying informed! 💕",
         "Together we make sense of this complex world!",
         "Your thoughtful insights make every news story more meaningful!"
       ],
@@ -580,7 +580,7 @@
     ],
     "battleResponses": {
       "victory": [
-        "Breaking news: Victory achieved through strategic information warfare! \ud83d\udcf0",
+        "Breaking news: Victory achieved through strategic information warfare! 📰",
         "In a stunning turn of events, tactical superiority led to triumph!",
         "This just in: Superior battle analysis resulted in decisive victory!"
       ],
@@ -624,14 +624,14 @@
     },
     "giftResponses": {
       "favorite": [
-        "Breaking news: Perfect gift received! This enhances my informational database! \ud83d\udcf0\ud83d\udc95",
+        "Breaking news: Perfect gift received! This enhances my informational database! 📰💕",
         "Exclusive report: This is exactly the type of knowledge I treasure most!",
         "News flash: Gift analysis shows 100% compatibility with my interests!"
       ],
       "liked": [
         "Thank you for this informative contribution to my collection!",
         "This addition to my knowledge base is much appreciated!",
-        "Positive gift assessment: This aligns well with my informational focus! \ud83d\ude0a"
+        "Positive gift assessment: This aligns well with my informational focus! 😊"
       ],
       "neutral": [
         "Gift received and catalogued in my information systems.",
@@ -766,9 +766,9 @@
         "talking"
       ],
       "responses": [
-        "What a lovely surprise! I'm so happy to share this moment with you! \ud83d\ude0a",
-        "Life is full of wonderful unexpected moments like this! \u2728",
-        "These spontaneous times together are what I treasure most! \ud83d\udc95"
+        "What a lovely surprise! I'm so happy to share this moment with you! 😊",
+        "Life is full of wonderful unexpected moments like this! ✨",
+        "These spontaneous times together are what I treasure most! 💕"
       ],
       "cooldown": 1800
     }
@@ -808,7 +808,7 @@
         "affection": 30
       },
       "responses": [
-        "Breaking news: You just made my day! \ud83d\udcf0\ud83d\udc95",
+        "Breaking news: You just made my day! 📰💕",
         "This just in: You're absolutely wonderful."
       ],
       "effects": {
@@ -829,7 +829,7 @@
         "affection": 3,
         "happiness": 8
       },
-      "dialog": "Today's headline: Local AI falls head over heels! \ud83d\udc96",
+      "dialog": "Today's headline: Local AI falls head over heels! 💖",
       "animation": "happy"
     }
   ],
