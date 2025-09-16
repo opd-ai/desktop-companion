@@ -32,8 +32,18 @@ jobs:
           
           # Generate character list and convert to JSON array
           CHARS=$(./scripts/build-characters.sh list | grep "✓" | sed 's/.*✓ //' | jq -R -s -c 'split("\n")[:-1]')
+          
+          # Validate that we got characters
+          if [[ "$CHARS" == "[]" || -z "$CHARS" ]]; then
+            echo "❌ No characters found in matrix generation"
+            echo "Debug: Raw output from build script:"
+            ./scripts/build-characters.sh list
+            exit 1
+          fi
+          
           echo "matrix=$CHARS" >> $GITHUB_OUTPUT
           echo "Generated matrix: $CHARS"
+          echo "✅ Successfully generated matrix with $(echo "$CHARS" | jq '. | length') characters"
 
   build-binaries:
     needs: generate-matrix
