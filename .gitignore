@@ -41,4 +41,5 @@ scripts/embed-character
 apk-validator
 artifact-manager
 llm-config-generator
+gif-generator
 cmd/gif-generator/gif-generator
