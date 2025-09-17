@@ -47,7 +47,7 @@ jobs:
   build-binaries:
     needs: generate-matrix
     strategy:
-      fail-fast: false  # Continue all builds even if some fail, so we can validate all Android builds
+      fail-fast: true  # Fail immediately upon any build failure
       matrix:
         character: ${{ fromJson(needs.generate-matrix.outputs.characters) }}
         include:
@@ -104,7 +104,6 @@ jobs:
             # Remove specific problematic packages
             rm -rf ~/go/pkg/mod/gonum.org 2>/dev/null || true
           fi
-        continue-on-error: true
       
       - name: Cache Go modules
         uses: actions/cache@v4
@@ -116,7 +115,6 @@ jobs:
         env:
           # Fix tar extraction conflicts by allowing overwrites and preserving permissions
           SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5
-        continue-on-error: true
       
       - name: Setup Android SDK
         if: matrix.goos == 'android'
@@ -126,7 +124,6 @@ jobs:
           packages: 'tools platform-tools build-tools;33.0.2 platforms;android-33 ndk;25.2.9519653'
           # Accept all Android SDK licenses automatically
           accept-android-sdk-licenses: true
-        continue-on-error: false
       
       - name: Install dependencies
         run: |
