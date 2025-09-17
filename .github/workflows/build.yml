@@ -244,7 +244,7 @@ jobs:
         # Build ARM64 APK (primary Android architecture)
         echo "Building ARM64 APK..."
         fyne package --target android/arm64 --appID ai.opd.dds --name "DDS Companion" \
-          --appersion "0.1.0" --appbuild ${{ github.run_number }} \
+          --appVersion "0.1.0" --appBuild ${{ github.run_number }} \
           --icon "../../assets/app/icon.png" --release
         
         # Verify ARM64 APK was created
