@@ -37,9 +37,9 @@ func TestStep3SpecializedFeatures(t *testing.T) {
 		{
 			name:                "Specialist Character",
 			charPath:            "../../assets/characters/specialist/character.json",
-			expectNews:          false, // Sleepy character, no news reading
+			expectNews:          true, // Sleepy character has news reading enabled in config
 			expectGeneralEvents: true,
-			expectedNewsStyle:   "",
+			expectedNewsStyle:   "wellness", // Sleep & wellness themed news
 			expectedEventCount:  2,
 		},
 		{
