@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: '1.24.5'
   ANDROID_NDK_VERSION: '25.2.9519653'  # Pin to compatible NDK version
   FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
   LANG: en_US.UTF-8
@@ -217,7 +217,13 @@ jobs:
           echo "STRIP=$STRIP" >> $GITHUB_ENV
           echo "CGO_ENABLED=1" >> $GITHUB_ENV
           echo "CGO_CFLAGS=-I$NDK_ROOT/sysroot/usr/include" >> $GITHUB_ENV
-          echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          
+          # Set architecture-specific CGO LDFLAGS
+          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+            echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          else
+            echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm64/usr/lib" >> $GITHUB_ENV
+          fi
           
           echo "=== Android Build Environment Summary ==="
           echo "Android SDK: ${ANDROID_SDK_ROOT:-Not set}"
@@ -463,7 +469,7 @@ jobs:
           missing_apks=()
           
           # Check each character for required Android builds
-          echo "$expected_characters" | jq -r '.[]' | while read character; do
+          while IFS= read -r character; do
             echo "Checking Android builds for character: $character"
             
             # Check for ARM64 APK
@@ -489,7 +495,7 @@ jobs:
               echo "❌ Missing ARM32 APK for $character"
               missing_apks+=("$character-android-arm32")
             fi
-          done
+          done < <(echo "$expected_characters" | jq -r '.[]')
           
           # Validate counts
           echo ""

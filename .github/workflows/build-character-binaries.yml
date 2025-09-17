@@ -11,7 +11,7 @@ on:
     branches: [ main ]
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: '1.24.5'
   ANDROID_NDK_VERSION: '25.2.9519653'  # Pin to compatible NDK version
   FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
   LANG: en_US.UTF-8
@@ -85,9 +85,10 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: true
       
       - name: Make scripts executable
         run: |
@@ -223,9 +224,14 @@ jobs:
           export GOOS=android
           export GOARCH=${{ matrix.goarch }}
           export CGO_ENABLED=1
-          # Add critical CGO flags for Android NDK compatibility
+          
+          # Set architecture-specific CGO flags for Android NDK compatibility
           export CGO_CFLAGS="-I$ANDROID_NDK_ROOT/sysroot/usr/include"
-          export CGO_LDFLAGS="-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm/usr/lib"
+          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+            export CGO_LDFLAGS="-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm/usr/lib"
+          else
+            export CGO_LDFLAGS="-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm64/usr/lib"
+          fi
           
           # Add environment variables for subsequent steps
           echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
@@ -238,7 +244,13 @@ jobs:
           echo "GOARCH=${{ matrix.goarch }}" >> $GITHUB_ENV
           echo "CGO_ENABLED=1" >> $GITHUB_ENV
           echo "CGO_CFLAGS=-I$ANDROID_NDK_ROOT/sysroot/usr/include" >> $GITHUB_ENV
-          echo "CGO_LDFLAGS=-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          
+          # Set architecture-specific CGO LDFLAGS
+          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+            echo "CGO_LDFLAGS=-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          else
+            echo "CGO_LDFLAGS=-L$ANDROID_NDK_ROOT/platforms/android-33/arch-arm64/usr/lib" >> $GITHUB_ENV
+          fi
           
           # Verify NDK tools exist
           if [[ -f "$CC" ]]; then
@@ -250,7 +262,7 @@ jobs:
           
           # Display Android setup summary
           echo "=== Android Build Environment Summary ==="
-          echo "Android SDK: $ANDROID_SDK_ROOT"
+          echo "Android SDK: ${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
           echo "Android NDK: $ANDROID_NDK_ROOT"
           echo "Java Version: $(java -version 2>&1 | head -1)"
           echo "Fyne Version: $(fyne version)"
@@ -395,7 +407,7 @@ jobs:
             echo "Validating Android APK: $apk_file"
             
             # Check APK file size (should be reasonable)
-            file_size=$(stat -f%z "$apk_file" 2>/dev/null || stat -c%s "$apk_file")
+            file_size=$(stat -c%s "$apk_file")
             min_size=$((1024 * 1024))      # 1MB minimum
             max_size=$((100 * 1024 * 1024)) # 100MB maximum
             
@@ -489,9 +501,10 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: true
       
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -515,7 +528,7 @@ jobs:
           missing_apks=()
           
           # Check each character for required Android builds
-          echo "$expected_characters" | jq -r '.[]' | while read character; do
+          while IFS= read -r character; do
             echo "Checking Android builds for character: $character"
             
             # Check for ARM64 APK
@@ -541,7 +554,7 @@ jobs:
               echo "❌ Missing ARM32 APK for $character"
               missing_apks+=("$character-android-arm32")
             fi
-          done
+          done < <(echo "$expected_characters" | jq -r '.[]')
           
           # Validate counts
           echo ""
@@ -634,9 +647,10 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: true
       
       - name: Download all artifacts
         uses: actions/download-artifact@v4
