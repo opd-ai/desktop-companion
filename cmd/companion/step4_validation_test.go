@@ -37,7 +37,7 @@ func TestStep4ExperimentalFeatures(t *testing.T) {
 		{
 			name:                     "Specialist Character",
 			charPath:                 "../../assets/characters/specialist/character.json",
-			expectedBattleEnabled:    true,  // Sleepy character has battle system enabled in config
+			expectedBattleEnabled:    true, // Sleepy character has battle system enabled in config
 			expectedGiftEnabled:      true,
 			expectedBattleDifficulty: "easy", // Easy difficulty for sleepy character
 			expectedMaxGiftSlots:     4,      // Low energy = fewer gift interactions
@@ -61,7 +61,7 @@ func TestStep4ExperimentalFeatures(t *testing.T) {
 		{
 			name:                     "Romance Character",
 			charPath:                 "../../assets/characters/romance/character.json",
-			expectedBattleEnabled:    true,   // Romance character has battle system enabled in config
+			expectedBattleEnabled:    true, // Romance character has battle system enabled in config
 			expectedGiftEnabled:      true,
 			expectedBattleDifficulty: "normal", // Normal difficulty for romance character
 			expectedMaxGiftSlots:     10,       // Romance = lots of gift giving
