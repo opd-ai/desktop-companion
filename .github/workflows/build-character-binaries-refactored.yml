@@ -322,8 +322,8 @@ jobs:
           if ! fyne package \
             --target "android/${{ matrix.goarch }}" \
             --name "${{ matrix.character }} Companion" \
-            --appid "ai.opd.${{ matrix.character }}" \
-            --appversion "0.1.0" \
+            --appID "ai.opd.${{ matrix.character }}" \
+            --appVersion "0.1.0" \
             --release 2>&1; then
             echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.goarch }})"
             echo "Build environment debugging:"
