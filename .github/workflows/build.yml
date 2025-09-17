@@ -202,7 +202,7 @@ jobs:
         path: artifacts/
 
   build-android:
-    name: Build Android APK
+    name: Build Android APKs (ARM64 + ARM32)
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -234,27 +234,91 @@ jobs:
     - name: Install fyne tool
       run: go install fyne.io/tools/cmd/fyne@latest
     
-    - name: Build Android APK
+    - name: Build Android APKs
       run: |
         mkdir -p build artifacts
         cd cmd/companion
         
-        # Build release APK - no fallback, must succeed
-        fyne package --target android --app-id ai.opd.dds --name "DDS Companion" \
+        echo "Building Android APKs for both ARM64 and ARM32 architectures..."
+        
+        # Build ARM64 APK (primary Android architecture)
+        echo "Building ARM64 APK..."
+        fyne package --target android/arm64 --app-id ai.opd.dds --name "DDS Companion" \
           --app-version "0.1.0" --app-build ${{ github.run_number }} \
           --icon "../../assets/app/icon.png" --release
         
-        # Verify APK was created
+        # Verify ARM64 APK was created
         if ! ls *.apk 1> /dev/null 2>&1; then
-          echo "❌ CRITICAL FAILURE: Android APK build failed"
-          echo "No APK file found after build completion"
+          echo "❌ CRITICAL FAILURE: Android ARM64 APK build failed"
+          echo "No APK file found after ARM64 build completion"
           exit 1
         fi
         
-        # Move APK to artifacts
-        cp *.apk ../../artifacts/companion-android.apk
-        echo "✅ Android APK built successfully"
-        ls -lh ../../artifacts/companion-android.apk
+        # Move ARM64 APK to artifacts
+        cp *.apk ../../artifacts/companion-android-arm64.apk
+        rm *.apk  # Clean up for next build
+        echo "✅ Android ARM64 APK built successfully"
+        ls -lh ../../artifacts/companion-android-arm64.apk
+        
+        # Build ARM32 APK (for older Android devices)
+        echo "Building ARM32 APK..."
+        fyne package --target android/arm --app-id ai.opd.dds --name "DDS Companion" \
+          --app-version "0.1.0" --app-build ${{ github.run_number }} \
+          --icon "../../assets/app/icon.png" --release
+        
+        # Verify ARM32 APK was created
+        if ! ls *.apk 1> /dev/null 2>&1; then
+          echo "❌ CRITICAL FAILURE: Android ARM32 APK build failed"
+          echo "No APK file found after ARM32 build completion"
+          exit 1
+        fi
+        
+        # Move ARM32 APK to artifacts
+        cp *.apk ../../artifacts/companion-android-arm32.apk
+        echo "✅ Android ARM32 APK built successfully"
+        ls -lh ../../artifacts/companion-android-arm32.apk
+        
+        # Verify both APKs exist
+        echo "=== Android APK Build Summary ==="
+        echo "ARM64 APK: $(ls -lh ../../artifacts/companion-android-arm64.apk)"
+        echo "ARM32 APK: $(ls -lh ../../artifacts/companion-android-arm32.apk)"
+        echo "✅ Both Android APKs built successfully"
+    
+    - name: Validate Android APKs
+      run: |
+        echo "=== Android APK Validation ==="
+        
+        # Check ARM64 APK
+        if [[ ! -f "artifacts/companion-android-arm64.apk" ]]; then
+          echo "❌ CRITICAL FAILURE: ARM64 APK missing"
+          exit 1
+        fi
+        
+        arm64_size=$(stat -c%s "artifacts/companion-android-arm64.apk")
+        min_size=$((1024 * 1024))  # 1MB minimum
+        
+        if [[ $arm64_size -lt $min_size ]]; then
+          echo "❌ CRITICAL FAILURE: ARM64 APK too small ($arm64_size bytes, minimum: $min_size)"
+          exit 1
+        fi
+        
+        echo "✅ ARM64 APK validated: $arm64_size bytes"
+        
+        # Check ARM32 APK
+        if [[ ! -f "artifacts/companion-android-arm32.apk" ]]; then
+          echo "❌ CRITICAL FAILURE: ARM32 APK missing"
+          exit 1
+        fi
+        
+        arm32_size=$(stat -c%s "artifacts/companion-android-arm32.apk")
+        
+        if [[ $arm32_size -lt $min_size ]]; then
+          echo "❌ CRITICAL FAILURE: ARM32 APK too small ($arm32_size bytes, minimum: $min_size)"
+          exit 1
+        fi
+        
+        echo "✅ ARM32 APK validated: $arm32_size bytes"
+        echo "✅ Both Android APKs passed validation"
     
     - name: Upload Android artifacts
       uses: actions/upload-artifact@v4
@@ -280,7 +344,18 @@ jobs:
         cp windows-build/* release/ 2>/dev/null || true
         cp macos-build/* release/ 2>/dev/null || true
         cp android-build/* release/ 2>/dev/null || true
+        
+        echo "=== Release Contents ==="
         ls -la release/
+        
+        # Verify both Android APKs are included
+        if [[ -f "release/companion-android-arm64.apk" && -f "release/companion-android-arm32.apk" ]]; then
+          echo "✅ Both Android APKs included in release"
+          echo "   ARM64: $(ls -lh release/companion-android-arm64.apk | awk '{print $5}')"
+          echo "   ARM32: $(ls -lh release/companion-android-arm32.apk | awk '{print $5}')"
+        else
+          echo "⚠️ Warning: Not all Android APKs found in release"
+        fi
     
     - name: Create Release
       uses: softprops/action-gh-release@v2
