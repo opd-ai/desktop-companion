@@ -241,7 +241,7 @@ jobs:
         
         # Build release APK - no fallback, must succeed
         fyne package --target android --app-id ai.opd.dds --name "DDS Companion" \
-          --app-version "1.0.0-${{ github.run_number }}" --app-build ${{ github.run_number }} \
+          --app-version "0.1.0" --app-build ${{ github.run_number }} \
           --icon "../../assets/app/icon.png" --release
         
         # Verify APK was created

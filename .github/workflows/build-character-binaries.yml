@@ -300,7 +300,7 @@ jobs:
           Icon = "Icon.png"
           Name = "${{ matrix.character }} Companion"
           ID = "ai.opd.${{ matrix.character }}"
-          Version = "1.0.0"
+          Version = "0.1.0"
           Build = "${{ github.run_number }}"
           
           [Development]
@@ -339,7 +339,7 @@ jobs:
               --target "android/${{ matrix.goarch }}" \
               --name "${{ matrix.character }} Companion" \
               --app-id "ai.opd.${{ matrix.character }}" \
-              --app-version "1.0.0" \
+              --app-version "0.1.0" \
               --release 2>&1; then
               echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.goarch }})"
               echo "This is a required build failure - workflow will exit"
