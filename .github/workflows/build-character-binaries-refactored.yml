@@ -130,8 +130,12 @@ jobs:
         if: matrix.goos == 'android'
         run: |
           echo "Installing fyne CLI for Android builds..."
-          go install fyne.io/tools/cmd/fyne@latest
+          # Pin fyne CLI to match the library version in go.mod for compatibility
+          go install fyne.io/tools/cmd/fyne@v2.5.2
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          
+          # Verify fyne installation and version
+          fyne version
           echo "✅ Android build dependencies installed"
       
       # Install Go dependencies (simplified dependency management)
@@ -231,6 +235,22 @@ jobs:
           echo "Target Architecture: ${{ matrix.goarch }}"
           echo "C Compiler: $CC"
           echo "✅ Android NDK toolchain configured successfully"
+          
+          # Pre-build validation to catch issues early
+          echo "=== Pre-build Toolchain Validation ==="
+          if ! $CC --version >/dev/null 2>&1; then
+            echo "❌ C compiler validation failed: $CC"
+            echo "Available compilers in toolchain:"
+            ls -la "${NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin/" | grep clang || true
+            exit 1
+          fi
+          echo "✅ C compiler validation passed"
+          
+          if ! $CXX --version >/dev/null 2>&1; then
+            echo "❌ C++ compiler validation failed: $CXX"
+            exit 1
+          fi
+          echo "✅ C++ compiler validation passed"
       
       # Build Android APK (simplified APK building)
       - name: Build Android APK
@@ -290,6 +310,15 @@ jobs:
           echo "Starting APK build process..."
           
           # Build APK - release build only, no fallback to debug
+          echo "=== Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }}) ==="
+          echo "Build environment:"
+          echo "  - ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
+          echo "  - CC: $CC"
+          echo "  - CXX: $CXX"
+          echo "  - CGO_LDFLAGS: $CGO_LDFLAGS"
+          echo "  - GOARCH: ${{ matrix.goarch }}"
+          echo "  - Fyne version: $(fyne version 2>/dev/null || echo 'Unknown')"
+          
           if ! fyne package \
             --target "android/${{ matrix.goarch }}" \
             --name "${{ matrix.character }} Companion" \
@@ -297,6 +326,12 @@ jobs:
             --app-version "0.1.0" \
             --release 2>&1; then
             echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.goarch }})"
+            echo "Build environment debugging:"
+            echo "  - Current directory: $(pwd)"
+            echo "  - Available files: $(ls -la)"
+            echo "  - Go module: $(go list -m)"
+            echo "  - CGO enabled: $CGO_ENABLED"
+            echo "  - Toolchain CC exists: $(test -f "$CC" && echo "Yes" || echo "No")"
             echo "This is a required build failure - workflow will exit"
             exit 1
           fi
@@ -481,6 +516,9 @@ jobs:
               ((android_arm64_count++))
             else
               echo "❌ Missing ARM64 APK for $character"
+              echo "   Expected artifact directory: $arm64_artifact"
+              echo "   Available artifacts:"
+              find artifacts/ -name "${character}-android-*" -type d 2>/dev/null | head -5 || echo "   None found"
               missing_apks+=("$character-android-arm64")
             fi
             
@@ -493,6 +531,7 @@ jobs:
               ((android_arm_count++))
             else
               echo "❌ Missing ARM32 APK for $character"
+              echo "   Expected artifact directory: $arm_artifact"
               missing_apks+=("$character-android-arm32")
             fi
           done < <(echo "$expected_characters" | jq -r '.[]')
@@ -510,6 +549,13 @@ jobs:
             echo ""
             echo "❌ CRITICAL FAILURE: Missing Android APKs:"
             printf '  - %s\n' "${missing_apks[@]}"
+            echo ""
+            echo "=== DEBUGGING INFORMATION ==="
+            echo "Available artifact directories:"
+            find artifacts/ -type d -name "*android*" | sort
+            echo ""
+            echo "All APK files found:"
+            find artifacts/ -name "*.apk" -type f | sort
             echo ""
             echo "This is a mandatory requirement for Android build validation"
             exit 1
