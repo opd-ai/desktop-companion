@@ -32,6 +32,8 @@ MAX_PARALLEL="${DDS_MAX_PARALLEL}"
 PLATFORMS="${DDS_PLATFORMS}"
 LDFLAGS="${DDS_LDFLAGS}"
 ENABLE_ARTIFACT_MGMT="${DDS_ENABLE_ARTIFACT_MGMT}"
+SPECIFIC_CHARACTER=""
+COMMAND=""
 
 # ============================================================================
 # HELP AND USAGE
@@ -516,7 +518,7 @@ manage_artifacts() {
 
 # Parse command line arguments
 parse_arguments() {
-    local command="build"
+    COMMAND="build"
     
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -541,20 +543,18 @@ parse_arguments() {
                 shift
                 ;;
             list|build|clean|manage|platforms)
-                command="$1"
+                COMMAND="$1"
                 shift
                 ;;
             *)
                 # Assume it's a character name for build command
-                if [[ "$command" == "build" ]]; then
+                if [[ "$COMMAND" == "build" ]]; then
                     SPECIFIC_CHARACTER="$1"
                 fi
                 shift
                 ;;
         esac
     done
-    
-    echo "$command"
 }
 
 # Main entry point
@@ -574,14 +574,13 @@ main() {
     done
     
     # Parse arguments
-    local command
-    command=$(parse_arguments "$@")
+    parse_arguments "$@"
     
     # Ensure build directory exists
     ensure_directories
     
     # Execute command
-    case "$command" in
+    case "$COMMAND" in
         list)
             list_characters
             ;;

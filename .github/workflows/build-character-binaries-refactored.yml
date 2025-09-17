@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: '1.24.5'
   ANDROID_NDK_VERSION: '25.2.9519653'  # Pin to compatible NDK version
   FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
   LANG: en_US.UTF-8
@@ -48,9 +48,10 @@ jobs:
   build-binaries:
     needs: generate-matrix
     strategy:
+      fail-fast: true  # Fail immediately upon any build failure
       matrix:
         character: ${{ fromJson(needs.generate-matrix.outputs.characters) }}
-        include:
+        platform:
           - os: ubuntu-latest
             goos: linux
             goarch: amd64
@@ -79,7 +80,7 @@ jobs:
             ext: ".apk"
             target_suffix: "-android32"
     
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.os }}
     
     steps:
       - uses: actions/checkout@v4
@@ -93,13 +94,15 @@ jobs:
       
       # Simple script permission setup (replaces complex shell commands)
       - name: Make scripts executable
+        if: matrix.platform.os != 'windows-latest'
         run: |
           find scripts -name "*.sh" -type f -exec chmod +x {} \;
           echo "✅ Scripts made executable"
       
       # Use official Android SDK setup action (replaces manual Android setup)
+      # CRITICAL: Android SDK setup must succeed for Android builds to be valid
       - name: Setup Android SDK
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         uses: android-actions/setup-android@v3
         with:
           cmdline-tools-version: 12266719
@@ -114,9 +117,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       
-      # Use cached APT package installation (replaces manual apt commands)
+      # Install Linux dependencies (replaces manual apt commands)
       - name: Install Linux dependencies
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.platform.os == 'ubuntu-latest'
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
@@ -125,11 +128,15 @@ jobs:
       
       # Install Go tools for Android builds
       - name: Install Go tools for Android
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
           echo "Installing fyne CLI for Android builds..."
-          go install fyne.io/tools/cmd/fyne@latest
+          # Pin fyne CLI to match the library version in go.mod for compatibility
+          go install fyne.io/fyne/v2/cmd/fyne@v2.5.2
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          
+          # Verify fyne installation and version
+          fyne version
           echo "✅ Android build dependencies installed"
       
       # Install Go dependencies (simplified dependency management)
@@ -165,7 +172,7 @@ jobs:
       
       # Configure Android build environment (simplified NDK setup)
       - name: Configure Android build environment
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
           echo "Configuring NDK toolchain for Android builds..."
           
@@ -189,7 +196,7 @@ jobs:
           # Set up toolchain paths based on architecture
           TOOLCHAIN_BASE="${NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin"
           
-          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+          if [[ "${{ matrix.platform.goarch }}" == "arm" ]]; then
             CC="${TOOLCHAIN_BASE}/armv7a-linux-androideabi33-clang"
             CXX="${TOOLCHAIN_BASE}/armv7a-linux-androideabi33-clang++"
           else
@@ -215,22 +222,44 @@ jobs:
           echo "STRIP=$STRIP" >> $GITHUB_ENV
           echo "CGO_ENABLED=1" >> $GITHUB_ENV
           echo "CGO_CFLAGS=-I$NDK_ROOT/sysroot/usr/include" >> $GITHUB_ENV
-          echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          
+          # Set architecture-specific CGO LDFLAGS
+          if [[ "${{ matrix.platform.goarch }}" == "arm" ]]; then
+            echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
+          else
+            echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm64/usr/lib" >> $GITHUB_ENV
+          fi
           
           echo "=== Android Build Environment Summary ==="
           echo "Android SDK: ${ANDROID_SDK_ROOT:-Not set}"
           echo "Android NDK: $NDK_ROOT"
-          echo "Target Architecture: ${{ matrix.goarch }}"
+          echo "Target Architecture: ${{ matrix.platform.goarch }}"
           echo "C Compiler: $CC"
           echo "✅ Android NDK toolchain configured successfully"
+          
+          # Pre-build validation to catch issues early
+          echo "=== Pre-build Toolchain Validation ==="
+          if ! $CC --version >/dev/null 2>&1; then
+            echo "❌ C compiler validation failed: $CC"
+            echo "Available compilers in toolchain:"
+            ls -la "${NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin/" | grep clang || true
+            exit 1
+          fi
+          echo "✅ C compiler validation passed"
+          
+          if ! $CXX --version >/dev/null 2>&1; then
+            echo "❌ C++ compiler validation failed: $CXX"
+            exit 1
+          fi
+          echo "✅ C++ compiler validation passed"
       
       # Build Android APK (simplified APK building)
       - name: Build Android APK
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
           mkdir -p build
           
-          echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
+          echo "Building Android APK for ${{ matrix.character }} (${{ matrix.platform.goarch }})"
           
           # Validate NDK environment
           echo "=== Android Build Environment Validation ==="
@@ -258,7 +287,7 @@ jobs:
           Icon = "Icon.png"
           Name = "${{ matrix.character }} Companion"
           ID = "ai.opd.${{ matrix.character }}"
-          Version = "1.0.0"
+          Version = "0.1.0"
           Build = "${{ github.run_number }}"
           
           [Development]
@@ -281,42 +310,45 @@ jobs:
           
           echo "Starting APK build process..."
           
-          build_success=false
-          if fyne package \
-            --target "android/${{ matrix.goarch }}" \
+          # Build APK - release build only, no fallback to debug
+          echo "=== Building Android APK for ${{ matrix.character }} (${{ matrix.platform.goarch }}) ==="
+          echo "Build environment:"
+          echo "  - ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
+          echo "  - CC: $CC"
+          echo "  - CXX: $CXX"
+          echo "  - CGO_LDFLAGS: $CGO_LDFLAGS"
+          echo "  - GOARCH: ${{ matrix.platform.goarch }}"
+          echo "  - Fyne version: $(fyne version 2>/dev/null || echo 'Unknown')"
+          
+          if ! fyne package \
+            --target "android/${{ matrix.platform.goarch }}" \
             --name "${{ matrix.character }} Companion" \
-            --app-id "ai.opd.${{ matrix.character }}" \
-            --app-version "1.0.0" \
+            --appID "ai.opd.${{ matrix.character }}" \
+            --appVersion "0.1.0" \
             --release 2>&1; then
-            build_success=true
-          else
-            echo "Release build failed, trying debug build..."
-            if fyne package \
-              --target "android/${{ matrix.goarch }}" \
-              --name "${{ matrix.character }} Companion" \
-              --app-id "ai.opd.${{ matrix.character }}" \
-              --app-version "1.0.0"; then
-              build_success=true
-            else
-              echo "❌ Both release and debug builds failed"
-              exit 1
-            fi
+            echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.platform.goarch }})"
+            echo "Build environment debugging:"
+            echo "  - Current directory: $(pwd)"
+            echo "  - Available files: $(ls -la)"
+            echo "  - Go module: $(go list -m)"
+            echo "  - CGO enabled: $CGO_ENABLED"
+            echo "  - Toolchain CC exists: $(test -f "$CC" && echo "Yes" || echo "No")"
+            echo "This is a required build failure - workflow will exit"
+            exit 1
           fi
           
-          if [[ "$build_success" == "true" ]]; then
-            # Find and move APK
-            apk_file=$(find . -name "*.apk" -type f | head -1)
-            if [[ -n "$apk_file" ]]; then
-              output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
-              mkdir -p "$GITHUB_WORKSPACE/build"
-              mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
-              echo "✓ Built Android APK: $output_name"
-              ls -lh "$GITHUB_WORKSPACE/build/$output_name"
-            else
-              echo "❌ No APK file generated"
-              exit 1
-            fi
+          # Verify APK was created and move it to build directory
+          apk_file=$(find . -name "*.apk" -type f | head -1)
+          if [[ -z "$apk_file" ]]; then
+            echo "❌ No APK file found after build completion"
+            exit 1
           fi
+          
+          output_name="${{ matrix.character }}_android_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}.apk"
+          mkdir -p "$GITHUB_WORKSPACE/build"
+          mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
+          echo "✅ Android APK built successfully: $output_name"
+          ls -lh "$GITHUB_WORKSPACE/build/$output_name"
         env:
           CGO_ENABLED: 1
           GOOS: android
@@ -324,13 +356,13 @@ jobs:
       
       # Build regular binary (simplified binary building)
       - name: Build binary
-        if: matrix.goos != 'android'
+        if: matrix.platform.goos != 'android'
         run: |
           mkdir -p build
           
-          echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
+          echo "Building ${{ matrix.character }} for ${{ matrix.platform.goos }}/${{ matrix.platform.goarch }}"
           
-          binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+          binary_name="${{ matrix.character }}_${{ matrix.platform.goos }}_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}${{ matrix.platform.ext }}"
           
           go build -ldflags="-s -w" \
             -o "build/$binary_name" \
@@ -340,14 +372,14 @@ jobs:
           ls -lh "build/$binary_name"
         env:
           CGO_ENABLED: 1
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
+          GOOS: ${{ matrix.platform.goos }}
+          GOARCH: ${{ matrix.platform.goarch }}
       
       # Validate Android APK (simplified APK validation)
       - name: Validate Android APK
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
-          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}.apk"
           
           if [[ ! -f "$apk_file" ]]; then
             echo "❌ APK file not found: $apk_file"
@@ -397,11 +429,43 @@ jobs:
           
           echo "✅ Android APK validation completed successfully"
       
+      # Mandatory Android build verification - ensures all Android builds succeed
+      - name: Mandatory Android Build Verification
+        if: matrix.platform.goos == 'android'
+        run: |
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}.apk"
+          
+          echo "=== MANDATORY ANDROID BUILD VERIFICATION ==="
+          echo "Verifying required Android APK: $apk_file"
+          
+          # Critical: APK file must exist
+          if [[ ! -f "$apk_file" ]]; then
+            echo "❌ CRITICAL FAILURE: Required Android APK not found: $apk_file"
+            echo "This is a mandatory build requirement - workflow will fail"
+            exit 1
+          fi
+          
+          # Critical: APK file must be valid size
+          file_size=$(stat -c%s "$apk_file")
+          min_size=$((1024 * 1024))  # 1MB minimum
+          
+          if [[ $file_size -lt $min_size ]]; then
+            echo "❌ CRITICAL FAILURE: Android APK too small ($file_size bytes, minimum: $min_size)"
+            echo "This indicates a build failure - workflow will fail"
+            exit 1
+          fi
+          
+          echo "✅ MANDATORY ANDROID BUILD VERIFICATION PASSED"
+          echo "   APK file: $apk_file"
+          echo "   File size: $file_size bytes"
+          echo "   Character: ${{ matrix.character }}"
+          echo "   Architecture: ${{ matrix.platform.goarch }}"
+      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.character }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.target_suffix || '' }}
-          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}*
+          name: ${{ matrix.character }}-${{ matrix.platform.goos }}-${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}
+          path: build/${{ matrix.character }}_${{ matrix.platform.goos }}_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}*
           retention-days: ${{ github.ref == 'refs/heads/main' && '30' || '7' }}
 
   # Simplified artifact management job
@@ -423,6 +487,93 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
+      
+      - name: Validate Android Build Requirements
+        run: |
+          echo "=== ANDROID BUILD VALIDATION ==="
+          
+          # Get expected character count
+          expected_characters='${{ needs.generate-matrix.outputs.characters }}'
+          expected_count=$(echo "$expected_characters" | jq '. | length')
+          
+          echo "Expected characters: $expected_count"
+          echo "Characters: $(echo "$expected_characters" | jq -r '.[]' | tr '\n' ' ')"
+          
+          # Count Android APKs for each architecture
+          android_arm64_count=0
+          android_arm_count=0
+          missing_apks=()
+          
+          # Check each character for required Android builds
+          while IFS= read -r character; do
+            echo "Checking Android builds for character: $character"
+            
+            # Check for ARM64 APK
+            arm64_artifact="artifacts/${character}-android-arm64-android"
+            arm64_apk=$(find "$arm64_artifact" -name "*.apk" 2>/dev/null | head -1)
+            if [[ -n "$arm64_apk" && -f "$arm64_apk" ]]; then
+              size=$(stat -c%s "$arm64_apk")
+              echo "✅ Found ARM64 APK: $arm64_apk ($size bytes)"
+              ((android_arm64_count++))
+            else
+              echo "❌ Missing ARM64 APK for $character"
+              echo "   Expected artifact directory: $arm64_artifact"
+              echo "   Available artifacts:"
+              find artifacts/ -name "${character}-android-*" -type d 2>/dev/null | head -5 || echo "   None found"
+              missing_apks+=("$character-android-arm64")
+            fi
+            
+            # Check for ARM32 APK
+            arm_artifact="artifacts/${character}-android-arm-android32"
+            arm_apk=$(find "$arm_artifact" -name "*.apk" 2>/dev/null | head -1)
+            if [[ -n "$arm_apk" && -f "$arm_apk" ]]; then
+              size=$(stat -c%s "$arm_apk")
+              echo "✅ Found ARM32 APK: $arm_apk ($size bytes)"
+              ((android_arm_count++))
+            else
+              echo "❌ Missing ARM32 APK for $character"
+              echo "   Expected artifact directory: $arm_artifact"
+              missing_apks+=("$character-android-arm32")
+            fi
+          done < <(echo "$expected_characters" | jq -r '.[]')
+          
+          # Validate counts
+          echo ""
+          echo "=== ANDROID BUILD COUNT SUMMARY ==="
+          echo "Expected characters: $expected_count"
+          echo "Android ARM64 APKs found: $android_arm64_count"
+          echo "Android ARM32 APKs found: $android_arm_count"
+          echo "Total Android APKs expected: $((expected_count * 2))"
+          echo "Total Android APKs found: $((android_arm64_count + android_arm_count))"
+          
+          if [[ ${#missing_apks[@]} -gt 0 ]]; then
+            echo ""
+            echo "❌ CRITICAL FAILURE: Missing Android APKs:"
+            printf '  - %s\n' "${missing_apks[@]}"
+            echo ""
+            echo "=== DEBUGGING INFORMATION ==="
+            echo "Available artifact directories:"
+            find artifacts/ -type d -name "*android*" | sort
+            echo ""
+            echo "All APK files found:"
+            find artifacts/ -name "*.apk" -type f | sort
+            echo ""
+            echo "This is a mandatory requirement for Android build validation"
+            exit 1
+          fi
+          
+          if [[ $android_arm64_count -ne $expected_count ]]; then
+            echo "❌ CRITICAL FAILURE: Expected $expected_count ARM64 APKs, found $android_arm64_count"
+            exit 1
+          fi
+          
+          if [[ $android_arm_count -ne $expected_count ]]; then
+            echo "❌ CRITICAL FAILURE: Expected $expected_count ARM32 APKs, found $android_arm_count"
+            exit 1
+          fi
+          
+          echo "✅ ANDROID BUILD VALIDATION PASSED"
+          echo "All required Android APKs are present and accounted for"
       
       # Simplified artifact management
       - name: Build and run artifact manager
@@ -610,7 +761,6 @@ jobs:
           name: character-releases
           path: releases/
           retention-days: 90
-          if-no-files-found: ignore
       
       - name: Upload release manifest
         uses: actions/upload-artifact@v4

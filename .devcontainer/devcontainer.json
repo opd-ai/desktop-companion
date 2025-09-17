@@ -1,0 +1,66 @@
+{
+  // Desktop Companion Development Environment
+  // - Go 1.24.5 on Ubuntu 22.04 LTS (Jammy)
+  // - Fyne GUI framework with CGO support
+  // - Android SDK/NDK for mobile development
+  // - All required dependencies pre-installed
+  "name": "Desktop Companion Development",
+  "image": "mcr.microsoft.com/devcontainers/go:1-1.24-jammy",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": "true",
+      "username": "vscode",
+      "upgradePackages": "true"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "jdkDistro": "ms"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "ms-vscode.makefile-tools",
+        "ms-vscode.test-adapter-converter",
+        "hbenl.vscode-test-explorer",
+        "github.codespaces",
+        "github.copilot",
+        "github.copilot-chat",
+        "github.github-vscode-theme",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github"
+      ],
+      "settings": {
+        "go.toolsManagement.checkForUpdates": "local",
+        "go.useLanguageServer": true,
+        "go.gopath": "/go",
+        "go.goroot": "/usr/local/go",
+        "go.lintTool": "staticcheck",
+        "go.formatTool": "goimports",
+        "go.testFlags": ["-v", "-race"],
+        "go.coverOnSingleTest": true,
+        "go.coverOnSingleTestFile": true,
+        "terminal.integrated.shell.linux": "/bin/zsh"
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "remoteEnv": {
+    "CGO_ENABLED": "1",
+    "DISPLAY": ":99",
+    "ANDROID_HOME": "/opt/android-sdk",
+    "ANDROID_NDK_HOME": "/opt/android-ndk",
+    "PATH": "${containerEnv:PATH}:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-ndk"
+  },
+  "forwardPorts": [8188],
+  "portsAttributes": {
+    "8188": {
+      "label": "ComfyUI (GIF Generator)",
+      "onAutoForward": "silent"
+    }
+  }
+}
