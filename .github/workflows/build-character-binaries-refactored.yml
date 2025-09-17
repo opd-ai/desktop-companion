@@ -464,7 +464,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.character }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.target_suffix || '' }}
-          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}*
+          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}*
           retention-days: ${{ github.ref == 'refs/heads/main' && '30' || '7' }}
 
   # Simplified artifact management job
