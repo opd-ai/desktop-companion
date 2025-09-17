@@ -51,7 +51,7 @@ jobs:
       fail-fast: true  # Fail immediately upon any build failure
       matrix:
         character: ${{ fromJson(needs.generate-matrix.outputs.characters) }}
-        include:
+        platform:
           - os: ubuntu-latest
             goos: linux
             goarch: amd64
@@ -80,7 +80,7 @@ jobs:
             ext: ".apk"
             target_suffix: "-android32"
     
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.os }}
     
     steps:
       - uses: actions/checkout@v4
@@ -101,7 +101,7 @@ jobs:
       # Use official Android SDK setup action (replaces manual Android setup)
       # CRITICAL: Android SDK setup must succeed for Android builds to be valid
       - name: Setup Android SDK
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         uses: android-actions/setup-android@v3
         with:
           cmdline-tools-version: 12266719
@@ -116,9 +116,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       
-      # Use cached APT package installation (replaces manual apt commands)
+      # Install Linux dependencies (replaces manual apt commands)
       - name: Install Linux dependencies
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.platform.os == 'ubuntu-latest'
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
@@ -127,7 +127,7 @@ jobs:
       
       # Install Go tools for Android builds
       - name: Install Go tools for Android
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
           echo "Installing fyne CLI for Android builds..."
           # Pin fyne CLI to match the library version in go.mod for compatibility
@@ -171,7 +171,7 @@ jobs:
       
       # Configure Android build environment (simplified NDK setup)
       - name: Configure Android build environment
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
           echo "Configuring NDK toolchain for Android builds..."
           
@@ -195,7 +195,7 @@ jobs:
           # Set up toolchain paths based on architecture
           TOOLCHAIN_BASE="${NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin"
           
-          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+          if [[ "${{ matrix.platform.goarch }}" == "arm" ]]; then
             CC="${TOOLCHAIN_BASE}/armv7a-linux-androideabi33-clang"
             CXX="${TOOLCHAIN_BASE}/armv7a-linux-androideabi33-clang++"
           else
@@ -223,7 +223,7 @@ jobs:
           echo "CGO_CFLAGS=-I$NDK_ROOT/sysroot/usr/include" >> $GITHUB_ENV
           
           # Set architecture-specific CGO LDFLAGS
-          if [[ "${{ matrix.goarch }}" == "arm" ]]; then
+          if [[ "${{ matrix.platform.goarch }}" == "arm" ]]; then
             echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm/usr/lib" >> $GITHUB_ENV
           else
             echo "CGO_LDFLAGS=-L$NDK_ROOT/platforms/android-33/arch-arm64/usr/lib" >> $GITHUB_ENV
@@ -232,7 +232,7 @@ jobs:
           echo "=== Android Build Environment Summary ==="
           echo "Android SDK: ${ANDROID_SDK_ROOT:-Not set}"
           echo "Android NDK: $NDK_ROOT"
-          echo "Target Architecture: ${{ matrix.goarch }}"
+          echo "Target Architecture: ${{ matrix.platform.goarch }}"
           echo "C Compiler: $CC"
           echo "✅ Android NDK toolchain configured successfully"
           
@@ -254,11 +254,11 @@ jobs:
       
       # Build Android APK (simplified APK building)
       - name: Build Android APK
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
           mkdir -p build
           
-          echo "Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }})"
+          echo "Building Android APK for ${{ matrix.character }} (${{ matrix.platform.goarch }})"
           
           # Validate NDK environment
           echo "=== Android Build Environment Validation ==="
@@ -310,22 +310,22 @@ jobs:
           echo "Starting APK build process..."
           
           # Build APK - release build only, no fallback to debug
-          echo "=== Building Android APK for ${{ matrix.character }} (${{ matrix.goarch }}) ==="
+          echo "=== Building Android APK for ${{ matrix.character }} (${{ matrix.platform.goarch }}) ==="
           echo "Build environment:"
           echo "  - ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
           echo "  - CC: $CC"
           echo "  - CXX: $CXX"
           echo "  - CGO_LDFLAGS: $CGO_LDFLAGS"
-          echo "  - GOARCH: ${{ matrix.goarch }}"
+          echo "  - GOARCH: ${{ matrix.platform.goarch }}"
           echo "  - Fyne version: $(fyne version 2>/dev/null || echo 'Unknown')"
           
           if ! fyne package \
-            --target "android/${{ matrix.goarch }}" \
+            --target "android/${{ matrix.platform.goarch }}" \
             --name "${{ matrix.character }} Companion" \
             --appID "ai.opd.${{ matrix.character }}" \
             --appVersion "0.1.0" \
             --release 2>&1; then
-            echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.goarch }})"
+            echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.platform.goarch }})"
             echo "Build environment debugging:"
             echo "  - Current directory: $(pwd)"
             echo "  - Available files: $(ls -la)"
@@ -343,7 +343,7 @@ jobs:
             exit 1
           fi
           
-          output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          output_name="${{ matrix.character }}_android_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}.apk"
           mkdir -p "$GITHUB_WORKSPACE/build"
           mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
           echo "✅ Android APK built successfully: $output_name"
@@ -355,13 +355,13 @@ jobs:
       
       # Build regular binary (simplified binary building)
       - name: Build binary
-        if: matrix.goos != 'android'
+        if: matrix.platform.goos != 'android'
         run: |
           mkdir -p build
           
-          echo "Building ${{ matrix.character }} for ${{ matrix.goos }}/${{ matrix.goarch }}"
+          echo "Building ${{ matrix.character }} for ${{ matrix.platform.goos }}/${{ matrix.platform.goarch }}"
           
-          binary_name="${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}${{ matrix.ext }}"
+          binary_name="${{ matrix.character }}_${{ matrix.platform.goos }}_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}${{ matrix.platform.ext }}"
           
           go build -ldflags="-s -w" \
             -o "build/$binary_name" \
@@ -371,14 +371,14 @@ jobs:
           ls -lh "build/$binary_name"
         env:
           CGO_ENABLED: 1
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
+          GOOS: ${{ matrix.platform.goos }}
+          GOARCH: ${{ matrix.platform.goarch }}
       
       # Validate Android APK (simplified APK validation)
       - name: Validate Android APK
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
-          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}.apk"
           
           if [[ ! -f "$apk_file" ]]; then
             echo "❌ APK file not found: $apk_file"
@@ -430,9 +430,9 @@ jobs:
       
       # Mandatory Android build verification - ensures all Android builds succeed
       - name: Mandatory Android Build Verification
-        if: matrix.goos == 'android'
+        if: matrix.platform.goos == 'android'
         run: |
-          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}.apk"
           
           echo "=== MANDATORY ANDROID BUILD VERIFICATION ==="
           echo "Verifying required Android APK: $apk_file"
@@ -458,13 +458,13 @@ jobs:
           echo "   APK file: $apk_file"
           echo "   File size: $file_size bytes"
           echo "   Character: ${{ matrix.character }}"
-          echo "   Architecture: ${{ matrix.goarch }}"
+          echo "   Architecture: ${{ matrix.platform.goarch }}"
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.character }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.target_suffix || '' }}
-          path: build/${{ matrix.character }}_${{ matrix.goos }}_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}*
+          name: ${{ matrix.character }}-${{ matrix.platform.goos }}-${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}
+          path: build/${{ matrix.character }}_${{ matrix.platform.goos }}_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}*
           retention-days: ${{ github.ref == 'refs/heads/main' && '30' || '7' }}
 
   # Simplified artifact management job
