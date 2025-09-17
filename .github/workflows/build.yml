@@ -243,8 +243,8 @@ jobs:
         
         # Build ARM64 APK (primary Android architecture)
         echo "Building ARM64 APK..."
-        fyne package --target android/arm64 --app-id ai.opd.dds --name "DDS Companion" \
-          --app-version "0.1.0" --app-build ${{ github.run_number }} \
+        fyne package --target android/arm64 --appid ai.opd.dds --name "DDS Companion" \
+          --appversion "0.1.0" --app-build ${{ github.run_number }} \
           --icon "../../assets/app/icon.png" --release
         
         # Verify ARM64 APK was created
@@ -262,8 +262,8 @@ jobs:
         
         # Build ARM32 APK (for older Android devices)
         echo "Building ARM32 APK..."
-        fyne package --target android/arm --app-id ai.opd.dds --name "DDS Companion" \
-          --app-version "0.1.0" --app-build ${{ github.run_number }} \
+        fyne package --target android/arm --appid ai.opd.dds --name "DDS Companion" \
+          --appversion "0.1.0" --app-build ${{ github.run_number }} \
           --icon "../../assets/app/icon.png" --release
         
         # Verify ARM32 APK was created
