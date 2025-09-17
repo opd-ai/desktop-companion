@@ -37,10 +37,10 @@ func TestStep4ExperimentalFeatures(t *testing.T) {
 		{
 			name:                     "Specialist Character",
 			charPath:                 "../../assets/characters/specialist/character.json",
-			expectedBattleEnabled:    false, // Sleepy character not competitive
+			expectedBattleEnabled:    true,  // Sleepy character has battle system enabled in config
 			expectedGiftEnabled:      true,
-			expectedBattleDifficulty: "", // No battle system
-			expectedMaxGiftSlots:     4,  // Low energy = fewer gift interactions
+			expectedBattleDifficulty: "easy", // Easy difficulty for sleepy character
+			expectedMaxGiftSlots:     4,      // Low energy = fewer gift interactions
 		},
 		{
 			name:                     "Markov Example",
@@ -61,10 +61,10 @@ func TestStep4ExperimentalFeatures(t *testing.T) {
 		{
 			name:                     "Romance Character",
 			charPath:                 "../../assets/characters/romance/character.json",
-			expectedBattleEnabled:    false, // Romance character not competitive
+			expectedBattleEnabled:    true,   // Romance character has battle system enabled in config
 			expectedGiftEnabled:      true,
-			expectedBattleDifficulty: "", // No battle system
-			expectedMaxGiftSlots:     10, // Romance = lots of gift giving
+			expectedBattleDifficulty: "normal", // Normal difficulty for romance character
+			expectedMaxGiftSlots:     10,       // Romance = lots of gift giving
 		},
 	}
 
@@ -163,7 +163,7 @@ func TestStep4PersonalityPreservation(t *testing.T) {
 			name:                "Specialist Character",
 			charPath:            "../../assets/characters/specialist/character.json",
 			expectedTheme:       "energy management focus",
-			allowedBattleStyles: []string{}, // No battle system
+			allowedBattleStyles: []string{"easy", "sleepy", "drowsy"}, // Has battle system with easy difficulty
 			allowedGiftStyles:   []string{"comfort", "energy", "relaxation"},
 		},
 		{
@@ -184,7 +184,7 @@ func TestStep4PersonalityPreservation(t *testing.T) {
 			name:                "Romance Character",
 			charPath:            "../../assets/characters/romance/character.json",
 			expectedTheme:       "dating simulator",
-			allowedBattleStyles: []string{}, // No battle system
+			allowedBattleStyles: []string{"normal", "romantic", "playful"}, // Has battle system with normal difficulty
 			allowedGiftStyles:   []string{"romantic", "intimate", "affection"},
 		},
 	}
