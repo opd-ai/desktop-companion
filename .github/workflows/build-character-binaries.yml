@@ -155,7 +155,7 @@ jobs:
               
               # Install fyne CLI for Android builds
               echo "Installing fyne CLI for Android builds..."
-              go install fyne.io/tools/cmd/fyne@latest
+              go install fyne.io/fyne/v2/cmd/fyne@v2.5.2
               echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
               
               echo "✅ Android build dependencies installed"
