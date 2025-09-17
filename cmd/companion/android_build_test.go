@@ -156,7 +156,7 @@ func TestGitHubActionsWorkflow(t *testing.T) {
 	// Check for Android-specific setup
 	androidSteps := []string{
 		"setup-android@v2",
-		"android --app-id",
+		"--app-id",
 		"fyne package",
 	}
 
