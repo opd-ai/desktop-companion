@@ -1271,7 +1271,7 @@ func (c *MarkovChain) Train(text string) {
 	}
 
 	// Build states and transitions
-	for i := 0; i <= len(words)-c.order-1; i++ {
+	for i := 0; i < len(words)-c.order; i++ {
 		state := c.createState(words[i : i+c.order])
 		nextWord := words[i+c.order]
 
