@@ -48,7 +48,7 @@ jobs:
   build-binaries:
     needs: generate-matrix
     strategy:
-      fail-fast: false  # Continue all builds even if some fail, so we can validate all Android builds
+      fail-fast: true  # Fail immediately upon any build failure
       matrix:
         character: ${{ fromJson(needs.generate-matrix.outputs.characters) }}
         include:
