@@ -333,57 +333,42 @@ jobs:
             
             # Build APK with direct dependency resolution and better error handling
             build_success=false
-            if fyne package \
+            # Build APK - release build only, no fallback to debug
+            if ! fyne package \
               --target "android/${{ matrix.goarch }}" \
               --name "${{ matrix.character }} Companion" \
               --app-id "ai.opd.${{ matrix.character }}" \
               --app-version "1.0.0" \
               --release 2>&1; then
-              build_success=true
-            else
-              echo "Release build failed, trying debug build..."
-              if fyne package \
-                --target "android/${{ matrix.goarch }}" \
-                --name "${{ matrix.character }} Companion" \
-                --app-id "ai.opd.${{ matrix.character }}" \
-                --app-version "1.0.0"; then
-                build_success=true
-              else
-                echo "❌ Both release and debug builds failed"
-                echo "Checking for common issues:"
-                echo "  - NDK version: $(ls -la $ANDROID_NDK_ROOT 2>/dev/null || echo 'NDK not found')"
-                echo "  - Go version: $(go version)"
-                echo "  - Fyne version: $(fyne version)"
-                exit 1
-              fi
+              echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.goarch }})"
+              echo "This is a required build failure - workflow will exit"
+              echo "Debugging information:"
+              echo "  - NDK version: $(ls -la $ANDROID_NDK_ROOT 2>/dev/null || echo 'NDK not found')"
+              echo "  - Go version: $(go version)"
+              echo "  - Fyne version: $(fyne version)"
+              exit 1
             fi
             
-            if [[ "$build_success" == "true" ]]; then
-              # Find and move the generated APK
-              apk_file=$(find . -name "*.apk" -type f | head -1)
-              if [[ -n "$apk_file" ]]; then
-                output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
-                
-                # Move to build directory  
-                mkdir -p "$GITHUB_WORKSPACE/build"
-                mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
-                echo "✓ Built Android APK: $output_name"
-                
-                # Get APK info
-                if command -v aapt >/dev/null 2>&1; then
-                  echo "APK Information:"
-                  aapt dump badging "$GITHUB_WORKSPACE/build/$output_name" | head -5
-                fi
-                
-                # Show file size
-                ls -lh "$GITHUB_WORKSPACE/build/$output_name"
-              else
-                echo "No APK file generated"
-                echo "Files in build directory:"
-                find . -type f -name "*.apk" -o -name "*.aar" -o -name "*.so" | head -10
-                exit 1
-              fi
+            # Verify APK was created and move it to build directory
+            apk_file=$(find . -name "*.apk" -type f | head -1)
+            if [[ -z "$apk_file" ]]; then
+              echo "❌ No APK file found after build completion"
+              exit 1
             fi
+            
+            output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+            mkdir -p "$GITHUB_WORKSPACE/build"
+            mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
+            echo "✅ Android APK built successfully: $output_name"
+            
+            # Get APK info
+            if command -v aapt >/dev/null 2>&1; then
+              echo "APK Information:"
+              aapt dump badging "$GITHUB_WORKSPACE/build/$output_name" | head -5
+            fi
+            
+            # Show file size
+            ls -lh "$GITHUB_WORKSPACE/build/$output_name"
             
           else
             # Direct build - no complex internal package resolution needed
@@ -452,6 +437,39 @@ jobs:
             echo "❌ APK file not found: $apk_file"
             exit 1
           fi
+      
+      # Mandatory Android build verification - ensures all Android builds succeed
+      - name: Mandatory Android Build Verification
+        if: matrix.goos == 'android'
+        shell: bash
+        run: |
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          
+          echo "=== MANDATORY ANDROID BUILD VERIFICATION ==="
+          echo "Verifying required Android APK: $apk_file"
+          
+          # Critical: APK file must exist
+          if [[ ! -f "$apk_file" ]]; then
+            echo "❌ CRITICAL FAILURE: Required Android APK not found: $apk_file"
+            echo "This is a mandatory build requirement - workflow will fail"
+            exit 1
+          fi
+          
+          # Critical: APK file must be valid size
+          file_size=$(stat -c%s "$apk_file")
+          min_size=$((1024 * 1024))  # 1MB minimum
+          
+          if [[ $file_size -lt $min_size ]]; then
+            echo "❌ CRITICAL FAILURE: Android APK too small ($file_size bytes, minimum: $min_size)"
+            echo "This indicates a build failure - workflow will fail"
+            exit 1
+          fi
+          
+          echo "✅ MANDATORY ANDROID BUILD VERIFICATION PASSED"
+          echo "   APK file: $apk_file"
+          echo "   File size: $file_size bytes"
+          echo "   Character: ${{ matrix.character }}"
+          echo "   Architecture: ${{ matrix.goarch }}"
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

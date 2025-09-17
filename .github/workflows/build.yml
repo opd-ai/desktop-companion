@@ -237,31 +237,30 @@ jobs:
     - name: Build Android APK
       run: |
         mkdir -p build artifacts
-        cd build
-        # Build debug APK (doesn't require signing)
-        #fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
-        #  --app-version "1.0.0-${{ github.run_number }}" --app-build ${{ github.run_number }} \
-        #  --icon "../assets/characters/default/animations/idle.gif" \
-        #  --src "../cmd/companion" || echo "Android build failed, continuing..."
-        cd ../cmd/companion && fyne package --target android --app-id ai.opd.dds.debug --name "DDS Debug" \
+        cd cmd/companion
+        
+        # Build release APK - no fallback, must succeed
+        fyne package --target android --app-id ai.opd.dds --name "DDS Companion" \
           --app-version "1.0.0-${{ github.run_number }}" --app-build ${{ github.run_number }} \
-          --icon "../assets/characters/default/animations/idle.gif" || echo "Android build failed, continuing..."
-
-        # Find and copy APK if created
-        if ls *.apk 1> /dev/null 2>&1; then
-          cp *.apk ../artifacts/companion-debug.apk
-          echo "Android APK built successfully"
-        else
-          echo "Android APK build failed - this is expected without proper Android SDK setup"
+          --icon "../../assets/app/icon.png" --release
+        
+        # Verify APK was created
+        if ! ls *.apk 1> /dev/null 2>&1; then
+          echo "❌ CRITICAL FAILURE: Android APK build failed"
+          echo "No APK file found after build completion"
+          exit 1
         fi
+        
+        # Move APK to artifacts
+        cp *.apk ../../artifacts/companion-android.apk
+        echo "✅ Android APK built successfully"
+        ls -lh ../../artifacts/companion-android.apk
     
     - name: Upload Android artifacts
       uses: actions/upload-artifact@v4
-      if: success()
       with:
         name: android-build
         path: artifacts/
-        if-no-files-found: ignore
 
   release:
     name: Create Release

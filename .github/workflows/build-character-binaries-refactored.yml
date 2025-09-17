@@ -98,6 +98,7 @@ jobs:
           echo "✅ Scripts made executable"
       
       # Use official Android SDK setup action (replaces manual Android setup)
+      # CRITICAL: Android SDK setup must succeed for Android builds to be valid
       - name: Setup Android SDK
         if: matrix.goos == 'android'
         uses: android-actions/setup-android@v3
@@ -281,42 +282,30 @@ jobs:
           
           echo "Starting APK build process..."
           
-          build_success=false
-          if fyne package \
+          # Build APK - release build only, no fallback to debug
+          if ! fyne package \
             --target "android/${{ matrix.goarch }}" \
             --name "${{ matrix.character }} Companion" \
             --app-id "ai.opd.${{ matrix.character }}" \
             --app-version "1.0.0" \
             --release 2>&1; then
-            build_success=true
-          else
-            echo "Release build failed, trying debug build..."
-            if fyne package \
-              --target "android/${{ matrix.goarch }}" \
-              --name "${{ matrix.character }} Companion" \
-              --app-id "ai.opd.${{ matrix.character }}" \
-              --app-version "1.0.0"; then
-              build_success=true
-            else
-              echo "❌ Both release and debug builds failed"
-              exit 1
-            fi
+            echo "❌ Android APK build failed for ${{ matrix.character }} (${{ matrix.goarch }})"
+            echo "This is a required build failure - workflow will exit"
+            exit 1
           fi
           
-          if [[ "$build_success" == "true" ]]; then
-            # Find and move APK
-            apk_file=$(find . -name "*.apk" -type f | head -1)
-            if [[ -n "$apk_file" ]]; then
-              output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
-              mkdir -p "$GITHUB_WORKSPACE/build"
-              mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
-              echo "✓ Built Android APK: $output_name"
-              ls -lh "$GITHUB_WORKSPACE/build/$output_name"
-            else
-              echo "❌ No APK file generated"
-              exit 1
-            fi
+          # Verify APK was created and move it to build directory
+          apk_file=$(find . -name "*.apk" -type f | head -1)
+          if [[ -z "$apk_file" ]]; then
+            echo "❌ No APK file found after build completion"
+            exit 1
           fi
+          
+          output_name="${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          mkdir -p "$GITHUB_WORKSPACE/build"
+          mv "$apk_file" "$GITHUB_WORKSPACE/build/$output_name"
+          echo "✅ Android APK built successfully: $output_name"
+          ls -lh "$GITHUB_WORKSPACE/build/$output_name"
         env:
           CGO_ENABLED: 1
           GOOS: android
@@ -396,6 +385,38 @@ jobs:
           fi
           
           echo "✅ Android APK validation completed successfully"
+      
+      # Mandatory Android build verification - ensures all Android builds succeed
+      - name: Mandatory Android Build Verification
+        if: matrix.goos == 'android'
+        run: |
+          apk_file="build/${{ matrix.character }}_android_${{ matrix.goarch }}${{ matrix.target_suffix || '' }}.apk"
+          
+          echo "=== MANDATORY ANDROID BUILD VERIFICATION ==="
+          echo "Verifying required Android APK: $apk_file"
+          
+          # Critical: APK file must exist
+          if [[ ! -f "$apk_file" ]]; then
+            echo "❌ CRITICAL FAILURE: Required Android APK not found: $apk_file"
+            echo "This is a mandatory build requirement - workflow will fail"
+            exit 1
+          fi
+          
+          # Critical: APK file must be valid size
+          file_size=$(stat -c%s "$apk_file")
+          min_size=$((1024 * 1024))  # 1MB minimum
+          
+          if [[ $file_size -lt $min_size ]]; then
+            echo "❌ CRITICAL FAILURE: Android APK too small ($file_size bytes, minimum: $min_size)"
+            echo "This indicates a build failure - workflow will fail"
+            exit 1
+          fi
+          
+          echo "✅ MANDATORY ANDROID BUILD VERIFICATION PASSED"
+          echo "   APK file: $apk_file"
+          echo "   File size: $file_size bytes"
+          echo "   Character: ${{ matrix.character }}"
+          echo "   Architecture: ${{ matrix.goarch }}"
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
