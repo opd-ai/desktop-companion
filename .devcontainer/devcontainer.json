@@ -26,7 +26,13 @@
         "golang.go",
         "ms-vscode.makefile-tools",
         "ms-vscode.test-adapter-converter",
-        "hbenl.vscode-test-explorer"
+        "hbenl.vscode-test-explorer",
+        "github.codespaces",
+        "github.copilot",
+        "github.copilot-chat",
+        "github.github-vscode-theme",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github"
       ],
       "settings": {
         "go.toolsManagement.checkForUpdates": "local",
