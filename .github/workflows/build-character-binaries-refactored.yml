@@ -131,7 +131,7 @@ jobs:
         run: |
           echo "Installing fyne CLI for Android builds..."
           # Pin fyne CLI to match the library version in go.mod for compatibility
-          go install fyne.io/tools/cmd/fyne@v2.5.2
+          go install fyne.io/fyne/v2/cmd/fyne@v2.5.2
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
           
           # Verify fyne installation and version
