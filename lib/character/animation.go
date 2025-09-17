@@ -177,7 +177,10 @@ func (am *AnimationManager) GetCurrentFrame() (image.Image, bool) {
 	}
 
 	// Calculate frame timing to determine if update is needed
-	frameDelay := time.Duration(currentGif.Delay[am.frameIndex]) * 10 * time.Millisecond
+	var frameDelay time.Duration
+	if am.frameIndex < len(currentGif.Delay) && len(currentGif.Delay) > 0 {
+		frameDelay = time.Duration(currentGif.Delay[am.frameIndex]) * 10 * time.Millisecond
+	}
 	if frameDelay == 0 {
 		frameDelay = 100 * time.Millisecond // Default to 10 FPS
 	}
@@ -222,7 +225,10 @@ func (am *AnimationManager) Update() bool {
 	}
 
 	// Calculate frame timing
-	frameDelay := time.Duration(currentGif.Delay[am.frameIndex]) * 10 * time.Millisecond
+	var frameDelay time.Duration
+	if am.frameIndex < len(currentGif.Delay) && len(currentGif.Delay) > 0 {
+		frameDelay = time.Duration(currentGif.Delay[am.frameIndex]) * 10 * time.Millisecond
+	}
 	if frameDelay == 0 {
 		frameDelay = 100 * time.Millisecond // Default to 10 FPS
 	}
