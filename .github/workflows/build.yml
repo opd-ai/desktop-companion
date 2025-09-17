@@ -110,7 +110,7 @@ jobs:
     
     - name: Build Windows binary
       run: |
-        mkdir build; mkdir artifacts
+        mkdir build -Force; mkdir artifacts -Force
         go build -ldflags="-s -w" -o build/companion-windows-amd64.exe cmd/companion/main.go
         copy build\companion-windows-amd64.exe artifacts\
     
