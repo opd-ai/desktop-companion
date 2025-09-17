@@ -94,6 +94,7 @@ jobs:
       
       # Simple script permission setup (replaces complex shell commands)
       - name: Make scripts executable
+        if: matrix.platform.os != 'windows-latest'
         run: |
           find scripts -name "*.sh" -type f -exec chmod +x {} \;
           echo "✅ Scripts made executable"

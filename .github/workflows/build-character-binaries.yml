@@ -91,6 +91,8 @@ jobs:
           cache: true
       
       - name: Make scripts executable
+        if: matrix.platform.os != 'windows-latest'
+        shell: bash
         run: |
           chmod +x scripts/*.sh
           chmod +x scripts/validate-*.sh 2>/dev/null || true
