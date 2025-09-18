@@ -3,6 +3,7 @@ package dialog
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -105,6 +106,7 @@ type BackendInfo struct {
 
 // DialogManager orchestrates multiple backends and handles fallbacks
 type DialogManager struct {
+	mu             sync.RWMutex
 	backends       map[string]DialogBackend
 	defaultBackend string
 	fallbackChain  []string
@@ -122,11 +124,15 @@ func NewDialogManager(debug bool) *DialogManager {
 
 // RegisterBackend adds a new dialog backend to the manager
 func (dm *DialogManager) RegisterBackend(name string, backend DialogBackend) {
+	dm.mu.Lock()
+	defer dm.mu.Unlock()
 	dm.backends[name] = backend
 }
 
 // SetDefaultBackend sets the primary backend to use for dialog generation
 func (dm *DialogManager) SetDefaultBackend(name string) error {
+	dm.mu.Lock()
+	defer dm.mu.Unlock()
 	if _, exists := dm.backends[name]; !exists {
 		return fmt.Errorf("backend '%s' not registered", name)
 	}
@@ -136,6 +142,8 @@ func (dm *DialogManager) SetDefaultBackend(name string) error {
 
 // SetFallbackChain configures the order of backends to try if primary fails
 func (dm *DialogManager) SetFallbackChain(backends []string) error {
+	dm.mu.Lock()
+	defer dm.mu.Unlock()
 	for _, name := range backends {
 		if _, exists := dm.backends[name]; !exists {
 			return fmt.Errorf("fallback backend '%s' not registered", name)
@@ -163,12 +171,12 @@ func (dm *DialogManager) GenerateDialog(context DialogContext) (DialogResponse, 
 
 // tryDefaultBackend attempts to generate response using the configured default backend
 func (dm *DialogManager) tryDefaultBackend(context DialogContext) (DialogResponse, bool) {
-	if dm.defaultBackend == "" {
-		return DialogResponse{}, false
-	}
+	dm.mu.RLock()
+	defaultBackend := dm.defaultBackend
+	backend, exists := dm.backends[defaultBackend]
+	dm.mu.RUnlock()
 
-	backend, exists := dm.backends[dm.defaultBackend]
-	if !exists {
+	if defaultBackend == "" || !exists {
 		return DialogResponse{}, false
 	}
 
@@ -186,7 +194,12 @@ func (dm *DialogManager) tryDefaultBackend(context DialogContext) (DialogRespons
 
 // tryFallbackChain attempts to generate response using the fallback backend chain
 func (dm *DialogManager) tryFallbackChain(context DialogContext) (DialogResponse, bool) {
-	for _, backendName := range dm.fallbackChain {
+	dm.mu.RLock()
+	fallbackChain := make([]string, len(dm.fallbackChain))
+	copy(fallbackChain, dm.fallbackChain)
+	dm.mu.RUnlock()
+
+	for _, backendName := range fallbackChain {
 		if response, success := dm.tryFallbackBackend(backendName, context); success {
 			return response, true
 		}
@@ -196,7 +209,10 @@ func (dm *DialogManager) tryFallbackChain(context DialogContext) (DialogResponse
 
 // tryFallbackBackend attempts to generate response using a specific fallback backend
 func (dm *DialogManager) tryFallbackBackend(backendName string, context DialogContext) (DialogResponse, bool) {
+	dm.mu.RLock()
 	backend, exists := dm.backends[backendName]
+	dm.mu.RUnlock()
+
 	if !exists {
 		return DialogResponse{}, false
 	}
@@ -238,6 +254,8 @@ func (dm *DialogManager) createFallbackResponse(context DialogContext) DialogRes
 
 // GetRegisteredBackends returns a list of all registered backend names
 func (dm *DialogManager) GetRegisteredBackends() []string {
+	dm.mu.RLock()
+	defer dm.mu.RUnlock()
 	names := make([]string, 0, len(dm.backends))
 	for name := range dm.backends {
 		names = append(names, name)
@@ -247,7 +265,10 @@ func (dm *DialogManager) GetRegisteredBackends() []string {
 
 // GetBackendInfo returns information about a specific backend
 func (dm *DialogManager) GetBackendInfo(name string) (BackendInfo, error) {
+	dm.mu.RLock()
 	backend, exists := dm.backends[name]
+	dm.mu.RUnlock()
+	
 	if !exists {
 		return BackendInfo{}, fmt.Errorf("backend '%s' not found", name)
 	}
@@ -257,7 +278,14 @@ func (dm *DialogManager) GetBackendInfo(name string) (BackendInfo, error) {
 // UpdateBackendMemory records interaction outcomes for backend learning
 func (dm *DialogManager) UpdateBackendMemory(context DialogContext, response DialogResponse, feedback *UserFeedback) {
 	// Update memory for the backend that generated this response
+	dm.mu.RLock()
+	backends := make([]DialogBackend, 0, len(dm.backends))
 	for _, backend := range dm.backends {
+		backends = append(backends, backend)
+	}
+	dm.mu.RUnlock()
+
+	for _, backend := range backends {
 		if backend.CanHandle(context) {
 			_ = backend.UpdateMemory(context, response, feedback)
 			break
@@ -267,6 +295,8 @@ func (dm *DialogManager) UpdateBackendMemory(context DialogContext, response Dia
 
 // GetBackend returns a specific registered backend by name
 func (dm *DialogManager) GetBackend(name string) (DialogBackend, bool) {
+	dm.mu.RLock()
+	defer dm.mu.RUnlock()
 	backend, exists := dm.backends[name]
 	return backend, exists
 }
