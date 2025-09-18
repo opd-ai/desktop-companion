@@ -1,6 +1,7 @@
 package dialog
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -172,33 +173,68 @@ func (llm *LLMDialogBackend) CanHandle(context DialogContext) bool {
 }
 
 // GenerateResponse implements DialogBackend.GenerateResponse
-func (llm *LLMDialogBackend) GenerateResponse(context DialogContext) (DialogResponse, error) {
+func (llm *LLMDialogBackend) GenerateResponse(dialogCtx DialogContext) (DialogResponse, error) {
 	if !llm.initialized || !llm.enabled {
 		return DialogResponse{}, fmt.Errorf("LLM backend not available")
 	}
 
 	// Handle mock mode - return mock response
 	if llm.config.MockMode {
-		return llm.createMockResponse(context), nil
+		return llm.createMockResponse(dialogCtx), nil
 	}
 
 	// Check health before attempting generation
 	if !llm.IsHealthy() {
 		logrus.Warn("LLM backend health check failed, triggering fallback")
-		return llm.createFallbackResponse(context), fmt.Errorf("LLM backend unhealthy")
+		return llm.createFallbackResponse(dialogCtx), fmt.Errorf("LLM backend unhealthy")
 	}
 
 	// Convert our DialogContext to miniLM's format
-	miniLMContext := llm.buildMiniLMContext(context)
+	miniLMContext := llm.buildMiniLMContext(dialogCtx)
 
-	// Generate response using miniLM with timeout
+	// Generate response using miniLM with timeout and proper cancellation
 	responseChan := make(chan DialogResponse, 1)
 	errorChan := make(chan error, 1)
+	timeout := time.Duration(llm.config.MaxGenerationTime) * time.Second
+
+	// Create context for cancellation
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel() // Ensure cleanup
 
 	go func() {
+		defer func() {
+			// Ensure channels are not blocked on send by using non-blocking sends
+			select {
+			case responseChan <- DialogResponse{}:
+			default:
+			}
+			select {
+			case errorChan <- fmt.Errorf("goroutine cancelled"):
+			default:
+			}
+		}()
+
+		// Check context before starting work
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		response, err := llm.manager.GenerateDialog(miniLMContext)
+
+		// Check context again before sending result
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		if err != nil {
-			errorChan <- err
+			select {
+			case errorChan <- err:
+			case <-ctx.Done():
+			}
 			return
 		}
 
@@ -216,11 +252,13 @@ func (llm *LLMDialogBackend) GenerateResponse(context DialogContext) (DialogResp
 			Metadata:         response.Metadata,
 		}
 
-		responseChan <- dialogResponse
+		select {
+		case responseChan <- dialogResponse:
+		case <-ctx.Done():
+		}
 	}()
 
 	// Wait for response with timeout
-	timeout := time.Duration(llm.config.MaxGenerationTime) * time.Second
 	select {
 	case response := <-responseChan:
 		// Validate response quality
@@ -229,7 +267,7 @@ func (llm *LLMDialogBackend) GenerateResponse(context DialogContext) (DialogResp
 				"text":       response.Text,
 				"confidence": response.Confidence,
 			}).Debug("LLM response quality too low, triggering fallback")
-			return llm.createFallbackResponse(context), fmt.Errorf("LLM response quality insufficient")
+			return llm.createFallbackResponse(dialogCtx), fmt.Errorf("LLM response quality insufficient")
 		}
 
 		// Add our own metadata
@@ -241,7 +279,7 @@ func (llm *LLMDialogBackend) GenerateResponse(context DialogContext) (DialogResp
 		response.Metadata["generation_time"] = time.Now().Format(time.RFC3339)
 
 		logrus.WithFields(logrus.Fields{
-			"trigger":    context.Trigger,
+			"trigger":    dialogCtx.Trigger,
 			"text":       response.Text,
 			"confidence": response.Confidence,
 			"animation":  response.Animation,
@@ -251,11 +289,11 @@ func (llm *LLMDialogBackend) GenerateResponse(context DialogContext) (DialogResp
 
 	case err := <-errorChan:
 		logrus.WithError(err).Debug("LLM generation failed, returning error for fallback")
-		return llm.createFallbackResponse(context), fmt.Errorf("LLM generation failed: %w", err)
+		return llm.createFallbackResponse(dialogCtx), fmt.Errorf("LLM generation failed: %w", err)
 
-	case <-time.After(timeout):
+	case <-ctx.Done():
 		logrus.WithField("timeout", timeout).Warn("LLM generation timed out, triggering fallback")
-		return llm.createFallbackResponse(context), fmt.Errorf("LLM generation timed out after %v", timeout)
+		return llm.createFallbackResponse(dialogCtx), fmt.Errorf("LLM generation timed out after %v", timeout)
 	}
 }
 
