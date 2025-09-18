@@ -23,13 +23,13 @@ func TestDialogManagerConcurrency(t *testing.T) {
 	numOperations := 100
 
 	var wg sync.WaitGroup
-	
+
 	// Test concurrent registration and configuration
 	wg.Add(numGoroutines)
 	for i := 0; i < numGoroutines; i++ {
 		go func(id int) {
 			defer wg.Done()
-			
+
 			for j := 0; j < numOperations; j++ {
 				// Concurrent operations that should be safe
 				switch j % 6 {
@@ -73,12 +73,12 @@ func TestDialogManagerConcurrency(t *testing.T) {
 		Trigger:           "final_test",
 		FallbackResponses: []string{"Final test"},
 	}
-	
+
 	response, err := manager.GenerateDialog(context)
 	if err != nil {
 		t.Errorf("Dialog generation failed after concurrent operations: %v", err)
 	}
-	
+
 	if response.Text == "" {
 		t.Error("Expected non-empty response after concurrent operations")
 	}
@@ -87,7 +87,7 @@ func TestDialogManagerConcurrency(t *testing.T) {
 // TestDialogManagerReadWritePatterns tests typical read/write patterns
 func TestDialogManagerReadWritePatterns(t *testing.T) {
 	manager := NewDialogManager(false)
-	
+
 	// Initialize with some backends
 	simpleBackend := NewSimpleRandomBackend()
 	simpleBackend.Initialize([]byte(`{}`))
@@ -138,7 +138,7 @@ func TestDialogManagerReadWritePatterns(t *testing.T) {
 					// Write operations
 					backend := NewSimpleRandomBackend()
 					backend.Initialize([]byte(`{}`))
-					
+
 					backendName := "dynamic_backend"
 					manager.RegisterBackend(backendName, backend)
 					manager.SetFallbackChain([]string{backendName})

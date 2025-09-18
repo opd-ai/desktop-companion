@@ -268,7 +268,7 @@ func (dm *DialogManager) GetBackendInfo(name string) (BackendInfo, error) {
 	dm.mu.RLock()
 	backend, exists := dm.backends[name]
 	dm.mu.RUnlock()
-	
+
 	if !exists {
 		return BackendInfo{}, fmt.Errorf("backend '%s' not found", name)
 	}
