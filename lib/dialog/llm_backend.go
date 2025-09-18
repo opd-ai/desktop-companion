@@ -203,14 +203,12 @@ func (llm *LLMDialogBackend) GenerateResponse(dialogCtx DialogContext) (DialogRe
 
 	go func() {
 		defer func() {
-			// Ensure channels are not blocked on send by using non-blocking sends
-			select {
-			case responseChan <- DialogResponse{}:
-			default:
-			}
-			select {
-			case errorChan <- fmt.Errorf("goroutine cancelled"):
-			default:
+			if r := recover(); r != nil {
+				// Only send error on panic, not normal cancellation
+				select {
+				case errorChan <- fmt.Errorf("goroutine panicked: %v", r):
+				case <-ctx.Done():
+				}
 			}
 		}()
 
