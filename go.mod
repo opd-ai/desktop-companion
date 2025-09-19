@@ -2,6 +2,8 @@ module github.com/opd-ai/desktop-companion
 
 go 1.24.5
 
+toolchain go1.24.7
+
 require (
 	fyne.io/fyne/v2 v2.5.2
 	github.com/jdkato/prose/v2 v2.0.0
