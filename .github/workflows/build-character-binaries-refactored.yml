@@ -369,6 +369,7 @@ jobs:
           
           # Build from within the embedded character directory since it has its own go.mod
           cd cmd/${{ matrix.character }}-embedded
+          go mod tidy
           go build -ldflags="-s -w" \
             -o "../../build/$binary_name" \
             .
