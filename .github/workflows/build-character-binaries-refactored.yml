@@ -11,6 +11,7 @@ on:
 
 env:
   GO_VERSION: '1.23'
+  GOTOOLCHAIN: 'go1.24.7'  # Use toolchain for Go 1.24.7 compatibility
   ANDROID_NDK_VERSION: '25.2.9519653'  # Pin to compatible NDK version
   FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
   LANG: en_US.UTF-8
@@ -169,6 +170,8 @@ jobs:
           echo "go.mod content:"
           cat "${output_dir}/go.mod"
           echo "✅ Character embedded successfully"
+        env:
+          GOTOOLCHAIN: ${{ env.GOTOOLCHAIN }}
       
       # Configure Android build environment (simplified NDK setup)
       - name: Configure Android build environment
@@ -364,13 +367,17 @@ jobs:
           
           binary_name="${{ matrix.character }}_${{ matrix.platform.goos }}_${{ matrix.platform.goarch }}${{ matrix.platform.target_suffix || '' }}${{ matrix.platform.ext }}"
           
+          # Build from within the embedded character directory since it has its own go.mod
+          cd cmd/${{ matrix.character }}-embedded
           go build -ldflags="-s -w" \
-            -o "build/$binary_name" \
-            ./cmd/${{ matrix.character }}-embedded
+            -o "../../build/$binary_name" \
+            .
           
+          cd ../..
           echo "✓ Built binary: $binary_name"
           ls -lh "build/$binary_name"
         env:
+          GOTOOLCHAIN: ${{ env.GOTOOLCHAIN }}
           CGO_ENABLED: 1
           GOOS: ${{ matrix.platform.goos }}
           GOARCH: ${{ matrix.platform.goarch }}
