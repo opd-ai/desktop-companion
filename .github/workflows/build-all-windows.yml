@@ -1,0 +1,311 @@
+name: Build All Windows Character Executables
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: '1.21'
+  FYNE_MIN_VERSION: '2.5.0'
+
+jobs:
+  test:
+    name: Run Tests (Required)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Run tests
+      run: go test ./... -v -coverprofile=coverage.out
+
+  build-all-windows-characters:
+    name: Build All Windows Character Executables
+    runs-on: windows-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Install fyne tool
+      run: go install fyne.io/fyne/v2/cmd/fyne@v2.5.2
+    
+    - name: Discover character names
+      id: discover-characters
+      run: |
+        # Discover all character directories (excluding templates, examples, and special directories)
+        $characters = @()
+        Get-ChildItem -Path "assets/characters" -Directory | ForEach-Object {
+          $name = $_.Name
+          # Exclude template, example, and utility directories
+          if ($name -notin @("templates", "examples", "README_ROMANCE_ARCHETYPES.md")) {
+            # Verify this is a valid character with config.json
+            if (Test-Path "assets/characters/$name/config.json") {
+              $characters += $name
+              Write-Host "Found character: $name"
+            }
+          }
+        }
+        
+        if ($characters.Count -eq 0) {
+          Write-Error "No valid characters found in assets/characters/"
+          exit 1
+        }
+        
+        $characterList = $characters -join ","
+        Write-Host "Character list: $characterList"
+        
+        # Export for later steps
+        "characters=$characterList" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        "character-count=$($characters.Count)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+    
+    - name: Create build directories
+      run: |
+        mkdir build -Force
+        mkdir artifacts -Force
+        mkdir temp -Force
+    
+    - name: Build character executables
+      run: |
+        $characters = "${{ steps.discover-characters.outputs.characters }}".Split(',')
+        $buildCount = 0
+        
+        Write-Host "=== Building Windows Character Executables ==="
+        Write-Host "Total characters to build: $($characters.Count)"
+        
+        foreach ($character in $characters) {
+          $character = $character.Trim()
+          if ([string]::IsNullOrEmpty($character)) { continue }
+          
+          Write-Host ""
+          Write-Host "📦 Building character: $character"
+          
+          # Generate embedded character application
+          $tempDir = "temp/$character"
+          Write-Host "   Generating embedded app in: $tempDir"
+          
+          go run scripts/embed-character.go -character="$character" -output="$tempDir"
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "❌ Failed to generate embedded app for character: $character"
+            exit 1
+          }
+          
+          # Build the generated application
+          $outputFile = "build/character-$character-windows-amd64.exe"
+          Write-Host "   Building executable: $outputFile"
+          
+          Push-Location "$tempDir"
+          go build -ldflags="-s -w" -o "../../$outputFile" main.go
+          $buildResult = $LASTEXITCODE
+          Pop-Location
+          
+          if ($buildResult -ne 0) {
+            Write-Error "❌ Failed to build executable for character: $character"
+            exit 1
+          }
+          
+          # Verify the executable was created and has reasonable size
+          if (!(Test-Path $outputFile)) {
+            Write-Error "❌ Executable not found: $outputFile"
+            exit 1
+          }
+          
+          $fileSize = (Get-Item $outputFile).Length
+          $fileSizeMB = [math]::Round($fileSize / 1MB, 2)
+          
+          if ($fileSize -lt 1MB) {
+            Write-Error "❌ Executable too small ($fileSizeMB MB): $outputFile"
+            exit 1
+          }
+          
+          Write-Host "   ✅ Built successfully: $fileSizeMB MB"
+          $buildCount++
+          
+          # Copy to artifacts directory
+          Copy-Item $outputFile "artifacts/"
+        }
+        
+        Write-Host ""
+        Write-Host "=== Build Summary ==="
+        Write-Host "Successfully built: $buildCount/$($characters.Count) characters"
+        
+        if ($buildCount -ne $characters.Count) {
+          Write-Error "❌ Not all characters built successfully"
+          exit 1
+        }
+        
+        Write-Host "✅ All character executables built successfully"
+    
+    - name: Package all executables
+      run: |
+        Write-Host "=== Packaging Character Executables ==="
+        
+        # List all built executables
+        $executables = Get-ChildItem -Path "artifacts/" -Filter "character-*-windows-amd64.exe"
+        Write-Host "Found $($executables.Count) executables to package:"
+        
+        foreach ($exe in $executables) {
+          $size = [math]::Round($exe.Length / 1MB, 2)
+          Write-Host "  - $($exe.Name): $size MB"
+        }
+        
+        # Create comprehensive package with all character executables
+        cd artifacts
+        $archiveFiles = @()
+        $archiveFiles += Get-ChildItem -Filter "character-*-windows-amd64.exe" | ForEach-Object { $_.Name }
+        
+        if ($archiveFiles.Count -eq 0) {
+          Write-Error "❌ No character executables found to package"
+          exit 1
+        }
+        
+        Write-Host "Creating archive with $($archiveFiles.Count) files..."
+        powershell Compress-Archive -Path $archiveFiles -DestinationPath "all-characters-windows-amd64.zip" -Force
+        
+        # Verify archive was created
+        if (!(Test-Path "all-characters-windows-amd64.zip")) {
+          Write-Error "❌ Failed to create package archive"
+          exit 1
+        }
+        
+        $archiveSize = [math]::Round((Get-Item "all-characters-windows-amd64.zip").Length / 1MB, 2)
+        Write-Host "✅ Package created: all-characters-windows-amd64.zip ($archiveSize MB)"
+    
+    - name: Validate build artifacts
+      run: |
+        Write-Host "=== Build Validation ==="
+        
+        # Check individual executables
+        $executables = Get-ChildItem -Path "artifacts/" -Filter "character-*-windows-amd64.exe"
+        $totalSize = 0
+        
+        Write-Host "Individual executables:"
+        foreach ($exe in $executables) {
+          $size = $exe.Length
+          $sizeMB = [math]::Round($size / 1MB, 2)
+          $totalSize += $size
+          
+          Write-Host "  ✅ $($exe.Name): $sizeMB MB"
+          
+          # Validate minimum size (1MB)
+          if ($size -lt 1MB) {
+            Write-Error "❌ Executable too small: $($exe.Name)"
+            exit 1
+          }
+        }
+        
+        # Check package
+        if (!(Test-Path "artifacts/all-characters-windows-amd64.zip")) {
+          Write-Error "❌ Package archive missing"
+          exit 1
+        }
+        
+        $packageSize = (Get-Item "artifacts/all-characters-windows-amd64.zip").Length
+        $packageSizeMB = [math]::Round($packageSize / 1MB, 2)
+        $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
+        
+        Write-Host ""
+        Write-Host "=== Final Validation Results ==="
+        Write-Host "✅ Character executables: $($executables.Count)"
+        Write-Host "✅ Total executable size: $totalSizeMB MB"
+        Write-Host "✅ Package size: $packageSizeMB MB"
+        Write-Host "✅ All artifacts validated successfully"
+    
+    - name: Upload Windows character artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-all-characters-build
+        path: artifacts/
+        retention-days: 30
+
+  release:
+    name: Create Release (if tagged)
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    needs: [build-all-windows-characters]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download Windows character artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-all-characters-build
+        path: release/
+    
+    - name: Prepare release files
+      run: |
+        echo "=== Windows Character Release Contents ==="
+        ls -la release/
+        
+        # Count executables and validate package
+        exe_count=$(ls release/character-*-windows-amd64.exe 2>/dev/null | wc -l)
+        
+        if [[ $exe_count -eq 0 ]]; then
+          echo "❌ No character executables found"
+          exit 1
+        fi
+        
+        if [[ ! -f "release/all-characters-windows-amd64.zip" ]]; then
+          echo "❌ Package archive missing"
+          exit 1
+        fi
+        
+        echo "✅ Found $exe_count character executables"
+        echo "✅ Package archive: $(ls -lh release/all-characters-windows-amd64.zip | awk '{print $5}')"
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: release/*
+        draft: false
+        prerelease: true
+        generate_release_notes: true
+        name: "Windows Character Executables ${{ github.ref_name }}"
+        body: |
+          ## Windows Character Executables
+          
+          This release contains standalone Windows executables for all available characters.
+          
+          ### 📦 What's Included
+          - Individual character executables: `character-{name}-windows-amd64.exe`
+          - Complete package: `all-characters-windows-amd64.zip`
+          
+          ### 🚀 Usage
+          1. Download the complete package or individual character executables
+          2. Run any `.exe` file directly - no installation required
+          3. Each executable contains its own character assets embedded
+          
+          ### 💡 Features
+          - Standalone executables (no external dependencies)
+          - All character personalities and animations included
+          - Full desktop companion functionality
+          - Cross-platform compatibility (Windows 10+)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

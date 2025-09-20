@@ -1,0 +1,461 @@
+name: Build All Embedded Character Android APKs
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: '1.21'
+  ANDROID_NDK_VERSION: '25.1.8937393'  # Pin to compatible NDK version
+  FYNE_MIN_VERSION: '2.5.0'            # Minimum Fyne version for Android compatibility
+  LANG: en_US.UTF-8
+
+jobs:
+  discover-characters:
+    name: Discover Available Characters
+    runs-on: ubuntu-latest
+    outputs:
+      characters: ${{ steps.scan.outputs.characters }}
+      character-count: ${{ steps.scan.outputs.count }}
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Scan for characters
+      id: scan
+      run: |
+        echo "=== Scanning assets/characters/ for buildable characters ==="
+        
+        # Find all character directories (excluding templates, examples, and files)
+        characters=()
+        
+        for dir in assets/characters/*/; do
+          # Extract character name
+          character=$(basename "$dir")
+          
+          # Skip directories that aren't character builds
+          case "$character" in
+            "examples"|"templates"|"README"*) 
+              echo "⏭️  Skipping: $character (excluded directory)"
+              continue
+              ;;
+          esac
+          
+          # Verify character.json exists
+          if [[ ! -f "${dir}character.json" ]]; then
+            echo "⚠️  Skipping: $character (no character.json found)"
+            continue
+          fi
+          
+          # Verify at least one animation exists
+          if ! find "$dir" -name "*.gif" -type f | head -1 | grep -q .; then
+            echo "⚠️  Skipping: $character (no GIF animations found)"
+            continue
+          fi
+          
+          characters+=("$character")
+          echo "✅ Found buildable character: $character"
+        done
+        
+        if [[ ${#characters[@]} -eq 0 ]]; then
+          echo "❌ CRITICAL: No buildable characters found!"
+          exit 1
+        fi
+        
+        # Convert to JSON array for matrix strategy
+        # Create a proper JSON array manually to avoid jq formatting issues
+        character_json="["
+        for i in "${!characters[@]}"; do
+          if [[ $i -gt 0 ]]; then
+            character_json+=","
+          fi
+          character_json+="\"${characters[i]}\""
+        done
+        character_json+="]"
+        
+        echo "characters=$character_json" >> $GITHUB_OUTPUT
+        echo "count=${#characters[@]}" >> $GITHUB_OUTPUT
+        
+        echo "=== Character Discovery Summary ==="
+        echo "Found ${#characters[@]} buildable characters:"
+        printf '%s\n' "${characters[@]}" | sed 's/^/  - /'
+
+  test-embedding:
+    name: Test Embedded Character Generation
+    runs-on: ubuntu-latest
+    needs: discover-characters
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    
+    - name: Install dependencies
+      run: go mod download
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+
+    - name: Test embedding generator
+      run: |
+        echo "=== Testing Embedded Character Generator ==="
+        
+        # Get first character for testing
+        first_character=$(echo '${{ needs.discover-characters.outputs.characters }}' | jq -r '.[0]')
+        echo "Testing with character: $first_character"
+        
+        # Test character generation
+        mkdir -p test_embed
+        go run scripts/embed-character.go -character "$first_character" -output "test_embed/$first_character"
+        
+        # Verify generated files
+        if [[ ! -f "test_embed/$first_character/main.go" ]]; then
+          echo "❌ CRITICAL: main.go not generated"
+          exit 1
+        fi
+        
+        if [[ ! -f "test_embed/$first_character/go.mod" ]]; then
+          echo "❌ CRITICAL: go.mod not generated"
+          exit 1
+        fi
+        
+        # Test compilation
+        cd "test_embed/$first_character"
+        go mod tidy
+        go build -o test-companion main.go
+        
+        if [[ ! -f "test-companion" ]]; then
+          echo "❌ CRITICAL: Failed to compile embedded character"
+          exit 1
+        fi
+        
+        echo "✅ Embedded character generation test passed"
+
+  build-android-apks:
+    name: Build Android APKs
+    runs-on: ubuntu-latest
+    needs: [discover-characters, test-embedding]
+    strategy:
+      fail-fast: false
+      matrix:
+        character: ${{ fromJson(needs.discover-characters.outputs.characters) }}
+        arch: ['arm64', 'arm']
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+    
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 30
+        ndk-version: '25.1.8937393'
+        cmake-version: '3.22.1'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+    
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Install fyne tool
+      run: go install fyne.io/fyne/v2/cmd/fyne@v2.5.2
+    
+    - name: Generate embedded character application
+      run: |
+        echo "=== Generating Embedded Character: ${{ matrix.character }} ==="
+        
+        # Create character-specific build directory
+        build_dir="build_embedded/${{ matrix.character }}"
+        mkdir -p "$build_dir"
+        
+        # Generate embedded character application
+        go run scripts/embed-character.go -character "${{ matrix.character }}" -output "$build_dir"
+        
+        # Verify generation
+        if [[ ! -f "$build_dir/main.go" ]]; then
+          echo "❌ CRITICAL: Failed to generate ${{ matrix.character }} embedded app"
+          exit 1
+        fi
+        
+        echo "✅ Generated embedded app for ${{ matrix.character }}"
+        ls -la "$build_dir/"
+    
+    - name: Prepare for Android build
+      run: |
+        build_dir="build_embedded/${{ matrix.character }}"
+        cd "$build_dir"
+        
+        # Ensure dependencies are available
+        go mod tidy
+        
+        # Test compilation first
+        echo "Testing compilation..."
+        go build -o test-companion main.go
+        
+        if [[ ! -f "test-companion" ]]; then
+          echo "❌ CRITICAL: Failed to compile ${{ matrix.character }} embedded app"
+          exit 1
+        fi
+        
+        echo "✅ Compilation test passed for ${{ matrix.character }}"
+        rm test-companion
+    
+    - name: Build Android APK
+      run: |
+        build_dir="build_embedded/${{ matrix.character }}"
+        cd "$build_dir"
+        
+        echo "=== Building Android APK: ${{ matrix.character }} (${{ matrix.arch }}) ==="
+        
+        # Create artifacts directory
+        mkdir -p ../../artifacts
+        
+        # Determine architecture target
+        if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+          android_target="android/arm64"
+          apk_suffix="android-arm64"
+        else
+          android_target="android/arm"
+          apk_suffix="android-arm32"
+        fi
+        
+        # Set unique app ID for each character
+        app_id="ai.opd.dds.${{ matrix.character }}"
+        app_name="DDS ${{ matrix.character }}"
+        
+        echo "Building $android_target APK..."
+        echo "App ID: $app_id"
+        echo "App Name: $app_name"
+        
+        # Build APK with character-specific metadata
+        fyne package --target "$android_target" \
+          --appID "$app_id" \
+          --name "$app_name" \
+          --appVersion "1.0.0" \
+          --appBuild ${{ github.run_number }} \
+          --icon "../../assets/app/icon.png" \
+          --release
+        
+        # Verify APK was created
+        if ! ls *.apk 1> /dev/null 2>&1; then
+          echo "❌ CRITICAL FAILURE: ${{ matrix.character }} ${{ matrix.arch }} APK build failed"
+          echo "No APK file found after build completion"
+          exit 1
+        fi
+        
+        # Move APK to artifacts with descriptive name
+        apk_file=$(ls *.apk | head -1)
+        final_name="${{ matrix.character }}-${apk_suffix}.apk"
+        cp "$apk_file" "../../artifacts/$final_name"
+        
+        echo "✅ ${{ matrix.character }} ${{ matrix.arch }} APK built successfully"
+        ls -lh "../../artifacts/$final_name"
+    
+    - name: Validate APK
+      run: |
+        apk_file="artifacts/${{ matrix.character }}-android-${{ matrix.arch == 'arm64' && 'arm64' || 'arm32' }}.apk"
+        
+        echo "=== Validating APK: $apk_file ==="
+        
+        # Check APK exists
+        if [[ ! -f "$apk_file" ]]; then
+          echo "❌ CRITICAL FAILURE: APK missing: $apk_file"
+          exit 1
+        fi
+        
+        # Check APK size
+        apk_size=$(stat -c%s "$apk_file")
+        min_size=$((1024 * 1024))  # 1MB minimum
+        
+        if [[ $apk_size -lt $min_size ]]; then
+          echo "❌ CRITICAL FAILURE: APK too small ($apk_size bytes, minimum: $min_size)"
+          exit 1
+        fi
+        
+        echo "✅ APK validated: $apk_size bytes"
+        
+        # Try to extract basic APK info (if aapt is available)
+        if command -v aapt >/dev/null 2>&1; then
+          echo "=== APK Information ==="
+          aapt dump badging "$apk_file" | head -5 || true
+        fi
+    
+    - name: Upload character APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.character }}-android-${{ matrix.arch == 'arm64' && 'arm64' || 'arm32' }}
+        path: artifacts/${{ matrix.character }}-android-${{ matrix.arch == 'arm64' && 'arm64' || 'arm32' }}.apk
+
+  collect-all-apks:
+    name: Collect and Validate All APKs
+    runs-on: ubuntu-latest
+    needs: [discover-characters, build-android-apks]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all character APKs
+      uses: actions/download-artifact@v4
+    
+    - name: Organize and validate APK collection
+      run: |
+        echo "=== Organizing All Character APKs ==="
+        
+        # Create final artifacts directory
+        mkdir -p all_character_apks
+        
+        # Expected character count
+        character_count=${{ needs.discover-characters.outputs.character-count }}
+        expected_apks=$((character_count * 2))  # ARM64 + ARM32 for each character
+        
+        echo "Expected characters: $character_count"
+        echo "Expected APKs: $expected_apks"
+        
+        # Collect all APKs
+        apk_count=0
+        total_size=0
+        
+        echo ""
+        echo "=== APK Collection Report ==="
+        printf "%-20s %-10s %-10s %-12s\n" "Character" "Arch" "Size" "Status"
+        printf "%-20s %-10s %-10s %-12s\n" "--------" "----" "----" "------"
+        
+        for character in $(echo '${{ needs.discover-characters.outputs.characters }}' | jq -r '.[]'); do
+          for arch in arm64 arm32; do
+            # Find APK file
+            apk_pattern="${character}-android-${arch}"
+            apk_file=$(find . -name "${apk_pattern}.apk" -type f | head -1)
+            
+            if [[ -f "$apk_file" ]]; then
+              # Copy to final location
+              cp "$apk_file" "all_character_apks/"
+              
+              # Get size info
+              size=$(stat -c%s "$apk_file")
+              size_mb=$(( size / 1024 / 1024 ))
+              total_size=$((total_size + size))
+              apk_count=$((apk_count + 1))
+              
+              printf "%-20s %-10s %-10s %-12s\n" "$character" "$arch" "${size_mb}MB" "✅ Found"
+            else
+              printf "%-20s %-10s %-10s %-12s\n" "$character" "$arch" "N/A" "❌ Missing"
+            fi
+          done
+        done
+        
+        echo ""
+        echo "=== Final Summary ==="
+        echo "Total APKs collected: $apk_count / $expected_apks"
+        echo "Total size: $(( total_size / 1024 / 1024 ))MB"
+        echo ""
+        
+        if [[ $apk_count -lt $expected_apks ]]; then
+          missing=$((expected_apks - apk_count))
+          echo "⚠️  Warning: $missing APKs missing from expected total"
+        else
+          echo "✅ All expected APKs collected successfully"
+        fi
+        
+        echo ""
+        echo "=== APK Inventory ==="
+        ls -lh all_character_apks/ | sed 's/^/  /'
+        
+        # Create summary file
+        cat > all_character_apks/BUILD_SUMMARY.txt << 'SUMMARY_EOF'
+        Desktop Companion - All Character Android APKs
+        Build Date: $(date)
+        Build Number: ${{ github.run_number }}
+        Commit: ${{ github.sha }}
+        
+        Total Characters: $character_count
+        Total APKs: $apk_count
+        Total Size: $(( total_size / 1024 / 1024 ))MB
+        
+        APK List:
+        $(ls -1 all_character_apks/*.apk | sort)
+        
+        This package contains Android APKs for all available Desktop Companion characters.
+        Each character has both ARM64 (modern devices) and ARM32 (older devices) variants.
+        
+        Installation: Install the APK for your character of choice on your Android device.
+        Note: You may need to enable "Install from Unknown Sources" in your device settings.
+        SUMMARY_EOF
+        
+        echo "✅ Build summary created"
+    
+    - name: Upload complete APK collection
+      uses: actions/upload-artifact@v4
+      with:
+        name: all-character-android-apks
+        path: all_character_apks/
+
+  build-summary:
+    name: Build Summary Report
+    runs-on: ubuntu-latest
+    needs: [discover-characters, build-android-apks, collect-all-apks]
+    if: always()
+    steps:
+    - name: Generate build summary
+      run: |
+        echo "=== Desktop Companion - All Characters Android Build Summary ==="
+        echo ""
+        echo "**Build Information:**"
+        echo "- Date: $(date)"
+        echo "- Commit: ${{ github.sha }}"
+        echo "- Build Number: ${{ github.run_number }}"
+        echo "- Characters Found: ${{ needs.discover-characters.outputs.character-count }}"
+        echo ""
+        echo "**Build Status:**"
+        echo "- Character Discovery: ${{ needs.discover-characters.result }}"
+        echo "- Embedding Test: ${{ needs.test-embedding.result }}"
+        echo "- APK Builds: ${{ needs.build-android-apks.result }}"
+        echo "- APK Collection: ${{ needs.collect-all-apks.result }}"
+        echo ""
+        echo "**Available Characters:**"
+        echo '${{ needs.discover-characters.outputs.characters }}' | jq -r '.[]' | sed 's/^/  - /'
+        echo ""
+        
+        if [[ "${{ needs.build-android-apks.result }}" == "success" && "${{ needs.collect-all-apks.result }}" == "success" ]]; then
+          echo "✅ **All character APKs built successfully!**"
+          echo ""
+          echo "Download the 'all-character-android-apks' artifact to get all APKs."
+        else
+          echo "❌ **Some builds failed. Check individual job logs for details.**"
+        fi
