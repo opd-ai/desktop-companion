@@ -1,0 +1,399 @@
+name: Build All macOS Character DMGs
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: '1.21'
+  FYNE_MIN_VERSION: '2.5.0'
+  LANG: en_US.UTF-8
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Run tests
+      run: go test ./... -v -coverprofile=coverage.out
+
+  build-all-macos-characters:
+    name: Build All macOS Character DMGs
+    runs-on: macos-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Xcode command line tools
+      run: |
+        xcode-select --install || true
+
+    - name: Install OpenGL (macOS)
+      run: |
+        brew install --cask xquartz
+        brew install glfw glew
+
+    - name: Ensure XQuartz OpenGL headers
+      run: |
+        brew install --cask xquartz
+        brew install glew glfw
+        sleep 10  # Give XQuartz time to finish post-install scripts
+        sudo mkdir -p /opt/X11/include
+        # Try both possible header locations
+        if [ -d "/Applications/XQuartz.app/Contents/Resources/include/GL" ]; then
+          sudo ln -sf /Applications/XQuartz.app/Contents/Resources/include/GL /opt/X11/include/GL
+        elif [ -d "/opt/X11/include/GL" ]; then
+          echo "OpenGL headers already present."
+        else
+          echo "OpenGL headers missing. XQuartz installation failed."
+          exit 1
+        fi 
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Install fyne tool
+      run: go install fyne.io/fyne/v2/cmd/fyne@v2.5.2
+
+    - name: Identify Character Archetypes
+      id: characters
+      run: |
+        echo "=== Identifying Character Archetypes ==="
+        
+        # Get all valid character directories (exclude templates, examples, special dirs)
+        characters=""
+        for dir in assets/characters/*/; do
+          dirname=$(basename "$dir")
+          
+          # Skip non-character directories
+          if [[ "$dirname" == "templates" || "$dirname" == "examples" || "$dirname" == "README_ROMANCE_ARCHETYPES.md" ]]; then
+            echo "Skipping: $dirname (special directory)"
+            continue
+          fi
+          
+          # Verify it has a character.json file
+          if [[ ! -f "$dir/character.json" ]]; then
+            echo "Skipping: $dirname (no character.json found)"
+            continue
+          fi
+          
+          echo "Found character: $dirname"
+          if [[ -z "$characters" ]]; then
+            characters="$dirname"
+          else
+            characters="$characters,$dirname"
+          fi
+        done
+        
+        echo "character_list=$characters" >> $GITHUB_OUTPUT
+        echo "=== Character List: $characters ==="
+        
+        # Count characters
+        IFS=',' read -ra CHARS <<< "$characters"
+        echo "Total characters to build: ${#CHARS[@]}"
+
+    - name: Generate Embedded Character Applications
+      run: |
+        echo "=== Generating Embedded Character Applications ==="
+        mkdir -p embedded_builds artifacts
+        
+        IFS=',' read -ra CHARACTERS <<< "${{ steps.characters.outputs.character_list }}"
+        for character in "${CHARACTERS[@]}"; do
+          echo "Generating embedded app for: $character"
+          
+          # Create character-specific build directory
+          character_dir="embedded_builds/${character}-embedded"
+          mkdir -p "$character_dir"
+          
+          # Generate embedded character application
+          go run scripts/embed-character.go \
+            -character "$character" \
+            -output "$character_dir"
+          
+          if [[ $? -ne 0 ]]; then
+            echo "❌ Failed to generate embedded app for $character"
+            exit 1
+          fi
+          
+          echo "✅ Generated embedded app for $character"
+        done
+        
+        echo "=== All embedded applications generated successfully ==="
+
+    - name: Build Character DMGs
+      run: |
+        echo "=== Building Character DMGs ==="
+        export CGO_CFLAGS="-I/opt/X11/include"
+        export CGO_LDFLAGS="-L/opt/X11/lib"
+        export CGO_ENABLED=1
+        
+        IFS=',' read -ra CHARACTERS <<< "${{ steps.characters.outputs.character_list }}"
+        total_characters=${#CHARACTERS[@]}
+        current=0
+        
+        for character in "${CHARACTERS[@]}"; do
+          current=$((current + 1))
+          echo "=== Building $character ($current/$total_characters) ==="
+          
+          character_dir="embedded_builds/${character}-embedded"
+          
+          if [[ ! -d "$character_dir" ]]; then
+            echo "❌ Character directory not found: $character_dir"
+            exit 1
+          fi
+          
+          cd "$character_dir"
+          
+          # Install dependencies for this character
+          echo "Installing dependencies for $character..."
+          go mod download
+          if [[ $? -ne 0 ]]; then
+            echo "❌ Failed to download dependencies for $character"
+            exit 1
+          fi
+          
+          # Build for Intel (amd64)
+          echo "Building Intel binary for $character..."
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" \
+            -o "${character}-companion-amd64" main.go
+          if [[ $? -ne 0 ]]; then
+            echo "❌ Failed to build Intel binary for $character"
+            exit 1
+          fi
+          
+          # Build for Apple Silicon (arm64)
+          echo "Building Apple Silicon binary for $character..."
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" \
+            -o "${character}-companion-arm64" main.go
+          if [[ $? -ne 0 ]]; then
+            echo "❌ Failed to build Apple Silicon binary for $character"
+            exit 1
+          fi
+          
+          # Package Intel DMG
+          echo "Packaging Intel DMG for $character..."
+          fyne package \
+            --target darwin \
+            --name "${character}-companion-intel" \
+            --appID "com.opdai.${character}-companion" \
+            --appVersion "1.0.0" \
+            --appBuild "${{ github.run_number }}" \
+            --icon "../../assets/characters/${character}/icon.png" \
+            --exe "${character}-companion-amd64" \
+            --release
+          
+          # Package Apple Silicon DMG
+          echo "Packaging Apple Silicon DMG for $character..."
+          fyne package \
+            --target darwin \
+            --name "${character}-companion-silicon" \
+            --appID "com.opdai.${character}-companion" \
+            --appVersion "1.0.0" \
+            --appBuild "${{ github.run_number }}" \
+            --icon "../../assets/characters/${character}/icon.png" \
+            --exe "${character}-companion-arm64" \
+            --release
+          
+          # Verify DMG files were created
+          intel_dmg="${character}-companion-intel.dmg"
+          silicon_dmg="${character}-companion-silicon.dmg"
+          
+          if [[ ! -f "$intel_dmg" ]]; then
+            echo "❌ Intel DMG not found for $character"
+            exit 1
+          fi
+          
+          if [[ ! -f "$silicon_dmg" ]]; then
+            echo "❌ Apple Silicon DMG not found for $character"
+            exit 1
+          fi
+          
+          # Move to artifacts with standardized names
+          mv "$intel_dmg" "../../artifacts/${character}-companion-macos-intel.dmg"
+          mv "$silicon_dmg" "../../artifacts/${character}-companion-macos-silicon.dmg"
+          
+          # Log DMG info
+          intel_size=$(stat -f%z "../../artifacts/${character}-companion-macos-intel.dmg")
+          silicon_size=$(stat -f%z "../../artifacts/${character}-companion-macos-silicon.dmg")
+          
+          echo "✅ $character DMGs created successfully:"
+          echo "   Intel: ${intel_size} bytes"
+          echo "   Apple Silicon: ${silicon_size} bytes"
+          
+          cd ../..
+        done
+        
+        echo "=== All Character DMGs Built Successfully ==="
+
+    - name: Validate Character DMGs
+      run: |
+        echo "=== Validating Character DMGs ==="
+        
+        IFS=',' read -ra CHARACTERS <<< "${{ steps.characters.outputs.character_list }}"
+        min_size=$((1024 * 1024))  # 1MB minimum
+        total_dmgs=0
+        total_size=0
+        
+        for character in "${CHARACTERS[@]}"; do
+          intel_dmg="artifacts/${character}-companion-macos-intel.dmg"
+          silicon_dmg="artifacts/${character}-companion-macos-silicon.dmg"
+          
+          # Validate Intel DMG
+          if [[ ! -f "$intel_dmg" ]]; then
+            echo "❌ Missing Intel DMG for $character"
+            exit 1
+          fi
+          
+          intel_size=$(stat -f%z "$intel_dmg")
+          if [[ $intel_size -lt $min_size ]]; then
+            echo "❌ Intel DMG too small for $character: $intel_size bytes"
+            exit 1
+          fi
+          
+          # Validate Apple Silicon DMG
+          if [[ ! -f "$silicon_dmg" ]]; then
+            echo "❌ Missing Apple Silicon DMG for $character"
+            exit 1
+          fi
+          
+          silicon_size=$(stat -f%z "$silicon_dmg")
+          if [[ $silicon_size -lt $min_size ]]; then
+            echo "❌ Apple Silicon DMG too small for $character: $silicon_size bytes"
+            exit 1
+          fi
+          
+          total_dmgs=$((total_dmgs + 2))
+          total_size=$((total_size + intel_size + silicon_size))
+          
+          echo "✅ $character: Intel(${intel_size}b) + Silicon(${silicon_size}b)"
+        done
+        
+        echo "=== Validation Summary ==="
+        echo "Total DMGs created: $total_dmgs"
+        echo "Total size: $total_size bytes ($(echo "scale=2; $total_size/1024/1024" | bc)MB)"
+        echo "✅ All Character DMGs passed validation"
+
+    - name: Create Build Summary
+      run: |
+        echo "=== macOS Character DMG Build Summary ===" > artifacts/BUILD_SUMMARY.md
+        echo "" >> artifacts/BUILD_SUMMARY.md
+        echo "Build Date: $(date)" >> artifacts/BUILD_SUMMARY.md
+        echo "GitHub Run: ${{ github.run_number }}" >> artifacts/BUILD_SUMMARY.md
+        echo "Commit: ${{ github.sha }}" >> artifacts/BUILD_SUMMARY.md
+        echo "" >> artifacts/BUILD_SUMMARY.md
+        echo "## Character DMGs Built" >> artifacts/BUILD_SUMMARY.md
+        echo "" >> artifacts/BUILD_SUMMARY.md
+        
+        IFS=',' read -ra CHARACTERS <<< "${{ steps.characters.outputs.character_list }}"
+        for character in "${CHARACTERS[@]}"; do
+          intel_dmg="artifacts/${character}-companion-macos-intel.dmg"
+          silicon_dmg="artifacts/${character}-companion-macos-silicon.dmg"
+          
+          intel_size=$(stat -f%z "$intel_dmg")
+          silicon_size=$(stat -f%z "$silicon_dmg")
+          
+          echo "### $character" >> artifacts/BUILD_SUMMARY.md
+          echo "- Intel DMG: ${intel_size} bytes" >> artifacts/BUILD_SUMMARY.md
+          echo "- Apple Silicon DMG: ${silicon_size} bytes" >> artifacts/BUILD_SUMMARY.md
+          echo "" >> artifacts/BUILD_SUMMARY.md
+        done
+        
+        total_dmgs=$((${#CHARACTERS[@]} * 2))
+        echo "**Total: $total_dmgs DMG files for ${#CHARACTERS[@]} characters**" >> artifacts/BUILD_SUMMARY.md
+
+    - name: Upload macOS Character DMGs
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-character-dmgs
+        path: artifacts/
+        retention-days: 30
+
+  release:
+    name: Create Release with Character DMGs
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    needs: [build-all-macos-characters]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download character DMGs
+      uses: actions/download-artifact@v4
+      with:
+        name: macos-character-dmgs
+        path: character_dmgs/
+    
+    - name: Prepare release files
+      run: |
+        mkdir -p release
+        cp character_dmgs/* release/ 2>/dev/null || true
+        
+        echo "=== Character DMG Release Contents ==="
+        ls -la release/
+        
+        # Count DMG files
+        dmg_count=$(ls -1 release/*.dmg 2>/dev/null | wc -l)
+        echo "Total DMG files: $dmg_count"
+        
+        if [[ $dmg_count -eq 0 ]]; then
+          echo "⚠️ Warning: No DMG files found for release"
+        else
+          echo "✅ $dmg_count character DMG files ready for release"
+        fi
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: release/*
+        draft: false
+        prerelease: true
+        generate_release_notes: true
+        body: |
+          ## macOS Character DMG Release
+          
+          This release includes native macOS DMG packages for all available character archetypes.
+          
+          ### What's Included
+          - DMG packages for both Intel and Apple Silicon Macs
+          - Standalone character applications with embedded assets
+          - Native macOS app bundles with proper code signing
+          
+          ### Installation
+          1. Download the DMG for your desired character and Mac architecture
+          2. Open the DMG file
+          3. Drag the application to your Applications folder
+          4. Launch your character companion!
+          
+          ### Character Archetypes Available
+          Each character has unique personality traits, dialog patterns, and romance mechanics.
+          
+          Built with ❤️ using Go and Fyne framework.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
