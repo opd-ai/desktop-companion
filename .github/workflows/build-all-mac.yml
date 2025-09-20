@@ -206,7 +206,7 @@ jobs:
             --appID "com.opdai.${character}-companion" \
             --appVersion "1.0.0" \
             --appBuild "${{ github.run_number }}" \
-            --icon "../../assets/characters/${character}/icon.png" \
+            --icon "../../assets/app/icon.png" \
             --exe "${character}-companion-amd64" \
             --release
           
@@ -218,7 +218,7 @@ jobs:
             --appID "com.opdai.${character}-companion" \
             --appVersion "1.0.0" \
             --appBuild "${{ github.run_number }}" \
-            --icon "../../assets/characters/${character}/icon.png" \
+            --icon "../../assets/app/icon.png" \
             --exe "${character}-companion-arm64" \
             --release
           
