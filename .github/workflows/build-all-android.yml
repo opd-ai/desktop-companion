@@ -64,7 +64,15 @@ jobs:
         fi
         
         # Convert to JSON array for matrix strategy
-        character_json=$(printf '%s\n' "${characters[@]}" | jq -R . | jq -s .)
+        # Create a proper JSON array manually to avoid jq formatting issues
+        character_json="["
+        for i in "${!characters[@]}"; do
+          if [[ $i -gt 0 ]]; then
+            character_json+=","
+          fi
+          character_json+="\"${characters[i]}\""
+        done
+        character_json+="]"
         
         echo "characters=$character_json" >> $GITHUB_OUTPUT
         echo "count=${#characters[@]}" >> $GITHUB_OUTPUT
