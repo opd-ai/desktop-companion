@@ -1,7 +1,0 @@
-goos: linux
-goarch: amd64
-pkg: desktop-companion/internal/character
-cpu: AMD EPYC 7763 64-Core Processor                
-BenchmarkCharacterCardValidation-2   	 7843418	       331.4 ns/op	      96 B/op	       2 allocs/op
-PASS
-ok  	desktop-companion/internal/character	24.925s
