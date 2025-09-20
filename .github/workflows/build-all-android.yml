@@ -103,7 +103,12 @@ jobs:
     
     - name: Install dependencies
       run: go mod download
-    
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+
     - name: Test embedding generator
       run: |
         echo "=== Testing Embedded Character Generator ==="
@@ -155,7 +160,12 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
-    
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc pkg-config libgl1-mesa-dev xorg-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
+
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
