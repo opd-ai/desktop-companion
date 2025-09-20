@@ -1,0 +1,129 @@
+name: Build All Embedded Android APKs
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch: {}
+
+jobs:
+  build-embedded-apks:
+    name: Build embedded character APKs (arm64 + arm32)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install system packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y unzip wget libc6-i386 libstdc++6
+
+    - name: Set up Java 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Install Android SDK (minimal)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-17-jdk-headless
+        # Use Android Github action or sdkmanager if more control is needed
+        echo "Android SDK should be configured here if embed script needs it."
+
+    - name: Prepare artifacts dir
+      run: |
+        mkdir -p artifacts
+
+    - name: Discover character configs
+      id: discover
+      run: |
+        # Find files under assets/characters - adjust glob if card files use a different extension
+        echo "SEARCH_DIR=assets/characters" >> $GITHUB_OUTPUT
+        files=$(ls -1 assets/characters 2>/dev/null || true)
+        if [ -z "$files" ]; then
+          echo "No character files found in assets/characters" >&2
+          exit 1
+        fi
+        # Emit a newline-separated list for later steps
+        printf "%s" "$files" > characters.list
+        echo "characters_count=$(wc -l < characters.list)" >> $GITHUB_OUTPUT
+
+    - name: Build APKs for each character
+      env:
+        GOFLAGS: -mod=mod
+      run: |
+        set -euo pipefail
+        # Loop over discovered character names (files or directories)
+        while IFS= read -r entry; do
+          # Normalize character name (strip extension if present)
+          name=$(basename "$entry")
+          name_noext="${name%.*}"
+          echo "Building character: $name_noext"
+
+          # Build arm64 first
+          out_arm64="artifacts/companion-${name_noext}-android-arm64.apk"
+          echo "Generating ARM64 APK -> $out_arm64"
+          if ! go run scripts/embed-character.go --character "assets/characters/$entry" --arch arm64 --output "$out_arm64"; then
+            echo "ERROR: ARM64 build failed for $name_noext" >&2
+            exit 1
+          fi
+
+          # Validate file exists and size >= 1MB
+          if [ ! -f "$out_arm64" ]; then
+            echo "ERROR: Expected APK not found: $out_arm64" >&2
+            exit 1
+          fi
+          size=$(stat -c%s "$out_arm64")
+          if [ "$size" -lt $((1024*1024)) ]; then
+            echo "ERROR: APK too small ($size bytes): $out_arm64" >&2
+            exit 1
+          fi
+          echo "ARM64 APK validated: $out_arm64 ($size bytes)"
+
+          # Build arm (32-bit)
+          out_arm="artifacts/companion-${name_noext}-android-arm32.apk"
+          echo "Generating ARM32 APK -> $out_arm"
+          if ! go run scripts/embed-character.go --character "assets/characters/$entry" --arch arm --output "$out_arm"; then
+            echo "ERROR: ARM32 build failed for $name_noext" >&2
+            exit 1
+          fi
+
+          # Validate arm32
+          if [ ! -f "$out_arm" ]; then
+            echo "ERROR: Expected APK not found: $out_arm" >&2
+            exit 1
+          fi
+          size2=$(stat -c%s "$out_arm")
+          if [ "$size2" -lt $((1024*1024)) ]; then
+            echo "ERROR: APK too small ($size2 bytes): $out_arm" >&2
+            exit 1
+          fi
+          echo "ARM32 APK validated: $out_arm ($size2 bytes)"
+
+        done < characters.list
+
+    - name: List artifacts
+      run: |
+        echo "=== Artifacts ==="
+        ls -lh artifacts || true
+
+    - name: Upload APKs
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-embedded-characters
+        path: artifacts/
