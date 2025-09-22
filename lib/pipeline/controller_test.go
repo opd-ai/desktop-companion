@@ -57,9 +57,9 @@ func (m *mockComfyUIClient) GetQueueStatus(ctx context.Context) (*comfyui.QueueS
 
 func TestNewController(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
 
-	controller, err := NewController(config, client)
+	// Test with default ComfyUI backend
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -98,7 +98,7 @@ func TestNewControllerValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewController(tt.config, tt.client)
+			_, err := NewController(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewController() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -108,8 +108,7 @@ func TestNewControllerValidation(t *testing.T) {
 
 func TestProcessCharacterValidation(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -123,8 +122,7 @@ func TestProcessCharacterValidation(t *testing.T) {
 
 func TestBuildPrompts(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -165,8 +163,7 @@ func TestBuildPrompts(t *testing.T) {
 
 func TestCreateWorkflowForState(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -174,7 +171,7 @@ func TestCreateWorkflowForState(t *testing.T) {
 	pipelineController := controller.(*pipelineController)
 	charConfig := DefaultCharacterConfig("test")
 
-	workflow, err := pipelineController.createWorkflowForState(charConfig, "idle")
+	workflow := pipelineController.createWorkflowForState(charConfig, "idle")
 	if err != nil {
 		t.Fatalf("createWorkflowForState failed: %v", err)
 	}
@@ -212,8 +209,7 @@ func TestCreateWorkflowForState(t *testing.T) {
 
 func TestProcessBatchValidation(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -227,8 +223,7 @@ func TestProcessBatchValidation(t *testing.T) {
 
 func TestValidateAssetsValidation(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -242,8 +237,7 @@ func TestValidateAssetsValidation(t *testing.T) {
 
 func TestDeployAssetsValidation(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -267,8 +261,7 @@ func TestDeployAssetsValidation(t *testing.T) {
 
 func TestIsRetryableError(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}
@@ -301,8 +294,7 @@ func TestIsRetryableError(t *testing.T) {
 
 func TestGenerateBatchSummary(t *testing.T) {
 	config := DefaultPipelineConfig()
-	client := &mockComfyUIClient{}
-	controller, err := NewController(config, client)
+	controller, err := NewController(config)
 	if err != nil {
 		t.Fatalf("NewController failed: %v", err)
 	}

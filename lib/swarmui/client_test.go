@@ -1,5 +1,4 @@
 package swarmui
-package swarmui
 
 import (
 	"context"
@@ -151,11 +150,11 @@ func TestNew(t *testing.T) {
 
 func TestClient_RefreshSession(t *testing.T) {
 	tests := []struct {
-		name         string
-		response     string
-		statusCode   int
-		wantErr      bool
-		wantSession  string
+		name        string
+		response    string
+		statusCode  int
+		wantErr     bool
+		wantSession string
 	}{
 		{
 			name: "successful session",
@@ -180,10 +179,10 @@ func TestClient_RefreshSession(t *testing.T) {
 			wantErr:    true,
 		},
 		{
-			name:        "invalid JSON",
-			response:    `{invalid json`,
-			statusCode:  200,
-			wantErr:     true,
+			name:       "invalid JSON",
+			response:   `{invalid json`,
+			statusCode: 200,
+			wantErr:    true,
 		},
 		{
 			name: "empty session ID",
@@ -232,10 +231,10 @@ func TestClient_RefreshSession(t *testing.T) {
 
 func TestClient_GenerateImage(t *testing.T) {
 	tests := []struct {
-		name      string
-		request   *ImageRequest
-		responses []mockResponse
-		wantErr   bool
+		name       string
+		request    *ImageRequest
+		responses  []mockResponse
+		wantErr    bool
 		wantImages int
 	}{
 		{
@@ -418,28 +417,11 @@ func TestClient_MonitorJob(t *testing.T) {
 }
 
 func TestIsRetryableError(t *testing.T) {
-	tests := []struct {
-		name string
-		err  error
-		want bool
-	}{
-		{
-			name: "connection refused",
-			err:  &http.Client{}.Do(&http.Request{}), // This will create a connection refused error in testing
-			want: false, // actual error type varies, but we test with string content
-		},
-		{
-			name: "timeout error",
-			err:  context.DeadlineExceeded,
-			want: false, // context.DeadlineExceeded doesn't contain "timeout" string
-		},
-	}
-
 	// Test with string-based errors since that's how isRetryableError works
 	stringTests := []struct {
-		name     string
-		errStr   string
-		want     bool
+		name   string
+		errStr string
+		want   bool
 	}{
 		{
 			name:   "connection refused",
@@ -500,7 +482,7 @@ func TestImageRequestMarshaling(t *testing.T) {
 		Images:         2,
 		DoNotSave:      true,
 		Extra: map[string]interface{}{
-			"sampler": "DPM++ 2M",
+			"sampler":   "DPM++ 2M",
 			"scheduler": "karras",
 		},
 	}
