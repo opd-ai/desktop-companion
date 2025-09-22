@@ -73,25 +73,16 @@ func TestNewControllerValidation(t *testing.T) {
 	tests := []struct {
 		name    string
 		config  *PipelineConfig
-		client  comfyui.Client
 		wantErr bool
 	}{
 		{
 			name:    "nil config",
 			config:  nil,
-			client:  &mockComfyUIClient{},
-			wantErr: true,
-		},
-		{
-			name:    "nil client",
-			config:  DefaultPipelineConfig(),
-			client:  nil,
 			wantErr: true,
 		},
 		{
 			name:    "valid inputs",
 			config:  DefaultPipelineConfig(),
-			client:  &mockComfyUIClient{},
 			wantErr: false,
 		},
 	}

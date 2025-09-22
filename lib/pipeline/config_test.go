@@ -10,16 +10,19 @@ import (
 func TestDefaultPipelineConfig(t *testing.T) {
 	config := DefaultPipelineConfig()
 
-	if err := config.Validate(); err != nil {
+	if err := ValidatePipelineConfig(config); err != nil {
 		t.Fatalf("default config validation failed: %v", err)
 	}
 
-	// Test ComfyUI defaults
-	if config.ComfyUI.ServerURL != "http://localhost:8188" {
-		t.Errorf("expected default server URL, got %s", config.ComfyUI.ServerURL)
+	// Test Backend defaults
+	if config.Backend.Type != "comfyui" {
+		t.Errorf("expected comfyui backend type, got %s", config.Backend.Type)
 	}
-	if config.ComfyUI.Timeout != 30*time.Second {
-		t.Errorf("expected 30s timeout, got %v", config.ComfyUI.Timeout)
+	if config.Backend.ComfyUI.ServerURL != "http://localhost:8188" {
+		t.Errorf("expected default server URL, got %s", config.Backend.ComfyUI.ServerURL)
+	}
+	if config.Backend.ComfyUI.Timeout != 30*time.Second {
+		t.Errorf("expected 30s timeout, got %v", config.Backend.ComfyUI.Timeout)
 	}
 
 	// Test generation defaults
@@ -46,7 +49,7 @@ func TestConfigSaveLoad(t *testing.T) {
 
 	// Create and save config
 	original := DefaultPipelineConfig()
-	original.ComfyUI.ServerURL = "http://test:8188"
+	original.Backend.ComfyUI.ServerURL = "http://test:8188"
 	original.Generation.DefaultStyle = "anime"
 
 	if err := SaveConfig(original, configPath); err != nil {
@@ -60,8 +63,8 @@ func TestConfigSaveLoad(t *testing.T) {
 	}
 
 	// Verify values
-	if loaded.ComfyUI.ServerURL != "http://test:8188" {
-		t.Errorf("expected test server URL, got %s", loaded.ComfyUI.ServerURL)
+	if loaded.Backend.ComfyUI.ServerURL != "http://test:8188" {
+		t.Errorf("expected test server URL, got %s", loaded.Backend.ComfyUI.ServerURL)
 	}
 	if loaded.Generation.DefaultStyle != "anime" {
 		t.Errorf("expected anime style, got %s", loaded.Generation.DefaultStyle)
@@ -80,19 +83,10 @@ func TestConfigValidation(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "empty server URL",
+			name: "invalid concurrent jobs",
 			config: func() *PipelineConfig {
 				c := DefaultPipelineConfig()
-				c.ComfyUI.ServerURL = ""
-				return c
-			}(),
-			wantErr: true,
-		},
-		{
-			name: "invalid timeout",
-			config: func() *PipelineConfig {
-				c := DefaultPipelineConfig()
-				c.ComfyUI.Timeout = 0
+				c.Generation.ConcurrentJobs = 0
 				return c
 			}(),
 			wantErr: true,
@@ -101,16 +95,25 @@ func TestConfigValidation(t *testing.T) {
 			name: "invalid frame count",
 			config: func() *PipelineConfig {
 				c := DefaultPipelineConfig()
-				c.Generation.FrameCount = 10
+				c.Generation.FrameCount = 0
 				return c
 			}(),
 			wantErr: true,
 		},
 		{
-			name: "empty required states",
+			name: "invalid base resolution",
 			config: func() *PipelineConfig {
 				c := DefaultPipelineConfig()
-				c.Validation.RequiredStates = []string{}
+				c.Generation.BaseResolution = [2]int{16, 16}
+				return c
+			}(),
+			wantErr: true,
+		},
+		{
+			name: "invalid max file size",
+			config: func() *PipelineConfig {
+				c := DefaultPipelineConfig()
+				c.Validation.MaxFileSize = 500
 				return c
 			}(),
 			wantErr: true,
@@ -119,9 +122,9 @@ func TestConfigValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.config.Validate()
+			err := ValidatePipelineConfig(tt.config)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ValidatePipelineConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

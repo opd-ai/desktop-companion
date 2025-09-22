@@ -261,7 +261,7 @@ func LoadConfig(path string) (*PipelineConfig, error) {
 		return nil, fmt.Errorf("parse config JSON: %w", err)
 	}
 
-	if err := config.Validate(); err != nil {
+	if err := ValidatePipelineConfig(&config); err != nil {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
@@ -277,7 +277,7 @@ func SaveConfig(config *PipelineConfig, path string) error {
 		return errors.New("config path required")
 	}
 
-	if err := config.Validate(); err != nil {
+	if err := ValidatePipelineConfig(config); err != nil {
 		return fmt.Errorf("invalid config: %w", err)
 	}
 
