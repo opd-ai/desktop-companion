@@ -205,7 +205,7 @@ func setDefaults() {
 			}
 		}
 		if !isValid {
-			fmt.Fprintf(os.Stderr, "Error: Invalid backend type '%s'. Valid options are: %s\n", 
+			fmt.Fprintf(os.Stderr, "Error: Invalid backend type '%s'. Valid options are: %s\n",
 				globalConfig.Backend, strings.Join(validBackends, ", "))
 			fmt.Fprintf(os.Stderr, "Use 'gif-generator help' for more information.\n")
 			os.Exit(1)
@@ -247,12 +247,12 @@ func printUsage() {
 	fmt.Println("  --parallel N         Number of parallel jobs (default: 2)")
 	fmt.Println("  --verbose, -v        Verbose output")
 	fmt.Println("  --dry-run            Show what would be done without executing")
-	
+
 	fmt.Println("\nBackend Configuration:")
 	fmt.Println("  ComfyUI (default):   --backend comfyui --server-url http://localhost:8188")
 	fmt.Println("  SwarmUI:             --backend swarmui --server-url http://localhost:7801")
 	fmt.Println("  Legacy ComfyUI:      --comfyui-url http://localhost:8188")
-	
+
 	fmt.Println("\nQuick Start Examples:")
 	fmt.Println("  # Generate default character with ComfyUI")
 	fmt.Printf("  %s character --archetype default\n", appName)
@@ -262,11 +262,11 @@ func printUsage() {
 	fmt.Println()
 	fmt.Println("  # Process multiple characters")
 	fmt.Printf("  %s batch --config characters.txt\n", appName)
-	
+
 	fmt.Println("\nNote:")
 	fmt.Println("  Global flags must be specified before the command.")
 	fmt.Println("  Use space syntax: --flag value (not --flag=value)")
-	
+
 	fmt.Printf("\nUse '%s help COMMAND' for detailed command information.\n", appName)
 }
 
@@ -282,7 +282,7 @@ func handleCharacterCommand(args []string) error {
 	output := fs.String("output", "", "Output directory (overrides default)")
 	validate := fs.Bool("validate", false, "Validate generated assets")
 	backup := fs.Bool("backup", false, "Backup existing assets before generation")
-	
+
 	// Backend configuration flags
 	timeout := fs.String("timeout", "", "Backend timeout (e.g., 30s, 1m)")
 	retryAttempts := fs.Int("retry-attempts", 0, "Number of retry attempts (0 = use backend default)")
@@ -406,7 +406,7 @@ func handleBatchCommand(args []string) error {
 	configPath := fs.String("config", "", "Batch configuration file (required)")
 	parallel := fs.Int("parallel", globalConfig.Parallel, "Number of parallel jobs")
 	output := fs.String("output", "", "Output directory (overrides config)")
-	
+
 	// Backend configuration flags
 	timeout := fs.String("timeout", "", "Backend timeout (e.g., 30s, 1m)")
 	retryAttempts := fs.Int("retry-attempts", 0, "Number of retry attempts (0 = use backend default)")
@@ -804,7 +804,7 @@ func applyBackendOverrides(config *pipeline.PipelineConfig, timeoutStr string, r
 		if err != nil {
 			return fmt.Errorf("invalid timeout duration %q: %w", timeoutStr, err)
 		}
-		
+
 		switch config.Backend.Type {
 		case backends.BackendTypeComfyUI:
 			if config.Backend.ComfyUI != nil {
@@ -816,7 +816,7 @@ func applyBackendOverrides(config *pipeline.PipelineConfig, timeoutStr string, r
 			}
 		}
 	}
-	
+
 	if retryAttempts > 0 {
 		switch config.Backend.Type {
 		case backends.BackendTypeComfyUI:
@@ -829,13 +829,13 @@ func applyBackendOverrides(config *pipeline.PipelineConfig, timeoutStr string, r
 			}
 		}
 	}
-	
+
 	if retryBackoffStr != "" {
 		retryBackoff, err := time.ParseDuration(retryBackoffStr)
 		if err != nil {
 			return fmt.Errorf("invalid retry backoff duration %q: %w", retryBackoffStr, err)
 		}
-		
+
 		switch config.Backend.Type {
 		case backends.BackendTypeComfyUI:
 			if config.Backend.ComfyUI != nil {
@@ -847,7 +847,7 @@ func applyBackendOverrides(config *pipeline.PipelineConfig, timeoutStr string, r
 			}
 		}
 	}
-	
+
 	return nil
 }
 
