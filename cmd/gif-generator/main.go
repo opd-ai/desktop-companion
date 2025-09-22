@@ -15,8 +15,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/opd-ai/desktop-companion/lib/backends"
 	"github.com/opd-ai/desktop-companion/lib/character"
-	"github.com/opd-ai/desktop-companion/lib/comfyui"
+	"github.com/opd-ai/desktop-companion/lib/comfyui" // For template management
 	"github.com/opd-ai/desktop-companion/lib/pipeline"
 )
 
@@ -36,7 +37,8 @@ type Command struct {
 // CLIConfig holds CLI application configuration.
 type CLIConfig struct {
 	ConfigPath string
-	ComfyUIURL string
+	Backend    string // "comfyui" or "swarmui"
+	ServerURL  string // Backend server URL
 	OutputDir  string
 	TempDir    string
 	Parallel   int
@@ -137,10 +139,22 @@ func parseGlobalFlags() int {
 				globalConfig.ConfigPath = os.Args[i+1]
 				i++ // Skip the value
 			}
+		case "--backend":
+			if i+1 < len(os.Args) {
+				globalConfig.Backend = os.Args[i+1]
+				i++ // Skip the value
+			}
+		case "--server-url":
+			if i+1 < len(os.Args) {
+				globalConfig.ServerURL = os.Args[i+1]
+				i++ // Skip the value
+			}
+		// Legacy support for --comfyui-url
 		case "--comfyui-url":
 			if i+1 < len(os.Args) {
-				globalConfig.ComfyUIURL = os.Args[i+1]
-				i++ // Skip the value
+				globalConfig.ServerURL = os.Args[i+1]
+				globalConfig.Backend = "comfyui" // Assume ComfyUI backend
+				i++                              // Skip the value
 			}
 		case "--output":
 			if i+1 < len(os.Args) {
@@ -178,8 +192,34 @@ func setDefaults() {
 	if globalConfig.ConfigPath == "" {
 		globalConfig.ConfigPath = "config.json"
 	}
-	if globalConfig.ComfyUIURL == "" {
-		globalConfig.ComfyUIURL = "http://localhost:8188"
+	if globalConfig.Backend == "" {
+		globalConfig.Backend = "comfyui" // Default to ComfyUI
+	} else {
+		// Validate backend type
+		validBackends := []string{"comfyui", "swarmui"}
+		isValid := false
+		for _, valid := range validBackends {
+			if globalConfig.Backend == valid {
+				isValid = true
+				break
+			}
+		}
+		if !isValid {
+			fmt.Fprintf(os.Stderr, "Error: Invalid backend type '%s'. Valid options are: %s\n", 
+				globalConfig.Backend, strings.Join(validBackends, ", "))
+			fmt.Fprintf(os.Stderr, "Use 'gif-generator help' for more information.\n")
+			os.Exit(1)
+		}
+	}
+	if globalConfig.ServerURL == "" {
+		switch globalConfig.Backend {
+		case "comfyui":
+			globalConfig.ServerURL = "http://localhost:8188"
+		case "swarmui":
+			globalConfig.ServerURL = "http://localhost:7801"
+		default:
+			globalConfig.ServerURL = "http://localhost:8188" // Default to ComfyUI
+		}
 	}
 	if globalConfig.Parallel == 0 {
 		globalConfig.Parallel = 2
@@ -190,7 +230,7 @@ func setDefaults() {
 func printUsage() {
 	fmt.Printf("%s v%s - Desktop Companion GIF Asset Generator\n\n", appName, version)
 	fmt.Println("Usage:")
-	fmt.Printf("  %s COMMAND [options]\n\n", appName)
+	fmt.Printf("  %s [GLOBAL OPTIONS] COMMAND [COMMAND OPTIONS]\n\n", appName)
 	fmt.Println("Commands:")
 
 	for _, cmd := range commands {
@@ -199,13 +239,35 @@ func printUsage() {
 
 	fmt.Println("\nGlobal Options:")
 	fmt.Println("  --config PATH        Pipeline configuration file (default: config.json)")
-	fmt.Println("  --comfyui-url URL    ComfyUI server URL (default: http://localhost:8188)")
+	fmt.Println("  --backend TYPE       Backend type: comfyui, swarmui (default: comfyui)")
+	fmt.Println("  --server-url URL     Backend server URL")
+	fmt.Println("  --comfyui-url URL    ComfyUI server URL (legacy, use --server-url with --backend=comfyui)")
 	fmt.Println("  --output DIR         Output directory")
 	fmt.Println("  --temp-dir DIR       Temporary directory")
 	fmt.Println("  --parallel N         Number of parallel jobs (default: 2)")
 	fmt.Println("  --verbose, -v        Verbose output")
 	fmt.Println("  --dry-run            Show what would be done without executing")
-	fmt.Printf("\nUse '%s help COMMAND' for more information about a command.\n", appName)
+	
+	fmt.Println("\nBackend Configuration:")
+	fmt.Println("  ComfyUI (default):   --backend comfyui --server-url http://localhost:8188")
+	fmt.Println("  SwarmUI:             --backend swarmui --server-url http://localhost:7801")
+	fmt.Println("  Legacy ComfyUI:      --comfyui-url http://localhost:8188")
+	
+	fmt.Println("\nQuick Start Examples:")
+	fmt.Println("  # Generate default character with ComfyUI")
+	fmt.Printf("  %s character --archetype default\n", appName)
+	fmt.Println()
+	fmt.Println("  # Generate romance character with SwarmUI")
+	fmt.Printf("  %s --backend swarmui character --archetype romance_tsundere\n", appName)
+	fmt.Println()
+	fmt.Println("  # Process multiple characters")
+	fmt.Printf("  %s batch --config characters.txt\n", appName)
+	
+	fmt.Println("\nNote:")
+	fmt.Println("  Global flags must be specified before the command.")
+	fmt.Println("  Use space syntax: --flag value (not --flag=value)")
+	
+	fmt.Printf("\nUse '%s help COMMAND' for detailed command information.\n", appName)
 }
 
 // handleCharacterCommand generates assets for a single character.
@@ -220,6 +282,11 @@ func handleCharacterCommand(args []string) error {
 	output := fs.String("output", "", "Output directory (overrides default)")
 	validate := fs.Bool("validate", false, "Validate generated assets")
 	backup := fs.Bool("backup", false, "Backup existing assets before generation")
+	
+	// Backend configuration flags
+	timeout := fs.String("timeout", "", "Backend timeout (e.g., 30s, 1m)")
+	retryAttempts := fs.Int("retry-attempts", 0, "Number of retry attempts (0 = use backend default)")
+	retryBackoff := fs.String("retry-backoff", "", "Retry backoff duration (e.g., 500ms, 1s)")
 
 	fs.Parse(args)
 
@@ -243,6 +310,11 @@ func handleCharacterCommand(args []string) error {
 	config, err := loadPipelineConfig()
 	if err != nil {
 		return fmt.Errorf("load pipeline config: %w", err)
+	}
+
+	// Apply command-line backend configuration overrides
+	if err := applyBackendOverrides(config, *timeout, *retryAttempts, *retryBackoff); err != nil {
+		return fmt.Errorf("apply backend overrides: %w", err)
 	}
 
 	var charConfig *pipeline.CharacterConfig
@@ -334,6 +406,11 @@ func handleBatchCommand(args []string) error {
 	configPath := fs.String("config", "", "Batch configuration file (required)")
 	parallel := fs.Int("parallel", globalConfig.Parallel, "Number of parallel jobs")
 	output := fs.String("output", "", "Output directory (overrides config)")
+	
+	// Backend configuration flags
+	timeout := fs.String("timeout", "", "Backend timeout (e.g., 30s, 1m)")
+	retryAttempts := fs.Int("retry-attempts", 0, "Number of retry attempts (0 = use backend default)")
+	retryBackoff := fs.String("retry-backoff", "", "Retry backoff duration (e.g., 500ms, 1s)")
 
 	fs.Parse(args)
 
@@ -371,6 +448,11 @@ func handleBatchCommand(args []string) error {
 	pipelineConfig, err := loadPipelineConfig()
 	if err != nil {
 		return fmt.Errorf("load pipeline config: %w", err)
+	}
+
+	// Apply command-line backend configuration overrides
+	if err := applyBackendOverrides(pipelineConfig, *timeout, *retryAttempts, *retryBackoff); err != nil {
+		return fmt.Errorf("apply backend overrides: %w", err)
 	}
 
 	// Override concurrent jobs
@@ -583,17 +665,46 @@ func handleHelpCommand(args []string) error {
 		switch command {
 		case "character":
 			fmt.Println("\nOptions:")
-			fmt.Println("  --archetype TYPE     Character archetype (required)")
+			fmt.Println("  --file FILE          Character JSON file path")
+			fmt.Println("  --archetype TYPE     Character archetype (alternative to --file)")
 			fmt.Println("  --style STYLE        Art style (default: pixel_art)")
+			fmt.Println("  --model MODEL        AI model to use (default: flux1d)")
 			fmt.Println("  --description TEXT   Character description")
 			fmt.Println("  --states LIST        Comma-separated animation states")
 			fmt.Println("  --output DIR         Output directory")
+			fmt.Println("  --validate           Validate generated assets")
+			fmt.Println("  --backup             Backup existing assets")
+			fmt.Println("  --timeout DURATION   Backend timeout (e.g., 30s, 1m)")
+			fmt.Println("  --retry-attempts N   Number of retry attempts")
+			fmt.Println("  --retry-backoff DUR  Retry backoff duration (e.g., 500ms)")
+			fmt.Println()
+			fmt.Println("Examples:")
+			fmt.Println("  # Generate from archetype with ComfyUI")
+			fmt.Println("  gif-generator --backend comfyui character --archetype romance_tsundere")
+			fmt.Println()
+			fmt.Println("  # Generate from archetype with SwarmUI and custom timeout")
+			fmt.Println("  gif-generator --backend swarmui --server-url http://localhost:7801 \\")
+			fmt.Println("    character --archetype default --timeout 45s")
+			fmt.Println()
+			fmt.Println("  # Generate from character file")
+			fmt.Println("  gif-generator character --file characters/my_character.json")
 
 		case "batch":
 			fmt.Println("\nOptions:")
 			fmt.Println("  --config FILE        Batch configuration file (required)")
 			fmt.Println("  --parallel N         Number of parallel jobs")
 			fmt.Println("  --output DIR         Output directory base")
+			fmt.Println("  --timeout DURATION   Backend timeout (e.g., 30s, 1m)")
+			fmt.Println("  --retry-attempts N   Number of retry attempts")
+			fmt.Println("  --retry-backoff DUR  Retry backoff duration (e.g., 500ms)")
+			fmt.Println()
+			fmt.Println("Examples:")
+			fmt.Println("  # Process batch with ComfyUI")
+			fmt.Println("  gif-generator --backend comfyui batch --config batch.txt")
+			fmt.Println()
+			fmt.Println("  # Process batch with SwarmUI and custom settings")
+			fmt.Println("  gif-generator --backend swarmui --server-url http://localhost:7801 \\")
+			fmt.Println("    batch --config batch.txt --timeout 60s --parallel 4")
 
 		case "validate":
 			fmt.Println("\nOptions:")
@@ -622,8 +733,27 @@ func loadPipelineConfig() (*pipeline.PipelineConfig, error) {
 		config := pipeline.DefaultPipelineConfig()
 
 		// Override with command-line settings
-		if globalConfig.ComfyUIURL != "" {
-			config.ComfyUI.ServerURL = globalConfig.ComfyUIURL
+		if globalConfig.ServerURL != "" {
+			// New backend system
+			backendType := globalConfig.Backend
+			if backendType == "" {
+				backendType = "comfyui" // Default
+			}
+
+			switch backendType {
+			case "comfyui":
+				if config.Backend.ComfyUI == nil {
+					config.Backend.ComfyUI = &backends.ComfyUIConfig{}
+				}
+				config.Backend.Type = backends.BackendTypeComfyUI
+				config.Backend.ComfyUI.ServerURL = globalConfig.ServerURL
+			case "swarmui":
+				if config.Backend.SwarmUI == nil {
+					config.Backend.SwarmUI = &backends.SwarmUIConfig{}
+				}
+				config.Backend.Type = backends.BackendTypeSwarmUI
+				config.Backend.SwarmUI.ServerURL = globalConfig.ServerURL
+			}
 		}
 		if globalConfig.TempDir != "" {
 			config.Generation.TempDir = globalConfig.TempDir
@@ -638,14 +768,87 @@ func loadPipelineConfig() (*pipeline.PipelineConfig, error) {
 	}
 
 	// Override with command-line settings
-	if globalConfig.ComfyUIURL != "" {
-		config.ComfyUI.ServerURL = globalConfig.ComfyUIURL
+	if globalConfig.ServerURL != "" {
+		// New backend system
+		backendType := globalConfig.Backend
+		if backendType == "" {
+			backendType = "comfyui" // Default
+		}
+
+		switch backendType {
+		case "comfyui":
+			if config.Backend.ComfyUI == nil {
+				config.Backend.ComfyUI = &backends.ComfyUIConfig{}
+			}
+			config.Backend.Type = backends.BackendTypeComfyUI
+			config.Backend.ComfyUI.ServerURL = globalConfig.ServerURL
+		case "swarmui":
+			if config.Backend.SwarmUI == nil {
+				config.Backend.SwarmUI = &backends.SwarmUIConfig{}
+			}
+			config.Backend.Type = backends.BackendTypeSwarmUI
+			config.Backend.SwarmUI.ServerURL = globalConfig.ServerURL
+		}
 	}
 	if globalConfig.TempDir != "" {
 		config.Generation.TempDir = globalConfig.TempDir
 	}
 
 	return config, nil
+}
+
+// applyBackendOverrides applies command-line backend configuration overrides to the pipeline config.
+func applyBackendOverrides(config *pipeline.PipelineConfig, timeoutStr string, retryAttempts int, retryBackoffStr string) error {
+	if timeoutStr != "" {
+		timeout, err := time.ParseDuration(timeoutStr)
+		if err != nil {
+			return fmt.Errorf("invalid timeout duration %q: %w", timeoutStr, err)
+		}
+		
+		switch config.Backend.Type {
+		case backends.BackendTypeComfyUI:
+			if config.Backend.ComfyUI != nil {
+				config.Backend.ComfyUI.Timeout = timeout
+			}
+		case backends.BackendTypeSwarmUI:
+			if config.Backend.SwarmUI != nil {
+				config.Backend.SwarmUI.Timeout = timeout
+			}
+		}
+	}
+	
+	if retryAttempts > 0 {
+		switch config.Backend.Type {
+		case backends.BackendTypeComfyUI:
+			if config.Backend.ComfyUI != nil {
+				config.Backend.ComfyUI.RetryAttempts = retryAttempts
+			}
+		case backends.BackendTypeSwarmUI:
+			if config.Backend.SwarmUI != nil {
+				config.Backend.SwarmUI.RetryAttempts = retryAttempts
+			}
+		}
+	}
+	
+	if retryBackoffStr != "" {
+		retryBackoff, err := time.ParseDuration(retryBackoffStr)
+		if err != nil {
+			return fmt.Errorf("invalid retry backoff duration %q: %w", retryBackoffStr, err)
+		}
+		
+		switch config.Backend.Type {
+		case backends.BackendTypeComfyUI:
+			if config.Backend.ComfyUI != nil {
+				config.Backend.ComfyUI.RetryBackoff = retryBackoff
+			}
+		case backends.BackendTypeSwarmUI:
+			if config.Backend.SwarmUI != nil {
+				config.Backend.SwarmUI.RetryBackoff = retryBackoff
+			}
+		}
+	}
+	
+	return nil
 }
 
 // loadBatchConfigs loads batch processing configurations.
@@ -675,23 +878,10 @@ func loadBatchConfigs(path string) ([]*pipeline.CharacterConfig, error) {
 	return configs, nil
 }
 
-// createController creates a pipeline controller with ComfyUI client.
+// createController creates a pipeline controller from configuration.
 func createController(config *pipeline.PipelineConfig) (pipeline.Controller, error) {
-	// Create ComfyUI client
-	comfyuiConfig := comfyui.Config{
-		ServerURL:     config.ComfyUI.ServerURL,
-		APIKey:        config.ComfyUI.APIKey,
-		Timeout:       config.ComfyUI.Timeout,
-		RetryAttempts: config.ComfyUI.RetryAttempts,
-		RetryBackoff:  500 * time.Millisecond,
-	}
-
-	client, err := comfyui.New(comfyuiConfig)
-	if err != nil {
-		return nil, fmt.Errorf("create ComfyUI client: %w", err)
-	}
-
-	return pipeline.NewController(config, client)
+	// The pipeline controller now handles backend creation internally
+	return pipeline.NewController(config)
 }
 
 // Utility functions for printing results would go here...

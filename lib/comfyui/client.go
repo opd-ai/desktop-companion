@@ -93,8 +93,8 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		ServerURL:     "http://localhost:8188",
-		Timeout:       10 * time.Second, // reduced from 30s to speed up failure detection
-		RetryAttempts: 2,
+		Timeout:       30 * time.Second, // Increased for better stability
+		RetryAttempts: 3,                // Increased for better reliability
 		RetryBackoff:  500 * time.Millisecond,
 		WSPath:        "/ws",
 	}

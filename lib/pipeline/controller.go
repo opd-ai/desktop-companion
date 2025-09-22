@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/opd-ai/desktop-companion/lib/assets"
-	"github.com/opd-ai/desktop-companion/lib/comfyui"
+	"github.com/opd-ai/desktop-companion/lib/backends"
 )
 
 // Controller orchestrates the complete generation pipeline.
@@ -104,24 +104,52 @@ type BatchSummary struct {
 // pipelineController is the concrete implementation of Controller.
 type pipelineController struct {
 	config         *PipelineConfig
-	comfyuiClient  comfyui.Client
+	backend        backends.Backend
 	assetProcessor assets.ArtifactPostProcessor
 	validator      Validator
 	mu             sync.RWMutex
 }
 
 // NewController creates a new pipeline controller instance.
-func NewController(config *PipelineConfig, comfyuiClient comfyui.Client) (Controller, error) {
+func NewController(config *PipelineConfig) (Controller, error) {
 	if config == nil {
 		return nil, fmt.Errorf("pipeline config required")
 	}
-	if comfyuiClient == nil {
-		return nil, fmt.Errorf("comfyui client required")
+
+	// Migrate legacy config if needed
+	config.MigrateFromLegacyConfig()
+
+	// Validate configuration
+	if err := ValidatePipelineConfig(config); err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
+	}
+
+	// Create backend
+	backend, err := config.CreateBackend()
+	if err != nil {
+		return nil, fmt.Errorf("creating backend: %w", err)
 	}
 
 	return &pipelineController{
 		config:         config,
-		comfyuiClient:  comfyuiClient,
+		backend:        backend,
+		assetProcessor: &assets.GIFAssembler{},
+		validator:      NewValidator(),
+	}, nil
+}
+
+// NewControllerWithBackend creates a new pipeline controller with a provided backend.
+func NewControllerWithBackend(config *PipelineConfig, backend backends.Backend) (Controller, error) {
+	if config == nil {
+		return nil, fmt.Errorf("pipeline config required")
+	}
+	if backend == nil {
+		return nil, fmt.Errorf("backend required")
+	}
+
+	return &pipelineController{
+		config:         config,
+		backend:        backend,
 		assetProcessor: &assets.GIFAssembler{},
 		validator:      NewValidator(),
 	}, nil
@@ -319,57 +347,75 @@ func (c *pipelineController) DeployAssets(ctx context.Context, result *ProcessRe
 func (c *pipelineController) generateAssetForState(ctx context.Context, config *CharacterConfig, state string, tempDir string) (*GeneratedAsset, error) {
 	startTime := time.Now()
 
-	// Create workflow for this state
-	workflow, err := c.createWorkflowForState(config, state)
-	if err != nil {
-		return nil, fmt.Errorf("create workflow: %w", err)
+	// Create generation request
+	req := &backends.GenerateRequest{
+		Prompt:         c.buildPositivePrompt(config, state),
+		NegativePrompt: c.buildNegativePrompt(config, state),
+		Width:          config.Character.OutputConfig.Width,
+		Height:         config.Character.OutputConfig.Height,
+		Steps:          c.config.Workflow.Quality.Steps,
+		CFGScale:       c.config.Workflow.Quality.CFGScale,
+		Seed:           c.config.Workflow.Quality.Seed,
+		Images:         config.GIFConfig.FrameCount, // Generate multiple frames
+		Model:          c.getModelForArchetype(config.Character.Archetype),
+		Style:          config.Character.Style,
+		Quality:        "high",
+		DoNotSave:      false, // We want to save for asset processing
 	}
 
-	// Submit workflow to ComfyUI
-	job, err := c.comfyuiClient.SubmitWorkflow(ctx, workflow)
-	if err != nil {
-		return nil, fmt.Errorf("submit workflow: %w", err)
+	// Add backend-specific parameters
+	req.BackendParams = make(map[string]interface{})
+	req.BackendParams["sampler"] = c.config.Workflow.Quality.Sampler
+	req.BackendParams["scheduler"] = c.config.Workflow.Quality.Scheduler
+
+	// For ComfyUI, add workflow if needed
+	if c.config.IsComfyUIBackend() {
+		workflow := c.createWorkflowForState(config, state)
+		req.Workflow = workflow
 	}
 
-	// Monitor job progress
-	progressChan, err := c.comfyuiClient.MonitorJob(ctx, job.ID)
+	// Generate images
+	result, err := c.backend.GenerateImage(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("monitor job: %w", err)
+		return nil, fmt.Errorf("generate image: %w", err)
 	}
 
-	// Wait for completion
-	var finalProgress comfyui.JobProgress
-	for progress := range progressChan {
-		finalProgress = progress
-		if progress.Err != nil {
-			return nil, fmt.Errorf("job failed: %w", progress.Err)
+	// Monitor job if supported
+	if result.JobID != "" {
+		progressChan, err := c.backend.MonitorJob(ctx, result.JobID)
+		if err == nil {
+			// Wait for completion
+			var finalProgress backends.JobProgress
+			for progress := range progressChan {
+				finalProgress = progress
+				if progress.Error != nil {
+					return nil, fmt.Errorf("job failed: %w", progress.Error)
+				}
+			}
+
+			if finalProgress.Status != "completed" && finalProgress.Status != "" {
+				return nil, fmt.Errorf("job failed with status: %s", finalProgress.Status)
+			}
 		}
+		// If monitoring fails, continue - the generation might still work
 	}
 
-	if finalProgress.Status != "completed" {
-		return nil, fmt.Errorf("job failed with status: %s", finalProgress.Status)
+	// Process generated images into GIF
+	if len(result.Images) == 0 {
+		return nil, fmt.Errorf("no images generated")
 	}
 
-	// Get job result
-	jobResult, err := c.comfyuiClient.GetResult(ctx, job.ID)
-	if err != nil {
-		return nil, fmt.Errorf("get job result: %w", err)
-	}
-
-	// Save artifacts to temp directory
+	// Create frames directory
 	framesDir := filepath.Join(tempDir, state+"_frames")
 	if err := os.MkdirAll(framesDir, 0o755); err != nil {
 		return nil, fmt.Errorf("create frames directory: %w", err)
 	}
 
-	if err := comfyui.SaveArtifacts(jobResult, framesDir); err != nil {
-		return nil, fmt.Errorf("save artifacts: %w", err)
-	}
-
-	// Collect frame files
-	frameFiles, err := c.collectFrameFiles(framesDir)
-	if err != nil {
-		return nil, fmt.Errorf("collect frame files: %w", err)
+	// For now, use the first image as all frames (simplified implementation)
+	// In a full implementation, you'd process multiple images or use frame interpolation
+	frameFiles := make([]string, config.GIFConfig.FrameCount)
+	for i := 0; i < config.GIFConfig.FrameCount; i++ {
+		frameFiles[i] = result.Images[0] // Use first image for all frames
 	}
 
 	// Create GIF from frames
@@ -398,16 +444,16 @@ func (c *pipelineController) generateAssetForState(ctx context.Context, config *
 		SourceFiles:    frameFiles,
 		OutputPath:     outputPath,
 		Metrics:        metrics,
-		JobID:          job.ID,
+		JobID:          result.JobID,
 		GenerationTime: time.Since(startTime),
 	}, nil
 }
 
-// createWorkflowForState creates a ComfyUI workflow for a character state.
-func (c *pipelineController) createWorkflowForState(config *CharacterConfig, state string) (*comfyui.Workflow, error) {
+// createWorkflowForState creates workflow parameters for a character state.
+func (c *pipelineController) createWorkflowForState(config *CharacterConfig, state string) *backends.WorkflowParams {
 	// This is a simplified workflow creation - in a full implementation,
 	// this would use the workflow template system and dynamic prompt injection
-	workflow := &comfyui.Workflow{
+	return &backends.WorkflowParams{
 		ID: fmt.Sprintf("%s_%s_%d", config.Character.Archetype, state, time.Now().Unix()),
 		Nodes: map[string]interface{}{
 			"prompt": map[string]interface{}{
@@ -430,8 +476,6 @@ func (c *pipelineController) createWorkflowForState(config *CharacterConfig, sta
 			"style":     config.Character.Style,
 		},
 	}
-
-	return workflow, nil
 }
 
 // buildPositivePrompt constructs the positive prompt for generation.
@@ -475,6 +519,26 @@ func (c *pipelineController) buildNegativePrompt(config *CharacterConfig, state 
 	}
 
 	return prompt
+}
+
+// getModelForArchetype returns the appropriate model for a character archetype.
+func (c *pipelineController) getModelForArchetype(archetype string) string {
+	// Check if we have a specific model configured for this archetype
+	for _, model := range c.config.Workflow.Models {
+		if model.Type == archetype {
+			return model.Name
+		}
+	}
+
+	// Return a default model based on archetype characteristics
+	switch archetype {
+	case "romance", "romance_tsundere", "romance_flirty", "romance_slowburn", "romance_supportive":
+		return "anime_model_xl" // Anime-style model for romance characters
+	case "specialist", "challenge", "hard":
+		return "realistic_model_xl" // More realistic model for serious characters
+	default:
+		return "pixel_art_model" // Default pixel art model
+	}
 }
 
 // collectFrameFiles finds all image files in a directory for GIF creation.

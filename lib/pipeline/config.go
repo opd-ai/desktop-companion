@@ -11,6 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/opd-ai/desktop-companion/lib/backends"
 )
 
 // CharacterConfig defines complete character processing configuration.
@@ -117,11 +119,14 @@ type QualityConfig struct {
 
 // PipelineConfig is the root configuration structure.
 type PipelineConfig struct {
-	ComfyUI    ComfyUIConfig    `json:"comfyui"`
-	Workflow   WorkflowConfig   `json:"workflow"`
+	Backend    backends.Config  `json:"backend"`  // Backend configuration
+	Workflow   WorkflowConfig   `json:"workflow"` // Workflow configuration (ComfyUI only)
 	Generation GenerationConfig `json:"generation"`
 	Validation ValidationConfig `json:"validation"`
 	Deployment DeploymentConfig `json:"deployment"`
+
+	// Deprecated: Use Backend instead
+	ComfyUI ComfyUIConfig `json:"comfyui,omitempty"`
 }
 
 // GenerationConfig defines default generation settings.
@@ -153,12 +158,7 @@ type ArchetypePrompts struct {
 // DefaultPipelineConfig returns a conservative default configuration.
 func DefaultPipelineConfig() *PipelineConfig {
 	return &PipelineConfig{
-		ComfyUI: ComfyUIConfig{
-			ServerURL:     "http://localhost:8188",
-			Timeout:       30 * time.Second,
-			RetryAttempts: 3,
-			QueueLimit:    4,
-		},
+		Backend: *backends.DefaultConfig(backends.BackendTypeComfyUI), // Default to ComfyUI
 		Workflow: WorkflowConfig{
 			TemplatesPath: "templates/workflows",
 			Models:        make(map[string]ModelConfig),
@@ -194,6 +194,13 @@ func DefaultPipelineConfig() *PipelineConfig {
 			ValidateBeforeDeploy: true,
 		},
 	}
+}
+
+// DefaultPipelineConfigWithBackend returns a default configuration for the specified backend.
+func DefaultPipelineConfigWithBackend(backendType backends.BackendType) *PipelineConfig {
+	cfg := DefaultPipelineConfig()
+	cfg.Backend = *backends.DefaultConfig(backendType)
+	return cfg
 }
 
 // defaultStyles returns default art style configurations.
@@ -417,5 +424,77 @@ func DefaultCharacterConfig(archetype string) *CharacterConfig {
 			UpdateCharacterJSON:  true,
 			ValidateBeforeDeploy: true,
 		},
+	}
+}
+
+// ValidatePipelineConfig validates the pipeline configuration.
+func ValidatePipelineConfig(cfg *PipelineConfig) error {
+	if cfg == nil {
+		return errors.New("pipeline config is required")
+	}
+
+	// Validate backend configuration
+	if err := backends.ValidateConfig(&cfg.Backend); err != nil {
+		return fmt.Errorf("invalid backend config: %w", err)
+	}
+
+	// Validate generation config
+	if cfg.Generation.ConcurrentJobs < 1 {
+		return errors.New("concurrent jobs must be at least 1")
+	}
+	if cfg.Generation.FrameCount < 1 {
+		return errors.New("frame count must be at least 1")
+	}
+	if cfg.Generation.BaseResolution[0] < 32 || cfg.Generation.BaseResolution[1] < 32 {
+		return errors.New("base resolution must be at least 32x32")
+	}
+
+	// Validate validation config
+	if cfg.Validation.MaxFileSize < 1000 {
+		return errors.New("max file size must be at least 1KB")
+	}
+	if cfg.Validation.MinFrameRate < 1 {
+		return errors.New("min frame rate must be at least 1")
+	}
+
+	return nil
+}
+
+// GetBackendType returns the backend type from the configuration.
+func (cfg *PipelineConfig) GetBackendType() backends.BackendType {
+	return cfg.Backend.Type
+}
+
+// IsComfyUIBackend returns true if the pipeline is configured to use ComfyUI.
+func (cfg *PipelineConfig) IsComfyUIBackend() bool {
+	return cfg.Backend.Type == backends.BackendTypeComfyUI
+}
+
+// IsSwarmUIBackend returns true if the pipeline is configured to use SwarmUI.
+func (cfg *PipelineConfig) IsSwarmUIBackend() bool {
+	return cfg.Backend.Type == backends.BackendTypeSwarmUI
+}
+
+// CreateBackend creates a backend instance from the configuration.
+func (cfg *PipelineConfig) CreateBackend() (backends.Backend, error) {
+	return backends.NewBackend(&cfg.Backend)
+}
+
+// MigrateFromLegacyConfig migrates from old ComfyUI-only config to new backend config.
+func (cfg *PipelineConfig) MigrateFromLegacyConfig() {
+	// If we have old ComfyUI config but no backend config, migrate
+	if cfg.ComfyUI.ServerURL != "" && cfg.Backend.Type == "" {
+		cfg.Backend = backends.Config{
+			Type: backends.BackendTypeComfyUI,
+			ComfyUI: &backends.ComfyUIConfig{
+				ServerURL:     cfg.ComfyUI.ServerURL,
+				APIKey:        cfg.ComfyUI.APIKey,
+				Timeout:       cfg.ComfyUI.Timeout,
+				RetryAttempts: cfg.ComfyUI.RetryAttempts,
+				RetryBackoff:  500 * time.Millisecond, // Default backoff
+			},
+		}
+		// Clear legacy config
+		cfg.ComfyUI = ComfyUIConfig{}
 	}
 }
