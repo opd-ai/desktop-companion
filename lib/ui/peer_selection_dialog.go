@@ -54,9 +54,11 @@ func (psd *PeerSelectionDialog) initializeComponents() {
 		},
 		func(id widget.ListItemID, item fyne.CanvasObject) {
 			if id < len(psd.peers) {
-				label := item.(*widget.Label)
-				peer := psd.peers[id]
-				label.SetText(peer.ID + " (" + peer.AddrStr + ")")
+				// Safe type assertion to prevent panics
+				if label, ok := item.(*widget.Label); ok {
+					peer := psd.peers[id]
+					label.SetText(peer.ID + " (" + peer.AddrStr + ")")
+				}
 			}
 		},
 	)

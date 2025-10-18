@@ -149,7 +149,10 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 					statusIcon = "🟢" // Connected
 				}
 
-				obj.(*widget.Label).SetText(fmt.Sprintf("%s %s", statusIcon, peer.ID))
+				// Safe type assertion to prevent panics
+				if label, ok := obj.(*widget.Label); ok {
+					label.SetText(fmt.Sprintf("%s %s", statusIcon, peer.ID))
+				}
 			}
 		},
 	)
@@ -209,7 +212,11 @@ func (no *NetworkOverlay) createNetworkWidgets() {
 
 				displayText := fmt.Sprintf("%s %s %s (%s)%s",
 					locationIcon, statusIcon, char.Name, char.Location, compatibilityText)
-				obj.(*widget.Label).SetText(displayText)
+				
+				// Safe type assertion to prevent panics
+				if label, ok := obj.(*widget.Label); ok {
+					label.SetText(displayText)
+				}
 			}
 		},
 	)

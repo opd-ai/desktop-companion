@@ -526,8 +526,11 @@ func (dw *DesktopWindow) showModalContent(content *fyne.Container) {
 
 	content.Move(fyne.NewPos(modalX, modalY))
 
-	// Add to window temporarily
-	currentContent := dw.window.Content().(*fyne.Container)
+	// Add to window temporarily with safe type assertion
+	currentContent, ok := dw.window.Content().(*fyne.Container)
+	if !ok {
+		return // Cannot add content if window content is not a container
+	}
 	currentContent.Add(content)
 	content.Show()
 
