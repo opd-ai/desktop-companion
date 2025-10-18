@@ -113,39 +113,49 @@ func (gsd *GiftSelectionDialog) createGiftList() {
 			}
 
 			gift := gifts[id]
-			itemContainer := obj.(*fyne.Container)
-
-			// Update name label
-			nameContainer := itemContainer.Objects[0].(*fyne.Container)
-			nameLabel := nameContainer.Objects[1].(*widget.Label)
-			nameLabel.SetText(gift.Name)
-
-			// Update description
-			descLabel := itemContainer.Objects[1].(*widget.Label)
-			desc := gift.Description
-			if len(desc) > 50 {
-				desc = desc[:47] + "..."
+			
+			// Safe type assertion with error recovery
+			itemContainer, ok := obj.(*fyne.Container)
+			if !ok || len(itemContainer.Objects) < 4 {
+				return // Silently fail if structure doesn't match expected layout
 			}
-			descLabel.SetText(desc)
 
-			// Update rarity with simple text (keep it simple - color coding can be added later)
-			rarityLabel := itemContainer.Objects[2].(*widget.Label)
-			rarityLabel.SetText(fmt.Sprintf("Rarity: %s", strings.Title(gift.Rarity)))
+			// Update name label with safe type assertions
+			if nameContainer, ok := itemContainer.Objects[0].(*fyne.Container); ok && len(nameContainer.Objects) > 1 {
+				if nameLabel, ok := nameContainer.Objects[1].(*widget.Label); ok {
+					nameLabel.SetText(gift.Name)
+				}
+			}
 
-			// Handle cooldown display
-			cooldownTimer := itemContainer.Objects[3].(*CooldownTimer)
-			if gsd.giftManager.IsGiftOnCooldown(gift.ID) {
-				remaining := gsd.giftManager.GetGiftCooldownRemaining(gift.ID)
-				cooldownTimer.StartCooldown(remaining)
-				cooldownTimer.Show()
+			// Update description with safe type assertion
+			if descLabel, ok := itemContainer.Objects[1].(*widget.Label); ok {
+				desc := gift.Description
+				if len(desc) > 50 {
+					desc = desc[:47] + "..."
+				}
+				descLabel.SetText(desc)
+			}
 
-				// Set completion callback to refresh the list when cooldown expires
-				cooldownTimer.SetOnComplete(func() {
+			// Update rarity with safe type assertion
+			if rarityLabel, ok := itemContainer.Objects[2].(*widget.Label); ok {
+				rarityLabel.SetText(fmt.Sprintf("Rarity: %s", strings.Title(gift.Rarity)))
+			}
+
+			// Handle cooldown display with safe type assertion
+			if cooldownTimer, ok := itemContainer.Objects[3].(*CooldownTimer); ok {
+				if gsd.giftManager.IsGiftOnCooldown(gift.ID) {
+					remaining := gsd.giftManager.GetGiftCooldownRemaining(gift.ID)
+					cooldownTimer.StartCooldown(remaining)
+					cooldownTimer.Show()
+
+					// Set completion callback to refresh the list when cooldown expires
+					cooldownTimer.SetOnComplete(func() {
+						cooldownTimer.Hide()
+						gsd.giftList.Refresh()
+					})
+				} else {
 					cooldownTimer.Hide()
-					gsd.giftList.Refresh()
-				})
-			} else {
-				cooldownTimer.Hide()
+				}
 			}
 		},
 	)
