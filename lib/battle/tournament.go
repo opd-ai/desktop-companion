@@ -107,10 +107,10 @@ type Tournament struct {
 
 // TournamentManager handles tournament creation and management
 type TournamentManager struct {
-	tournaments map[string]*Tournament       `json:"tournaments"`
-	players     map[string]*TournamentPlayer `json:"players"`
-	nextMatchID int                          `json:"nextMatchId"`
-	nextTournID int                          `json:"nextTournId"`
+	Tournaments map[string]*Tournament       `json:"tournaments"`
+	Players     map[string]*TournamentPlayer `json:"players"`
+	NextMatchID int                          `json:"nextMatchId"`
+	NextTournID int                          `json:"nextTournId"`
 }
 
 // ELO rating constants for fair skill assessment
@@ -125,16 +125,16 @@ const (
 // NewTournamentManager creates a new tournament management system
 func NewTournamentManager() *TournamentManager {
 	return &TournamentManager{
-		tournaments: make(map[string]*Tournament),
-		players:     make(map[string]*TournamentPlayer),
-		nextMatchID: 1,
-		nextTournID: 1,
+		Tournaments: make(map[string]*Tournament),
+		Players:     make(map[string]*TournamentPlayer),
+		NextMatchID: 1,
+		NextTournID: 1,
 	}
 }
 
 // RegisterPlayer adds a new player to the tournament system
 func (tm *TournamentManager) RegisterPlayer(id, name, personality string) *TournamentPlayer {
-	if player, exists := tm.players[id]; exists {
+	if player, exists := tm.Players[id]; exists {
 		// Update existing player
 		player.Name = name
 		player.Personality = personality
@@ -151,7 +151,7 @@ func (tm *TournamentManager) RegisterPlayer(id, name, personality string) *Tourn
 		LastActive:  time.Now(),
 	}
 
-	tm.players[id] = player
+	tm.Players[id] = player
 	return player
 }
 
@@ -163,7 +163,7 @@ func (tm *TournamentManager) CreateTournament(name string, format TournamentForm
 	}
 
 	tournament := &Tournament{
-		ID:             fmt.Sprintf("tournament_%d", tm.nextTournID),
+		ID:             fmt.Sprintf("tournament_%d", tm.NextTournID),
 		Name:           name,
 		Format:         format,
 		Status:         STATUS_REGISTRATION,
@@ -175,8 +175,8 @@ func (tm *TournamentManager) CreateTournament(name string, format TournamentForm
 		PrizeStructure: tm.getDefaultPrizeStructure(maxPlayers),
 	}
 
-	tm.nextTournID++
-	tm.tournaments[tournament.ID] = tournament
+	tm.NextTournID++
+	tm.Tournaments[tournament.ID] = tournament
 	return tournament, nil
 }
 
@@ -227,7 +227,7 @@ func (tm *TournamentManager) getDefaultPrizeStructure(maxPlayers int) map[int]st
 
 // JoinTournament adds a player to a tournament
 func (tm *TournamentManager) JoinTournament(tournamentID, playerID string) error {
-	tournament, exists := tm.tournaments[tournamentID]
+	tournament, exists := tm.Tournaments[tournamentID]
 	if !exists {
 		return errors.New("tournament not found")
 	}
@@ -240,7 +240,7 @@ func (tm *TournamentManager) JoinTournament(tournamentID, playerID string) error
 		return ErrTournamentFull
 	}
 
-	player, exists := tm.players[playerID]
+	player, exists := tm.Players[playerID]
 	if !exists {
 		return ErrPlayerNotFound
 	}
@@ -259,7 +259,7 @@ func (tm *TournamentManager) JoinTournament(tournamentID, playerID string) error
 
 // StartTournament begins a tournament and generates the initial bracket
 func (tm *TournamentManager) StartTournament(tournamentID string) error {
-	tournament, exists := tm.tournaments[tournamentID]
+	tournament, exists := tm.Tournaments[tournamentID]
 	if !exists {
 		return errors.New("tournament not found")
 	}
@@ -313,13 +313,13 @@ func (tm *TournamentManager) generateSingleEliminationBracket(tournament *Tourna
 	for i := 0; i < len(players); i += 2 {
 		if i+1 < len(players) {
 			match := &TournamentMatch{
-				ID:         fmt.Sprintf("match_%d", tm.nextMatchID),
+				ID:         fmt.Sprintf("match_%d", tm.NextMatchID),
 				Player1ID:  players[i].ID,
 				Player2ID:  players[i+1].ID,
 				Round:      round,
 				BracketPos: position,
 			}
-			tm.nextMatchID++
+			tm.NextMatchID++
 			position++
 			tournament.Matches = append(tournament.Matches, match)
 		}
@@ -339,13 +339,13 @@ func (tm *TournamentManager) generateRoundRobinMatches(tournament *Tournament) e
 	for i := 0; i < len(players); i++ {
 		for j := i + 1; j < len(players); j++ {
 			match := &TournamentMatch{
-				ID:         fmt.Sprintf("match_%d", tm.nextMatchID),
+				ID:         fmt.Sprintf("match_%d", tm.NextMatchID),
 				Player1ID:  players[i].ID,
 				Player2ID:  players[j].ID,
 				Round:      round,
 				BracketPos: position,
 			}
-			tm.nextMatchID++
+			tm.NextMatchID++
 			position++
 			tournament.Matches = append(tournament.Matches, match)
 		}
@@ -378,13 +378,13 @@ func (tm *TournamentManager) generateSwissRound(tournament *Tournament) error {
 	for i := 0; i < len(players); i += 2 {
 		if i+1 < len(players) {
 			match := &TournamentMatch{
-				ID:         fmt.Sprintf("match_%d", tm.nextMatchID),
+				ID:         fmt.Sprintf("match_%d", tm.NextMatchID),
 				Player1ID:  players[i].ID,
 				Player2ID:  players[i+1].ID,
 				Round:      tournament.CurrentRound,
 				BracketPos: position,
 			}
-			tm.nextMatchID++
+			tm.NextMatchID++
 			position++
 			tournament.Matches = append(tournament.Matches, match)
 		}
@@ -395,7 +395,7 @@ func (tm *TournamentManager) generateSwissRound(tournament *Tournament) error {
 
 // getTournamentWins counts wins for a player in a specific tournament
 func (tm *TournamentManager) getTournamentWins(tournamentID, playerID string) int {
-	tournament := tm.tournaments[tournamentID]
+	tournament := tm.Tournaments[tournamentID]
 	if tournament == nil {
 		return 0
 	}
@@ -411,7 +411,7 @@ func (tm *TournamentManager) getTournamentWins(tournamentID, playerID string) in
 
 // ReportMatchResult records the result of a tournament match
 func (tm *TournamentManager) ReportMatchResult(tournamentID, matchID string, result MatchResult, winnerID string) error {
-	tournament, exists := tm.tournaments[tournamentID]
+	tournament, exists := tm.Tournaments[tournamentID]
 	if !exists {
 		return errors.New("tournament not found")
 	}
@@ -447,8 +447,8 @@ func (tm *TournamentManager) ReportMatchResult(tournamentID, matchID string, res
 	match.CompletedAt = time.Now()
 
 	// Update player statistics
-	player1 := tm.players[match.Player1ID]
-	player2 := tm.players[match.Player2ID]
+	player1 := tm.Players[match.Player1ID]
+	player2 := tm.Players[match.Player2ID]
 
 	if player1 != nil && player2 != nil {
 		switch result {
@@ -542,7 +542,7 @@ func (tm *TournamentManager) checkSingleEliminationProgress(tournament *Tourname
 			tournament.CompletedAt = time.Now()
 
 			// Update winner statistics
-			if winner := tm.players[winners[0]]; winner != nil {
+			if winner := tm.Players[winners[0]]; winner != nil {
 				winner.Victories++
 			}
 		} else if len(winners) > 1 {
@@ -574,13 +574,13 @@ func (tm *TournamentManager) generateNextEliminationRound(tournament *Tournament
 	for i := 0; i < len(winners); i += 2 {
 		if i+1 < len(winners) {
 			match := &TournamentMatch{
-				ID:         fmt.Sprintf("match_%d", tm.nextMatchID),
+				ID:         fmt.Sprintf("match_%d", tm.NextMatchID),
 				Player1ID:  winners[i],
 				Player2ID:  winners[i+1],
 				Round:      nextRound,
 				BracketPos: position,
 			}
-			tm.nextMatchID++
+			tm.NextMatchID++
 			position++
 			tournament.Matches = append(tournament.Matches, match)
 		}
@@ -606,7 +606,7 @@ func (tm *TournamentManager) checkRoundRobinProgress(tournament *Tournament) {
 		tournament.CompletedAt = time.Now()
 
 		// Update winner statistics
-		if winner := tm.players[tournament.WinnerID]; winner != nil {
+		if winner := tm.Players[tournament.WinnerID]; winner != nil {
 			winner.Victories++
 		}
 	}
@@ -673,7 +673,7 @@ func (tm *TournamentManager) checkSwissProgress(tournament *Tournament) {
 			tournament.CompletedAt = time.Now()
 
 			// Update winner statistics
-			if winner := tm.players[tournament.WinnerID]; winner != nil {
+			if winner := tm.Players[tournament.WinnerID]; winner != nil {
 				winner.Victories++
 			}
 		} else {
@@ -712,7 +712,7 @@ func (tm *TournamentManager) getSwissWinner(tournament *Tournament) string {
 
 // GetTournament retrieves a tournament by ID
 func (tm *TournamentManager) GetTournament(tournamentID string) (*Tournament, error) {
-	tournament, exists := tm.tournaments[tournamentID]
+	tournament, exists := tm.Tournaments[tournamentID]
 	if !exists {
 		return nil, errors.New("tournament not found")
 	}
@@ -721,7 +721,7 @@ func (tm *TournamentManager) GetTournament(tournamentID string) (*Tournament, er
 
 // GetPlayer retrieves a player by ID
 func (tm *TournamentManager) GetPlayer(playerID string) (*TournamentPlayer, error) {
-	player, exists := tm.players[playerID]
+	player, exists := tm.Players[playerID]
 	if !exists {
 		return nil, ErrPlayerNotFound
 	}
@@ -730,9 +730,9 @@ func (tm *TournamentManager) GetPlayer(playerID string) (*TournamentPlayer, erro
 
 // GetLeaderboard returns top players sorted by rating
 func (tm *TournamentManager) GetLeaderboard(limit int) []*TournamentPlayer {
-	players := make([]*TournamentPlayer, 0, len(tm.players))
+	players := make([]*TournamentPlayer, 0, len(tm.Players))
 
-	for _, player := range tm.players {
+	for _, player := range tm.Players {
 		players = append(players, player)
 	}
 
@@ -752,7 +752,7 @@ func (tm *TournamentManager) GetLeaderboard(limit int) []*TournamentPlayer {
 func (tm *TournamentManager) GetActiveTournaments() []*Tournament {
 	var active []*Tournament
 
-	for _, tournament := range tm.tournaments {
+	for _, tournament := range tm.Tournaments {
 		if tournament.Status == STATUS_REGISTRATION || tournament.Status == STATUS_IN_PROGRESS {
 			active = append(active, tournament)
 		}
@@ -763,7 +763,7 @@ func (tm *TournamentManager) GetActiveTournaments() []*Tournament {
 
 // CalculateWinRate calculates a player's win rate percentage
 func (tm *TournamentManager) CalculateWinRate(playerID string) float64 {
-	player, exists := tm.players[playerID]
+	player, exists := tm.Players[playerID]
 	if !exists {
 		return 0.0
 	}

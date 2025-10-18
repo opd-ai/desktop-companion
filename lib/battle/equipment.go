@@ -147,15 +147,15 @@ type EquipmentStatBonuses struct {
 
 // EquipmentManager handles equipment management for battle participants
 type EquipmentManager struct {
-	participantLoadouts map[string]*EquipmentLoadout `json:"participantLoadouts"`
-	availableEquipment  map[string]*BattleEquipment  `json:"availableEquipment"` // Equipment database
+	ParticipantLoadouts map[string]*EquipmentLoadout `json:"participantLoadouts"`
+	AvailableEquipment  map[string]*BattleEquipment  `json:"availableEquipment"` // Equipment database
 }
 
 // NewEquipmentManager creates a new equipment manager with default equipment
 func NewEquipmentManager() *EquipmentManager {
 	em := &EquipmentManager{
-		participantLoadouts: make(map[string]*EquipmentLoadout),
-		availableEquipment:  make(map[string]*BattleEquipment),
+		ParticipantLoadouts: make(map[string]*EquipmentLoadout),
+		AvailableEquipment:  make(map[string]*BattleEquipment),
 	}
 
 	// Load default equipment database
@@ -278,7 +278,7 @@ func (em *EquipmentManager) loadDefaultEquipment() {
 
 	// Add all equipment to the database
 	for _, equipment := range defaultEquipment {
-		em.availableEquipment[equipment.ID] = equipment
+		em.AvailableEquipment[equipment.ID] = equipment
 	}
 }
 
@@ -303,13 +303,13 @@ func (em *EquipmentManager) InitializeParticipantLoadout(participantID string, c
 	// Calculate initial stat bonuses
 	em.calculateStatBonuses(loadout)
 
-	em.participantLoadouts[participantID] = loadout
+	em.ParticipantLoadouts[participantID] = loadout
 }
 
 // addStarterEquipment provides basic equipment based on character level
 func (em *EquipmentManager) addStarterEquipment(loadout *EquipmentLoadout, characterLevel int) {
 	// Add basic equipment that the character can use
-	for _, equipment := range em.availableEquipment {
+	for _, equipment := range em.AvailableEquipment {
 		if equipment.RequiredLevel <= characterLevel {
 			// Add a copy to inventory
 			equipmentCopy := *equipment // Copy the equipment
@@ -351,7 +351,7 @@ func (em *EquipmentManager) autoEquipStarterItems(loadout *EquipmentLoadout) {
 
 // EquipItem equips an item from inventory to the appropriate slot
 func (em *EquipmentManager) EquipItem(participantID, equipmentID string) error {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return errors.New("participant loadout not found")
 	}
@@ -396,7 +396,7 @@ func (em *EquipmentManager) EquipItem(participantID, equipmentID string) error {
 
 // UnequipItem removes an equipped item and returns it to inventory
 func (em *EquipmentManager) UnequipItem(participantID string, slot EquipmentSlot) error {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return errors.New("participant loadout not found")
 	}
@@ -465,7 +465,7 @@ func (em *EquipmentManager) clampBonus(value, maxValue float64) float64 {
 
 // ApplyEquipmentBonuses modifies battle stats based on equipped items
 func (em *EquipmentManager) ApplyEquipmentBonuses(participantID string, baseStats *BattleStats) *BattleStats {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return baseStats // No equipment, return original stats
 	}
@@ -491,7 +491,7 @@ func (em *EquipmentManager) ApplyEquipmentBonuses(participantID string, baseStat
 
 // GetEquippedItems returns the currently equipped items for a participant
 func (em *EquipmentManager) GetEquippedItems(participantID string) map[EquipmentSlot]*BattleEquipment {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return make(map[EquipmentSlot]*BattleEquipment)
 	}
@@ -500,7 +500,7 @@ func (em *EquipmentManager) GetEquippedItems(participantID string) map[Equipment
 
 // GetInventory returns the inventory items for a participant
 func (em *EquipmentManager) GetInventory(participantID string) []*BattleEquipment {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return make([]*BattleEquipment, 0)
 	}
@@ -509,7 +509,7 @@ func (em *EquipmentManager) GetInventory(participantID string) []*BattleEquipmen
 
 // GetStatBonuses returns the calculated stat bonuses for a participant
 func (em *EquipmentManager) GetStatBonuses(participantID string) EquipmentStatBonuses {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return EquipmentStatBonuses{
 			AttackMultiplier: 1.0, DefenseMultiplier: 1.0,
@@ -522,7 +522,7 @@ func (em *EquipmentManager) GetStatBonuses(participantID string) EquipmentStatBo
 
 // DamageEquipment reduces durability of equipped items after battle
 func (em *EquipmentManager) DamageEquipment(participantID string) {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return
 	}
@@ -542,7 +542,7 @@ func (em *EquipmentManager) DamageEquipment(participantID string) {
 
 // RepairEquipment restores durability to an item (costs resources in real game)
 func (em *EquipmentManager) RepairEquipment(participantID, equipmentID string) error {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return errors.New("participant loadout not found")
 	}
@@ -580,7 +580,7 @@ func (em *EquipmentManager) RepairEquipment(participantID, equipmentID string) e
 
 // UseConsumable activates a consumable item's effects
 func (em *EquipmentManager) UseConsumable(participantID, equipmentID string) (*BattleResult, error) {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return nil, errors.New("participant loadout not found")
 	}
@@ -695,17 +695,17 @@ func (em *EquipmentManager) getConsumableAnimation(equipType EquipmentType) stri
 
 // GetAvailableEquipment returns all equipment in the database
 func (em *EquipmentManager) GetAvailableEquipment() map[string]*BattleEquipment {
-	return em.availableEquipment
+	return em.AvailableEquipment
 }
 
 // AddEquipmentToInventory adds equipment to a participant's inventory
 func (em *EquipmentManager) AddEquipmentToInventory(participantID, equipmentID string) error {
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if loadout == nil {
 		return errors.New("participant loadout not found")
 	}
 
-	baseEquipment := em.availableEquipment[equipmentID]
+	baseEquipment := em.AvailableEquipment[equipmentID]
 	if baseEquipment == nil {
 		return ErrEquipmentNotFound
 	}
@@ -719,7 +719,7 @@ func (em *EquipmentManager) AddEquipmentToInventory(participantID, equipmentID s
 
 // GetEquipmentInfo returns detailed information about a specific equipment piece
 func (em *EquipmentManager) GetEquipmentInfo(equipmentID string) (*BattleEquipment, error) {
-	equipment := em.availableEquipment[equipmentID]
+	equipment := em.AvailableEquipment[equipmentID]
 	if equipment == nil {
 		return nil, ErrEquipmentNotFound
 	}

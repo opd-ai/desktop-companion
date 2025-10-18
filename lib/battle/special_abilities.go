@@ -126,19 +126,19 @@ type ComboState struct {
 
 // AbilityManager handles special abilities and combo tracking
 type AbilityManager struct {
-	participantAbilities map[string][]SpecialAbility `json:"participantAbilities"`
-	availableCombos      []ComboAttack               `json:"availableCombos"`
-	activeComboStates    map[string]*ComboState      `json:"activeComboStates"` // participantID -> combo state
-	currentTurn          int                         `json:"currentTurn"`
+	ParticipantAbilities map[string][]SpecialAbility `json:"participantAbilities"`
+	AvailableCombos      []ComboAttack               `json:"availableCombos"`
+	ActiveComboStates    map[string]*ComboState      `json:"activeComboStates"` // participantID -> combo state
+	CurrentTurn          int                         `json:"currentTurn"`
 }
 
 // NewAbilityManager creates a new ability manager with default special abilities
 func NewAbilityManager() *AbilityManager {
 	return &AbilityManager{
-		participantAbilities: make(map[string][]SpecialAbility),
-		availableCombos:      getDefaultCombos(),
-		activeComboStates:    make(map[string]*ComboState),
-		currentTurn:          0,
+		ParticipantAbilities: make(map[string][]SpecialAbility),
+		AvailableCombos:      getDefaultCombos(),
+		ActiveComboStates:    make(map[string]*ComboState),
+		CurrentTurn:          0,
 	}
 }
 
@@ -318,12 +318,12 @@ func (am *AbilityManager) InitializeParticipantAbilities(participantID string, c
 		}
 	}
 
-	am.participantAbilities[participantID] = availableAbilities
+	am.ParticipantAbilities[participantID] = availableAbilities
 }
 
 // GetAvailableSpecialAbilities returns abilities that are off cooldown and have charges
 func (am *AbilityManager) GetAvailableSpecialAbilities(participantID string) []SpecialAbility {
-	abilities := am.participantAbilities[participantID]
+	abilities := am.ParticipantAbilities[participantID]
 	if abilities == nil {
 		return nil
 	}
@@ -353,14 +353,14 @@ func (am *AbilityManager) isAbilityAvailable(ability SpecialAbility) bool {
 
 	// Use Unix timestamp to track turn when ability was used
 	lastUsedTurn := int(ability.LastUsed.Unix())
-	turnsElapsed := am.currentTurn - lastUsedTurn
+	turnsElapsed := am.CurrentTurn - lastUsedTurn
 
 	return turnsElapsed >= ability.Cooldown
 }
 
 // UseSpecialAbility attempts to use a special ability and returns the enhanced battle result
 func (am *AbilityManager) UseSpecialAbility(participantID string, abilityType SpecialAbilityType, battleState *BattleState) (*BattleResult, error) {
-	abilities := am.participantAbilities[participantID]
+	abilities := am.ParticipantAbilities[participantID]
 	if abilities == nil {
 		return nil, errors.New("participant has no abilities")
 	}
@@ -392,13 +392,13 @@ func (am *AbilityManager) UseSpecialAbility(participantID string, abilityType Sp
 	result = am.applySpecialAbilityFairnessCaps(result)
 
 	// Update ability state
-	ability.LastUsed = time.Unix(int64(am.currentTurn), 0) // Store current turn in Unix timestamp
+	ability.LastUsed = time.Unix(int64(am.CurrentTurn), 0) // Store current turn in Unix timestamp
 	if ability.ChargesMax > 0 {
 		ability.ChargesCurrent--
 	}
 
 	// Save the updated ability
-	am.participantAbilities[participantID][abilityIndex] = *ability
+	am.ParticipantAbilities[participantID][abilityIndex] = *ability
 
 	return result, nil
 }
@@ -533,7 +533,7 @@ func (am *AbilityManager) executeSpecialAbility(abilityType SpecialAbilityType, 
 // TrackComboAction records an action and checks for combo progress/completion
 func (am *AbilityManager) TrackComboAction(participantID string, action BattleActionType) (*ComboAttack, error) {
 	// Check if participant has an active combo
-	comboState := am.activeComboStates[participantID]
+	comboState := am.ActiveComboStates[participantID]
 
 	if comboState != nil {
 		// Continue existing combo
@@ -546,13 +546,13 @@ func (am *AbilityManager) TrackComboAction(participantID string, action BattleAc
 
 // checkComboStart determines if an action begins a combo sequence
 func (am *AbilityManager) checkComboStart(participantID string, action BattleActionType) (*ComboAttack, error) {
-	for _, combo := range am.availableCombos {
+	for _, combo := range am.AvailableCombos {
 		if len(combo.Sequence) > 0 && combo.Sequence[0] == action {
 			// Start tracking this combo
-			am.activeComboStates[participantID] = &ComboState{
+			am.ActiveComboStates[participantID] = &ComboState{
 				Type:             combo.Type,
 				ActionsCompleted: []BattleActionType{action},
-				StartedTurn:      am.currentTurn,
+				StartedTurn:      am.CurrentTurn,
 				ActorID:          participantID,
 				IsActive:         true,
 			}
@@ -567,9 +567,9 @@ func (am *AbilityManager) checkComboStart(participantID string, action BattleAct
 func (am *AbilityManager) continueCombo(participantID string, action BattleActionType, comboState *ComboState) (*ComboAttack, error) {
 	// Find the combo definition
 	var comboDef *ComboAttack
-	for i := range am.availableCombos {
-		if am.availableCombos[i].Type == comboState.Type {
-			comboDef = &am.availableCombos[i]
+	for i := range am.AvailableCombos {
+		if am.AvailableCombos[i].Type == comboState.Type {
+			comboDef = &am.AvailableCombos[i]
 			break
 		}
 	}
@@ -580,7 +580,7 @@ func (am *AbilityManager) continueCombo(participantID string, action BattleActio
 	}
 
 	// Check if combo window has expired FIRST
-	if am.currentTurn-comboState.StartedTurn >= comboDef.WindowDuration {
+	if am.CurrentTurn-comboState.StartedTurn >= comboDef.WindowDuration {
 		am.clearComboState(participantID)
 		return nil, ErrComboInterrupted
 	}
@@ -614,7 +614,7 @@ func (am *AbilityManager) continueCombo(participantID string, action BattleActio
 
 // clearComboState removes the active combo state for a participant
 func (am *AbilityManager) clearComboState(participantID string) {
-	delete(am.activeComboStates, participantID)
+	delete(am.ActiveComboStates, participantID)
 }
 
 // ApplyComboBonus enhances a battle result with combo multipliers and effects
@@ -648,24 +648,24 @@ func (am *AbilityManager) ApplyComboBonus(result *BattleResult, combo *ComboAtta
 
 // GetActiveComboState returns the current combo state for a participant
 func (am *AbilityManager) GetActiveComboState(participantID string) *ComboState {
-	return am.activeComboStates[participantID]
+	return am.ActiveComboStates[participantID]
 }
 
 // AdvanceTurn updates the internal turn counter for cooldown calculations
 func (am *AbilityManager) AdvanceTurn() {
-	am.currentTurn++
+	am.CurrentTurn++
 
 	// Clean up expired combo states
-	for participantID, comboState := range am.activeComboStates {
+	for participantID, comboState := range am.ActiveComboStates {
 		var comboDef *ComboAttack
-		for i := range am.availableCombos {
-			if am.availableCombos[i].Type == comboState.Type {
-				comboDef = &am.availableCombos[i]
+		for i := range am.AvailableCombos {
+			if am.AvailableCombos[i].Type == comboState.Type {
+				comboDef = &am.AvailableCombos[i]
 				break
 			}
 		}
 
-		if comboDef != nil && am.currentTurn-comboState.StartedTurn >= comboDef.WindowDuration {
+		if comboDef != nil && am.CurrentTurn-comboState.StartedTurn >= comboDef.WindowDuration {
 			am.clearComboState(participantID)
 		}
 	}
@@ -713,12 +713,12 @@ func (am *AbilityManager) getAbilityResponse(abilityType SpecialAbilityType) str
 
 // GetAvailableCombos returns all combo attacks that can be initiated
 func (am *AbilityManager) GetAvailableCombos() []ComboAttack {
-	return am.availableCombos
+	return am.AvailableCombos
 }
 
 // ResetParticipantAbilities restores all abilities and clears cooldowns (for new battles)
 func (am *AbilityManager) ResetParticipantAbilities(participantID string) {
-	abilities := am.participantAbilities[participantID]
+	abilities := am.ParticipantAbilities[participantID]
 	if abilities == nil {
 		return
 	}
@@ -731,6 +731,6 @@ func (am *AbilityManager) ResetParticipantAbilities(participantID string) {
 		}
 	}
 
-	am.participantAbilities[participantID] = abilities
+	am.ParticipantAbilities[participantID] = abilities
 	am.clearComboState(participantID)
 }
