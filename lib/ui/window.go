@@ -68,6 +68,7 @@ type DesktopWindow struct {
 	networkMode             bool
 	showNetwork             bool
 	eventsEnabled           bool
+	stopFocusLoop           chan bool // Channel to signal stop for focus maintenance goroutine
 }
 
 // NewDesktopWindow creates a new transparent desktop window
@@ -101,6 +102,7 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		networkMode:   networkMode,
 		showNetwork:   showNetwork,
 		eventsEnabled: eventsEnabled,
+		stopFocusLoop: make(chan bool, 1), // Buffered channel to prevent blocking on close
 	}
 
 	logrus.WithFields(logrus.Fields{
@@ -143,6 +145,12 @@ func NewDesktopWindow(app fyne.App, char *character.Character, debug bool, profi
 		"caller": caller,
 	}).Debug("Window interactions setup completed")
 
+	// Configure always-on-top behavior with proper lifecycle management
+	dw.setupAlwaysOnTop(debug)
+	logrus.WithFields(logrus.Fields{
+		"caller": caller,
+	}).Debug("Always-on-top configuration applied")
+
 	// Start animation update loop
 	go dw.animationLoop()
 	logrus.WithFields(logrus.Fields{
@@ -175,10 +183,6 @@ func createConfiguredWindow(app fyne.App, char *character.Character, debug bool)
 
 	// Configure transparency for desktop overlay
 	configureTransparency(window, debug)
-
-	// Attempt to configure always-on-top behavior using available Fyne capabilities
-	// Note: Fyne has limited always-on-top support, but we can try available approaches
-	configureAlwaysOnTop(window, debug)
 
 	return window
 }
@@ -977,6 +981,12 @@ func (dw *DesktopWindow) Hide() {
 
 // Close closes the desktop window and stops animation
 func (dw *DesktopWindow) Close() {
+	// Stop the focus maintenance goroutine
+	select {
+	case dw.stopFocusLoop <- true:
+	default:
+		// Channel already closed or not listening
+	}
 	dw.window.Close()
 }
 
@@ -1158,25 +1168,26 @@ func (dw *DesktopWindow) checkForNewAchievements() {
 	}
 }
 
-// configureAlwaysOnTop attempts to configure always-on-top behavior using available Fyne capabilities
+// setupAlwaysOnTop configures always-on-top behavior with proper goroutine lifecycle management
 // Following the "lazy programmer" principle: use what's available rather than implementing platform-specific code
-func configureAlwaysOnTop(window fyne.Window, debug bool) {
+func (dw *DesktopWindow) setupAlwaysOnTop(debug bool) {
 	// Fyne v2.4.5 has limited always-on-top support, but we can use available approaches:
 
 	// 1. Use RequestFocus to raise and focus the window (closest to always-on-top behavior)
-	window.RequestFocus()
+	dw.window.RequestFocus()
 
 	// 2. Try to minimize window decorations (makes it more overlay-like)
 	// Note: Title removal is already handled in configureTransparency to avoid duplication
 
 	// 3. Set window to fixed size to prevent accidental resizing that could lose focus
-	window.SetFixedSize(true)
+	dw.window.SetFixedSize(true)
 
 	// 4. Configure for desktop overlay use case
 	// Fyne's design philosophy focuses on cross-platform compatibility over platform-specific features
 	// True always-on-top requires platform-specific window manager hints that Fyne doesn't expose
 
 	// 5. Implement periodic focus maintenance for better desktop overlay behavior
+	// This goroutine now has proper lifecycle management via stopFocusLoop channel
 	go func() {
 		ticker := time.NewTicker(5 * time.Second)
 		defer ticker.Stop()
@@ -1186,9 +1197,12 @@ func configureAlwaysOnTop(window fyne.Window, debug bool) {
 			case <-ticker.C:
 				// Periodically request focus to maintain overlay-like behavior
 				// This helps ensure the companion stays visible during normal desktop use
-				if window != nil {
-					window.RequestFocus()
+				if dw.window != nil {
+					dw.window.RequestFocus()
 				}
+			case <-dw.stopFocusLoop:
+				// Clean shutdown when window is closed
+				return
 			}
 		}
 	}()
@@ -1199,6 +1213,7 @@ func configureAlwaysOnTop(window fyne.Window, debug bool) {
 		log.Println("Note: Periodic focus requests every 5 seconds to maintain visibility")
 		log.Println("Note: Fixed size prevents accidental resize that could interfere with focus")
 		log.Println("Note: Full always-on-top behavior requires platform-specific window manager support")
+		log.Println("Note: Focus maintenance goroutine will be cleaned up on window close")
 	}
 
 	// Future enhancement opportunity:
