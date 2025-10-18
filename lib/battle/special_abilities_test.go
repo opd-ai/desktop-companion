@@ -11,15 +11,15 @@ func TestNewAbilityManager(t *testing.T) {
 		t.Fatal("NewAbilityManager returned nil")
 	}
 
-	if am.participantAbilities == nil {
+	if am.ParticipantAbilities == nil {
 		t.Error("participantAbilities map not initialized")
 	}
 
-	if am.activeComboStates == nil {
+	if am.ActiveComboStates == nil {
 		t.Error("activeComboStates map not initialized")
 	}
 
-	if len(am.availableCombos) == 0 {
+	if len(am.AvailableCombos) == 0 {
 		t.Error("no default combos loaded")
 	}
 
@@ -35,7 +35,7 @@ func TestNewAbilityManager(t *testing.T) {
 	}
 
 	comboMap := make(map[ComboAttackType]bool)
-	for _, combo := range am.availableCombos {
+	for _, combo := range am.AvailableCombos {
 		comboMap[combo.Type] = true
 	}
 
@@ -66,7 +66,7 @@ func TestInitializeParticipantAbilities(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			am.InitializeParticipantAbilities(participantID, tt.characterLevel)
 
-			abilities := am.participantAbilities[participantID]
+			abilities := am.ParticipantAbilities[participantID]
 			if abilities == nil {
 				t.Fatal("No abilities initialized")
 			}
@@ -236,14 +236,14 @@ func TestSpecialAbilityCharges(t *testing.T) {
 	}
 
 	// Reset cooldown and use again
-	am.currentTurn += 10 // Advance beyond cooldown
+	am.CurrentTurn += 10 // Advance beyond cooldown
 	_, err = am.UseSpecialAbility(participantID, ABILITY_PERFECT_GUARD, battleState)
 	if err != nil {
 		t.Fatalf("Second use failed: %v", err)
 	}
 
 	// Reset cooldown and try to use third time (should fail - no charges left)
-	am.currentTurn += 10
+	am.CurrentTurn += 10
 	_, err = am.UseSpecialAbility(participantID, ABILITY_PERFECT_GUARD, battleState)
 	if err != ErrAbilityOnCooldown {
 		t.Errorf("Expected cooldown/charges error, got: %v", err)
@@ -491,7 +491,7 @@ func TestResetParticipantAbilities(t *testing.T) {
 	am.ResetParticipantAbilities(participantID)
 
 	// Check that charges are restored
-	abilities := am.participantAbilities[participantID]
+	abilities := am.ParticipantAbilities[participantID]
 	for _, ability := range abilities {
 		if ability.Type == ABILITY_PERFECT_GUARD {
 			if ability.ChargesCurrent != ability.ChargesMax {

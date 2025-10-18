@@ -12,20 +12,20 @@ func TestNewTournamentManager(t *testing.T) {
 		t.Fatal("NewTournamentManager returned nil")
 	}
 
-	if tm.tournaments == nil {
+	if tm.Tournaments == nil {
 		t.Error("tournaments map not initialized")
 	}
 
-	if tm.players == nil {
+	if tm.Players == nil {
 		t.Error("players map not initialized")
 	}
 
-	if tm.nextMatchID != 1 {
-		t.Errorf("Expected nextMatchID to be 1, got %d", tm.nextMatchID)
+	if tm.NextMatchID != 1 {
+		t.Errorf("Expected nextMatchID to be 1, got %d", tm.NextMatchID)
 	}
 
-	if tm.nextTournID != 1 {
-		t.Errorf("Expected nextTournID to be 1, got %d", tm.nextTournID)
+	if tm.NextTournID != 1 {
+		t.Errorf("Expected nextTournID to be 1, got %d", tm.NextTournID)
 	}
 }
 
@@ -286,8 +286,8 @@ func TestReportMatchResult(t *testing.T) {
 
 	// Test valid match result
 	match1 := tournament.Matches[0]
-	initialRating1 := tm.players[match1.Player1ID].Rating
-	initialRating2 := tm.players[match1.Player2ID].Rating
+	initialRating1 := tm.Players[match1.Player1ID].Rating
+	initialRating2 := tm.Players[match1.Player2ID].Rating
 
 	err = tm.ReportMatchResult(tournament.ID, match1.ID, RESULT_PLAYER1_WIN, match1.Player1ID)
 	if err != nil {
@@ -307,8 +307,8 @@ func TestReportMatchResult(t *testing.T) {
 	}
 
 	// Check that ratings were updated
-	newRating1 := tm.players[match1.Player1ID].Rating
-	newRating2 := tm.players[match1.Player2ID].Rating
+	newRating1 := tm.Players[match1.Player1ID].Rating
+	newRating2 := tm.Players[match1.Player2ID].Rating
 
 	if newRating1 <= initialRating1 {
 		t.Error("Winner's rating should increase")
@@ -319,8 +319,8 @@ func TestReportMatchResult(t *testing.T) {
 	}
 
 	// Check that match statistics were updated
-	winner := tm.players[match1.Player1ID]
-	loser := tm.players[match1.Player2ID]
+	winner := tm.Players[match1.Player1ID]
+	loser := tm.Players[match1.Player2ID]
 
 	if winner.MatchesWon == 0 {
 		t.Error("Winner should have match win recorded")
@@ -394,7 +394,7 @@ func TestTournamentCompletion(t *testing.T) {
 		t.Fatal("Final match not found")
 	}
 
-	initialVictories := tm.players[finalMatch.Player1ID].Victories
+	initialVictories := tm.Players[finalMatch.Player1ID].Victories
 
 	tm.ReportMatchResult(tournament.ID, finalMatch.ID, RESULT_PLAYER1_WIN, finalMatch.Player1ID)
 
@@ -412,7 +412,7 @@ func TestTournamentCompletion(t *testing.T) {
 	}
 
 	// Check that winner's victory count was incremented
-	finalVictories := tm.players[finalMatch.Player1ID].Victories
+	finalVictories := tm.Players[finalMatch.Player1ID].Victories
 	if finalVictories != initialVictories+1 {
 		t.Errorf("Expected winner victories to increase by 1, got %d -> %d", initialVictories, finalVictories)
 	}

@@ -12,23 +12,23 @@ func TestNewEquipmentManager(t *testing.T) {
 		t.Fatal("NewEquipmentManager returned nil")
 	}
 
-	if em.participantLoadouts == nil {
+	if em.ParticipantLoadouts == nil {
 		t.Error("participantLoadouts map not initialized")
 	}
 
-	if em.availableEquipment == nil {
+	if em.AvailableEquipment == nil {
 		t.Error("availableEquipment map not initialized")
 	}
 
 	// Check that default equipment was loaded
-	if len(em.availableEquipment) == 0 {
+	if len(em.AvailableEquipment) == 0 {
 		t.Error("no default equipment loaded")
 	}
 
 	// Verify we have expected equipment types
 	expectedEquipment := []string{"iron_sword", "wooden_bow", "leather_armor", "health_potion"}
 	for _, expectedID := range expectedEquipment {
-		if _, exists := em.availableEquipment[expectedID]; !exists {
+		if _, exists := em.AvailableEquipment[expectedID]; !exists {
 			t.Errorf("Expected equipment %s not found", expectedID)
 		}
 	}
@@ -53,7 +53,7 @@ func TestInitializeParticipantLoadout(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			em.InitializeParticipantLoadout(participantID, tt.characterLevel)
 
-			loadout := em.participantLoadouts[participantID]
+			loadout := em.ParticipantLoadouts[participantID]
 			if loadout == nil {
 				t.Fatal("No loadout created")
 			}
@@ -96,7 +96,7 @@ func TestEquipItem(t *testing.T) {
 	participantID := "test_participant"
 	em.InitializeParticipantLoadout(participantID, 5) // High level for access to all equipment
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 
 	// Find a weapon in inventory to equip
 	var weaponToEquip *BattleEquipment
@@ -153,7 +153,7 @@ func TestEquipItemSlotReplacement(t *testing.T) {
 	participantID := "test_participant"
 	em.InitializeParticipantLoadout(participantID, 5)
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 
 	// Find two weapons to test slot replacement
 	var weapon1, weapon2 *BattleEquipment
@@ -216,7 +216,7 @@ func TestUnequipItem(t *testing.T) {
 	participantID := "test_participant"
 	em.InitializeParticipantLoadout(participantID, 5)
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 
 	// Find and equip a weapon
 	var weaponToEquip *BattleEquipment
@@ -277,7 +277,7 @@ func TestApplyEquipmentBonuses(t *testing.T) {
 	}
 
 	// Since the character has starter equipment, stats should be modified
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	if len(loadout.EquippedItems) > 0 {
 		// With equipment, some stats should be different
 		if modifiedStats.Attack == baseStats.Attack &&
@@ -298,7 +298,7 @@ func TestEquipmentDurability(t *testing.T) {
 	participantID := "test_participant"
 	em.InitializeParticipantLoadout(participantID, 5)
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 
 	// Find and equip a weapon
 	var weaponToEquip *BattleEquipment
@@ -350,7 +350,7 @@ func TestRepairEquipment(t *testing.T) {
 	participantID := "test_participant"
 	em.InitializeParticipantLoadout(participantID, 5)
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 
 	// Find and equip a weapon
 	var weaponToEquip *BattleEquipment
@@ -409,7 +409,7 @@ func TestUseConsumable(t *testing.T) {
 		t.Fatalf("Failed to add health potion: %v", err)
 	}
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 	initialInventorySize := len(loadout.Inventory)
 
 	// Use the health potion
@@ -489,7 +489,7 @@ func TestEquipmentRarity(t *testing.T) {
 
 	for _, rarity := range rarities {
 		// Find equipment of this rarity
-		for _, equipment := range em.availableEquipment {
+		for _, equipment := range em.AvailableEquipment {
 			if equipment.Rarity == rarity && equipment.AttackBonus > 0 {
 				bonuses = append(bonuses, equipment.AttackBonus)
 				break
@@ -530,7 +530,7 @@ func TestEquipmentByLevel(t *testing.T) {
 			participantID := fmt.Sprintf("test_participant_%d", tt.level)
 			em.InitializeParticipantLoadout(participantID, tt.level)
 
-			loadout := em.participantLoadouts[participantID]
+			loadout := em.ParticipantLoadouts[participantID]
 
 			// Verify all inventory items meet level requirement
 			for _, equipment := range loadout.Inventory {
@@ -597,7 +597,7 @@ func BenchmarkEquipmentBonusCalculation(b *testing.B) {
 	participantID := "test_participant"
 	em.InitializeParticipantLoadout(participantID, 5)
 
-	loadout := em.participantLoadouts[participantID]
+	loadout := em.ParticipantLoadouts[participantID]
 
 	b.ResetTimer()
 
@@ -632,7 +632,7 @@ func BenchmarkEquipItem(b *testing.B) {
 		// Reset for each iteration
 		em.InitializeParticipantLoadout(participantID, 5)
 
-		loadout := em.participantLoadouts[participantID]
+		loadout := em.ParticipantLoadouts[participantID]
 		if len(loadout.Inventory) > 0 {
 			em.EquipItem(participantID, loadout.Inventory[0].ID)
 		}
